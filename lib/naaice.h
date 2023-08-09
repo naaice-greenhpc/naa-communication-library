@@ -29,9 +29,18 @@
 #define ntohll be64toh
 #define htonll htobe64
 #define TIMEOUT_IN_MS 500
+
+#define TRANSFER_LENGTH 1024
+#define INT_DATA_SUBSTITUTE 11
+#define MR_META_DATA_SIZE 1024
 // size of MR for MR exchange
 // type + padding: 32 + Maximum number of regions:UINT_MAX+1 * (Addr:64 +  size:32 + key:32) + requested size:64 / 8
 #define MR_SIZE_MR_EXHANGE (32 + (UINT8_MAX + 1) * 2 * 64 + 64) / 8
+extern struct timespec programm_start_time, init_done_time, mr_exchange_done_time,
+    data_exchange_done_time[NUMBER_OF_REPITITIONS + 1];
+
+//static uint64_t transfer_length;
+
 enum message_id
 {
   MSG_MR_ERR = 0x00,
@@ -82,6 +91,7 @@ struct naaice_mr_local
 {
   struct ibv_mr *ibv;
   char *addr;
+  uint32_t size;
 };
 
 struct naaice_communication_context
@@ -128,14 +138,14 @@ struct naaice_communication_context
   } state;
   uint64_t transfer_length;
   uint8_t no_local_mrs;
-  uint32_t repititions_completed;
-  
-  uint64_t peer_advertised_length;
   uint8_t no_peer_mrs;
+  uint32_t repititions_completed;
+  uint64_t requested_size;
+  uint64_t peer_advertised_length;
   uint8_t events_to_ack;
   uint8_t events_acked;
   uint8_t rdma_writes_done;
-
+  uint8_t no_advertised_mrs;
   bool rdma_write_finished;
 };
  /**
@@ -143,21 +153,32 @@ struct naaice_communication_context
  * params:
  * rdma communcation id: communcation identifier, analogous to sockets
  */
-int naaice_prepare_connection(struct rdma_cm_id *id);
-
- /**
- * RDMA event loop. RDMA communication is event-based. This event loop is used for handling connection building and cleanup. Returns 0 on sucess, -1 otherwise
- * params:
- * rdma event returned by rdma_get_cm_event()
- */
-int naaice_on_event(struct rdma_cm_event *ev);
+int naaice_prepare_connection(struct naaice_communication_context *comm_ctx);
 
 /**
- * Routine called after address resolution of the host/connection initiator. During the routine route resolution for the resolved address is tried. Returns 0 on sucess, -1 otherwise
- * params:
- * rdma communcation id: communcation identifier, analogous to sockets
+ * RDMA event loop. RDMA communication is event-based. This event loop is used
+ * for handling connection building and cleanup. Returns 0 on sucess, -1
+ * otherwise params: rdma event returned by rdma_get_cm_event()
  */
-int naaice_on_addr_resolved(struct rdma_cm_id *id);
+int naaice_on_event_server(struct rdma_cm_event *ev,
+                    struct naaice_communication_context *comm_ctx);
+
+/**
+ * Routine called after address resolution of the host/connection initiator.
+ * During the routine route resolution for the resolved address is tried.
+ * Returns 0 on sucess, -1 otherwise params: rdma communcation id: communcation
+ * identifier, analogous to sockets
+ */
+int naaice_on_event_client(struct rdma_cm_event *ev,
+                    struct naaice_communication_context *comm_ctx);
+
+/**
+ * Routine called after address resolution of the host/connection initiator.
+ * During the routine route resolution for the resolved address is tried.
+ * Returns 0 on sucess, -1 otherwise params: rdma communcation id: communcation
+ * identifier, analogous to sockets
+ */
+int naaice_on_addr_resolved(struct rdma_cm_id *id, struct naaice_communication_context *comm_ctx);
 
 /**
  * Routine called after route resolution of the host/connection initiator. During the routine communication parameters such as retries for non-acked messages are set and rdma_connect() is called to initiate the connection handshake. Returns 0 on sucess, -1 otherwise
@@ -170,20 +191,37 @@ int naaice_on_route_resolved(struct rdma_cm_id *id);
  * Routine called after event for connection request is triggered. Used on the FPGA/side passive partner in connection establishment. Sets communication parameters and rdma_accept() is called to accept connection request. Returns 0 on success, -1 otherwise
  * params:
  * rdma communcation id: communcation identifier, analogous to sockets
- */ 
-int naaice_on_connection_requests(struct rdma_cm_id *id);
+ */
+int naaice_on_connection_requests(struct rdma_cm_id *id, struct naaice_communication_context *comm_ctx);
 /**
- * Routine called after connection establishment. Only called by initiator. Memory regions for message exchange and local data memory regions are allocated and registered. Returns 0 on success, -1 otherwise
- * params:
- * rdma communcation id: communcation identifier, analogous to sockets
- */ 
-int naaice_on_connection(struct naaice_communication_context *comm_ctx);
+ * Routine called by client after connection establishment. Only called by initiator.
+ * Memory regions for message exchange and local data memory regions are
+ * allocated and registered. Returns 0 on success, -1 otherwise params: rdma
+ * communcation id: communcation identifier, analogous to sockets
+ */
+int naaice_on_connection_client(struct naaice_communication_context *comm_ctx);
+/**
+ * Routine called by server after connection establishment. Only called by initiator.
+ * Memory regions for message exchange and local data memory regions are
+ * allocated and registered. Returns 0 on success, -1 otherwise params: rdma
+ * communcation id: communcation identifier, analogous to sockets
+ */
+int naaice_on_connection_server(struct naaice_communication_context *comm_ctx);
 
 /**
- * Routine called after event disconnetion. Cleanup. MRs are deregistered and all allocated memory is freed. Returns 0 on success, -1 otherwise
- * params:
- *  naaice_communication_context *comm_ctx: structure for the communication context. Holds all info of the connection and mrs
- */ 
+ * Routine called after event disconnetion. Cleanup. MRs are deregistered and
+ * all allocated memory is freed. Returns 0 on success, -1 otherwise params:
+ *  naaice_communication_context *comm_ctx: structure for the communication
+ * context. Holds all info of the connection and mrs
+ */
+int naaice_on_connection_client(struct naaice_communication_context *comm_ctx);
+
+/**
+ * Routine called after event disconnetion. Cleanup. MRs are deregistered and
+ * all allocated memory is freed. Returns 0 on success, -1 otherwise params:
+ *  naaice_communication_context *comm_ctx: structure for the communication
+ * context. Holds all info of the connection and mrs
+ */
 int naaice_on_disconnect(struct naaice_communication_context *comm_ctx);
 
 /**
@@ -194,11 +232,25 @@ int naaice_on_disconnect(struct naaice_communication_context *comm_ctx);
 void naaice_poll_cq(struct naaice_communication_context *comm_ctx);
 
 /**
- * Main Routine for data transfer. Called after each completed RDMA operation. Usually the next RDMA operation is initiated or incoming data is handled. Progression is ensured through a state-machine-like structure in the commmunication context. 
- * params:
- * naaice_communication_context *comm_ctx: structure for the communication context. Holds all info of the connection and mrs
- */ 
-int naaice_on_completion(struct ibv_wc *wc, struct naaice_communication_context *comm_ctx);
+ * Main Routine for data transfer. Called after each completed RDMA operation.
+ * Usually the next RDMA operation is initiated or incoming data is handled.
+ * Progression is ensured through a state-machine-like structure in the
+ * commmunication context. params: naaice_communication_context *comm_ctx:
+ * structure for the communication context. Holds all info of the connection and
+ * mrs
+ */
+int naaice_on_completion_client(struct ibv_wc *wc,
+                         struct naaice_communication_context *comm_ctx);
+/**
+ * Main Routine for data transfer. Called after each completed RDMA operation.
+ * Usually the next RDMA operation is initiated or incoming data is handled.
+ * Progression is ensured through a state-machine-like structure in the
+ * commmunication context. params: naaice_communication_context *comm_ctx:
+ * structure for the communication context. Holds all info of the connection and
+ * mrs
+ */
+int naaice_on_completion_server(struct ibv_wc *wc,
+                         struct naaice_communication_context *comm_ctx);
 
 /**
  * Routine for sending out metadata for memory regions. 
@@ -249,3 +301,6 @@ int naaice_prepare_local_mrs(struct naaice_communication_context *comm_ctx);
 /*void naaice_mr_response(struct rdma_cm_id *id);
 
 void naaice_send(struct rdma_cm_id *id);*/
+double timediff(struct timespec start, struct timespec end);
+
+int memvcmp(void *memory, unsigned char val, unsigned int size);
