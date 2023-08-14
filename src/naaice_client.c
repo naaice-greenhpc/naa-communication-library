@@ -12,11 +12,13 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   };
   char *ptr; 
+  //Check if user input includes at least and no more than 32 memory regions (limit on fpga)
   long int mr_num = strtol(argv[3], &ptr, 10);
   if(mr_num < 1 || mr_num > 32){
     fprintf(stderr, "Chosen number of arguments %ld is not supported. Exiting\n",mr_num);
     exit(EXIT_FAILURE);
   }
+  //derive sizes of memory regions
   int i = 0;
   int mr_sizes[mr_num+1];
   char *token = strtok(argv[4], " ");
@@ -41,13 +43,16 @@ int main(int argc, char *argv[]) {
     }
     mr_sizes[i] = atoi(token);
   }
+  //Size of Meta-data region is fixed right now. Has a variable length highly dependent on the problem to offload
+  //Metadata region is used to announce output address to FPGA and to report structure/size of parameters if not implicitly known
   mr_sizes[mr_num] = MR_META_DATA_SIZE;
 
   for (int j = 0; j < mr_num+1; j++) {
         printf("array pos %d, %d\n", j, mr_sizes[j]);
     }
     clock_gettime(CLOCK_MONOTONIC_RAW, &programm_start_time);
- 
+
+    //Basic Infiniband strucutres, channel and id
     struct rdma_event_channel *rdma_ev_channel;
     struct rdma_cm_id *rdma_comm_id;
     struct addrinfo *rem_addr, *loc_addr;
@@ -63,6 +68,7 @@ int main(int argc, char *argv[]) {
       perror("Failed to create a communication id.");
       exit(EXIT_FAILURE);
     }
+    // Allocate communication context structure, this holds all information necessary for the connection
     struct naaice_communication_context *comm_ctx =
         (struct naaice_communication_context *)malloc(
             sizeof(struct naaice_communication_context));
@@ -73,10 +79,25 @@ int main(int argc, char *argv[]) {
     }
     rdma_comm_id->context = comm_ctx;
     comm_ctx->id = rdma_comm_id;
+    // for MRSP we do not advertise all regions: meta-data region is not
+    // announced
     comm_ctx->no_local_mrs = mr_num+1;
     comm_ctx->no_advertised_mrs = mr_num;
+
+    //TODO: Can we find out the amount of requested memory automatically?
     comm_ctx->requested_size = strtoll(argv[5],&ptr,10);
-    
+    if (comm_ctx->requested_size > (255) * MAX_TRANSFER_LENGTH) {
+      fprintf(stderr, "Requested Transfer Size exceeds the maximum amount of "
+                      "memory regions. Exiting\n");
+      exit(EXIT_FAILURE);
+    }
+    errno = 0;
+    if ((errno == ERANGE && (comm_ctx->requested_size == ULLONG_MAX)) ||
+        (errno != 0 && comm_ctx->requested_size == 0)) {
+      perror("Conversion of user-input for transfer length failed.");
+      exit(EXIT_FAILURE);
+    }
+    //Allocate local memory for memory regions, in middleware-APi this is already done by user beforehand.
     struct naaice_mr_local *local;
     local = calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
     if (local == NULL) {
@@ -88,7 +109,9 @@ int main(int argc, char *argv[]) {
     comm_ctx->rdma_write_finished = 0;
     comm_ctx->rdma_writes_done = 0;
 
-    for(int i=0; i<=mr_num;i++){
+    //Allocate regions by user-input. Number and size for each region was given
+    //TODO: Error checking or a smarter way to do this
+    for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
       comm_ctx->mr_local_data[i].size = mr_sizes[i];
       posix_memalign((void **)&(comm_ctx->mr_local_data[i].addr),
                      sysconf(_SC_PAGESIZE), comm_ctx->mr_local_data[0].size);
@@ -98,8 +121,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
       }
     }
-    //exit(EXIT_SUCCESS);
-
+    //TODO: Port for connection is given by handle structure in Middleware later.
+    //Doesn't have to be fixed, but well known between host and FPGA
     snprintf(conn_port, 6, "%d", CONNECTION_PORT);
     if (getaddrinfo(argv[1], conn_port, NULL, &loc_addr)) {
       perror("Failed to get address info for local address. Exiting.");
@@ -118,18 +141,9 @@ int main(int argc, char *argv[]) {
     freeaddrinfo(rem_addr);
     if (argv[3]) {
     }
-    errno = 0;
-    comm_ctx->transfer_length = TRANSFER_LENGTH;
-    if (comm_ctx->transfer_length > (255) * MAX_TRANSFER_LENGTH) {
-      fprintf(stderr, "Requested Transfer Size exceeds the maximum amount of "
-                      "memory regions. Exiting\n");
-      exit(EXIT_FAILURE);
-    }
-    if ((errno == ERANGE && (comm_ctx->transfer_length == ULLONG_MAX)) ||
-        (errno != 0 && comm_ctx->transfer_length == 0)) {
-      perror("Conversion of user-input for transfer length failed.");
-      exit(EXIT_FAILURE);
-    }
+    
+  //Enter event loop until disconnect
+  //TODO in Middleware/Application example we exit this event loop after data transfer and get back to it?
   while (rdma_get_cm_event(rdma_ev_channel, &ev) == 0) {
     struct rdma_cm_event ev_cp;
     memcpy(&ev_cp, ev, sizeof(*ev));
@@ -142,7 +156,6 @@ int main(int argc, char *argv[]) {
     perror("Failed to destroy RDMA communication id.");
     exit(EXIT_FAILURE);
   }
-  // printf("Destroyed rdma_comm_id successfully\n");
   rdma_destroy_event_channel(rdma_ev_channel);
   printf("All cleaned up. Exiting\n");
   exit(EXIT_SUCCESS);

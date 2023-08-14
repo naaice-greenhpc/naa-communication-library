@@ -27,6 +27,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     perror("Failed to create a communication id.");
     exit(EXIT_FAILURE);
   }
+  //Allocate communication context earlier than before.
   struct naaice_communication_context *comm_ctx =
       (struct naaice_communication_context *)malloc(
           sizeof(struct naaice_communication_context));
@@ -36,8 +37,10 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1;
   }
 
+  //Bind address to communication ID and start listening for connections
   rdma_comm_id->context = comm_ctx;
   //comm_ctx->id = rdma_comm_id;
+  //Make port flexible?
   memset(&loc_addr, 0, sizeof(loc_addr));
   loc_addr.sa_family = AF_INET;
   ((struct sockaddr_in *)&loc_addr)->sin_port = htons(CONNECTION_PORT);
@@ -52,7 +55,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
 
   int port = ntohs(rdma_get_src_port(rdma_comm_id));
   printf("listening on port %d.\n", port);
-
+  //Enter event loop.
   while (rdma_get_cm_event(rdma_ev_channel, &ev) == 0) {
     struct rdma_cm_event ev_cp;
     memcpy(&ev_cp, ev, sizeof(*ev));

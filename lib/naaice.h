@@ -29,24 +29,21 @@
 #define ntohll be64toh
 #define htonll htobe64
 #define TIMEOUT_IN_MS 500
-
-#define TRANSFER_LENGTH 1024
-#define INT_DATA_SUBSTITUTE 11
-#define MR_META_DATA_SIZE 1024
 // size of MR for MR exchange
 // type + padding: 32 + Maximum number of regions:UINT_MAX+1 * (Addr:64 +  size:32 + key:32) + requested size:64 / 8
 #define MR_SIZE_MR_EXHANGE (32 + (UINT8_MAX + 1) * 2 * 64 + 64) / 8
+#define MR_META_DATA_SIZE 1024
+#define INT_DATA_SUBSTITUTE 11
+
 extern struct timespec programm_start_time, init_done_time, mr_exchange_done_time,
     data_exchange_done_time[NUMBER_OF_REPITITIONS + 1];
-
-//static uint64_t transfer_length;
 
 enum message_id
 {
   MSG_MR_ERR = 0x00,
-  // memory region announcement and request , send by host
+  // memory region advertisement and request , send by host
   MSG_MR_AAR = 0x01,
-  // memory region announcement without request, usually send by FPGA
+  // memory region advertisement without request, usually sent by FPGA
   MSG_MR_A = 0x02,
   //not used yet
   MSG_MR_R = 0x03, 
@@ -92,6 +89,7 @@ struct naaice_mr_local
   struct ibv_mr *ibv;
   char *addr;
   uint32_t size;
+  bool to_write;
 };
 
 struct naaice_communication_context
@@ -100,17 +98,39 @@ struct naaice_communication_context
   struct rdma_cm_id *id;
   struct ibv_context *ibv_ctx;
   struct ibv_pd *pd;
-  struct ibv_comp_channel *comp_channel;
+  //struct ibv_comp_channel *comp_channel;
   struct ibv_cq *cq;
   struct ibv_qp *qp;
+
+  // Structure for rpc metadata, includes return address and number/size of input paramters.
+  // if we want to support variable length parameters, we need to make the size_params member an array of variable size
+  /*
+   * To allow for multiple return regions, we would need to instead include a
+   * list of return regions in the metadata, I guess:
+   */
+  //struct naaice_metadata {
+  //  uint8_t n_return_regions;
+  //  uint64_t return_addrs[MAX_RETURN_REGIONS];
+  //}
+
+  /*
+   * ...and we'd update naaice_configure_metadata slightly to reflect this.
+   */
+  struct naaice_rpc_metadata {
+    uint32_t size;
+    uint64_t return_addr;
+    //uint32_t num_params;
+    //uint32_t size_params;
+  } rpc_metadata;
+  // memory region for return data, one (or possibly more) of the peer data regions
+  struct naaice_mr_peer *mr_return_data;
   // memory regions
-  // list of peer memory regions terminated by NULL
+  // array of peer memory regions 
   struct naaice_mr_peer *mr_peer_data;
-  // list of local memory regions terminated by NULL, used for data exchange
+  // array of local memory regions 
   struct naaice_mr_local *mr_local_data;
 
-  // struct naaice_mr_peer   *mr_peer_message;
-  //  list of local memory regions terminated by NULL, used for memory region exchange
+  // used for MRSP
   struct naaice_mr_local *mr_local_message;
 
   // States for host and FPGA
@@ -136,16 +156,21 @@ struct naaice_communication_context
     RUNNING,
     FINISHED // :)
   } state;
-  uint64_t transfer_length;
-  uint8_t no_local_mrs;
-  uint8_t no_peer_mrs;
-  uint32_t repititions_completed;
+  //What do we request on the FPGA, unused on FPGA
   uint64_t requested_size;
+  //How many regions are available
+  uint8_t no_local_mrs;
+  uint32_t repititions_completed;
+  //How much memory did the FPGA advertise, enough for requested amount?
   uint64_t peer_advertised_length;
+  uint8_t no_peer_mrs;
+  //How many regions were advertised to FPGA? Does not have to be all available ones
+  uint8_t no_advertised_mrs;
   uint8_t events_to_ack;
   uint8_t events_acked;
   uint8_t rdma_writes_done;
-  uint8_t no_advertised_mrs;
+  //How many SGEs are part of one write request
+  uint8_t sges;
   bool rdma_write_finished;
 };
  /**
@@ -162,21 +187,18 @@ int naaice_prepare_connection(struct naaice_communication_context *comm_ctx);
  */
 int naaice_on_event_server(struct rdma_cm_event *ev,
                     struct naaice_communication_context *comm_ctx);
-
 /**
- * Routine called after address resolution of the host/connection initiator.
- * During the routine route resolution for the resolved address is tried.
- * Returns 0 on sucess, -1 otherwise params: rdma communcation id: communcation
- * identifier, analogous to sockets
+ * RDMA event loop. RDMA communication is event-based. This event loop is used
+ * for handling connection building and cleanup. Returns 0 on sucess, -1
+ * otherwise params: rdma event returned by rdma_get_cm_event()
  */
 int naaice_on_event_client(struct rdma_cm_event *ev,
                     struct naaice_communication_context *comm_ctx);
 
 /**
- * Routine called after address resolution of the host/connection initiator.
- * During the routine route resolution for the resolved address is tried.
- * Returns 0 on sucess, -1 otherwise params: rdma communcation id: communcation
- * identifier, analogous to sockets
+ * Routine called after address resolution of the host/connection initiator. During the routine route resolution for the resolved address is tried. Returns 0 on sucess, -1 otherwise
+ * params:
+ * rdma communcation id: communcation identifier, analogous to sockets
  */
 int naaice_on_addr_resolved(struct rdma_cm_id *id, struct naaice_communication_context *comm_ctx);
 
@@ -209,19 +231,10 @@ int naaice_on_connection_client(struct naaice_communication_context *comm_ctx);
 int naaice_on_connection_server(struct naaice_communication_context *comm_ctx);
 
 /**
- * Routine called after event disconnetion. Cleanup. MRs are deregistered and
- * all allocated memory is freed. Returns 0 on success, -1 otherwise params:
- *  naaice_communication_context *comm_ctx: structure for the communication
- * context. Holds all info of the connection and mrs
- */
-int naaice_on_connection_client(struct naaice_communication_context *comm_ctx);
-
-/**
- * Routine called after event disconnetion. Cleanup. MRs are deregistered and
- * all allocated memory is freed. Returns 0 on success, -1 otherwise params:
- *  naaice_communication_context *comm_ctx: structure for the communication
- * context. Holds all info of the connection and mrs
- */
+ * Routine called after event disconnetion. Cleanup. MRs are deregistered and all allocated memory is freed. Returns 0 on success, -1 otherwise
+ * params:
+ *  naaice_communication_context *comm_ctx: structure for the communication context. Holds all info of the connection and mrs
+ */ 
 int naaice_on_disconnect(struct naaice_communication_context *comm_ctx);
 
 /**
@@ -262,11 +275,22 @@ int naaice_on_completion_server(struct ibv_wc *wc,
 void naaice_mr_exchange(struct naaice_communication_context *comm_ctx, enum message_id message_type,size_t requested_size);
 
 /**
- * Routine for writing data into peer data MRs. Either a simple RDMA_WRITE or RDMA_WRITE_WITH_IMM (last write operation)
- * params:
- * naaice_communication_context *comm_ctx: structure for the communication context. Holds all info of the connection and mrs
- */ 
-int naaice_write(struct naaice_communication_context *comm_ctx, uint errorcode);
+ * Routine for writing data into peer data MRs. Either a simple RDMA_WRITE or
+ * RDMA_WRITE_WITH_IMM (last write operation) params:
+ * naaice_communication_context *comm_ctx: structure for the communication
+ * context. Holds all info of the connection and mrs
+ */
+int naaice_write_data_client(struct naaice_communication_context *comm_ctx,
+                             uint errorcode);
+
+/**
+ * Routine for writing data into peer data MRs. Either a simple RDMA_WRITE or
+ * RDMA_WRITE_WITH_IMM (last write operation) params:
+ * naaice_communication_context *comm_ctx: structure for the communication
+ * context. Holds all info of the connection and mrs
+ */
+int naaice_write_data_server(struct naaice_communication_context *comm_ctx,
+                             uint errorcode);
 
 /**
  * Routine for posting receives. Receives have to be posted for corresponding SEND operations and WRITE_WITH_IMM. 
@@ -296,11 +320,15 @@ int naaice_handle_mr_announce_and_req(struct naaice_communication_context *comm_
 */
 int naaice_prepare_local_mrs(struct naaice_communication_context *comm_ctx);
 
-//void * poll_cq(void *);
+/*
+ * This ^^ would be called on naa_invoke, and must occur before
+ * naa_write happens.
+ */
+int naaice_configure_metadata(struct naaice_communication_context *comm_ctx,
+                              uint64_t return_addr);
 
-/*void naaice_mr_response(struct rdma_cm_id *id);
+int naaice_handle_metadata(struct naaice_communication_context *comm_ctx);
 
-void naaice_send(struct rdma_cm_id *id);*/
 double timediff(struct timespec start, struct timespec end);
 
 int memvcmp(void *memory, unsigned char val, unsigned int size);
