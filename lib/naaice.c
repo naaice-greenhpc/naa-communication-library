@@ -965,6 +965,7 @@ int naaice_on_completion_client(struct ibv_wc *wc,
         clock_gettime(CLOCK_MONOTONIC_RAW, &data_exchange_done_time[0]);
 
         //Configure return address and metdata for RPC
+        //In this example, we iterate over all regions and write one of them in each repition
         int ret = naaice_configure_metadata(
             comm_ctx,
             //(uintptr_t)comm_ctx->mr_local_data[0].addr);
@@ -975,6 +976,7 @@ int naaice_on_completion_client(struct ibv_wc *wc,
           return 1;
         }
         //Set which regions to write
+        //IN this exmaple, we pick the region after the one we're writing from to be the return region
         comm_ctx->mr_local_data[comm_ctx->repititions_completed % (comm_ctx->no_advertised_mrs)]
             .to_write = true;
         //Write Data to FPGA
@@ -1052,6 +1054,7 @@ int naaice_on_completion_client(struct ibv_wc *wc,
     //     (uintptr_t)comm_ctx->mr_local_data[0].addr);
     
     //Set metadata and return address
+    //In this exmaple, each repitition, a different region is used as return region for the FPGA    
     int ret = naaice_configure_metadata(
         comm_ctx,
         //(uintptr_t)comm_ctx->mr_local_data[0].addr);
@@ -1067,6 +1070,7 @@ int naaice_on_completion_client(struct ibv_wc *wc,
       return 1;
     }
     //Set which region to write 
+    //Iterate over all input regions 
     comm_ctx->mr_local_data[comm_ctx->repititions_completed %(comm_ctx->no_advertised_mrs)].to_write = true;
     // Write data
     ret = naaice_write_data_client(comm_ctx, 0);
