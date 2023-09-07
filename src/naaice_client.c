@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     }
     // Allocate communication context structure, this holds all information necessary for the connection
     struct naaice_communication_context *comm_ctx =
-        (struct naaice_communication_context *)malloc(
+        (struct naaice_communication_context *)calloc(1,
             sizeof(struct naaice_communication_context));
     if (comm_ctx == NULL) {
       fprintf(stderr,

@@ -29,7 +29,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   }
   //Allocate communication context earlier than before.
   struct naaice_communication_context *comm_ctx =
-      (struct naaice_communication_context *)malloc(
+      (struct naaice_communication_context *)calloc(1,
           sizeof(struct naaice_communication_context));
   if (comm_ctx == NULL) {
     fprintf(stderr,
@@ -37,7 +37,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1;
   }
 
-  //Bind address to communication ID and start listening for connections
+  // Bind address to communication ID and stamallocrt listening for connections
   rdma_comm_id->context = comm_ctx;
   //comm_ctx->id = rdma_comm_id;
   //Make port flexible?

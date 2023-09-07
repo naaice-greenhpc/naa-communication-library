@@ -144,9 +144,8 @@ int naaice_on_connection_requests(
 }
 
 int naaice_on_disconnect(struct naaice_communication_context *comm_ctx) {
-  //TODO: FRee everything that was allocated. 
-  
-  printf("Connection disconnected successfully. Cleaning up...\n");
+  printf(
+      "Connection disconnected successfully. Cleaning up...\n");
   if (comm_ctx->state > MR_EXCHANGE) {
     free(comm_ctx->mr_peer_data);
   }
@@ -166,6 +165,8 @@ int naaice_on_disconnect(struct naaice_communication_context *comm_ctx) {
     free((void *)(comm_ctx->mr_local_data[i].addr));
   }
   free(comm_ctx->mr_local_data);
+  free(comm_ctx->mr_return_data);
+
   ret = ibv_destroy_qp(comm_ctx->qp);
   if (ret) {
     fprintf(stderr, "Destroying QP failed. Reason %d", ret);
@@ -181,6 +182,7 @@ int naaice_on_disconnect(struct naaice_communication_context *comm_ctx) {
     fprintf(stderr, "Deallocating PD failed. Reason %d", ret);
     exit(EXIT_FAILURE);
   }
+  free(comm_ctx);
   return -1;
 }
 // TODO: Restructuring Code to not have function implementation in
@@ -277,7 +279,6 @@ void naaice_poll_cq_client(struct naaice_communication_context *comm_ctx) {
                                &wc[comm_ctx->events_acked]);
       }
       if (num_comp < 0) {
-        // TODO: This exits the program without telling the remote partner.
         fprintf(stderr, "ibv_poll_cq() failed\n");
         exit(EXIT_FAILURE);
       }
@@ -464,6 +465,8 @@ int naaice_write_data_client(struct naaice_communication_context *comm_ctx,
         comm_ctx->sges++;
       }
     }
+    //TODO find number of work requests. Size of write-operation(s) compared to peeer mr sizes
+    // split SGEs into write requests. 
     struct ibv_send_wr wr, *bad_wr = NULL;
     struct ibv_sge sge[comm_ctx->sges];
     //enum ibv_wr_opcode opcode;
@@ -1289,8 +1292,17 @@ int naaice_configure_metadata(struct naaice_communication_context *comm_ctx,
   }
 
 int naaice_handle_metadata(struct naaice_communication_context *comm_ctx) {
-  comm_ctx->rpc_metadata.return_addr =  ((uintptr_t)comm_ctx->mr_local_data[0].addr);
   struct naaice_rpc_metadata *metadata =
+      calloc(1, sizeof(struct naaice_rpc_metadata));
+  if (metadata == NULL) {
+    fprintf(stderr,
+            "Failed to allocate local memory for local memory struct.\n");
+    exit(EXIT_FAILURE);
+  }
+  comm_ctx->rpc_metadata = *metadata;
+
+  //comm_ctx->rpc_metadata.return_addr =  ((uintptr_t)comm_ctx->mr_local_data[0].addr);
+  metadata =
       (struct naaice_rpc_metadata *)(comm_ctx->mr_local_data[0].addr);
   // Save peer mr data from MRSP message
      comm_ctx->rpc_metadata.return_addr = ntohll(metadata->return_addr);
