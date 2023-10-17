@@ -15,7 +15,7 @@ bin/%: src/%.o lib/naaice.o lib/naaice_ap2.o lib/naaice_swnaa.o
 	${LD} $(CFLAGS)    -o $@ $^ ${LDLIBS}
 
 %.o: %.c lib/naaice.h lib/naaice_ap2.h
-	$(LD) $(CFLAGS) -c -o $@ $<
+	$(LD) $(CFLAGS) -c -o $@ $< -I${PWD}/lib
 
 clean:
 	rm -f lib/*.o src/*.o bin/*

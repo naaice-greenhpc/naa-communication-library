@@ -816,7 +816,10 @@ int naaice_swnaa_handle_metadata(
   uintptr_t return_addr = ntohll(rpc_metadata->return_addr);
 
   //TODO: Change this if necessary
-  comm_ctx->no_return_mrs = 1;
+  //
+  // ML: I had to change this, otherwise a compile error was produced.
+  // Not sure if no_local_mrs is what we need to set
+  comm_ctx->no_local_mrs = 1;
 
   // Check that the passed address points to one of the registered regions.
   // Returning to the metadata region (i.e. #0) is not allowed.

@@ -30,6 +30,9 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdint.h>
+#include <naaice.h>
+#include <naaice_swnaa.h>
 
 /* Constants *****************************************************************/
 
