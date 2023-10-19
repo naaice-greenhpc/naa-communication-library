@@ -83,6 +83,7 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->connection_requests_complete = false;
   (*comm_ctx)->connection_established_complete = false;
   (*comm_ctx)->routine_complete = false;
+  (*comm_ctx)->fncode = 0;
 
   // The memory region used for MRSP is allocated here, but the ones for the
   // parameters and metadata are not until after MRSP is complete (when their
@@ -664,13 +665,15 @@ int naaice_swnaa_handle_work_completion_data(struct ibv_wc *wc,
   // If we have received a write with immediate (i.e. the last parameter)...
   else if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
 
-    // Check if the immediate value is nonzero, indicating an error.
-    if (ntohl(wc->imm_data)) {
+    // Check if the immediate value is zero, indicating an error.
+    if (!ntohl(wc->imm_data)) {
       fprintf(stderr,
-              "Recieved write with nonzero immediate value %d.\n",
-              ntohl(wc->imm_data));
-      return ntohl(wc->imm_data);
+              "Recieved write with immediate value zero.\n");
+      return -1;
     }
+
+    // Otherwise, we can set the function code based on the immediate value.
+    comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data);
 
     // Handle the metadata, recording the return address.
     if (naaice_swnaa_handle_metadata(comm_ctx)) {
@@ -811,9 +814,9 @@ int naaice_swnaa_handle_metadata(
   debug_print("In naaice_swnaa_handle_metadata\n");
   
   // Get the return address from the metadata memory region.
-  struct naaice_rpc_metadata *rpc_metadata =
+  struct naaice_rpc_metadata *metadata =
       (struct naaice_rpc_metadata*) comm_ctx->mr_local_data[0].addr;
-  uintptr_t return_addr = ntohll(rpc_metadata->return_addr);
+  uintptr_t return_addr = ntohll(metadata->return_addr);
 
   // Check that the passed address points to one of the registered regions.
   // Returning to the metadata region (i.e. #0) is not allowed.

@@ -45,19 +45,24 @@
 // This nonzero error code is sent to the host in the case of an error.
 uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
 
-  // Example:
-  // Assume all data in the memory regions is arrays of chars.
-  // Increment all chars in all memory regions by one.
+  // Can switch on function code.
+  // Here, do nothing if code is 0. Otherwise do something.
+  if (comm_ctx->fncode) {
 
-  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
+    // Example:
+    // Assume all data in the memory regions is arrays of chars.
+    // Increment all chars in all memory regions by one.
 
-    // Get pointer to data.
-    char *data = (char*) comm_ctx->mr_local_data[i].addr;
+    for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
 
-    for(int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
+      // Get pointer to data.
+      char *data = (char*) comm_ctx->mr_local_data[i].addr;
 
-      // Increment a char.
-      data[j]++;
+      for(int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
+
+        // Increment a char.
+        data[j]++;
+      }
     }
   }
 

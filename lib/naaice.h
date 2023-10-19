@@ -243,6 +243,9 @@ struct naaice_communication_context
   // Number of write requests to be handled, equal to the number of memory
   // regions to be written from host to NAA and vice versa.
   uint8_t n_wrs;
+
+  // Function code indicating which NAA routine to be called.
+  uint8_t fncode;
 };
 
 /* Public Functions **********************************************************/
@@ -266,6 +269,8 @@ struct naaice_communication_context
  *  unsigned int params_amount:
  *    Number of params. Used to index param_sizes and params, so their lengths
  *    should correspond to params_amount.
+ *  uint8_t fncode:
+ *    Function code specifying which NAA routine to be called.
  *  const char *local_ip:
  *    String specifying local address, ex. "10.3.10.135".
  *  const char *remote_ip:
@@ -279,7 +284,7 @@ struct naaice_communication_context
 int naaice_init_communication_context(
   struct naaice_communication_context **comm_ctx,
   unsigned int *param_sizes, char **params, unsigned int params_amount,
-  const char *local_ip, const char *remote_ip, uint16_t port);
+  uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
 
 /**
  * naaice_poll_connection_event:
@@ -571,9 +576,5 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
  *  0 if successful, -1 if not.
  */ 
 int naaice_post_recv_data(struct naaice_communication_context *comm_ctx);
-
-/* Used for benchmarking and testing. */
-double timediff(struct timespec start, struct timespec end);
-int memvcmp(void *memory, unsigned char val, unsigned int size);
 
 #endif

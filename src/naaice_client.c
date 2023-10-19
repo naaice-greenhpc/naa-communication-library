@@ -35,6 +35,7 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
+#define FNCODE 1
 
 /* Main **********************************************************************/
 
@@ -104,7 +105,7 @@ int main(int argc, char *argv[]) {
 
   // Initialize the communication context struct.
   if (naaice_init_communication_context(&comm_ctx, param_sizes, params,
-    params_amount, argv[1], argv[2], CONNECTION_PORT)) { return -1; }
+    FNCODE, params_amount, argv[1], argv[2], CONNECTION_PORT)) { return -1; }
 
   // First, handle connection setup.
   if (naaice_setup_connection(comm_ctx)) { return -1; }

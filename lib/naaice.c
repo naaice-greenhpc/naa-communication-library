@@ -43,9 +43,15 @@
 int naaice_init_communication_context(
   struct naaice_communication_context **comm_ctx,
   unsigned int *param_sizes, char **params, unsigned int params_amount,
-  const char *local_ip, const char *remote_ip, uint16_t port) {
+  uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port) {
 
   debug_print("In naaice_init_communication_context\n");
+
+  // Check function code: should be positive.
+  if (fncode < 1) {
+    fprintf(stderr, "Function code should be positive.\n");
+    return -1;
+  }
 
   // Allocate memory for the communication context.
   *comm_ctx = (struct naaice_communication_context *)
@@ -86,6 +92,7 @@ int naaice_init_communication_context(
   (*comm_ctx)->connection_requests_complete = false;
   (*comm_ctx)->connection_established_complete = false;
   (*comm_ctx)->routine_complete = false;
+  (*comm_ctx)->fncode = fncode;
 
   // Initialize local memory region structs.
   struct naaice_mr_local *local;
@@ -493,7 +500,7 @@ int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
   }
 
   // Metadata region is already allocated in init_communication_context.
-  // Therefore, we just need to set the return address field.
+  // Therefore, we just need to set the fields.
   struct naaice_rpc_metadata *metadata = 
     (struct naaice_rpc_metadata*) &comm_ctx->mr_local_data[0];
   metadata->return_addr = htonll((uintptr_t)return_addr);
@@ -1039,6 +1046,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
   }
 
   // Otherwise, write all memory regions (metadata + parameters) to NAA.
+  // Immediate value is 0, indicating no host-side error.
   // TODO: Change this to allow writing from multiple regions to one/multiple.
   // Need to keep track of next writing position, also write metadata (output
   // address and possibly info on paramteres) first
@@ -1172,17 +1180,3 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
 
   return 0;
 }
-
-/*
-struct timespec programm_start_time, init_done_time, mr_exchange_done_time,
-    data_exchange_done_time[NUMBER_OF_REPITITIONS + 1];
-
-double timediff(struct timespec start, struct timespec end) {
-  return (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-}
-
-int memvcmp(void *memory, unsigned char val, unsigned int size) {
-  unsigned char *mm = (unsigned char *)memory;
-  return (*mm == val) && memcmp(mm, mm + 1, size - 1) == 0;
-}
-*/
