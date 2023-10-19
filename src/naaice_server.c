@@ -34,6 +34,7 @@
 #include <naaice.h>
 #include <naaice_swnaa.h>
 
+
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345

@@ -41,15 +41,9 @@
  *    require that the user ensure memory alignment, or find a way to ensure it
  *    without reallocation?
  * 
- * - Handle "server" dummy implementation.
- *    - Split this implementation into a separate file, and/or
- *    - handle via a configuration flag.
- * 
  * - Add support for running multiple RPCs before disconnecting.
  * 
  * - Add support for routine-specific metadata fields.
- * 
- * - Add compiler flag for debug statements.
  * 
  * - Add timeouts.
  * 

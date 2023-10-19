@@ -36,7 +36,7 @@
  * 
  *  - Implement timeouts.
  * 
- *  - Implement status struct. Probably just populate witth some relevant info
+ *  - Implement status struct. Probably just populate with some relevant info
  *      in the communication context struct.
  * 
  */

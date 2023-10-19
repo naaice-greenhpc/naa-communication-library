@@ -1173,6 +1173,7 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
   return 0;
 }
 
+/*
 struct timespec programm_start_time, init_done_time, mr_exchange_done_time,
     data_exchange_done_time[NUMBER_OF_REPITITIONS + 1];
 
@@ -1184,3 +1185,4 @@ int memvcmp(void *memory, unsigned char val, unsigned int size) {
   unsigned char *mm = (unsigned char *)memory;
   return (*mm == val) && memcmp(mm, mm + 1, size - 1) == 0;
 }
+*/

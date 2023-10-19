@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-OPTIONS := -D
+OPTIONS :=
 CC      := gcc
 CFLAGS  := -Wall -pedantic -g -Wextra -Ilib/ -fstack-protector-all ${OPTIONS}
 LD      := gcc

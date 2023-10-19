@@ -815,12 +815,6 @@ int naaice_swnaa_handle_metadata(
       (struct naaice_rpc_metadata*) comm_ctx->mr_local_data[0].addr;
   uintptr_t return_addr = ntohll(rpc_metadata->return_addr);
 
-  //TODO: Change this if necessary
-  //
-  // ML: I had to change this, otherwise a compile error was produced.
-  // Not sure if no_local_mrs is what we need to set
-  comm_ctx->no_local_mrs = 1;
-
   // Check that the passed address points to one of the registered regions.
   // Returning to the metadata region (i.e. #0) is not allowed.
   bool flag = false;
