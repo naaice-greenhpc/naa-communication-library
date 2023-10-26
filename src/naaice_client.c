@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
   // Initialize the communication context struct.
   if (naaice_init_communication_context(&comm_ctx, param_sizes, params,
-    FNCODE, params_amount, argv[1], argv[2], CONNECTION_PORT)) { return -1; }
+    params_amount, FNCODE, argv[1], argv[2], CONNECTION_PORT)) { return -1; }
 
   // First, handle connection setup.
   if (naaice_setup_connection(comm_ctx)) { return -1; }
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
   // Set metadata (i.e. return address).
   // For our example, the return parameter is the last one.
-  if (naaice_set_metadata(comm_ctx, (uintptr_t) params[params_amount-1])) {
+  if (naaice_set_metadata(comm_ctx, (uintptr_t) comm_ctx->mr_local_data[params_amount-1].addr)){//params[params_amount-1])) {
     return -1; }
 
   // Do the memory region setup protocol, and then post a recieve for the

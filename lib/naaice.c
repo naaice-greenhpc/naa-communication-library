@@ -37,7 +37,7 @@
 /* Constants *****************************************************************/
 
 #define TIMEOUT_RESOLVE_ADDR 100
-
+#define CONNECTION_PORT 12345
 /* Function Implementations **************************************************/
 
 int naaice_init_communication_context(
@@ -183,12 +183,14 @@ int naaice_init_communication_context(
 }
 
 int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
-  struct rdma_cm_event *ev) {
-
+                                 struct rdma_cm_event *ev,
+                                 struct rdma_cm_event *ev_cp) {
   debug_print("In naaice_poll_connection_event\n");
 
   if (!rdma_get_cm_event(comm_ctx->ev_channel, &ev)) {
-    
+    // Acking Event frees memory, therefore copy event before and use it subsequently
+    memcpy(ev_cp, ev, sizeof(*ev));
+
     // Send an ack in response.
     rdma_ack_cm_event(ev);
     return 0;
@@ -201,8 +203,9 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
 
   debug_print("In naaice_handle_addr_resolved\n");
 
-  if (ev->event == RDMA_CM_EVENT_ROUTE_RESOLVED) {
+  if (ev->event == RDMA_CM_EVENT_ADDR_RESOLVED) {
 
+    // FM: This needs to happen before the event for route resolution 
     if (rdma_resolve_route(comm_ctx->id, TIMEOUT_RESOLVE_ROUTE)) {
       fprintf(stderr, "RDMA route resolution failed.\n");
       return -1;
@@ -212,12 +215,16 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
   // Seems that protection domain, etc. cannot be created until after
   // route resolved.
 
-  // Make a protection domain, checking for allocation success.
-  debug_print("Making protection domain.\n");
-  comm_ctx->pd = ibv_alloc_pd(comm_ctx->ibv_ctx);
-  if (comm_ctx->pd == NULL) {
-    fprintf(stderr, "Failed to create an RDMA protection domain.\n");
-    return -1;
+  // the rdma_cm_id member verbs is only set after rdma_resolve_addr or rdma_resolve_route
+  // we could also just pass comm_ctx->id->verbs if thats more well liked
+  comm_ctx->ibv_ctx = comm_ctx->id->verbs;
+
+    // Make a protection domain, checking for allocation success.
+    debug_print("Making protection domain.\n");
+    comm_ctx->pd = ibv_alloc_pd(comm_ctx->ibv_ctx);
+    if (comm_ctx->pd == NULL) {
+      fprintf(stderr, "Failed to create an RDMA protection domain.\n");
+      return -1;
   }
 
   // Make a completion channel, checking for allocation success.
@@ -274,8 +281,7 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
 
     comm_ctx->address_resolution_complete = true;
   }
-
-  return 0;
+    return 0;
 }
 
 int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
@@ -405,16 +411,33 @@ int naaice_poll_and_handle_connection_event(
 
   // If we've received an event...
   struct rdma_cm_event ev;
-  if (!naaice_poll_connection_event(comm_ctx, &ev)) {
+  struct rdma_cm_event ev_cp;
 
+  if (!naaice_poll_connection_event(comm_ctx, &ev,&ev_cp)) {
+    // FM: TODO:Somehow we always loop through all of them. If we find the right handler, we should not call other handlers
     // Handle possible events.
     // If we fail in handling an event, return.
-    if (naaice_handle_addr_resolved(comm_ctx, &ev)) { return -1; }
-    if (naaice_handle_route_resolved(comm_ctx, &ev)) { return -1; }
-    if (naaice_handle_connection_requests(comm_ctx, &ev)) { return -1; }
-    if (naaice_handle_connection_established(comm_ctx, &ev)) { return -1; }
-    if (naaice_handle_error(comm_ctx, &ev)) { return -1; }
-    if (naaice_handle_other(comm_ctx, &ev)) { return -1; }
+    // FM many calls using comm_ctx seem to fail if the ibv_ctx of the communication id is not set. 
+    // However, any connection event also returns the communication id, so we can just update it here. I don't know if that's a dirty way of doing it though.
+    comm_ctx->id = ev_cp.id;
+    if (naaice_handle_addr_resolved(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+    if (naaice_handle_route_resolved(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+    if (naaice_handle_connection_requests(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+    if (naaice_handle_connection_established(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+    if (naaice_handle_error(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+    if (naaice_handle_other(comm_ctx, &ev_cp)) {
+      return -1;
+    }
   }
 
   // If we sucessfully handled an event (or haven't recieved one), success.
@@ -433,7 +456,8 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
     comm_ctx->comm_setup_complete = 
       comm_ctx->address_resolution_complete &&
       comm_ctx->route_resolution_complete &&
-      comm_ctx->connection_requests_complete &&
+      //FM: Connection_requests_complete only happens on the server. Neccessary?
+      //comm_ctx->connection_requests_complete &&
       comm_ctx->connection_established_complete;
   }
 
@@ -455,6 +479,7 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
       fprintf(stderr, "Failed to register memory for local memory region.\n");
 
       // Notify remote of failure.
+      //FM TODO: This might not work.We try to send a message before registring the memory region for message exchange
       naaice_send_message(comm_ctx, MSG_MR_ERR, -1);
       return -1;
     }
@@ -469,6 +494,7 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
             "Failed to register memory for memory region setup protocol.\n");
 
     // Notify remote of failure.
+    // FM: Will this even work? If the MR for messaging cant be registered, we porbably can't send an error message
     naaice_send_message(comm_ctx, MSG_MR_ERR, -1);
     return -1;
   }
@@ -484,7 +510,8 @@ int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
   // Check that the passed address points to one of the registered regions.
   // Returning to the metadata region (i.e. #0) is not allowed.
   bool flag = false;
-  for (int i = 1; i < comm_ctx->no_local_mrs-1; i++) {
+  // FM: Why 1 to < comm_ctx->no_local_mrs-1 -> that way we can neither specify the last nor the first mr
+  for (int i = 0; i <= comm_ctx->no_local_mrs-1; i++) {
     if (return_addr == (uintptr_t) comm_ctx->mr_local_data[i].addr) {
       // Keep track of which memory region is the return parameter.
       comm_ctx->mr_return_idx = i;
@@ -501,8 +528,9 @@ int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
 
   // Metadata region is already allocated in init_communication_context.
   // Therefore, we just need to set the fields.
+  // FM: Somehow this doesn't work? 
   struct naaice_rpc_metadata *metadata = 
-    (struct naaice_rpc_metadata*) &comm_ctx->mr_local_data[0];
+    (struct naaice_rpc_metadata*) (comm_ctx->mr_local_data[0].addr);
   metadata->return_addr = htonll((uintptr_t)return_addr);
 
   return 0;
@@ -938,19 +966,20 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       // Set fields of the packet.
       // TODO: These flags and fpgaaddresses need to be settable.
       curr->mrflags = 0;
-      for(int j = 0; j< 8; j++){
-        curr->fpgaaddress[i]= 0;
+      //FM: Only 7 fields, so <7?
+      for(int j = 0; j< 7; j++){
+        curr->fpgaaddress[j]= 0;
       }
       curr->addr = htonll((uintptr_t)comm_ctx->mr_local_data[i].addr);
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
 
-      /*
-      printf("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
+      
+      debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
              (uintptr_t)comm_ctx->mr_local_data[i].addr,
              comm_ctx->mr_local_data[i].ibv->length,
              comm_ctx->mr_local_data[i].ibv->rkey);
-      */
+      
 
       // Update packet size.
       msg_size += sizeof(struct naaice_mr_advertisement_request);

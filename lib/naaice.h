@@ -302,7 +302,8 @@ int naaice_init_communication_context(
  *  0 if sucessful (regardless of whether an event is recieved), -1 if not.
  */
 int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
-  struct rdma_cm_event *ev);
+                                 struct rdma_cm_event *ev,
+                                 struct rdma_cm_event *ev_cp);
 
 /**
  * connection event handlers:
