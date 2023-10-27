@@ -46,6 +46,8 @@
  * - Add support for routine-specific metadata fields.
  * 
  * - Add timeouts.
+ *
+ * - In case oof errors. Check if errno gets set and output to user
  * 
  * (style)
  * 
@@ -235,7 +237,7 @@ struct naaice_communication_context
   // Flags to track completion of connection setup.
   bool comm_setup_complete, address_resolution_complete,
     route_resolution_complete, connection_requests_complete,
-    connection_established_complete;
+    connection_established_complete, is_server;
 
   // Flag set to true when the RPC and all data communication is complete.
   bool routine_complete;
@@ -577,5 +579,19 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
  *  0 if successful, -1 if not.
  */ 
 int naaice_post_recv_data(struct naaice_communication_context *comm_ctx);
+
+/**
+ * naaice_init_rdma_resources
+ * Allocates a protection domain, completion channel, completion queue and queue
+ * pair
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *
+ * returns:
+ *  0 if successful, -1 if not.
+ */
+int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx);
 
 #endif

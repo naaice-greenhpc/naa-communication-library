@@ -93,6 +93,7 @@ int naaice_init_communication_context(
   (*comm_ctx)->connection_established_complete = false;
   (*comm_ctx)->routine_complete = false;
   (*comm_ctx)->fncode = fncode;
+  (*comm_ctx)->is_server = 0;
 
   // Initialize local memory region structs.
   struct naaice_mr_local *local;
@@ -210,79 +211,81 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
       fprintf(stderr, "RDMA route resolution failed.\n");
       return -1;
     }
+      /*
+        // Moved from init_communication_context.
+        // Seems that protection domain, etc. cannot be created until after
+        // route resolved.
 
-  // Moved from init_communication_context.
-  // Seems that protection domain, etc. cannot be created until after
-  // route resolved.
+        // the rdma_cm_id member verbs is only set after rdma_resolve_addr or
+        rdma_resolve_route
+        // we could also just pass comm_ctx->id->verbs if thats more well liked
+        comm_ctx->ibv_ctx = comm_ctx->id->verbs;
 
-  // the rdma_cm_id member verbs is only set after rdma_resolve_addr or rdma_resolve_route
-  // we could also just pass comm_ctx->id->verbs if thats more well liked
-  comm_ctx->ibv_ctx = comm_ctx->id->verbs;
+          // Make a protection domain, checking for allocation success.
+          debug_print("Making protection domain.\n");
+          comm_ctx->pd = ibv_alloc_pd(comm_ctx->ibv_ctx);
+          if (comm_ctx->pd == NULL) {
+            fprintf(stderr, "Failed to create an RDMA protection domain.\n");
+            return -1;
+        }
 
-    // Make a protection domain, checking for allocation success.
-    debug_print("Making protection domain.\n");
-    comm_ctx->pd = ibv_alloc_pd(comm_ctx->ibv_ctx);
-    if (comm_ctx->pd == NULL) {
-      fprintf(stderr, "Failed to create an RDMA protection domain.\n");
-      return -1;
-  }
+        // Make a completion channel, checking for allocation success.
+        debug_print("Making completion channel.\n");
+        comm_ctx->comp_channel = ibv_create_comp_channel(comm_ctx->ibv_ctx);
+        if (comm_ctx->comp_channel == NULL) {
+          fprintf(stderr, "Failed to create an IBV completion channel.\n");
+          return -1;
+        }
 
-  // Make a completion channel, checking for allocation success.
-  debug_print("Making completion channel.\n");
-  comm_ctx->comp_channel = ibv_create_comp_channel(comm_ctx->ibv_ctx);
-  if (comm_ctx->comp_channel == NULL) {
-    fprintf(stderr, "Failed to create an IBV completion channel.\n");
-    return -1;
-  }
+        // Make a completion queue, checking for allocation success.
+        debug_print("Making completion queue.\n");
+        comm_ctx->cq = ibv_create_cq(comm_ctx->ibv_ctx, RX_DEPTH + 1, NULL,
+                                     comm_ctx->comp_channel,
+                                     0);
+        if (comm_ctx->cq == NULL) {
+          fprintf(stderr, "Failed to create an IBV completion queue.\n");
+          return -1;
+        }
 
-  // Make a completion queue, checking for allocation success.
-  debug_print("Making completion queue.\n");
-  comm_ctx->cq = ibv_create_cq(comm_ctx->ibv_ctx, RX_DEPTH + 1, NULL,
-                               comm_ctx->comp_channel,
-                               0);
-  if (comm_ctx->cq == NULL) {
-    fprintf(stderr, "Failed to create an IBV completion queue.\n");
-    return -1;
-  }
+        // Request completion queue notifications, checking for success.
+        debug_print("Requesting completon queue notifications.\n");
+        if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+          fprintf(stderr,
+                  "Failed to request completion channel notifications "
+                  "on completion queue.\n");
+          return -1;
+        }
 
-  // Request completion queue notifications, checking for success.
-  debug_print("Requesting completon queue notifications.\n");
-  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
-    fprintf(stderr,
-            "Failed to request completion channel notifications "
-            "on completion queue.\n");
-    return -1;
-  }
+        // Set queue pair attributes.
+        struct ibv_qp_init_attr init_attr = {
+          .send_cq = comm_ctx->cq,
+          .recv_cq = comm_ctx->cq,
+          .sq_sig_all = 1,
+          // Exceeding the maximum number of wrs (sometimes by a lot more than
+        1)
+          // will lead to an ENOMEM error in ibv_post_send()
+          .cap =
+              {.max_send_wr = RX_DEPTH,
+               .max_recv_wr = RX_DEPTH,
+               // TODO: Maybe this needs to be changed if we write from multiple
+        MRs .max_send_sge = 32, .max_recv_sge = 32},
+          // DEFINE COMMUNICATION TYPE!
+          .qp_type = IBV_QPT_RC
+        };
 
-  // Set queue pair attributes.
-  struct ibv_qp_init_attr init_attr = {
-    .send_cq = comm_ctx->cq,
-    .recv_cq = comm_ctx->cq,
-    .sq_sig_all = 1,
-    // Exceeding the maximum number of wrs (sometimes by a lot more than 1)
-    // will lead to an ENOMEM error in ibv_post_send()
-    .cap =
-        {.max_send_wr = RX_DEPTH,
-         .max_recv_wr = RX_DEPTH,
-         // TODO: Maybe this needs to be changed if we write from multiple MRs
-         .max_send_sge = 32,
-         .max_recv_sge = 32},
-    // DEFINE COMMUNICATION TYPE!
-    .qp_type = IBV_QPT_RC
-  };
-
-  // Make a queue pair, checking for allocation success.
-  debug_print("Making queue pair.\n");
-  if (rdma_create_qp(comm_ctx->id, comm_ctx->pd, &init_attr)) {
-    perror("Failed to crete an RDMA queue pair.\n");
-    return -1;
-  }
-  comm_ctx->qp = comm_ctx->id->qp;
-
-    comm_ctx->address_resolution_complete = true;
-  }
+        // Make a queue pair, checking for allocation success.
+        debug_print("Making queue pair.\n");
+        if (rdma_create_qp(comm_ctx->id, comm_ctx->pd, &init_attr)) {
+          perror("Failed to crete an RDMA queue pair.\n");
+          return -1;
+        }
+        comm_ctx->qp = comm_ctx->id->qp;
+      */
+      comm_ctx->address_resolution_complete = true;
+      return naaice_init_rdma_resources(comm_ctx);
+    }
     return 0;
-}
+    }
 
 int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
@@ -310,6 +313,7 @@ int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
 }
 
 int naaice_handle_connection_requests(
+  // FM: Maybe move this into naaice_swnaa?
   struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
@@ -325,7 +329,23 @@ int naaice_handle_connection_requests(
     cm_params.initiator_depth = 1;
     cm_params.responder_resources = 1;
     cm_params.rnr_retry_count = 6; // 7 would be indefinite
-    
+    if (naaice_init_rdma_resources(comm_ctx)){
+      fprintf(stderr, "Failed in allocating RDMA resources\n");
+    }
+    // Register the memory region used for MRSP on the server side. 
+    comm_ctx->mr_local_message->ibv = ibv_reg_mr(
+        comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MR_EXHANGE,
+        (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
+    if (comm_ctx->mr_local_message->ibv == NULL) {
+      fprintf(stderr,
+              "Failed to register memory for memory region setup protocol.\n");
+
+      // Notify remote of failure.
+      // FM: Will this even work? If the MR for messaging cant be registered, we
+      // porbably can't send an error message
+      naaice_send_message(comm_ctx, MSG_MR_ERR, -1);
+      return -1;
+    }
     if (rdma_accept(comm_ctx->id, &cm_params)) {
       fprintf(stderr, "RDMA connection failed, in rdma_accept.\n");
       return -1;
@@ -451,16 +471,88 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
   // Loop handling events and updating the completion flag until finished.
   while (!(comm_ctx->comm_setup_complete)) {
     naaice_poll_and_handle_connection_event(comm_ctx);
-
+    // Client case
+    if(comm_ctx->is_server == 0){
     // Update stopping condition.
     comm_ctx->comm_setup_complete = 
       comm_ctx->address_resolution_complete &&
       comm_ctx->route_resolution_complete &&
-      //FM: Connection_requests_complete only happens on the server. Neccessary?
-      //comm_ctx->connection_requests_complete &&
+      //FM: Connection_requests_complete only happens on the server. 
       comm_ctx->connection_established_complete;
+    }
+    else{
+      // comm_ctx->is_server == 1 -> Server-side
+      // Server does not address/route resolution
+      comm_ctx->comm_setup_complete =
+          comm_ctx->connection_requests_complete &&
+           comm_ctx->connection_established_complete;
+    }
+  }
+  return 0;
+}
+int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
+  // Moved from naaice_handle_addr_resolved since server never encounters this
+  // the rdma_cm_id member verbs is only set after rdma_resolve_addr or
+  // rdma_resolve_route we could also just pass comm_ctx->id->verbs if thats
+  // more well liked
+  comm_ctx->ibv_ctx = comm_ctx->id->verbs;
+
+  // Make a protection domain, checking for allocation success.
+  debug_print("Making protection domain.\n");
+  comm_ctx->pd = ibv_alloc_pd(comm_ctx->ibv_ctx);
+  if (comm_ctx->pd == NULL) {
+    fprintf(stderr, "Failed to create an RDMA protection domain.\n");
+    return -1;
   }
 
+  // Make a completion channel, checking for allocation success.
+  debug_print("Making completion channel.\n");
+  comm_ctx->comp_channel = ibv_create_comp_channel(comm_ctx->ibv_ctx);
+  if (comm_ctx->comp_channel == NULL) {
+    fprintf(stderr, "Failed to create an IBV completion channel.\n");
+    return -1;
+  }
+
+  // Make a completion queue, checking for allocation success.
+  debug_print("Making completion queue.\n");
+  comm_ctx->cq = ibv_create_cq(comm_ctx->ibv_ctx, RX_DEPTH + 1, NULL,
+                               comm_ctx->comp_channel, 0);
+  if (comm_ctx->cq == NULL) {
+    fprintf(stderr, "Failed to create an IBV completion queue.\n");
+    return -1;
+  }
+
+  // Request completion queue notifications, checking for success.
+  debug_print("Requesting completion queue notifications.\n");
+  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+    fprintf(stderr, "Failed to request completion channel notifications "
+                    "on completion queue.\n");
+    return -1;
+  }
+
+  // Set queue pair attributes.
+  struct ibv_qp_init_attr init_attr = {
+      .send_cq = comm_ctx->cq,
+      .recv_cq = comm_ctx->cq,
+      .sq_sig_all = 1,
+      // Exceeding the maximum number of wrs (sometimes by a lot more than 1)
+      // will lead to an ENOMEM error in ibv_post_send()
+      .cap =
+          {.max_send_wr = RX_DEPTH,
+           .max_recv_wr = RX_DEPTH,
+           // TODO: Maybe this needs to be changed if we write from multiple MRs
+           .max_send_sge = 32,
+           .max_recv_sge = 32},
+      // DEFINE COMMUNICATION TYPE!
+      .qp_type = IBV_QPT_RC};
+
+  // Make a queue pair, checking for allocation success.
+  debug_print("Making queue pair.\n");
+  if (rdma_create_qp(comm_ctx->id, comm_ctx->pd, &init_attr)) {
+    perror("Failed to create an RDMA queue pair.\n");
+    return -1;
+  }
+  comm_ctx->qp = comm_ctx->id->qp;
   return 0;
 }
 
@@ -713,18 +805,18 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
 
     struct pollfd my_pollfd;
     int ms_timeout = 100;
-
     // Poll the completion channel, returning with flag unchanged if nothing
     // is recieved.
     my_pollfd.fd = comm_ctx->comp_channel->fd;
     my_pollfd.events = POLLIN;
     my_pollfd.revents = 0;
-
-    if (poll(&my_pollfd, 1, ms_timeout) < 0) {
-      fprintf(stderr, "No completion recieved.\n");
-      return 0;
+    
+    while (my_pollfd.revents == 0){
+      if (poll(&my_pollfd, 1, ms_timeout) < 0) {
+        fprintf(stderr, "No completion recieved.\n");
+        return 0;
+      }
     }
-
     // If something is recieved, get the completion event.
     if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
       fprintf(stderr, "Failed to get completion queue event.\n");

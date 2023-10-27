@@ -84,6 +84,7 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->connection_established_complete = false;
   (*comm_ctx)->routine_complete = false;
   (*comm_ctx)->fncode = 0;
+  (*comm_ctx)->is_server = 0;
 
   // The memory region used for MRSP is allocated here, but the ones for the
   // parameters and metadata are not until after MRSP is complete (when their
@@ -124,6 +125,8 @@ int naaice_swnaa_init_communication_context(
     fprintf(stderr, "Listening on specified port failed.\n");
     return -1;
   }
+  // We listen, so we are server
+  (*comm_ctx)->is_server = 1;
 
   int port_num = ntohs(rdma_get_src_port(rdma_comm_id));
   debug_print("Listening on port %d.\n", port_num);
@@ -137,6 +140,7 @@ int naaice_swnaa_setup_connection(
   debug_print("In naaice_swnaa_setup_connection\n");
 
   // Can simply call same logic used on the host side here.
+  // FM: Not in all cases. It's less/cleaner code, but we do need to differentiate client/server somehow
   return naaice_setup_connection(comm_ctx);
 }
 
@@ -280,9 +284,11 @@ int naaice_swnaa_poll_cq_nonblocking_mrsp(
     my_pollfd.events = POLLIN;
     my_pollfd.revents = 0;
 
-    if (poll(&my_pollfd, 1, ms_timeout) < 0) {
+    while(my_pollfd.revents == 0){    
+      if (poll(&my_pollfd, 1, ms_timeout) < 0) {
       fprintf(stderr, "No completion recieved.\n");
       return 0;
+    }
     }
 
     // If something is recieved, get the completion event.
