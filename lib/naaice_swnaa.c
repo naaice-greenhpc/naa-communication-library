@@ -479,8 +479,14 @@ int naaice_swnaa_handle_mr_announce_and_request(
 
     // Allocate memory for the memory region. This will be written into later
     // during data transmission.
+    // TODO: consider the role of the memaling here. Does it need to be done
+    // on the server side at all? When used here, it causes ibv_reg_mr to fail
+    // with errno 22, i.e. bad argument.
+    /*
     posix_memalign((void **)&(comm_ctx->mr_local_data[i].addr),
                    sysconf(_SC_PAGESIZE), comm_ctx->mr_peer_data[i].size);
+    */
+    comm_ctx->mr_local_data[i].addr = calloc(1, comm_ctx->mr_peer_data[i].size);
     if (comm_ctx->mr_local_data[i].addr == NULL) {
       fprintf(stderr,
               "Failed to allocate memory for local memory region buffer.\n");
