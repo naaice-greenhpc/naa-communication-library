@@ -82,7 +82,9 @@ int naaice_swnaa_init_communication_context(
 /**
  * naaice_swnaa_setup_connection:
  *  Loops polling for and handling connection events until connection setup
- *  is complete. Simply calls the base NAAICE version.
+ *  is complete. Unlike the base naaice version, does not require handling
+ *  the address or route resolution events, but does handle the connection
+ *  requests complete event which is not handled on the host side.
  * 
  * params:
  *  naaice_communication_context *comm_ctx:

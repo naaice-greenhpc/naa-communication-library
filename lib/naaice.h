@@ -237,7 +237,7 @@ struct naaice_communication_context
   // Flags to track completion of connection setup.
   bool comm_setup_complete, address_resolution_complete,
     route_resolution_complete, connection_requests_complete,
-    connection_established_complete, is_server;
+    connection_established_complete;
 
   // Flag set to true when the RPC and all data communication is complete.
   bool routine_complete;
