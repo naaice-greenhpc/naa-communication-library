@@ -426,7 +426,10 @@ int naaice_swnaa_handle_mr_announce_and_request(
   // Get the number of host memory regions.
   comm_ctx->no_peer_mrs = dyn->count;
 
-
+  // This is also the number of local memory regions we should have
+  // (in the symmetric memory region scheme).
+  comm_ctx->no_local_mrs = comm_ctx->no_peer_mrs;
+  
   // Allocate memory to hold information about host memory regions.
   comm_ctx->mr_peer_data =
       calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
@@ -850,6 +853,12 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t errorcode) {
 
   debug_print("In naaice_swnaa_write_data\n");
+
+  // If there are no memory regions to write back, return an error.
+  if (comm_ctx->no_local_mrs < 1) {
+    fprintf(stderr, "No local memory regions to write back.");
+    return -1;
+  }
 
   // If an error occured during the NAA routine computation, send an
   // error message to the host.
