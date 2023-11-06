@@ -124,7 +124,15 @@ int main(int argc, char *argv[]) {
 
   // TODO: Consider reimplementing the communication state machine.
 
+  // FM: We have to do this at least twice: once for the send wc and once for
+  // the recv wc.
+  // For now I introduced a new state and that state signifies the end of MRSP
   // Loop handling data transmission until RPC and communication is complete.
+  // Move loop into init_mrsp 
+  // FM TODO: some naaice_init_data_transfer() method that sends data after MRSP is done. This will be called by naa_invoke i assume
+  if (naaice_init_data_transfer(comm_ctx)) {
+    return -1;
+  }
   if (naaice_poll_cq_blocking(comm_ctx)) { return -1; }
 
   // Disconnect and cleanup.

@@ -272,11 +272,13 @@ int naaice_handle_connection_requests(
               "Failed to register memory for memory region setup protocol.\n");
 
       // Notify remote of failure.
-      // FM: Will this even work? If the MR for messaging cant be registered, we
-      // porbably can't send an error message
+      // FM: Will this even work? We don't yet have a connection.
       naaice_send_message(comm_ctx, MSG_MR_ERR, -1);
       return -1;
     }
+    // FM TODO: We currently have a race condition between client and server. Server should 
+    // post receive before accept to circumvent this. Method only available in naaice_swnaa.c 
+    // We could put the naaice_handle_connect_requests methods into naaice_swnaa.c maybe? 
     if (rdma_accept(comm_ctx->id, &cm_params)) {
       fprintf(stderr, "RDMA connection failed, in rdma_accept.\n");
       return -1;
@@ -391,7 +393,7 @@ int naaice_poll_and_handle_connection_event(
     }
   }
 
-  // If we sucessfully handled an event (or haven't recieved one), success.
+  // If we sucessfully handled an event (or haven't received one), success.
   return 0;
 }
 
@@ -487,6 +489,8 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
   // Register all memory regions corresponding to parameters and the metadata
   // memory region.
   for (int i = 0; i < ((int)comm_ctx->no_local_mrs); i++) {
+    // FM: TEST ONLY TODO: Method for setting mrs to wro
+    comm_ctx->mr_local_data[i].to_write = true;
     comm_ctx->mr_local_data[i].ibv =
         ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_data[i].addr,
                    comm_ctx->mr_local_data[i].size,
@@ -557,16 +561,40 @@ int naaice_init_mrsp(struct naaice_communication_context *comm_ctx) {
   debug_print("In naaice_init_mrsp\n");
 
   // TODO: handle errors from these.
-
+  // Post receive for response before sending message. Otherwise data race. Since we only
+  // get back to this level after the send is acknowledged.
+  naaice_post_recv_mrsp(comm_ctx);
   // Send MRSP announce + request.
   naaice_send_message(comm_ctx, MSG_MR_AAR, 0);
+  while (comm_ctx->state < MR_EXCHANGE) {
+    if (naaice_poll_cq_blocking(comm_ctx)) {
+      return -1;
+    }
+  }
+comm_ctx->events_to_ack = 1;
+comm_ctx->routine_complete = false;
 
-  // Post recieve for response.
-  naaice_post_recv_mrsp(comm_ctx);
-
+  while (comm_ctx->state < MRSP_DONE) {
+    if (naaice_poll_cq_blocking(comm_ctx)) {
+      return -1;
+    }
+  }
   return 0;
 }
 
+int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx){
+  //FM TODO: Errorhandling 
+  naaice_post_recv_data(comm_ctx);
+  naaice_write_data(comm_ctx,comm_ctx->fncode);
+  //FM: reset routine_complete
+  comm_ctx->routine_complete = false;
+  while (comm_ctx->state < WAIT_DATA) {
+    if (naaice_poll_cq_blocking(comm_ctx)) {
+      return -1;
+    }
+  }
+  return 0;
+}
 int naaice_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx) {
 
@@ -580,7 +608,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
     return -1;
   }
   
-  // If we have recieved a write without immediate..
+  // If we have received a write without immediate..
   else if (wc->opcode == IBV_WC_RECV) {
 
     // If we're still doing the MRSP...
@@ -630,12 +658,19 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
                         (i + 1) * sizeof(struct naaice_mr_advertisement)));
         }
 
-        // Write data to the NAA. Go to finished state if successful.
-        int write_result = naaice_write_data(comm_ctx, 0);
+
+        comm_ctx->state = MRSP_DONE;
+        return 0;
+        // FM TODO: We need to split this up probably. Handling completions
+        // should finish after the MRSP is done. Then through some higher-level
+        // API we will initiate data transfer. This is necessary to facilitate a
+        // semantic split between naa_init() and naa_invoke() from middleware
+        // API Write data to the NAA. Go to finished state if successful.
+        /*int write_result = naaice_write_data(comm_ctx, 0);
         if (write_result) {
           comm_ctx->state = FINISHED;
         }
-        return write_result;
+        return write_result;*/
       }
 
       // Return with error if a remote error has occured.
@@ -655,7 +690,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
     return 0;
   }
 
-  // If we have recieved data with an immediate...
+  // If we have received data with an immediate...
   else if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
 
     // Check whether an error occured.
@@ -694,8 +729,9 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
     // If all writes have been completed, enter the wait_data state.
     if (comm_ctx->rdma_writes_done == comm_ctx->n_wrs) {
       comm_ctx->state = WAIT_DATA;
-
-      // Post a recieve.
+      //FM: TODO: Check if this is necessary, we post a receive before we sent the data to avoid 
+      //unlikely races.
+      // Post a receive.
       naaice_post_recv_data(comm_ctx);
     }
 
@@ -730,18 +766,19 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
     struct pollfd my_pollfd;
     int ms_timeout = 100;
     // Poll the completion channel, returning with flag unchanged if nothing
-    // is recieved.
+    // is received.
     my_pollfd.fd = comm_ctx->comp_channel->fd;
     my_pollfd.events = POLLIN;
     my_pollfd.revents = 0;
     
     while (my_pollfd.revents == 0){
       if (poll(&my_pollfd, 1, ms_timeout) < 0) {
-        fprintf(stderr, "No completion recieved.\n");
+        //FM: This is probably an error. If none is received, we get back 0.
+        fprintf(stderr, "No completion received.\n");
         return 0;
       }
     }
-    // If something is recieved, get the completion event.
+    // If something is received, get the completion event.
     if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
       fprintf(stderr, "Failed to get completion queue event.\n");
       return -1;
@@ -791,20 +828,24 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
       comm_ctx->routine_complete = false;
     } else {
       comm_ctx->routine_complete = true;
+      comm_ctx->events_acked = 0;
     }
   }
 
   // Otherwise we are already done.
-  else { comm_ctx->routine_complete = true; }
-
+  else { comm_ctx->routine_complete = true;
+    comm_ctx->events_acked = 0;
+  }
   return 0;
 }
 
 int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_poll_cq_blocking\n");
-
+  // FM: Why is blocking and non-blocking the same? With polling we always have non-blocking behavior
   // TODO: consider a timeout here.
+  //FM: Test set routine_complete false
+  comm_ctx->routine_complete = false;
   while(!comm_ctx->routine_complete) {
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
   }
@@ -1049,14 +1090,14 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
 }
 
 int naaice_write_data(struct naaice_communication_context *comm_ctx,
-  uint8_t errorcode) {
+  uint8_t fncode) {
 
   debug_print("In naaice_write_data\n");
 
-  // If provided error code is nonzero, send a write indicated a host-side
-  // error. This takes the form of a single byte message with nonzero
+  // If provided function code is zero, send a write indicated a host-side
+  // error. This takes the form of a single byte message with zero
   // immediate value.
-  if (errorcode) {
+  if (fncode == 0) {
 
     // Construct scatter/gather elements.
     struct ibv_sge sge;
@@ -1070,7 +1111,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
     wr.wr_id = 1;
     wr.sg_list = &sge;
     wr.num_sge = 0;
-    wr.imm_data = htonl(errorcode);
+    wr.imm_data = htonl(fncode);
     wr.send_flags = IBV_SEND_SOLICITED;
     wr.opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
     wr.wr.rdma.remote_addr = comm_ctx->mr_peer_data[0].addr;
@@ -1114,9 +1155,9 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
     // Construct write requests and scatter/gather elemts for all memory
     // regions to be sent. Metadata region and others can be handled
     // equivalently.
-    for (int i = 1; i < comm_ctx->no_local_mrs; i++) {
+    for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
       if (comm_ctx->mr_local_data[i].to_write == true) {
-        memset(&wr[i], 0, sizeof(wr));
+        memset(&wr[i], 0, sizeof(wr[i]));
         wr[i].wr_id = i+1;
         wr[i].sg_list = &sge[i];
         wr[i].num_sge = 1;
@@ -1130,7 +1171,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         if(i == comm_ctx->n_wrs-1) {
           wr[i].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[i].send_flags = IBV_SEND_SOLICITED;
-          wr[i].imm_data = 0;
+          wr[i].imm_data = fncode;
           wr[i].next = NULL;
         }
 
@@ -1163,7 +1204,7 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_post_recv_mrsp\n");
 
-  // Construct the recieve request and scatter/gather elements.
+  // Construct the receive request and scatter/gather elements.
   struct ibv_recv_wr wr, *bad_wr = NULL;
 
   struct ibv_sge sge;
@@ -1181,10 +1222,10 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
   // Indicate that we expect one response.
   comm_ctx->events_to_ack = 1;
 
-  // Post the recieve.
+  // Post the receive.
   int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
-    fprintf(stderr, "Posting recieve for MRSP failed with error %d.\n",
+    fprintf(stderr, "Posting receive for MRSP failed with error %d.\n",
       post_result);
     return post_result;
   }
@@ -1196,7 +1237,7 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_post_recv_data\n");
 
-  // Construct the recieve request and scatter/gather elements.
+  // Construct the receive request and scatter/gather elements.
   // We expect a write back to the return parameter memory region.
 
   struct ibv_recv_wr wr, *bad_wr = NULL;
@@ -1215,10 +1256,10 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
   // Indicate that we expect one response.
   comm_ctx->events_to_ack = 1;
 
-  // Post the recieve.
+  // Post the receive.
   int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
-    fprintf(stderr, "Posting recieve for data failed with error %d.\n",
+    fprintf(stderr, "Posting receive for data failed with error %d.\n",
       post_result);
     return post_result;
   }

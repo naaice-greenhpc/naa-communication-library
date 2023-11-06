@@ -223,6 +223,7 @@ struct naaice_communication_context
     READY,
     CONNECTED,
     MR_EXCHANGE,
+    MRSP_DONE,
     WAIT_DATA,
     RUNNING,
     ERROR,
@@ -536,14 +537,14 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- *  uint8_t errorcode:
- *    Error code.
+ *  uint8_t fncode:
+ *    Function Code for NAA routine. Positive, 0 on error.
  * 
  * returns:
  *  0 if sucessful, -1 if not.
  */
 int naaice_write_data(struct naaice_communication_context *comm_ctx,
-  uint8_t errorcode);
+  uint8_t fncode);
 
 /**
  * naaice_post_recv_mrsp

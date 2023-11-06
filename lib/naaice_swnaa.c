@@ -22,6 +22,8 @@
  *****************************************************************************/
 
 // Enable debug messages.
+#include "naaice.h"
+#include <infiniband/verbs.h>
 #define DEBUG 1
 
 /* Dependencies **************************************************************/
@@ -368,7 +370,7 @@ int naaice_swnaa_poll_cq_blocking_mrsp(
 
   return 0;
 }
-
+// FM: No longer needed?
 int naaice_swnaa_handle_mr_announce(
   struct naaice_communication_context *comm_ctx) {
 
@@ -432,6 +434,9 @@ int naaice_swnaa_handle_mr_announce_and_request(
   
   // Get the number of host memory regions.
   comm_ctx->no_peer_mrs = dyn->count;
+  //FM: Unless we deal with MR flags, the count will be the same on both sides 
+  //Needed for sending back MR advertisement
+  comm_ctx->no_local_mrs = dyn->count;
 
   // This is also the number of local memory regions we should have
   // (in the symmetric memory region scheme).
@@ -448,17 +453,17 @@ int naaice_swnaa_handle_mr_announce_and_request(
   }
 
   // Pointer to current position in packet being read.
-  struct naaice_mr_advertisement *mr;
+  struct naaice_mr_advertisement_request *mr;
 
   // For each host memory region...
   for (int i = 0; i < comm_ctx->no_peer_mrs; i++) {
 
     // Point to next position in the packet.
-    mr = (struct naaice_mr_advertisement
+    mr = (struct naaice_mr_advertisement_request
               *)(comm_ctx->mr_local_message->addr +
                  (sizeof(struct naaice_mr_hdr) +
                   sizeof(struct naaice_mr_dynamic_hdr) +
-                  (i + 1) * sizeof(struct naaice_mr_advertisement)));
+                  (i) * sizeof(struct naaice_mr_advertisement_request)));
 
     // Set fields.
     comm_ctx->mr_peer_data[i].addr = ntohll(mr->addr);
@@ -471,7 +476,8 @@ int naaice_swnaa_handle_mr_announce_and_request(
   // The request packet includes the fields mrflags and fpgaaddress, which
   // specify how an FPGA-based NAA should handle memory region allocation.
   // However, in the software NAA, we can simply ignore these fields and
-  // allocate as normal.
+  // allocate as normal. 
+  // FM: In future we might need to handle mrflags maybe?
 
   comm_ctx->mr_local_data = calloc(comm_ctx->no_local_mrs, 
                               sizeof(struct naaice_mr_local));
@@ -631,37 +637,38 @@ int naaice_swnaa_post_recv_data(
 
   debug_print("In naaice_swnaa_post_recv_data\n");
 
+  //FM: only one recv request has to be constructed. Only the last write of the client triggers 
+  // completion of a recv request: the last RDMA_WRITE_WITH_IMM
   // Construct the recieve request and scatter/gather elements,
   // one for each memory region to be written to.
 
-  struct ibv_recv_wr wr[comm_ctx->no_local_mrs], *bad_wr = NULL;
-  struct ibv_sge sge[comm_ctx->no_local_mrs];
-
-  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
-    sge[i].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
-    sge[i].length = comm_ctx->mr_local_data[i].ibv->length;
-    sge[i].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
+  struct ibv_recv_wr wr, *bad_wr = NULL;
+  struct ibv_sge sge;
+  // FM: We could set up multiple SGEs, but they are most likely fncode dependent. Also
+  // nothing will ever be accessed using the WR anyways, so we can skip it. 
+  sge.addr = (uintptr_t)comm_ctx->mr_local_data[0].addr;
+  sge.length = comm_ctx->mr_local_data[0].ibv->length;
+  sge.lkey = comm_ctx->mr_local_data[0].ibv->lkey;
 
     // TODO: Maybe hardcode a wr_id for each communication type.
-    memset(&wr[i], 0, sizeof(wr));
-    wr[i].wr_id = i;
-    wr[i].sg_list = &sge[i];
-    wr[i].num_sge = 1;
+  memset(&wr, 0, sizeof(wr));
+  wr.wr_id = 1;
+  wr.sg_list = &sge;
+  wr.num_sge = 1;
 
     // If this is the last write request...
-    if (i == comm_ctx->no_local_mrs - 1) {
+  /*if (i == comm_ctx->no_local_mrs - 1) {
       wr[i].next = NULL;
     }
     else {
       wr[i].next = &wr[i+1];
     }
-  }
+  }*/
 
   // Indicate that we expect one response per write.
-  comm_ctx->events_to_ack = comm_ctx->no_local_mrs;
-
+  comm_ctx->events_to_ack = 1;
   // Post the recieve.
-  int post_result = ibv_post_recv(comm_ctx->qp, &wr[0], &bad_wr);
+  int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
     fprintf(stderr, "Posting recieve for data failed with error %d.\n",
       post_result);
@@ -710,6 +717,7 @@ int naaice_swnaa_handle_work_completion_data(struct ibv_wc *wc,
     comm_ctx->rdma_writes_done = 0;
 
     // Now we are ready to perform the NAA procedure.
+    return 0;
   }
 
   // For all other completion codes...
@@ -729,7 +737,8 @@ int naaice_swnaa_poll_cq_nonblocking_data(
   struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_poll_cq_nonblocking_data\n");
-
+  //FM: events_acked needs to be reset to zero after last polling finished.
+  comm_ctx->events_acked =0;
   struct ibv_cq *ev_cq;
   void *ev_ctx;
 
@@ -821,9 +830,11 @@ int naaice_swnaa_poll_cq_blocking_data(
   struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_poll_cq_blocking_data\n");
-
-  // TODO: consider a timeout here.
-  while(!comm_ctx->routine_complete) {
+  //FM: comm_ctx->routine_complete = true from poll_cq_nonblocking_mrsp -> reset false here. 
+  //FM: Maybe that member can be renamed?
+  comm_ctx->routine_complete = false;
+      // TODO: consider a timeout here.
+  while (!comm_ctx->routine_complete) {
     if (naaice_swnaa_poll_cq_nonblocking_data(comm_ctx)) { return -1; }
   }
 
@@ -864,7 +875,8 @@ int naaice_swnaa_handle_metadata(
 
 int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t errorcode) {
-
+  // FM TODO: What if we have more than one region to return? For example ping_pong example
+  // Allow multiple wrs? multiple return addresses?
   debug_print("In naaice_swnaa_write_data\n");
 
   // If there are no memory regions to write back, return an error.
@@ -950,7 +962,8 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
     struct ibv_sge sge[comm_ctx->no_local_mrs];
 
     // For each memory region...
-    for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
+    //FM: Not for every region. Never metadata 
+    for (int i = 1; i < comm_ctx->no_local_mrs; i++) {
 
       // Start building the write request for this region.
       memset(&wr[i], 0, sizeof(struct ibv_send_wr));
@@ -980,7 +993,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 
         // Then finish up the write request and post it.
         // The last write request is done with an immediate.
-        wr[i].opcode = IBV_WR_RDMA_WRITE;
+        wr[i].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
         wr[i].send_flags = IBV_SEND_SOLICITED;
         wr[i].imm_data = htonl(0);
         wr[i].next = NULL;
