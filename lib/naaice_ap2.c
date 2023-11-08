@@ -26,6 +26,7 @@
 #include <naaice_ap2.h>
 #include <naaice.h>
 
+
 /* Constants *****************************************************************/
 
 #define MAX_PARAMS 32
@@ -64,6 +65,7 @@ const struct naa_routineset_config naa_routineset_vectormath =
 const struct naa_routineset_config naa_routinesets[N_NAA_ROUTINESETS] = 
 	{naa_routineset_vectormath};
 
+
 /* Helper Functions **********************************************************/
 
 // Function to retrieve network parameters.
@@ -79,7 +81,8 @@ int get_network_params(char *local_ip, char *remote_ip, uint16_t *port) {
 }
 
 // Function to check validity of parameters against configuration values.
-int check_params(unsigned int function_code, naa_param_t *params,
+int check_params(unsigned int function_code, 
+	__attribute__((unused)) naa_param_t *params,
 	unsigned int params_amount) {
 
 	// Check validity of parameters based on dummy config values.
@@ -111,6 +114,7 @@ int check_params(unsigned int function_code, naa_param_t *params,
 	// Otherwise return with a success.
 	return 0;
 }
+
 
 /* Public Function Implementations *******************************************/
 
@@ -161,9 +165,10 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 	return 0;
 }
 
-int naa_invoke(naa_param_t *input_params, unsigned int input_amount, 
-			   naa_param_t output_param,
-			   naa_handle *handle) {
+int naa_invoke(__attribute__((unused)) naa_param_t *input_params,
+	__attribute__((unused)) unsigned int input_amount, 
+	naa_param_t output_param,
+	naa_handle *handle) {
 
 	// TODO: check that everything from naa_create is in fact complete.
 
@@ -180,7 +185,8 @@ int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
 	return 0;
 }
 
-int naa_test(naa_handle *handle, bool *flag, naa_status *status) {
+int naa_test(naa_handle *handle, bool *flag,
+	__attribute__((unused)) naa_status *status) {
 
 	// Check for NAA completion. If this returns -1, an error occured.
 	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }

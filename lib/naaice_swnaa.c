@@ -17,7 +17,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 12-10-2023
+ * 08-11-2023
  * 
  *****************************************************************************/
 
@@ -32,6 +32,14 @@
 #include <errno.h>
 #include <naaice_swnaa.h>
 #include <naaice.h>
+
+/* Helper Functions **********************************************************/
+
+// Prints a string representing a work completion opcode.
+// Used in debugging.
+// Implemented in naaice.c.
+void print_ibv_wc_opcode(enum ibv_wc_opcode opcode);
+
 
 /* Function Implementations **************************************************/
 

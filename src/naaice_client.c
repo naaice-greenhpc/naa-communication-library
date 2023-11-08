@@ -20,7 +20,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 12-10-2023
+ * 08-11-2023
  * 
  *****************************************************************************/
 
@@ -32,10 +32,12 @@
 #include <unistd.h>
 #include <time.h>
 
+
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
 #define FNCODE 1
+
 
 /* Main **********************************************************************/
 

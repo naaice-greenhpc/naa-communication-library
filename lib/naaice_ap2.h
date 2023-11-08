@@ -46,6 +46,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+
 /* Structs *******************************************************************/
 
 // Struct to hold information about a single (input or output) parameter to
@@ -62,7 +63,10 @@ typedef struct naa_handle {
 } naa_handle;
 
 // Struct to hold status information about the NAA session.
-typedef struct naa_status {} naa_status;
+typedef struct naa_status {
+  int prevent_empty_struct_warning;
+} naa_status;
+
 
 /* Public Functions **********************************************************/
 

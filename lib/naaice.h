@@ -24,7 +24,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 12-10-2023
+ * 08-11-2023
  * 
  *****************************************************************************/
 
@@ -47,21 +47,12 @@
  * 
  * - Add timeouts.
  *
- * - In case oof errors. Check if errno gets set and output to user
+ * - Handle errors better, utilizing errno and ERROR state in state machine.
  * 
  * (style)
  * 
- * - Combine connection setup tracking flags and transmission completion flag
- *    with state machine.
- * 
  * - Unify some of the packet structs used in naaice_send_message, so that a
  *    single type can be used rather than concatenating headers, for example.
- * 
- * - Unify comm_ctx->no_local_mrs and comm_ctx->no_advertised_mrs. In current
- *    implementation these should be the same
- * 
- * - Consider restructuring project directories. Move server/client into test
- *    directory, headers into include directory.
  * 
  */
 
@@ -83,6 +74,7 @@
 #include <rdma/rdma_cma.h>
 #include <rdma/rdma_verbs.h>
 
+
 /* Constants *****************************************************************/
 
 #define RX_DEPTH 1025
@@ -95,6 +87,7 @@
 //  * (Addr:64 +  size:32 + key:32) + requested size:64 / 8
 // TODO: rewrite in terms of struct sizes.
 #define MR_SIZE_MR_EXHANGE (32 + (UINT8_MAX + 1) * 2 * 64 + 64) / 8
+
 
 /* Structs and Enums *********************************************************/
 
@@ -248,6 +241,7 @@ struct naaice_communication_context
   // Keeps track of number of writes done to NAA.
   uint8_t rdma_writes_done;
 };
+
 
 /* Public Functions **********************************************************/
 
@@ -441,9 +435,23 @@ int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
 int naaice_init_mrsp(struct naaice_communication_context *comm_ctx);
 
 /**
+ * naaice_init_data_transfer:
+ *  Starts the data transfer. That is, posts the write for memory regions to
+ *  the NAA.
+ * 
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection and memory regions.
+ * 
+ * returns:
+ *  0 if sucessful, -1 if not.
+ */
+int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx);
+
+/**
  * naaice_handle_work_completion:
  *  Handles a single work completion from the completion queue.
- *  These represent memory region writes from the host. 
+ *  These represent memory region writes from host to NAA or NAA to host.
  * 
  * params:
  *  naaice_communication_context *comm_ctx:
@@ -475,8 +483,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_disconnect_and_cleanup:
- *  Terminates the connection and deallocates frees all communication context
- *  memory.
+ *  Terminates the connection and frees all communication context memory.
  * 
  * params:
  *  naaice_communication_context *comm_ctx:
@@ -508,7 +515,6 @@ int naaice_disconnect_and_cleanup(
  */
 int naaice_send_message(struct naaice_communication_context *comm_ctx,
   enum message_id message_type, uint8_t errorcode);
-
 
 /**
  * naaice_write_data:
@@ -565,8 +571,8 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_init_rdma_resources
- * Allocates a protection domain, completion channel, completion queue, and
- * queue pair.
+ *  Allocates a protection domain, completion channel, completion queue, and
+ *  queue pair.
  *
  * params:
  *  naaice_communication_context *comm_ctx:
@@ -579,7 +585,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_do_mrsp
- * Does all logic for the MRSP in a blocking fashion.
+ *  Does all logic for the MRSP in a blocking fashion.
  *
  * params:
  *  naaice_communication_context *comm_ctx:
@@ -592,9 +598,9 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_do_data_transfer
- * Does all logic for the data transfer, including writing data to the NAA,
- * wating for the NAA calculation, and receiving the return data back, in a
- * blocking fashion.
+ *  Does all logic for the data transfer, including writing data to the NAA,
+ *  wating for the NAA calculation, and receiving the return data back, in a
+ *  blocking fashion.
  *
  * params:
  *  naaice_communication_context *comm_ctx:

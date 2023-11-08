@@ -22,7 +22,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 12-10-2023
+ * 08-11-2023
  * 
  *****************************************************************************/
 
@@ -39,6 +39,7 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
+
 
 /* Implementation of NAA Procedure *******************************************/
 
@@ -75,6 +76,7 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
 
   return 0;
 }
+
 
 /* Main **********************************************************************/
 

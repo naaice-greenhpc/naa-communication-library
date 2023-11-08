@@ -17,7 +17,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 12-10-2023
+ * 08-11-2023
  * 
  *****************************************************************************/
 
@@ -34,10 +34,12 @@
 #include <stdio.h>
 #include <string.h>
 
+
 /* Constants *****************************************************************/
 
 #define TIMEOUT_RESOLVE_ADDR 100
 #define CONNECTION_PORT 12345
+
 
 /* Helper Functions **********************************************************/
 
@@ -57,6 +59,7 @@ void print_ibv_wc_opcode(enum ibv_wc_opcode opcode) {
     default: debug_print("Unhandled opcode\n"); return;
   }
 }
+
 
 /* Function Implementations **************************************************/
 
@@ -380,7 +383,8 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
   return 0;
 }
 
-int naaice_handle_other(struct naaice_communication_context *comm_ctx,
+int naaice_handle_other(
+  __attribute__((unused)) struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
   debug_print("In naaice_handle_other\n");
