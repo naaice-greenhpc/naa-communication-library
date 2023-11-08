@@ -55,27 +55,6 @@
  * returns:
  *  0 if sucessful, -1 if not.
  */
-
-/**
- * naaice_swnaa_init_communication_context:
- *  Initializes communication context struct.
- *  After a call to this function, the provied communication context struct is
- *  ready to be passed to all other SWNAA AP1 functions.
- *  Compared to the base NAAICE version, this SWNAA does not take parameters
- *  for the local and remote network addresses or those which describe the
- *  NAA routine's parameters.
- * 
- * params:
- *  naaice_communication_context **comm_ctx: (return param)
- *    Double pointer to communication context struct to be initialized.
- *    Should not point to an existing struct; the struct is allocated
- *    and returned by this function.
- *  uint16_t port:
- *    Value specifying connection port, ex. 12345.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
- */
 int naaice_swnaa_init_communication_context(
   struct naaice_communication_context **comm_ctx, uint16_t port);
 
@@ -137,13 +116,7 @@ int naaice_swnaa_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
  * returns:
  *  0 if sucessful, -1 if not.
  */
-int naaice_swnaa_handle_work_completion_mrsp(struct ibv_wc *wc,
-  struct naaice_communication_context *comm_ctx);
-
-int naaice_swnaa_poll_cq_nonblocking_mrsp(
-  struct naaice_communication_context *comm_ctx);
-
-int naaice_swnaa_poll_cq_blocking_mrsp(
+int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx);
 
 int naaice_swnaa_handle_mr_announce(
@@ -157,15 +130,6 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
 
 int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
 
-int naaice_swnaa_handle_work_completion_data(struct ibv_wc *wc,
-  struct naaice_communication_context *comm_ctx);
-
-int naaice_swnaa_poll_cq_nonblocking_data(
-  struct naaice_communication_context *comm_ctx);
-
-int naaice_swnaa_poll_cq_blocking_data(
-  struct naaice_communication_context *comm_ctx);
-
 int naaice_swnaa_handle_metadata(
   struct naaice_communication_context *comm_ctx);
 
@@ -173,6 +137,14 @@ int naaice_swnaa_write_data(
   struct naaice_communication_context *comm_ctx, uint8_t errorcode);
 
 int naaice_swnaa_disconnect_and_cleanup(
+  struct naaice_communication_context *comm_ctx);
+
+int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
+
+int naaice_swnaa_receive_data_transfer(
+  struct naaice_communication_context *comm_ctx);
+
+int naaice_swnaa_poll_cq_nonblocking(
   struct naaice_communication_context *comm_ctx);
 
 #endif

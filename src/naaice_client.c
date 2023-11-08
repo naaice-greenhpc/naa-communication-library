@@ -47,6 +47,8 @@
  *  'region-sizes', ex '1024'
  */
 int main(int argc, char *argv[]) {
+
+  printf("-- Handling Command Line Arguments --\n");
   
   // Check number of arguments.
   if (argc != 5) {
@@ -101,6 +103,7 @@ int main(int argc, char *argv[]) {
 
   // Communication context struct. 
   // This will hold all information necessary for the connection.
+  printf("-- Initializing Communication Context --\n");
   struct naaice_communication_context *comm_ctx = NULL;
 
   // Initialize the communication context struct.
@@ -108,21 +111,22 @@ int main(int argc, char *argv[]) {
     params_amount, FNCODE, argv[1], argv[2], CONNECTION_PORT)) { return -1; }
 
   // First, handle connection setup.
+  printf("-- Set Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) { return -1; }
 
   // Then, register the memory regions.
+  printf("-- Registering Memory Regions --\n");
   if (naaice_register_mrs(comm_ctx)) { return -1; }
 
   // Set metadata (i.e. return address).
   // For our example, the return parameter is the last one.
-  if (naaice_set_metadata(comm_ctx, (uintptr_t) comm_ctx->mr_local_data[params_amount-1].addr)){//params[params_amount-1])) {
+  printf("-- Setting Metadata --\n");
+  if (naaice_set_metadata(comm_ctx, (uintptr_t) params[params_amount-1])) {
     return -1; }
 
-  // Do the memory region setup protocol, and then post a recieve for the
-  // FPGA to post back its response.
-  if (naaice_init_mrsp(comm_ctx)) { return -1; }
-
-  // TODO: Consider reimplementing the communication state machine.
+  // Do the memory region setup protocol.
+  printf("-- Doing MRSP --\n");
+  if (naaice_do_mrsp(comm_ctx)) { return -1; }
 
   // FM: We have to do this at least twice: once for the send wc and once for
   // the recv wc.
@@ -130,15 +134,28 @@ int main(int argc, char *argv[]) {
   // Loop handling data transmission until RPC and communication is complete.
   // Move loop into init_mrsp 
   // FM TODO: some naaice_init_data_transfer() method that sends data after MRSP is done. This will be called by naa_invoke i assume
-  if (naaice_init_data_transfer(comm_ctx)) {
-    return -1;
-  }
-  if (naaice_poll_cq_blocking(comm_ctx)) { return -1; }
+  printf("-- Doing Data Transfer --\n");
+  if (naaice_init_data_transfer(comm_ctx)) { return -1; }
 
+  // Poll the completion queue and handle work completions until data transfer,
+  // including sending, calculation, and receiving, is complete.
+  while (comm_ctx->state < FINISHED) {
+    if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
+  }
+  
   // Disconnect and cleanup.
+  printf("-- Cleaning Up --\n");
   if (naaice_disconnect_and_cleanup(comm_ctx)) { return -1; }
 
   // At this point, we can check the data for correctness.
+  // For the simple SWNAA example, we expect all values in our parameters to
+  // have been incremented.
+  printf("-- Checking Results --\n");
+  for (unsigned char i = 0; i < params_amount; i++) {
+    unsigned char first_el = (unsigned char) *(params[i]);
+    printf("Parameter %u: first element: %u. Expected %u\n. Success? %s\n",
+      i, first_el, i+1, (first_el == (i+1)) ? "yes" : "no");
+  }
 
   return 0;
 }

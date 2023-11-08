@@ -45,7 +45,9 @@
 // The routine should return 0 if successful, or some nonzero number if not.
 // This nonzero error code is sent to the host in the case of an error.
 uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
-  debug_print("in do_procedure\n");
+
+  printf("in do_procedure\n");
+
   // Can switch on function code.
   // Here, do nothing if code is 0. Otherwise do something.
   if (comm_ctx->fncode) {
@@ -54,15 +56,19 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
     // Assume all data in the memory regions is arrays of chars.
     // Increment all chars in all memory regions by one.
 
-    for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
+    // Be sure not to include the metadata region.
+
+    for (unsigned int i = 1; i < comm_ctx->no_local_mrs; i++) {
 
       // Get pointer to data.
-      char *data = (char*) comm_ctx->mr_local_data[i].addr;
+      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[i].addr;
 
       for(unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
 
         // Increment a char.
+        //printf("data value (old/new): %u", data[j]);
         data[j]++;
+        //printf("/%u\n", data[j]);
       }
     }
   }
@@ -79,6 +85,7 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
 int main(int argc, __attribute__((unused)) char *argv[]) {
 
   // Handle command line arguments.
+  printf("-- Handling Command Line Arguments --\n");
   if (argc != 1) {
     fprintf(stderr,
             "Server should be called without arguments.\n");
@@ -87,6 +94,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
 
   // Communication context struct. 
   // This will hold all information necessary for the connection.
+  printf("-- Initializing Communication Context --\n");
   struct naaice_communication_context *comm_ctx = NULL;
 
   // Initialize the communication context struct.
@@ -94,27 +102,36 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1; }
 
   // First, handle connection setup.
-  // This step functions exactly the same as on the host side.
+    printf("-- Setting Up Connection --\n");
   if (naaice_swnaa_setup_connection(comm_ctx)) { return -1; }
 
-  // Start listening for MRSP messages from the host.
-  if (naaice_swnaa_init_mrsp(comm_ctx)) { return -1; }
+  // Receive MRSP message from the host.
+  printf("-- Doing MRSP --\n");
+  if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
-  // Then, loop, waiting for the MRSP messages from the host, and handling
-  // them when they arrive.
-  if (naaice_swnaa_poll_cq_blocking_mrsp(comm_ctx)) { return -1; }
+  // Check results of MRSP.
+  printf("MRSP Results:\n");
+  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
+    printf("Local MR %d: Addr: %lX, Size: %d\n", i + 1,
+            (uint64_t) comm_ctx->mr_local_data[i].addr,
+            comm_ctx->mr_local_data[i].size);
+  }
 
-  // Next, loop, waiting for transmissions of data (i.e. metadata + RPC
-  // parameters) from the host, handling them as they arrive.
-  if (naaice_swnaa_poll_cq_blocking_data(comm_ctx)) { return -1; }
+  // Receive data transfer from host.
+  printf("-- Receiving Data Transfer --\n");
+  if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
 
   // Now that all data has arrived, perform the RPC.
+  printf("-- Doing RPC --\n");
+  printf("Function Code: %d\n", comm_ctx->fncode);
   uint8_t errorcode = do_procedure(comm_ctx);
 
   // Finally, write back the results to the host.
+  printf("-- Writing Back Data --\n");
   if (naaice_swnaa_write_data(comm_ctx, errorcode)) { return -1; }
 
   // Disconnect and clean up.
+  printf("-- Cleaning Up --\n");
   if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
 
   return 0;

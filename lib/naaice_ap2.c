@@ -171,22 +171,26 @@ int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
   if (naaice_set_metadata(handle->comm_ctx, (uintptr_t) output_param.addr))
   	{ return -1; }
 
-  // Do the memory region setup protocol, subsequently waiting for
-  // NAA routine to complete and write back results.
-  if (naaice_init_mrsp(handle->comm_ctx)) { return -1; }
+  // Do the memory region setup protocol.
+  if (naaice_do_mrsp(handle->comm_ctx)) { return -1; }
+
+  // Initialize data transfer to the NAA.
+  if (naaice_init_data_transfer(handle->comm_ctx)) { return -1; }
 
 	return 0;
 }
 
 int naa_test(naa_handle *handle, bool *flag, naa_status *status) {
 
-	// Check for NAA completion and handle communication.
-	int poll_result = naaice_poll_cq_nonblocking(handle->comm_ctx);
-	*flag = handle->comm_ctx->routine_complete;
+	// Check for NAA completion. If this returns -1, an error occured.
+	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }
+
+	// Update completion flag.
+	*flag = handle->comm_ctx->state == FINISHED;
 
 	// TODO: Set status.
 
-	return poll_result;
+	return 0;
 }
 
 int naa_wait(naa_handle *handle, naa_status *status) {
@@ -198,7 +202,7 @@ int naa_wait(naa_handle *handle, naa_status *status) {
 	while (!flag && !poll_result) { 
 		poll_result = naa_test(handle, &flag, status);
 	}
-	
+
 	return poll_result;
 }
 

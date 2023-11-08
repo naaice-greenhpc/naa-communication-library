@@ -51,14 +51,14 @@
 // Struct to hold information about a single (input or output) parameter to
 // an NAA routine.
 typedef struct naa_param_t {
-    void *addr;
-    size_t size;
+  void *addr;
+  size_t size;
 } naa_param_t;
 
 // Struct to hold information about a NAA session.
 typedef struct naa_handle {
-    unsigned int function_code;
-    struct naaice_communication_context *comm_ctx;
+  unsigned int function_code;
+  struct naaice_communication_context *comm_ctx;
 } naa_handle;
 
 // Struct to hold status information about the NAA session.

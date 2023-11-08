@@ -206,49 +206,47 @@ struct naaice_communication_context
   // Connection state machine.
   // Control flow:
   //
-  // FPGA goes from:
-  //  ready: listening on connections.
-  //  connected: posted recv and waiting for memory regions.
-  //  wait_data: waiting for workload and immediate to start number crunching.
-  //  running: number crunching.
-  //  finished: sent data to host, goes back to wait_data.
+  // NAA goes from:
+  //  INIT: Starting state.
+  //  CONNECTED: Connection established.
+  //  MRSP_RECEIVING: Waiting for / processing MRSP packet from host.
+  //  MRSP_SENDING: Posting write for MRSP packet.
+  //  MRSP_DONE: Finished MRSP.
+  //  DATA_RECEIVING: Waiting for / processing data transfer from host.
+  //  CALCULATING: Running RPC.
+  //  DATA_SENDING: Posting write for data transfer back to host.
+  //  FINISHED: Done!
   //
   // Host goes from:
-  //  ready: address resolved.
-  //  connected: posted recv for mr answers.
-  //  mr_exchange: announced own regions and waitng for mr of fpga.
-  //  wait_data: waiting for results.
+  //  INIT: Starting state.
+  //  READY: Address resolved.
+  //  CONNECTED: Connection established.
+  //  MRSP_SENDING: Posting write for MRSP packet.
+  //  MRSP_REVEIVING: Waiting for / processing MRSP response from NAA.
+  //  MRSP_DONE: Finished MRSP.
+  //  DATA_SENDING: Posting write for data transfer to NAA.
+  //  DATA_RECEIVING: Waiting for / processing data transfer back from NAA.
+  //  FINISHED: Done!
   enum
   {
-    READY,
-    CONNECTED,
-    MR_EXCHANGE,
-    MRSP_DONE,
-    WAIT_DATA,
-    RUNNING,
-    ERROR,
-    FINISHED // :)
+    INIT            = 00,
+    READY           = 01,
+    CONNECTED       = 02,
+    MRSP_SENDING    = 10,
+    MRSP_RECEIVING  = 11,
+    MRSP_DONE       = 12,
+    DATA_SENDING    = 20,
+    CALCULATING     = 21,
+    DATA_RECEIVING  = 22,
+    FINISHED        = 30,
+    ERROR           = 40,
   } state;
-
-  // Counters used to track completion of memory region communication.
-  uint8_t events_to_ack;
-  uint8_t events_acked;
-  uint8_t rdma_writes_done;
-
-  // Flags to track completion of connection setup.
-  bool comm_setup_complete, address_resolution_complete,
-    route_resolution_complete, connection_requests_complete,
-    connection_established_complete;
-
-  // Flag set to true when the RPC and all data communication is complete.
-  bool routine_complete;
-
-  // Number of write requests to be handled, equal to the number of memory
-  // regions to be written from host to NAA and vice versa.
-  uint8_t n_wrs;
 
   // Function code indicating which NAA routine to be called.
   uint8_t fncode;
+
+  // Keeps track of number of writes done to NAA.
+  uint8_t rdma_writes_done;
 };
 
 /* Public Functions **********************************************************/
@@ -461,10 +459,9 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
  * naaice_poll_cq_nonblocking:
  *  Polls the completion queue for any work completions, and handles them if
  *  any are recieved using naaice_handle_work_completion.
- *  Keep track of the number of work completions which must be handled in order
- *  to complete all data transmission from NAA to host.
- *  If all necessary work completions for this have been sucessfully handled,
- *  sets the flag comm_ctx->routine_complete to true.
+ *  
+ *  Subsequently, comm_ctx->state is updated to reflect the current state
+ *  of the NAA connection and routine.
  * 
  * params:
  *  naaice_communication_context *comm_ctx:
@@ -475,21 +472,6 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
  * -1 if not.
  */
 int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx);
-
-/**
- * naaice_poll_cq_blocking:
- * 
- *  Loops polling the completion queue and handling work completions until
- *  all communication for the current RPC is complete.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
- */
-int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_disconnect_and_cleanup:
@@ -583,8 +565,8 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_init_rdma_resources
- * Allocates a protection domain, completion channel, completion queue and queue
- * pair
+ * Allocates a protection domain, completion channel, completion queue, and
+ * queue pair.
  *
  * params:
  *  naaice_communication_context *comm_ctx:
@@ -594,5 +576,33 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx);
  *  0 if successful, -1 if not.
  */
 int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx);
+
+/**
+ * naaice_do_mrsp
+ * Does all logic for the MRSP in a blocking fashion.
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *
+ * returns:
+ *  0 if successful, -1 if not.
+ */
+int naaice_do_mrsp(struct naaice_communication_context *comm_ctx);
+
+/**
+ * naaice_do_data_transfer
+ * Does all logic for the data transfer, including writing data to the NAA,
+ * wating for the NAA calculation, and receiving the return data back, in a
+ * blocking fashion.
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *
+ * returns:
+ *  0 if successful, -1 if not.
+ */
+int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx);
 
 #endif

@@ -72,19 +72,11 @@ int naaice_swnaa_init_communication_context(
   rdma_comm_id->context = (*comm_ctx);
 
   // Initialize fields of the communication context.
-  (*comm_ctx)->state = READY;
-  (*comm_ctx)->events_to_ack = 0;
-  (*comm_ctx)->events_acked = 0;
+  (*comm_ctx)->state = INIT;
   (*comm_ctx)->id = rdma_comm_id;
   (*comm_ctx)->no_local_mrs = 0;
   (*comm_ctx)->mr_return_idx = 0;
   (*comm_ctx)->rdma_writes_done = 0;
-  (*comm_ctx)->comm_setup_complete = false;
-  (*comm_ctx)->address_resolution_complete = false;
-  (*comm_ctx)->route_resolution_complete = false;
-  (*comm_ctx)->connection_requests_complete = false;
-  (*comm_ctx)->connection_established_complete = false;
-  (*comm_ctx)->routine_complete = false;
   (*comm_ctx)->fncode = 0;
 
   // The memory region used for MRSP is allocated here, but the ones for the
@@ -139,15 +131,9 @@ int naaice_swnaa_setup_connection(
   debug_print("In naaice_swnaa_setup_connection\n");
 
   // Loop handling events and updating the completion flag until finished.
-  while (!(comm_ctx->comm_setup_complete)) {
+  while (comm_ctx->state < CONNECTED) {
 
     naaice_poll_and_handle_connection_event(comm_ctx);
-
-    // SWNAA does not do address / route resolution, but does handle
-    // connection_established_complete.
-    comm_ctx->comm_setup_complete =
-      comm_ctx->connection_requests_complete &&
-      comm_ctx->connection_established_complete;
   }
 
   return 0;
@@ -157,12 +143,47 @@ int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_init_mrsp\n");
 
-  comm_ctx->rdma_writes_done = 0;
-  comm_ctx->events_to_ack = 0;
-  comm_ctx->events_acked = 0;
-
   // Wait for memory region announcement and request from the host.
   naaice_swnaa_post_recv_mrsp(comm_ctx);
+
+  return 0;
+}
+
+int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
+
+  debug_print("In naaice_swnaa_do_mrsp\n");
+
+  // Update state.
+  comm_ctx->state = MRSP_RECEIVING;
+
+  // Initialize the MRSP.
+  if (naaice_swnaa_init_mrsp(comm_ctx)) { return -1; }
+
+  // Poll the completion queue and handle work completions until the MRSP is
+  // complete.
+  while (comm_ctx->state < MRSP_DONE) {
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+  }
+
+  return 0;
+}
+
+int naaice_swnaa_receive_data_transfer(
+  struct naaice_communication_context *comm_ctx) {
+
+  debug_print("In naaice_swnaa_receive_data_transfer\n");
+
+  // Update state.
+  comm_ctx->state = DATA_RECEIVING;
+
+  // Post a receive for the data.
+  naaice_swnaa_post_recv_data(comm_ctx);
+
+  // Poll the completion queue and handle work completions until the data
+  // transfer to the NAA is complete.
+  while (comm_ctx->state == DATA_RECEIVING) {
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+  }
 
   return 0;
 }
@@ -176,11 +197,14 @@ int naaice_swnaa_post_recv_mrsp(
   return naaice_post_recv_mrsp(comm_ctx);
 }
 
-int naaice_swnaa_handle_work_completion_mrsp(struct ibv_wc *wc,
+int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_swnaa_handle_work_completion_mrsp\n");
+  debug_print("In naaice_swnaa_handle_work_completion\n");
 
+  debug_print("state: %d, opcode:\n", comm_ctx->state);
+  print_ibv_wc_opcode(wc->opcode);
+  
   // If the work completion status is not success, return with error.
   if (wc->status != IBV_WC_SUCCESS) {
     fprintf(stderr,
@@ -189,26 +213,26 @@ int naaice_swnaa_handle_work_completion_mrsp(struct ibv_wc *wc,
     return -1;
   }
 
-  // If we're recieving an MRSP packet...
-  if (wc->opcode == IBV_WC_RECV) {
+  // If we are still waiting for the MRSP packet...
+  if (comm_ctx->state == MRSP_RECEIVING) {
 
-    // If we're in the right state to recieve an MRSP packet...
-    if (comm_ctx->state == CONNECTED) {
+    // If we're recieving an MRSP packet...
+    if (wc->opcode == IBV_WC_RECV) {
 
       // The message should have been written to the memory region we allocated
-      // for MRRSP messages. grab the header from there.
+      // for MRSP messages. Grab the header from there.
       struct naaice_mr_hdr *msg =
           (struct naaice_mr_hdr *)comm_ctx->mr_local_message->addr;
       
       // If the message was an announce...
       // TODO: probably no longer necessary, host always sends A+R.
+
       if (msg->type == MSG_MR_A) {
 
         // Handle the packet.
         if(naaice_swnaa_handle_mr_announce(comm_ctx)) { return -1; }
 
-        // Post a recieve for memory region data.
-        return naaice_swnaa_post_recv_data(comm_ctx);
+        return 0;
       }
 
       // If the message was an announce + request...
@@ -224,8 +248,6 @@ int naaice_swnaa_handle_work_completion_mrsp(struct ibv_wc *wc,
         // Otherwise send an announcement back.
         naaice_swnaa_send_message(comm_ctx, MSG_MR_A, 0);
 
-        // Post a recieve for memory region data.
-        naaice_swnaa_post_recv_data(comm_ctx);
         return 0;
       }
 
@@ -239,137 +261,163 @@ int naaice_swnaa_handle_work_completion_mrsp(struct ibv_wc *wc,
                 err->code);
         return -1;
       }
+
+      // Otherwise, some weird message type. Return with error.
+      else {
+        fprintf(stderr, "Unhandled MRSP packet type received: %d\n",
+          msg->type);
+        return -1;
+      }
+    }
+  }
+
+  // If we are sending the MRSP response to the host...
+  else if (comm_ctx->state == MRSP_SENDING) {
+
+    // If we have sent the packet...
+    if (wc->opcode == IBV_WC_SEND) {
+
+      // NAA-side of MRSP done.
+      // Update state.
+      comm_ctx->state = MRSP_DONE;
+      return 0;
+    }
+  }
+
+  // If we are waiting for data from the host...
+  else if (comm_ctx->state == DATA_RECEIVING) {
+
+    // If we recieved data without an immediate...
+    if (wc->opcode == IBV_WC_RECV) {
+
+      // No need to do anything.
+      return 0;
     }
 
-    // Otherwise nothing needs to be done.
-    return 0;
+    // If we have received a write with immediate (i.e. the last parameter)...
+    else if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
+
+      // Check if the immediate value is zero, indicating an error.
+      if (!ntohl(wc->imm_data)) {
+        fprintf(stderr,
+                "Recieved write with immediate value zero.\n");
+        return -1;
+      }
+
+      // Otherwise, we can set the function code based on the immediate value.
+      debug_print("wc->imm_data: %d, ntohl(wc->imm_data): %d\n", 
+        wc->imm_data, ntohl(wc->imm_data));
+      comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data);
+
+      debug_print("transfer size: %d\n", wc->byte_len);
+
+      // Handle the metadata, recording the return address.
+      if (naaice_swnaa_handle_metadata(comm_ctx)) {
+        fprintf(stderr, "Error during RPC metadata handling.\n");
+        return -1;
+      }
+
+      // Update state.
+      comm_ctx->state = CALCULATING;
+
+      // Now we are ready to perform the NAA procedure.
+      return 0;
+    }
   }
 
-  // NAA-side of MRSP done. Go to next state.
-  else if (wc->opcode == IBV_WC_SEND) {
-    comm_ctx->state = WAIT_DATA;
-    return 0;
-  }
-
-  // For all other completion codes...
-  else {
-    fprintf(stderr,
-      "work completion opcode (wc opcode): %d, not handled. Disconnecting.\n",
-      wc->opcode);
-    return -1;
-  }
-
-  // If we've reached here, something has gone wrong.
-  fprintf(stderr, "Unknown error while handling work completion for MRSP.\n");
+  // If we've reached this point, the work completion had an opcode which is
+  // not handled for the current state, so return with error.
+  fprintf(stderr,
+      "Work completion opcode (wc opcode): %d, not handled for state:  %d.\n",
+      wc->opcode, comm_ctx->state);
   return -1;
 }
 
-int naaice_swnaa_poll_cq_nonblocking_mrsp(
+int naaice_swnaa_poll_cq_nonblocking(
   struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_swnaa_poll_cq_nonblocking_mrsp\n");
+  debug_print("In naaice_swnaa_poll_cq_nonblocking\n");
 
   struct ibv_cq *ev_cq;
   void *ev_ctx;
 
-  // If there is still work to be done...
-  if (comm_ctx->events_acked < comm_ctx->events_to_ack) {
+  // Ensure completion channel is in non-blocking mode.
+  int fd_flags = fcntl(comm_ctx->comp_channel->fd, F_GETFL);
+  if (fcntl(comm_ctx->comp_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
+    fprintf(stderr, "Failed to change file descriptor of completion event "
+      "channel.\n");
+    return -1;
+  }
 
-    // Ensure completion channel is in non-blocking mode.
-    int fd_flags = fcntl(comm_ctx->comp_channel->fd, F_GETFL);
-    if (fcntl(comm_ctx->comp_channel->fd, F_SETFL,
-          fd_flags | O_NONBLOCK) < 0) {
-      fprintf(stderr, "Failed to change file descriptor of completion "
-        "event channel.\n");
+  struct pollfd my_pollfd;
+  int ms_timeout = 100;
+  // Poll the completion channel, returning with flag unchanged if nothing
+  // is received.
+  my_pollfd.fd = comm_ctx->comp_channel->fd;
+  my_pollfd.events = POLLIN;
+  my_pollfd.revents = 0;
+  
+  // Nonblocking: if poll times out, just return.
+  int poll_result = poll(&my_pollfd, 1, ms_timeout);
+  if (poll_result < 0) {
+    //FM: This is probably an error. If none is received, we get back 0.
+    fprintf(stderr, "Error occured when polling completion channel.\n");
+    return -1;
+  }
+  else if (poll_result == 0) {
+
+    // We hav simply not recieved any events.
+    return 0;
+  }
+
+  // If something is received, get the completion event.
+  if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
+    fprintf(stderr, "Failed to get completion queue event.\n");
+    return -1;
+  }
+  
+  // Ack the completion event.
+  ibv_ack_cq_events(ev_cq, 1);
+
+  // While there are work completions in the completion queue, handle them.
+  struct ibv_wc wc;
+  int n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
+
+  // If ibv_poll_cq returns an error, return.
+  if (n_wcs < 0) {
+    fprintf(stderr, "ibv_poll_cq() failed.\n");
+    return -1;
+  }
+
+  while (n_wcs) {
+
+    // Handle the work completion.
+    if (naaice_swnaa_handle_work_completion(&wc, comm_ctx)) {
+      fprintf(stderr, "Error while handling work completion.\n");
       return -1;
     }
 
-    struct pollfd my_pollfd;
-    int ms_timeout = 100;
 
-    // Poll the completion channel, returning with flag unchanged if nothing
-    // is recieved.
-    my_pollfd.fd = comm_ctx->comp_channel->fd;
-    my_pollfd.events = POLLIN;
-    my_pollfd.revents = 0;
-
-    while(my_pollfd.revents == 0){    
-      if (poll(&my_pollfd, 1, ms_timeout) < 0) {
-      fprintf(stderr, "No completion recieved.\n");
-      return 0;
-    }
-    }
-
-    // If something is recieved, get the completion event.
-    if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
-      fprintf(stderr, "Failed to get completion queue event.\n");
-      return -1;
-    }
-    
-    // Ack the completion event.
-    ibv_ack_cq_events(ev_cq, comm_ctx->events_to_ack);
-    struct ibv_wc wc[comm_ctx->events_to_ack];
-    comm_ctx->events_acked = 0;
-
-    // Poll the completion queue.
-    int n_wcs = ibv_poll_cq(comm_ctx->cq,
-                           comm_ctx->events_to_ack - comm_ctx->events_acked,
-                           &wc[comm_ctx->events_acked]);
-    // If ibv_poll_cq returns an error, return.
+    // Find any remaining work completions in the queue.
+    n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
     if (n_wcs < 0) {
       fprintf(stderr, "ibv_poll_cq() failed.\n");
       return -1;
     }
-
-    // Increment the count of acked events.
-    comm_ctx->events_acked = comm_ctx->events_acked + n_wcs;
-    printf("%d of %d events polled\n", comm_ctx->events_acked,
-         comm_ctx->events_to_ack);
-  
-    // Request completion channel notifications.
-    if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
-      fprintf(
-          stderr,
-          "Failed to request completion channel notifications on completion "
-          "queue.\n");
-      return -1;
-    }
-
-    // Handle the work completions.
-    // TODO: Handle errors from this. If something goes wrong, disconnect?
-    for (int i = 0; i < comm_ctx->events_acked; i++) {
-      if (naaice_swnaa_handle_work_completion_mrsp(&wc[i], comm_ctx)) {
-        fprintf(stderr, "Error while handling work completion.\n");
-        return -1;
-      }
-    }
-
-    // Check the stopping condition again.
-    if (comm_ctx->events_acked < comm_ctx->events_to_ack) {
-      comm_ctx->routine_complete = false;
-    } else {
-      comm_ctx->routine_complete = true;
-    }
   }
 
-  // Otherwise we are already done.
-  else { comm_ctx->routine_complete = true; }
-
-  return 0;
-}
-
-int naaice_swnaa_poll_cq_blocking_mrsp(
-  struct naaice_communication_context *comm_ctx) {
-
-  debug_print("In naaice_swnaa_poll_cq_blocking_mrsp\n");
-
-  // TODO: consider a timeout here.
-  while(!comm_ctx->routine_complete) {
-    if (naaice_swnaa_poll_cq_nonblocking_mrsp(comm_ctx)) { return -1; }
+  // Request completion channel notifications for the next event.
+  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+    fprintf(
+        stderr,
+        "Failed to request completion channel notifications on completion "
+        "queue.\n");
+    return -1;
   }
 
   return 0;
 }
+
 // FM: No longer needed?
 int naaice_swnaa_handle_mr_announce(
   struct naaice_communication_context *comm_ctx) {
@@ -411,12 +459,6 @@ int naaice_swnaa_handle_mr_announce(
     comm_ctx->mr_peer_data[i].addr = ntohll(mr->addr);
     comm_ctx->mr_peer_data[i].rkey = ntohl(mr->rkey);
     comm_ctx->mr_peer_data[i].size = ntohl(mr->size);
-
-    /*
-    printf("Peer MR %d: Addr: %lX, Size: %d, rkey: %d\n", i + 1, 
-          (uintptr_t)peer[i].addr,
-          peer[i].size, peer[i].rkey);
-    */
   }
 
   return 0;
@@ -427,13 +469,14 @@ int naaice_swnaa_handle_mr_announce_and_request(
 
   debug_print("In naaice_swnaa_handle_mr_announce_and_request\n");
 
-    // First read the header.
+  // First read the header.
   struct naaice_mr_dynamic_hdr *dyn =
       (struct naaice_mr_dynamic_hdr *)(comm_ctx->mr_local_message->addr +
                                        sizeof(struct naaice_mr_hdr));
   
   // Get the number of host memory regions.
   comm_ctx->no_peer_mrs = dyn->count;
+
   //FM: Unless we deal with MR flags, the count will be the same on both sides 
   //Needed for sending back MR advertisement
   comm_ctx->no_local_mrs = dyn->count;
@@ -478,6 +521,8 @@ int naaice_swnaa_handle_mr_announce_and_request(
   // However, in the software NAA, we can simply ignore these fields and
   // allocate as normal. 
   // FM: In future we might need to handle mrflags maybe?
+  // Dylan: Yes for sure. This info should come from the confi files / memory
+  // management service / RMS
 
   comm_ctx->mr_local_data = calloc(comm_ctx->no_local_mrs, 
                               sizeof(struct naaice_mr_local));
@@ -527,6 +572,9 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
   enum message_id message_type, uint8_t errorcode) {
 
   debug_print("In naaice_swnaa_send_message\n");
+
+  // Update state.
+  comm_ctx->state = MRSP_SENDING;
   
   // This is the same as naaice_send_message, except that request messages are
   // not allowed to be sent from the server to host.
@@ -574,12 +622,10 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
 
-      /*
-      printf("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
+      debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
              (uintptr_t)comm_ctx->mr_local_data[i].addr,
              comm_ctx->mr_local_data[i].ibv->length,
              comm_ctx->mr_local_data[i].ibv->rkey);
-      */
 
       // Update packet size.
       msg_size += sizeof(struct naaice_mr_advertisement);
@@ -617,10 +663,6 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
   //wr.send_flags = IBV_SEND_SIGNALED;
   wr.send_flags = IBV_SEND_SOLICITED;
 
-  // Indicate that we expect one packet in response.
-  comm_ctx->events_to_ack = 1;
-  comm_ctx->events_acked = 0;
-
   // Send the packet.
   int post_result = ibv_post_send(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
@@ -637,8 +679,8 @@ int naaice_swnaa_post_recv_data(
 
   debug_print("In naaice_swnaa_post_recv_data\n");
 
-  //FM: only one recv request has to be constructed. Only the last write of the client triggers 
-  // completion of a recv request: the last RDMA_WRITE_WITH_IMM
+  // FM: only one recv request has to be constructed. Only the last write of the
+  // client triggers  completion of a recv request: the last RDMA_WRITE_WITH_IMM
   // Construct the recieve request and scatter/gather elements,
   // one for each memory region to be written to.
 
@@ -650,192 +692,18 @@ int naaice_swnaa_post_recv_data(
   sge.length = comm_ctx->mr_local_data[0].ibv->length;
   sge.lkey = comm_ctx->mr_local_data[0].ibv->lkey;
 
-    // TODO: Maybe hardcode a wr_id for each communication type.
+  // TODO: Maybe hardcode a wr_id for each communication type.
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 1;
   wr.sg_list = &sge;
   wr.num_sge = 1;
 
-    // If this is the last write request...
-  /*if (i == comm_ctx->no_local_mrs - 1) {
-      wr[i].next = NULL;
-    }
-    else {
-      wr[i].next = &wr[i+1];
-    }
-  }*/
-
-  // Indicate that we expect one response per write.
-  comm_ctx->events_to_ack = 1;
   // Post the recieve.
   int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
     fprintf(stderr, "Posting recieve for data failed with error %d.\n",
       post_result);
     return post_result;
-  }
-
-  return 0;
-}
-
-int naaice_swnaa_handle_work_completion_data(struct ibv_wc *wc,
-  struct naaice_communication_context *comm_ctx) {
-
-  debug_print("In naaice_swnaa_handle_work_completion_data\n");
-
-  // If the work completion status is not success, return with error.
-  if (wc->status != IBV_WC_SUCCESS) {
-    fprintf(stderr,
-            "Status is not IBV_WC_SUCCESS. Status %d for operation %d.\n",
-            wc->status, wc->opcode);
-    return -1;
-  }
-
-  // If we have received a write with immediate (i.e. the last parameter)...
-  else if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
-
-    // Check if the immediate value is zero, indicating an error.
-    if (!ntohl(wc->imm_data)) {
-      fprintf(stderr,
-              "Recieved write with immediate value zero.\n");
-      return -1;
-    }
-
-    // Otherwise, we can set the function code based on the immediate value.
-    comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data);
-
-    // Handle the metadata, recording the return address.
-    if (naaice_swnaa_handle_metadata(comm_ctx)) {
-      fprintf(stderr, "Error during RPC metadata handling.\n");
-      return -1;
-    }
-
-    // Update the state to indicate RPC is now being executed.
-    comm_ctx->state = RUNNING;
-
-    // Indicate that the data has not yet been written back.
-    comm_ctx->rdma_writes_done = 0;
-
-    // Now we are ready to perform the NAA procedure.
-    return 0;
-  }
-
-  // For all other completion codes...
-  else {  
-    fprintf(stderr,
-      "work completion opcode (wc opcode): %d, not handled. Disconnecting.\n",
-      wc->opcode);
-    return -1;
-  }
-
-  // If we've reached here, something has gone wrong.
-  fprintf(stderr, "Unknown error while handling work completion for data.\n");
-  return -1;
-}
-
-int naaice_swnaa_poll_cq_nonblocking_data(
-  struct naaice_communication_context *comm_ctx) {
-
-  debug_print("In naaice_swnaa_poll_cq_nonblocking_data\n");
-  //FM: events_acked needs to be reset to zero after last polling finished.
-  comm_ctx->events_acked =0;
-  struct ibv_cq *ev_cq;
-  void *ev_ctx;
-
-  // If there is still work to be done...
-  if (comm_ctx->events_acked < comm_ctx->events_to_ack) {
-
-    // Ensure completion channel is in non-blocking mode.
-    int fd_flags = fcntl(comm_ctx->comp_channel->fd, F_GETFL);
-    if (fcntl(comm_ctx->comp_channel->fd, F_SETFL,
-          fd_flags | O_NONBLOCK) < 0) {
-      fprintf(stderr, "Failed to change file descriptor of completion event "
-        "channel.\n");
-      return -1;
-    }
-
-    struct pollfd my_pollfd;
-    int ms_timeout = 100;
-
-    // Poll the completion channel, returning with flag unchanged if nothing
-    // is recieved.
-    my_pollfd.fd = comm_ctx->comp_channel->fd;
-    my_pollfd.events = POLLIN;
-    my_pollfd.revents = 0;
-
-    if (poll(&my_pollfd, 1, ms_timeout) < 0) {
-      fprintf(stderr, "No completion recieved.\n");
-      return 0;
-    }
-
-    // If something is recieved, get the completion event.
-    if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
-      fprintf(stderr, "Failed to get completion queue event.\n");
-      return -1;
-    }
-    
-    // Ack the completion event.
-    ibv_ack_cq_events(ev_cq, comm_ctx->events_to_ack);
-    struct ibv_wc wc[comm_ctx->events_to_ack];
-    comm_ctx->events_acked = 0;
-
-    // Poll the completion queue.
-    int n_wcs = ibv_poll_cq(comm_ctx->cq,
-                           comm_ctx->events_to_ack - comm_ctx->events_acked,
-                           &wc[comm_ctx->events_acked]);
-    // If ibv_poll_cq returns an error, return.
-    if (n_wcs < 0) {
-      fprintf(stderr, "ibv_poll_cq() failed.\n");
-      return -1;
-    }
-
-    // Increment the count of acked events.
-    comm_ctx->events_acked = comm_ctx->events_acked + n_wcs;
-    printf("%d of %d events polled\n", comm_ctx->events_acked,
-         comm_ctx->events_to_ack);
-  
-    // Request completion channel notifications.
-    if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
-      fprintf(
-          stderr,
-          "Failed to request completion channel notifications on completion "
-          "queue.\n");
-      return -1;
-    }
-
-    // Handle the work completions.
-    // TODO: Handle errors from this. If something goes wrong, disconnect?
-    for (int i = 0; i < comm_ctx->events_acked; i++) {
-      if (naaice_swnaa_handle_work_completion_data(&wc[i], comm_ctx)) {
-        fprintf(stderr, "Error while handling work completion.\n");
-        return -1;
-      }
-    }
-
-    // Check the stopping condition again.
-    if (comm_ctx->events_acked < comm_ctx->events_to_ack) {
-      comm_ctx->routine_complete = false;
-    } else {
-      comm_ctx->routine_complete = true;
-    }
-  }
-
-  // Otherwise we are already done.
-  else { comm_ctx->routine_complete = true; }
-
-  return 0;
-}
-
-int naaice_swnaa_poll_cq_blocking_data(
-  struct naaice_communication_context *comm_ctx) {
-
-  debug_print("In naaice_swnaa_poll_cq_blocking_data\n");
-  //FM: comm_ctx->routine_complete = true from poll_cq_nonblocking_mrsp -> reset false here. 
-  //FM: Maybe that member can be renamed?
-  comm_ctx->routine_complete = false;
-      // TODO: consider a timeout here.
-  while (!comm_ctx->routine_complete) {
-    if (naaice_swnaa_poll_cq_nonblocking_data(comm_ctx)) { return -1; }
   }
 
   return 0;
@@ -875,9 +743,17 @@ int naaice_swnaa_handle_metadata(
 
 int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t errorcode) {
+
   // FM TODO: What if we have more than one region to return? For example ping_pong example
   // Allow multiple wrs? multiple return addresses?
   debug_print("In naaice_swnaa_write_data\n");
+
+  // Print data to be written.
+  unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[1].addr;
+  debug_print("param data: %u\n", data[0]);
+
+  // Update state.
+  comm_ctx->state = DATA_SENDING;
 
   // If there are no memory regions to write back, return an error.
   if (comm_ctx->no_local_mrs < 1) {
@@ -914,10 +790,6 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
     wr.wr.rdma.remote_addr = 
       comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].addr;
     wr.wr.rdma.rkey = comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].rkey;
-    
-    // Indicate that we expect one ack in response.
-    comm_ctx->events_to_ack = 1;
-    comm_ctx->events_acked = 0;
 
     // Post the send.
     int post_result = ibv_post_send(comm_ctx->qp, &wr, &bad_wr);
@@ -930,117 +802,51 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   }
 
   // Otherwise, write back only the return parameter specified by the metadata.
-  //
-  // The NAA routine should place the return value contiguously in the
-  // parameter memory regions, starting with the first non-metadata region.
-  // Because the return parameter is one of the parameters, it is guranteed
-  // that there will be enough room. However, the return value may be split
-  // over multiple memory regions if the first (and second, etc.) region is
-  // too small to fit the return value.
-  //
-  // Therefore the data write may consist of one or multiple write requests
-  // (each having exactly one scatter/gather elements): one for each memory
-  // region required to fit the return value.
+  // The NAA routine should place the return value in the memory region specified
+  // as the return parameter by the metadata (i.e. the one indicated by
+  // comm_ctx->mr_return_idx, set in naaice_swnaa_handle_metadata).
   else {
 
-    // Get size of return value.
-    uint32_t return_size =
-      comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].size;
+    // Construct the write request and scatter/gather elements.
+    struct ibv_sge sge;
+    sge.addr = (uintptr_t)comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr;
+    sge.length = comm_ctx->mr_local_data[comm_ctx->mr_return_idx].ibv->length;
+    sge.lkey = comm_ctx->mr_local_data[comm_ctx->mr_return_idx].ibv->lkey;
 
-    // Use this value to track the total size of consequtive memory regions,
-    // in order to see how many are needed to fit the return value.
-    uint32_t total_size = 0;
+    debug_print("send addr: %p, length: %d, lkey %d\n",
+    (void*) sge.addr, sge.length, sge.lkey);
 
-    // Pointer keeping track of where we're writing to in the remote region.
-    uint64_t return_addr =
-      (uint64_t) comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr;
+    struct ibv_send_wr wr, *bad_wr = NULL;
+    memset(&wr, 0, sizeof(wr));
+    wr.wr_id = 1;
+    wr.sg_list = &sge;
+    wr.num_sge = 0;
+    wr.imm_data = htonl(0);
+    wr.opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
+    wr.send_flags = IBV_SEND_SOLICITED;
 
-    // Lists of write requests and scatter/gather elements, with the maximum
-    // number being the number of memory regions.
-    struct ibv_send_wr wr[comm_ctx->no_local_mrs];
-    struct ibv_send_wr *bad_wr = NULL;
-    struct ibv_sge sge[comm_ctx->no_local_mrs];
+    // TODO: Include multiple return regions in the future?
+    wr.wr.rdma.remote_addr = 
+      comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].addr;
+    wr.wr.rdma.rkey = comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].rkey;
 
-    // For each memory region...
-    //FM: Not for every region. Never metadata 
-    for (int i = 1; i < comm_ctx->no_local_mrs; i++) {
+    debug_print("remote address of return data: %p\n",
+      (void*) comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].addr);
 
-      // Start building the write request for this region.
-      memset(&wr[i], 0, sizeof(struct ibv_send_wr));
-      wr[i].wr_id = i;
-      wr[i].sg_list = &sge[i];
-      wr[i].num_sge = 1;
-      wr[i].wr.rdma.remote_addr = return_addr;
-      wr[i].wr.rdma.rkey =
-        comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].rkey;
-      wr[i].opcode = IBV_WR_RDMA_WRITE;
-
-      // Increment the size of the write, if we include this region.
-      total_size += comm_ctx->mr_local_data[i].size;
-
-      // Check if the return value will fit into the write if we include
-      // this region.
-      if (total_size >= return_size) {
-
-        // If so, make a write request and scatter/gather elements for this
-        // region, including only so much of this region is as required to fit
-        // the return value.
-        sge[i].addr = (uintptr_t) comm_ctx->mr_local_data[i].addr;
-        sge[i].length =
-          (uint32_t) (comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr
-          + return_size - return_addr);
-        sge[i].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
-
-        // Then finish up the write request and post it.
-        // The last write request is done with an immediate.
-        wr[i].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
-        wr[i].send_flags = IBV_SEND_SOLICITED;
-        wr[i].imm_data = htonl(0);
-        wr[i].next = NULL;
-
-        int post_result = ibv_post_send(comm_ctx->qp, &wr[0], &bad_wr);
-        if (post_result) {
-          fprintf(stderr, "Posting send for data write failed with "
-            "error %d.\n", post_result);
-          return post_result;
-        }
-
-        // If successful, go to the finished state and return.
-        comm_ctx->state = FINISHED;
-        return 0;
-      }
-
-      // If not...
-      else {
-
-        // If this is the last memory region and we still don't have enough
-        // space for the return value, something has gone wrong.
-        if (i == comm_ctx->no_local_mrs - 1) {
-          fprintf(stderr, "Unable to fit return value into local memory "
-            "regions.\n");
-          return -1;
-        }
-
-        // Simply make a write request and scatter/gather elements for
-        // this region.
-        // Writes before the last are done without an immediate.
-        wr[i].opcode = IBV_WR_RDMA_WRITE;
-        wr[i].next = &wr[i+1];
-
-        // Include the full size of this region.
-        sge[i].addr = (uintptr_t) comm_ctx->mr_local_data[i].addr;
-        sge[i].length = comm_ctx->mr_local_data[i].ibv->length;
-        sge[i].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
-
-        // Increment the point at which we are writing data to the remote.
-        return_addr += comm_ctx->mr_local_data[i].size;
-      }
+    // Post the send.
+    int post_result = ibv_post_send(comm_ctx->qp, &wr, &bad_wr);
+    if (post_result) {
+      fprintf(stderr, "Posting send for data write "
+        "failed with error %d.\n",
+        post_result);
+      return post_result;
     }
   }
 
-  // If we've reached here, something has gone wrong.
-  fprintf(stderr, "Unknown error while writing data.\n");
-  return -1;
+  // Update state.
+  comm_ctx->state = FINISHED;
+
+  return 0;
 }
 
 int naaice_swnaa_disconnect_and_cleanup(
@@ -1048,6 +854,78 @@ int naaice_swnaa_disconnect_and_cleanup(
 
   debug_print("In naaice_swnaa_disconnect_and_cleanup\n");
 
-  // Can simply call same logic used on the host side here.
-  return naaice_disconnect_and_cleanup(comm_ctx);
+  // Logic slightly different than on the host side:
+  // All local memory regions can be freed because they do not exist in user
+  // memory space.
+
+  // Disconnect.
+  rdma_disconnect(comm_ctx->id);
+
+  // Deregister memory regions.
+  int err = 0;
+  err = ibv_dereg_mr(comm_ctx->mr_local_message->ibv);
+  if (err) {
+    fprintf(stderr, "Deregestering local message memory region failed with "
+      "error %d.\n", err);
+    return -1;
+  }
+  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
+    err = ibv_dereg_mr(comm_ctx->mr_local_data[i].ibv);
+    if (err) {
+      fprintf(stderr, "Deregestering local data memory region failed with "
+        "error %d.\n", err);
+      return -1;
+    }
+    free((void *)(comm_ctx->mr_local_data[i].addr));
+  }
+
+  if (comm_ctx->state >= MRSP_DONE) {
+    free(comm_ctx->mr_peer_data);
+  }
+
+  free((void *)(comm_ctx->mr_local_message->addr));
+  free(comm_ctx->mr_local_message);
+  free(comm_ctx->mr_local_data);
+
+  // Destroy queue pair.
+  err = ibv_destroy_qp(comm_ctx->qp);
+  if (err) {
+    fprintf(stderr, "Destroying queue pair failed with error %d.\n", err);
+    return -1;
+  }
+
+  // Destroy completion queue.
+  err = ibv_destroy_cq(comm_ctx->cq);
+  if (err) {
+    fprintf(stderr, "Destroying completion queue failed with "
+      "error %d.\n", err);
+    return -1;
+  }
+
+  // Destroy completion channel.
+  err = ibv_destroy_comp_channel(comm_ctx->comp_channel);
+  if (err) {
+    fprintf(stderr, "Destroying completion channel failed with "
+      "error %d.\n", err);
+    return -1;
+  }
+
+  // Destroy protection domain.
+  err = ibv_dealloc_pd(comm_ctx->pd);
+  if (err) {
+    fprintf(stderr, "Destroying protection domain failed with "
+      "error %d.\n", err);
+    return -1;
+  }
+
+  // Destroy rdma communication id.
+  if (rdma_destroy_id(comm_ctx->id)) {
+    perror("Failed to destroy RDMA communication id.\n");
+    return -1;
+  }
+
+  // Destroy rdma event channel.
+  rdma_destroy_event_channel(comm_ctx->ev_channel);
+
+  return 0;
 }
