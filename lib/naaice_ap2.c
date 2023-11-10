@@ -24,7 +24,7 @@
 /* Dependencies **************************************************************/
 
 #include <naaice_ap2.h>
-#include <naaice.h>
+//#include <naaice.h>	// Moved to header.
 
 
 /* Constants *****************************************************************/
@@ -194,7 +194,8 @@ int naa_test(naa_handle *handle, bool *flag,
 	// Update completion flag.
 	*flag = handle->comm_ctx->state == FINISHED;
 
-	// TODO: Set status.
+	// Update the status struct,
+	status->state = handle->comm_ctx->state;
 
 	return 0;
 }

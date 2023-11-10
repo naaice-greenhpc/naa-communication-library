@@ -166,6 +166,45 @@ struct naaice_rpc_metadata {
     uintptr_t return_addr;
 };
 
+// Connection state machine.
+// Control flow:
+//
+// NAA goes from:
+//  INIT: Starting state.
+//  CONNECTED: Connection established.
+//  MRSP_RECEIVING: Waiting for / processing MRSP packet from host.
+//  MRSP_SENDING: Posting write for MRSP packet.
+//  MRSP_DONE: Finished MRSP.
+//  DATA_RECEIVING: Waiting for / processing data transfer from host.
+//  CALCULATING: Running RPC.
+//  DATA_SENDING: Posting write for data transfer back to host.
+//  FINISHED: Done!
+//
+// Host goes from:
+//  INIT: Starting state.
+//  READY: Address resolved.
+//  CONNECTED: Connection established.
+//  MRSP_SENDING: Posting write for MRSP packet.
+//  MRSP_REVEIVING: Waiting for / processing MRSP response from NAA.
+//  MRSP_DONE: Finished MRSP.
+//  DATA_SENDING: Posting write for data transfer to NAA.
+//  DATA_RECEIVING: Waiting for / processing data transfer back from NAA.
+//  FINISHED: Done!
+enum naaice_communication_state
+{
+  INIT            = 00,
+  READY           = 01,
+  CONNECTED       = 02,
+  MRSP_SENDING    = 10,
+  MRSP_RECEIVING  = 11,
+  MRSP_DONE       = 12,
+  DATA_SENDING    = 20,
+  CALCULATING     = 21,
+  DATA_RECEIVING  = 22,
+  FINISHED        = 30,
+  ERROR           = 40,
+};
+
 // Struct which holds all information about the connection.
 // Passed to almost all AP1 functions.
 struct naaice_communication_context
@@ -178,6 +217,9 @@ struct naaice_communication_context
   struct ibv_comp_channel *comp_channel;  // Completion channel.
   struct ibv_cq *cq;                      // Completion queue.
   struct ibv_qp *qp;                      // Queue pair.
+
+  // Current state.
+  enum naaice_communication_state state;
 
   // Local memory regions.
   struct naaice_mr_local *mr_local_data;
@@ -195,45 +237,6 @@ struct naaice_communication_context
 
   // Used for MRSP.
   struct naaice_mr_local *mr_local_message;
-
-  // Connection state machine.
-  // Control flow:
-  //
-  // NAA goes from:
-  //  INIT: Starting state.
-  //  CONNECTED: Connection established.
-  //  MRSP_RECEIVING: Waiting for / processing MRSP packet from host.
-  //  MRSP_SENDING: Posting write for MRSP packet.
-  //  MRSP_DONE: Finished MRSP.
-  //  DATA_RECEIVING: Waiting for / processing data transfer from host.
-  //  CALCULATING: Running RPC.
-  //  DATA_SENDING: Posting write for data transfer back to host.
-  //  FINISHED: Done!
-  //
-  // Host goes from:
-  //  INIT: Starting state.
-  //  READY: Address resolved.
-  //  CONNECTED: Connection established.
-  //  MRSP_SENDING: Posting write for MRSP packet.
-  //  MRSP_REVEIVING: Waiting for / processing MRSP response from NAA.
-  //  MRSP_DONE: Finished MRSP.
-  //  DATA_SENDING: Posting write for data transfer to NAA.
-  //  DATA_RECEIVING: Waiting for / processing data transfer back from NAA.
-  //  FINISHED: Done!
-  enum
-  {
-    INIT            = 00,
-    READY           = 01,
-    CONNECTED       = 02,
-    MRSP_SENDING    = 10,
-    MRSP_RECEIVING  = 11,
-    MRSP_DONE       = 12,
-    DATA_SENDING    = 20,
-    CALCULATING     = 21,
-    DATA_RECEIVING  = 22,
-    FINISHED        = 30,
-    ERROR           = 40,
-  } state;
 
   // Function code indicating which NAA routine to be called.
   uint8_t fncode;

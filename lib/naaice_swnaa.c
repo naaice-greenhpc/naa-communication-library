@@ -35,10 +35,9 @@
 
 /* Helper Functions **********************************************************/
 
-// Prints a string representing a work completion opcode.
-// Used in debugging.
 // Implemented in naaice.c.
-void print_ibv_wc_opcode(enum ibv_wc_opcode opcode);
+const char* get_ibv_wc_opcode_str(enum ibv_wc_opcode opcode);
+const char* get_state_str(enum naaice_communication_state state);
 
 
 /* Function Implementations **************************************************/
@@ -210,8 +209,9 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
   debug_print("In naaice_swnaa_handle_work_completion\n");
 
-  debug_print("state: %d, opcode:\n", comm_ctx->state);
-  print_ibv_wc_opcode(wc->opcode);
+  debug_print("state: %s, opcode: %s\n",
+    get_state_str(comm_ctx->state),
+    get_ibv_wc_opcode_str(wc->opcode));
   
   // If the work completion status is not success, return with error.
   if (wc->status != IBV_WC_SUCCESS) {

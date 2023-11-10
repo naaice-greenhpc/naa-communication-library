@@ -45,6 +45,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <naaice.h>   // Included here to get enum naaice_communication_state.
 
 
 /* Structs *******************************************************************/
@@ -64,7 +65,7 @@ typedef struct naa_handle {
 
 // Struct to hold status information about the NAA session.
 typedef struct naa_status {
-  int prevent_empty_struct_warning;
+  enum naaice_communication_state state;
 } naa_status;
 
 

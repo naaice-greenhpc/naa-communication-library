@@ -43,20 +43,38 @@
 
 /* Helper Functions **********************************************************/
 
-// Prints a string representing a work completion opcode.
+// Returns a string representing a work completion opcode.
 // Used in debugging.
-void print_ibv_wc_opcode(enum ibv_wc_opcode opcode) {
+const char* get_ibv_wc_opcode_str(enum ibv_wc_opcode opcode) {
   switch (opcode) {
-    case IBV_WC_SEND: debug_print("IBV_WC_SEND\n"); return;
-    case IBV_WC_RDMA_WRITE: debug_print("IBV_WC_RDMA_WRITE\n"); return;
-    case IBV_WC_RDMA_READ: debug_print("IBV_WC_RDMA_READ\n"); return;
-    case IBV_WC_COMP_SWAP: debug_print("IBV_WC_COMP_SWAP\n"); return;
-    case IBV_WC_FETCH_ADD: debug_print("IBV_WC_FETCH_ADD\n"); return;
-    case IBV_WC_BIND_MW: debug_print("IBV_WC_BIND_MW\n"); return;
-    case IBV_WC_RECV: debug_print("IBV_WC_RECV\n"); return;
-    case IBV_WC_RECV_RDMA_WITH_IMM: debug_print("IBV_WC_RECV_RDMA_WITH_IMM\n");
-      return;
-    default: debug_print("Unhandled opcode\n"); return;
+    case IBV_WC_SEND: return "IBV_WC_SEND";
+    case IBV_WC_RDMA_WRITE: return "IBV_WC_RDMA_WRITE";
+    case IBV_WC_RDMA_READ: return "IBV_WC_RDMA_READ";
+    case IBV_WC_COMP_SWAP: return "IBV_WC_COMP_SWAP";
+    case IBV_WC_FETCH_ADD: return "IBV_WC_FETCH_ADD";
+    case IBV_WC_BIND_MW: return "IBV_WC_BIND_MW";
+    case IBV_WC_RECV: return "IBV_WC_RECV";
+    case IBV_WC_RECV_RDMA_WITH_IMM: return "IBV_WC_RECV_RDMA_WITH_IMM";
+    default: return "Unhandled Opcode";
+  }
+}
+
+// Returns a string representing a naaice connection state.
+// Used in debugging.
+const char* get_state_str(enum naaice_communication_state state) {
+  switch (state) {
+    case INIT: return "INIT";
+    case READY: return "READY";
+    case CONNECTED: return "CONNECTED";
+    case MRSP_SENDING: return "MRSP_SENDING";
+    case MRSP_RECEIVING: return "MRSP_RECEIVING";
+    case MRSP_DONE: return "MRSP_DONE";
+    case DATA_SENDING: return "DATA_SENDING";
+    case CALCULATING: return "CALCULATING";
+    case DATA_RECEIVING: return "DATA_RECEIVING";
+    case FINISHED: return "FINISHED";
+    case ERROR: return "ERROR";
+    default: return "Unknown State";
   }
 }
 
@@ -615,8 +633,9 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
   debug_print("In naaice_handle_work_completion\n");
 
-  debug_print("state: %d, opcode:", comm_ctx->state);
-  print_ibv_wc_opcode(wc->opcode);
+  debug_print("state: %s, opcode: %s\n",
+    get_state_str(comm_ctx->state),
+    get_ibv_wc_opcode_str(wc->opcode));
   
   // If the work completion status is not success, return with error.
   if (wc->status != IBV_WC_SUCCESS) {
