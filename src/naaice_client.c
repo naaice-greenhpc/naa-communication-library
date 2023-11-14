@@ -122,20 +122,16 @@ int main(int argc, char *argv[]) {
 
   // Set metadata (i.e. return address).
   // For our example, the return parameter is the last one.
+  unsigned char return_param_idx = params_amount - 1;
   printf("-- Setting Metadata --\n");
-  if (naaice_set_metadata(comm_ctx, (uintptr_t) params[params_amount-1])) {
+  if (naaice_set_metadata(comm_ctx, (uintptr_t) params[return_param_idx])) {
     return -1; }
 
   // Do the memory region setup protocol.
   printf("-- Doing MRSP --\n");
   if (naaice_do_mrsp(comm_ctx)) { return -1; }
 
-  // FM: We have to do this at least twice: once for the send wc and once for
-  // the recv wc.
-  // For now I introduced a new state and that state signifies the end of MRSP
-  // Loop handling data transmission until RPC and communication is complete.
-  // Move loop into init_mrsp 
-  // FM TODO: some naaice_init_data_transfer() method that sends data after MRSP is done. This will be called by naa_invoke i assume
+  // Start data transfer.
   printf("-- Doing Data Transfer --\n");
   if (naaice_init_data_transfer(comm_ctx)) { return -1; }
 
@@ -150,13 +146,27 @@ int main(int argc, char *argv[]) {
   if (naaice_disconnect_and_cleanup(comm_ctx)) { return -1; }
 
   // At this point, we can check the data for correctness.
-  // For the simple SWNAA example, we expect all values in our parameters to
-  // have been incremented.
+  // For the simple SWNAA example, we expect all values in the return parameter
+  // to have been incremented, and the other parameters to be unchanged.
   printf("-- Checking Results --\n");
   for (unsigned char i = 0; i < params_amount; i++) {
-    unsigned char first_el = (unsigned char) *(params[i]);
-    printf("Parameter %u: first element: %u. Expected %u\n. Success? %s\n",
-      i, first_el, i+1, (first_el == (i+1)) ? "yes" : "no");
+
+    bool success = true;
+    unsigned char *data = (unsigned char *)(params[i]);
+    for(unsigned int j = 0; j < param_sizes[i]; j++) {
+
+      unsigned char el = data[j];
+
+      if (i == return_param_idx) {
+        if (el != i+1) { success = false; }
+      }
+      else {
+        if (el != i) { success = false; }
+      }
+    }
+
+    printf("Parameter %u: first element: %u. Success? %s\n",
+          i, data[0], success ? "yes" : "no");
   }
 
   return 0;
