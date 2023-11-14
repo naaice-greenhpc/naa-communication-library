@@ -465,6 +465,9 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
 }
 
 int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
+
+  debug_print("In naaice_init_rdma_resources\n");
+
   // Moved from naaice_handle_addr_resolved since server never encounters this
   // the rdma_cm_id member verbs is only set after rdma_resolve_addr or
   // rdma_resolve_route we could also just pass comm_ctx->id->verbs if thats
@@ -665,7 +668,22 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // Then we've recieved an MRSP message. Handle it.
 
-      // Update state.
+      // Print all information about the work completion.
+      /*
+      debug_print("Work Completion (MRSP):\n");
+      debug_print("wr_id: %ld\n", wc->wr_id);
+      debug_print("status: %d\n", wc->status);
+      debug_print("opcode: %d\n", wc->opcode);
+      debug_print("vendor_err: %08X\n", wc->vendor_err);
+      debug_print("byte_len: %d\n", wc->byte_len);
+      debug_print("imm_data: %d\n", wc->imm_data);
+      debug_print("qp_num: %d\n", wc->qp_num);
+      debug_print("src_qp: %d\n", wc->src_qp);
+      debug_print("wc_flags: %d\n", wc->wc_flags);
+      debug_print("slid: %d\n", wc->slid);
+      debug_print("sl: %d\n", wc->sl);
+      debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
+      */
 
       struct naaice_mr_hdr *msg =
         (struct naaice_mr_hdr *)comm_ctx->mr_local_message->addr;
@@ -793,7 +811,26 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
         return ntohl(wc->imm_data);
       }
 
-      debug_print("transfer size: %d\n", wc->byte_len);
+      // Print all information about the work completion.
+      /*
+      debug_print("Work Completion (Data):\n");
+      debug_print("wr_id: %ld\n", wc->wr_id);
+      debug_print("status: %d\n", wc->status);
+      debug_print("opcode: %d\n", wc->opcode);
+      debug_print("vendor_err: %08X\n", wc->vendor_err);
+      debug_print("byte_len: %d\n", wc->byte_len);
+      debug_print("imm_data: %d\n", wc->imm_data);
+      debug_print("qp_num: %d\n", wc->qp_num);
+      debug_print("src_qp: %d\n", wc->src_qp);
+      debug_print("wc_flags: %d\n", wc->wc_flags);
+      debug_print("slid: %d\n", wc->slid);
+      debug_print("sl: %d\n", wc->sl);
+      debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
+      */
+
+      // Print written data.
+      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr;
+      debug_print("param data: %u\n", data[0]);
 
       // If no error, go to finished state.
       comm_ctx->state = FINISHED;

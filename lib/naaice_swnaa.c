@@ -246,6 +246,23 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       // If the message was an announce + request...
       else if (msg->type == MSG_MR_AAR) {
 
+        // Print all information about the work completion.
+        /*
+        debug_print("Work Completion (MRSP):\n");
+        debug_print("wr_id: %ld\n", wc->wr_id);
+        debug_print("status: %d\n", wc->status);
+        debug_print("opcode: %d\n", wc->opcode);
+        debug_print("vendor_err: %08X\n", wc->vendor_err);
+        debug_print("byte_len: %d\n", wc->byte_len);
+        debug_print("imm_data: %d\n", wc->imm_data);
+        debug_print("qp_num: %d\n", wc->qp_num);
+        debug_print("src_qp: %d\n", wc->src_qp);
+        debug_print("wc_flags: %x\n", wc->wc_flags);
+        debug_print("slid: %d\n", wc->slid);
+        debug_print("sl: %d\n", wc->sl);
+        debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
+        */
+
         if (naaice_swnaa_handle_mr_announce_and_request(comm_ctx)) {
 
           // If an error occurs, send an error message to the host.
@@ -313,11 +330,26 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       }
 
       // Otherwise, we can set the function code based on the immediate value.
-      debug_print("wc->imm_data: %d, ntohl(wc->imm_data): %d\n", 
-        wc->imm_data, ntohl(wc->imm_data));
       comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data);
 
-      debug_print("transfer size: %d\n", wc->byte_len);
+      // Print all information about the work completion.
+      /*
+      debug_print("Work Completion (Data):\n");
+      debug_print("wr_id: %ld\n", wc->wr_id);
+      debug_print("status: %d\n", wc->status);
+      debug_print("opcode: %d\n", wc->opcode);
+      debug_print("vendor_err: %08X\n", wc->vendor_err);
+      debug_print("byte_len: %d\n", wc->byte_len);
+      debug_print("imm_data: %d\n", wc->imm_data);
+      debug_print("qp_num: %d\n", wc->qp_num);
+      debug_print("src_qp: %d\n", wc->src_qp);
+      debug_print("wc_flags: %x\n", wc->wc_flags);
+      debug_print("slid: %d\n", wc->slid);
+      debug_print("sl: %d\n", wc->sl);
+      debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
+      */
+
+      //debug_print("transfer size: %d\n", wc->byte_len);
 
       // Handle the metadata, recording the return address.
       if (naaice_swnaa_handle_metadata(comm_ctx)) {
@@ -700,6 +732,9 @@ int naaice_swnaa_post_recv_data(
   sge.length = comm_ctx->mr_local_data[0].ibv->length;
   sge.lkey = comm_ctx->mr_local_data[0].ibv->lkey;
 
+  debug_print("recv addr: %p, length: %d, lkey %d\n",
+    (void*) sge.addr, sge.length, sge.lkey);
+
   // TODO: Maybe hardcode a wr_id for each communication type.
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 1;
@@ -757,7 +792,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   debug_print("In naaice_swnaa_write_data\n");
 
   // Print data to be written.
-  unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[1].addr;
+  unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr;
   debug_print("param data: %u\n", data[0]);
 
   // Update state.
@@ -828,7 +863,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
     memset(&wr, 0, sizeof(wr));
     wr.wr_id = 1;
     wr.sg_list = &sge;
-    wr.num_sge = 0;
+    wr.num_sge = 1;
     wr.imm_data = htonl(0);
     wr.opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
     wr.send_flags = IBV_SEND_SOLICITED;
@@ -840,6 +875,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 
     debug_print("remote address of return data: %p\n",
       (void*) comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].addr);
+    debug_print("rkey: %d\n", wr.wr.rdma.rkey);
 
     // Post the send.
     int post_result = ibv_post_send(comm_ctx->qp, &wr, &bad_wr);
