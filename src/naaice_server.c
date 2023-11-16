@@ -111,14 +111,6 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   printf("-- Doing MRSP --\n");
   if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
-  // Check results of MRSP.
-  printf("MRSP Results:\n");
-  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
-    printf("Local MR %d: Addr: %lX, Size: %d\n", i + 1,
-            (uint64_t) comm_ctx->mr_local_data[i].addr,
-            comm_ctx->mr_local_data[i].size);
-  }
-
   // Receive data transfer from host.
   printf("-- Receiving Data Transfer --\n");
   if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }

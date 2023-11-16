@@ -82,6 +82,8 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->state = INIT;
   (*comm_ctx)->id = rdma_comm_id;
   (*comm_ctx)->no_local_mrs = 0;
+  (*comm_ctx)->no_peer_mrs = 0;
+  (*comm_ctx)->no_internal_mrs = 0;
   (*comm_ctx)->mr_return_idx = 0;
   (*comm_ctx)->rdma_writes_done = 0;
   (*comm_ctx)->fncode = 0;
@@ -98,7 +100,7 @@ int naaice_swnaa_init_communication_context(
             "Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
-  (*comm_ctx)->mr_local_message->addr = calloc(1, MR_SIZE_MR_EXHANGE);
+  (*comm_ctx)->mr_local_message->addr = calloc(1, MR_SIZE_MRSP);
   if ((*comm_ctx)->mr_local_message->addr == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
@@ -507,6 +509,14 @@ int naaice_swnaa_handle_mr_announce(
 int naaice_swnaa_handle_mr_announce_and_request(
     struct naaice_communication_context *comm_ctx) {
 
+  // The request packet includes the fields mrflags and fpgaaddress, which
+  // specify how an FPGA-based NAA should handle memory region allocation.
+  // However, in the software NAA, we can simply ignore these fields and
+  // allocate as normal. 
+  // FM: In future we might need to handle mrflags maybe?
+  // Dylan: Yes for sure. This info should come from the config files / memory
+  // management service / RMS
+
   debug_print("In naaice_swnaa_handle_mr_announce_and_request\n");
 
   // First read the header.
@@ -514,20 +524,52 @@ int naaice_swnaa_handle_mr_announce_and_request(
       (struct naaice_mr_dynamic_hdr *)(comm_ctx->mr_local_message->addr +
                                        sizeof(struct naaice_mr_hdr));
   
-  // Get the number of host memory regions.
-  comm_ctx->no_peer_mrs = dyn->count;
+  // Get the number of advertised memory regions.
+  uint8_t n_advertised_mrs = dyn->count;
 
-  //FM: Unless we deal with MR flags, the count will be the same on both sides 
-  //Needed for sending back MR advertisement
-  comm_ctx->no_local_mrs = dyn->count;
+  // First, iterate through the message and count the number of "normal" memory
+  // regions (i.e. parameters and metadata) and the number of requested
+  // internal memory regions.
 
-  // This is also the number of local memory regions we should have
-  // (in the symmetric memory region scheme).
-  comm_ctx->no_local_mrs = comm_ctx->no_peer_mrs;
+  // Pointer to current position in packet being read.
+  struct naaice_mr_advertisement_request *curr;
+
+  for (int i = 0; i < n_advertised_mrs; i++) {
+
+    // Point to next position in the packet.
+    curr = (struct naaice_mr_advertisement_request*)
+      (comm_ctx->mr_local_message->addr +
+      (sizeof(struct naaice_mr_hdr) +
+      sizeof(struct naaice_mr_dynamic_hdr) +
+      (i) * sizeof(struct naaice_mr_advertisement_request)));
+
+    // If the memory region flags indicate that this is an internal memory
+    // region, increment the number of those. Otherwise this is a "normal"
+    // memory region.
+    if (ntohll(curr->mrflags) && MRFLAG_INTERNAL) {
+      comm_ctx->no_internal_mrs++;
+    }
+    else {
+      comm_ctx->no_local_mrs++;
+    }
+  }
+
+  // Allocate memory to hold information about local memory regions.
+  // This doesn't include the internal memory regions.
+  comm_ctx->mr_local_data =
+    calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
+  if (comm_ctx->mr_local_data == NULL) {
+    fprintf(stderr,
+            "Failed to allocate memory for local memory region structures.\n");
+    return -1;
+  }
+
+  // Number of peer memory regions is the number of "normal" ones advertised.
+  comm_ctx->no_peer_mrs = comm_ctx->no_local_mrs;
   
-  // Allocate memory to hold information about host memory regions.
+  // Allocate memory to hold information about peer memory regions.
   comm_ctx->mr_peer_data =
-      calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
+    calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
   if (comm_ctx->mr_peer_data == NULL) {
     fprintf(stderr,
             "Failed to allocate memory for remote memory region "
@@ -535,74 +577,110 @@ int naaice_swnaa_handle_mr_announce_and_request(
     return -1;
   }
 
-  // Pointer to current position in packet being read.
-  struct naaice_mr_advertisement_request *mr;
+  // Allocate memory to hold information about internal memory regions.
+  comm_ctx->mr_internal = 
+    calloc(comm_ctx->no_internal_mrs, sizeof(struct naaice_mr_internal));
 
-  // For each host memory region...
-  for (int i = 0; i < comm_ctx->no_peer_mrs; i++) {
+  // Now iterate through the memory regions again.
+  // For a "normal" (aka not internal) memory region, set the fields in the
+  // associated peer memory region and local memory region structs, allocate
+  // memory for the region locally, and register the memory region with ibv.
+  // For an internal memory region, set the fields in the associated internal
+  // memory region struct and allocate memory for the region locally.
+
+  // We have to keep separate counts of internal and normal MRs as we go.
+  uint8_t local_count = 0, internal_count = 0;
+  for (int i = 0; i < n_advertised_mrs; i++) {
 
     // Point to next position in the packet.
-    mr = (struct naaice_mr_advertisement_request
-              *)(comm_ctx->mr_local_message->addr +
-                 (sizeof(struct naaice_mr_hdr) +
-                  sizeof(struct naaice_mr_dynamic_hdr) +
-                  (i) * sizeof(struct naaice_mr_advertisement_request)));
+    curr = (struct naaice_mr_advertisement_request*)
+      (comm_ctx->mr_local_message->addr +
+      (sizeof(struct naaice_mr_hdr) +
+      sizeof(struct naaice_mr_dynamic_hdr) +
+      (i) * sizeof(struct naaice_mr_advertisement_request)));
 
-    // Set fields.
-    comm_ctx->mr_peer_data[i].addr = ntohll(mr->addr);
-    comm_ctx->mr_peer_data[i].rkey = ntohl(mr->rkey);
-    comm_ctx->mr_peer_data[i].size = ntohl(mr->size);
-  }
+    // If this is an internal memory region...
+    if (ntohll(curr->mrflags) && MRFLAG_INTERNAL) {
 
-  // Now we need to allocate local memory regions based on this information.
+      debug_print("Processing internal memory region\n");
 
-  // The request packet includes the fields mrflags and fpgaaddress, which
-  // specify how an FPGA-based NAA should handle memory region allocation.
-  // However, in the software NAA, we can simply ignore these fields and
-  // allocate as normal. 
-  // FM: In future we might need to handle mrflags maybe?
-  // Dylan: Yes for sure. This info should come from the confi files / memory
-  // management service / RMS
+      // Allocate memory for the region.
+      // TODO: This address needs to be set based on the fpgaaddr field.
+      comm_ctx->mr_internal[internal_count].addr =
+        calloc(1, ntohl(curr->size));
+      if (comm_ctx->mr_internal[internal_count].addr == NULL) {
+        fprintf(stderr,
+          "Failed to allocate memory for internal memory region buffer.\n");
+        return -1;
+      }
 
-  comm_ctx->mr_local_data = calloc(comm_ctx->no_local_mrs, 
-                              sizeof(struct naaice_mr_local));
-  if (comm_ctx->mr_local_data == NULL) {
-    fprintf(stderr,
-            "Failed to allocate memory for local memory region structures.\n");
-    return -1;
-  }
-  
-  // For each memory region...
-  for (int i = 0; i < (comm_ctx->no_local_mrs); i++) {
+      // Set the size of the memory region.
+      comm_ctx->mr_internal[internal_count].size = ntohl(curr->size);
 
-    // Allocate memory for the memory region. This will be written into later
-    // during data transmission.
-    // TODO: consider the role of the memaling here. Does it need to be done
-    // on the server side at all? When used here, it causes ibv_reg_mr to fail
-    // with errno 22, i.e. bad argument.
-    /*
-    posix_memalign((void **)&(comm_ctx->mr_local_data[i].addr),
-                   sysconf(_SC_PAGESIZE), comm_ctx->mr_peer_data[i].size);
-    */
-    comm_ctx->mr_local_data[i].addr = calloc(1, comm_ctx->mr_peer_data[i].size);
-    if (comm_ctx->mr_local_data[i].addr == NULL) {
-      fprintf(stderr,
-              "Failed to allocate memory for local memory region buffer.\n");
-      return -1;
+      debug_print("Internal MR %d: Addr: %lX, Size: %d\n", internal_count + 1,
+        (uintptr_t) comm_ctx->mr_internal[internal_count].addr,
+        comm_ctx->mr_internal[internal_count].size);
+
+      // Increment count.
+      internal_count++;
     }
 
-    // Register the memory region.
-    comm_ctx->mr_local_data[i].ibv =
-        ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_data[i].addr,
-                   comm_ctx->mr_peer_data[i].size,
-                   (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
-    if (comm_ctx->mr_local_data[i].ibv == NULL) {
-      fprintf(stderr, "Failed to register memory for local memory region.\n");
-      return -1;
-    }
+    // Otherwise, if this is a "normal" memory region...
+    else {
 
-    // Set the size of the memory region.
-    comm_ctx->mr_local_data[i].size = comm_ctx->mr_local_data[i].ibv->length;
+      debug_print("Processing local memory region\n");
+
+      // Set peer memory region fields.
+      comm_ctx->mr_peer_data[local_count].addr = ntohll(curr->addr);
+      comm_ctx->mr_peer_data[local_count].rkey = ntohl(curr->rkey);
+      comm_ctx->mr_peer_data[local_count].size = ntohl(curr->size);
+
+      debug_print("1\n");
+
+      // Allocate memory for the region.
+      comm_ctx->mr_local_data[local_count].addr =
+        calloc(1, comm_ctx->mr_peer_data[local_count].size);
+      if (comm_ctx->mr_local_data[local_count].addr == NULL) {
+        fprintf(stderr,
+          "Failed to allocate memory for local memory region buffer.\n");
+        return -1;
+      }
+
+      debug_print("2\n");
+
+
+      // Register the memory region.
+      comm_ctx->mr_local_data[local_count].ibv =
+          ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_data[local_count].addr,
+                     comm_ctx->mr_peer_data[local_count].size,
+                     (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
+      if (comm_ctx->mr_local_data[local_count].ibv == NULL) {
+        fprintf(stderr, "Failed to register memory for local memory region.\n");
+        return -1;
+      }
+
+      debug_print("3\n");
+
+
+      // Set the size of the memory region.
+      comm_ctx->mr_local_data[local_count].size =
+        comm_ctx->mr_local_data[local_count].ibv->length;
+
+      debug_print("4\n");
+
+
+      debug_print("Local MR %d: Addr: %lX, Size: %lu\n", local_count + 1,
+       (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
+       comm_ctx->mr_local_data[local_count].ibv->length);
+
+      debug_print("Peer MR %d: Addr: %lX, Size: %lu, rkey: %u\n", local_count + 1,
+       (uintptr_t)comm_ctx->mr_peer_data[local_count].addr,
+       comm_ctx->mr_peer_data[local_count].size,
+       comm_ctx->mr_peer_data[local_count].rkey);
+
+      // Increment count.
+      local_count++;
+    }
   }
 
   return 0;
@@ -661,11 +739,6 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
       curr->addr = htonll((uintptr_t)comm_ctx->mr_local_data[i].addr);
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
-
-      debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
-             (uintptr_t)comm_ctx->mr_local_data[i].addr,
-             comm_ctx->mr_local_data[i].ibv->length,
-             comm_ctx->mr_local_data[i].ibv->rkey);
 
       // Update packet size.
       msg_size += sizeof(struct naaice_mr_advertisement);

@@ -124,6 +124,8 @@ int naaice_init_communication_context(
   (*comm_ctx)->state = INIT;
   (*comm_ctx)->id = rdma_comm_id;
   (*comm_ctx)->no_local_mrs = params_amount + 1;
+  (*comm_ctx)->no_peer_mrs = 0;
+  (*comm_ctx)->no_internal_mrs = 0;
   (*comm_ctx)->mr_return_idx = 0;
   (*comm_ctx)->rdma_writes_done = 0;
   (*comm_ctx)->fncode = fncode;
@@ -179,7 +181,7 @@ int naaice_init_communication_context(
             "Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
-  (*comm_ctx)->mr_local_message->addr = calloc(1, MR_SIZE_MR_EXHANGE);
+  (*comm_ctx)->mr_local_message->addr = calloc(1, MR_SIZE_MRSP);
   if ((*comm_ctx)->mr_local_message->addr == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
@@ -320,7 +322,7 @@ int naaice_handle_connection_requests(
 
     // Register the memory region used for MRSP on the server side. 
     comm_ctx->mr_local_message->ibv = ibv_reg_mr(
-        comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MR_EXHANGE,
+        comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MRSP,
         (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
     if (comm_ctx->mr_local_message->ibv == NULL) {
       fprintf(stderr,
@@ -556,7 +558,7 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
   // Register the memory region used for MRSP.
   comm_ctx->mr_local_message->ibv = 
     ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_message->addr,
-      MR_SIZE_MR_EXHANGE, (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
+      MR_SIZE_MRSP, (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
   if (comm_ctx->mr_local_message->ibv == NULL) {
     fprintf(stderr,
             "Failed to register memory for memory region setup protocol.\n");
@@ -602,6 +604,33 @@ int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
   struct naaice_rpc_metadata *metadata = 
     (struct naaice_rpc_metadata*) (comm_ctx->mr_local_data[0].addr);
   metadata->return_addr = htonll((uintptr_t)return_addr);
+
+  return 0;
+}
+
+int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
+  unsigned int n_internal_mrs, uintptr_t *addrs, size_t *sizes) {
+
+  debug_print("In naaice_set_internal_mrs\n");
+
+  // Update number of internal memory regions.
+  comm_ctx->no_internal_mrs = n_internal_mrs;
+
+  // Allocate space for internal memory region structs.
+  comm_ctx->mr_internal = calloc(comm_ctx->no_internal_mrs,
+    sizeof(struct naaice_mr_internal));
+
+  if (!comm_ctx->mr_internal) {
+    fprintf(stderr,
+      "Failed to allocate internal memory region structures.\n");
+    return -1;
+  }
+
+  // Update information in these structs.
+  for (unsigned int i = 0; i < n_internal_mrs; i++) {
+    comm_ctx->mr_internal[i].addr = (char*) addrs[i];
+    comm_ctx->mr_internal[i].size = sizes[i];
+  }
 
   return 0;
 }
@@ -722,7 +751,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
           peer[i].addr = ntohll(mr->addr);
           peer[i].rkey = ntohl(mr->rkey);
           peer[i].size = ntohl(mr->size);
-          debug_print("Peer MR %d: Addr: %lX, Size: %d, rkey: %d\n", i + 1,
+          debug_print("Peer MR %d: Addr: %lX, Size: %lu, rkey: %d\n", i + 1,
                  peer[i].addr, peer[i].size, peer[i].rkey);
           mr = (struct naaice_mr_advertisement
                     *)(comm_ctx->mr_local_message->addr +
@@ -1106,27 +1135,31 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
     struct naaice_mr_dynamic_hdr *dyn =
         (struct naaice_mr_dynamic_hdr *)(msg + sizeof(struct naaice_mr_hdr));
     msg_size += sizeof(struct naaice_mr_dynamic_hdr);
-    dyn->count = comm_ctx->no_local_mrs;
     dyn->padding[0] = 0;
     dyn->padding[1] = 0;
+
+    // Number of advertised memory regions is the number of parameters,
+    // plus one for the metadata memory region (included in no_local_mrs),
+    // plus the number of internal memory regions to be used by the NAA.
+    dyn->count = comm_ctx->no_local_mrs + comm_ctx->no_internal_mrs;
 
     // Pointer to the current position in the message being constructed.
     struct naaice_mr_advertisement_request *curr;
 
-    // For each memory region...
+    // For each parameter memory region...
     for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
 
       // Point to next position in the packet.
       curr = (struct naaice_mr_advertisement_request*)
-          (msg + sizeof(struct naaice_mr_hdr) +
-          sizeof(struct naaice_mr_dynamic_hdr) +
-          i * sizeof(struct naaice_mr_advertisement_request));
+        (msg + sizeof(struct naaice_mr_hdr) +
+        sizeof(struct naaice_mr_dynamic_hdr) +
+        i * sizeof(struct naaice_mr_advertisement_request));
 
       // Set fields of the packet.
-      // TODO: These flags and fpgaaddresses need to be settable.
-      curr->mrflags = 0;
-      //FM: Only 7 fields, so <7?
-      for(int j = 0; j< 7; j++){
+      curr->mrflags = htonl(0);
+      // TODO: fpgaaddresses need to be settable.
+      // FM: Only 7 fields, so <7?
+      for(int j = 0; j < 7; j++) {
         curr->fpgaaddress[j]= 0;
       }
       curr->addr = htonll((uintptr_t)comm_ctx->mr_local_data[i].addr);
@@ -1135,10 +1168,38 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
 
       
       debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
-             (uintptr_t)comm_ctx->mr_local_data[i].addr,
-             comm_ctx->mr_local_data[i].ibv->length,
-             comm_ctx->mr_local_data[i].ibv->rkey);
+        (uintptr_t) comm_ctx->mr_local_data[i].addr,
+        comm_ctx->mr_local_data[i].ibv->length,
+        comm_ctx->mr_local_data[i].ibv->rkey);
       
+
+      // Update packet size.
+      msg_size += sizeof(struct naaice_mr_advertisement_request);
+    }
+
+    // For each internal memory region...
+    for (int i = 0; i < comm_ctx->no_internal_mrs; i++) {
+
+      // Point to next position in the packet.
+      curr = (struct naaice_mr_advertisement_request*)
+        (msg + sizeof(struct naaice_mr_hdr) +
+        sizeof(struct naaice_mr_dynamic_hdr) +
+        comm_ctx->no_local_mrs * sizeof(struct naaice_mr_advertisement_request) +
+        i * sizeof(struct naaice_mr_advertisement_request));
+
+      // Set fields of the packet.
+      curr->mrflags = htonl(MRFLAG_INTERNAL);
+      // TODO: fpgaaddresses need to be settable.
+      for(int j = 0; j < 7; j++) {
+        curr->fpgaaddress[j]= 0;
+      }
+      curr->addr = htonll((uintptr_t)comm_ctx->mr_internal[i].addr);
+      curr->size = htonl(comm_ctx->mr_internal[i].size);
+      curr->rkey = htonl(0); // Internal mrs require no rkey, so just use 0.
+
+      debug_print("Internal MR %d: Addr: %lX, Size: %d\n", i + 1,
+        (uintptr_t) comm_ctx->mr_internal[i].addr,
+        comm_ctx->mr_internal[i].size);
 
       // Update packet size.
       msg_size += sizeof(struct naaice_mr_advertisement_request);
@@ -1290,7 +1351,7 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
 
   struct ibv_sge sge;
   sge.addr = (uintptr_t)comm_ctx->mr_local_message->addr;
-  sge.length = MR_SIZE_MR_EXHANGE;
+  sge.length = MR_SIZE_MRSP;
   sge.lkey = comm_ctx->mr_local_message->ibv->lkey;
 
   // TODO: Maybe hardcode a wr_id for each communication type.

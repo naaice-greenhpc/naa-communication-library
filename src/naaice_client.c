@@ -116,6 +116,13 @@ int main(int argc, char *argv[]) {
   printf("-- Set Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) { return -1; }
 
+  // Request internal memory regions.
+  printf("-- Specifying NAA Internal Memory Regions --\n");
+  uintptr_t internal_addrs[1] = {0};
+  size_t internal_sizes[1] = {8};
+  if (naaice_set_internal_mrs(comm_ctx, 1,
+        internal_addrs, internal_sizes)) { return -1; }
+
   // Then, register the memory regions.
   printf("-- Registering Memory Regions --\n");
   if (naaice_register_mrs(comm_ctx)) { return -1; }
@@ -131,15 +138,11 @@ int main(int argc, char *argv[]) {
   printf("-- Doing MRSP --\n");
   if (naaice_do_mrsp(comm_ctx)) { return -1; }
 
-  // Start data transfer.
+  // Do the data transfer, including commnication of parameters to NAA,
+  // waiting for calculation to complete, and receiving return parameter
+  // back from NAA.
   printf("-- Doing Data Transfer --\n");
-  if (naaice_init_data_transfer(comm_ctx)) { return -1; }
-
-  // Poll the completion queue and handle work completions until data transfer,
-  // including sending, calculation, and receiving, is complete.
-  while (comm_ctx->state < FINISHED) {
-    if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
-  }
+  if (naaice_do_data_transfer(comm_ctx)) { return -1; }
   
   // Disconnect and cleanup.
   printf("-- Cleaning Up --\n");

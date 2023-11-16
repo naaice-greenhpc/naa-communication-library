@@ -54,6 +54,38 @@
  * - Unify some of the packet structs used in naaice_send_message, so that a
  *    single type can be used rather than concatenating headers, for example.
  * 
+ * - Make type usage more uniform, i.e. single types for MR addr pointers and
+ *    sizes.
+ * 
+ */
+
+/**
+ * AP1 Usage
+ * For standard operation, functions should be called in the following order:
+ * 
+ * 1. naaice_init_communication_context
+ * 2. (in any order)
+ *    naaice_setup_connection
+ *    naaice_register_mrs
+ *    naaice_set_metadata
+ *    naaice_set_internal_mrs
+ * 3. naaice_do_mrsp
+ * 4. naaice_do_data_transfer
+ * 5. naaice_disconnect_and_cleanup
+ * 
+ * naaice_do_mrsp blocks until MRSP is complete. For a non-blocking version,
+ * use instead:
+ * 
+ * naaice_init_mrsp
+ * while (communication_context->state < MRSP_DONE) {
+ *  naaice_poll_cq_nonblocking }
+ * 
+ * naaice_do_data_transfer blocks until MRSP is complete. For a non-blocking
+ * version, use instead:
+ * 
+ * naaice_init_data_transfer
+ * while (communication_context->state < FINISHED) {
+ *  naaice_poll_cq_nonblocking }
  */
 
 /* Dependencies **************************************************************/
@@ -82,12 +114,21 @@
 #define htonll htobe64
 #define TIMEOUT_RESOLVE_ROUTE 500 // in ms.
 
+// Maximum allowed number of memory regions.
+// Total of parameters and internal NAA memory regions.
+#define MAX_MRS 32
+
 // size of MR for MR exchange
 // type + padding: 32 + Maximum number of regions:UINT_MAX+1
 //  * (Addr:64 +  size:32 + key:32) + requested size:64 / 8
 // TODO: rewrite in terms of struct sizes.
-#define MR_SIZE_MR_EXHANGE (32 + (UINT8_MAX + 1) * 2 * 64 + 64) / 8
+//#define MR_SIZE_MR_EXHANGE (32 + (UINT8_MAX + 1) * 2 * 64 + 64) / 8
 
+// Size of memory region used for MRSP.
+// Simply the size of a memory region advertisement and request message
+// multiplied by the maximum allowed number of memory regions.
+// TODO: add header size.
+#define MR_SIZE_MRSP sizeof(struct naaice_mr_advertisement_request) * MAX_MRS
 
 /* Structs and Enums *********************************************************/
 
@@ -115,6 +156,23 @@ struct naaice_mr_advertisement_request{
   uint64_t addr;
   uint32_t rkey;
   uint32_t size;
+};
+
+// Enum with values for naaice_mr_advertisement_request.mrflags.
+// Specifes additional information about an advertised / requested memory
+// region needed by the NAA.
+enum naaice_mrflags_value {
+
+  // Indicates that memory region is for internal use on the NAA only, and
+  // should not be written to or read from during data transfer.
+  MRFLAG_INTERNAL = 0x01,
+
+  // Indicates that memory region should be written back to the host during
+  // memory transfer in addition to the return parameter memory region
+  // specified in the metadata.
+  // Does not override MRFLAG_INTERNAL; if both are set, the memory region
+  // is not written back.
+  MRFLAG_WRITEBACK = 0x02
 };
 
 // Struct to hold memory region request message.
@@ -147,7 +205,7 @@ struct naaice_mr_peer
 {
   uint64_t addr;
   uint32_t rkey;
-  uint32_t size;
+  size_t size;
 };
 
 // Struct to hold information about a local memory region.
@@ -155,8 +213,22 @@ struct naaice_mr_local
 {
   struct ibv_mr *ibv;
   char *addr;
+  size_t size;
+
+  // Used by the software NAA implementation. Ignored in normal host-side
+  // operation. If set, this memory region is always written back to the host
+  // in addition to the return parameter memory region specified in the
+  // metadata.
+  bool writeback;
+};
+
+// Struct to hold information about a memory region used internally for
+// calculation on the NAA.
+// The addr field represents the MR's address in NAA memory space.
+struct naaice_mr_internal
+{
+  char *addr;
   uint32_t size;
-  bool to_write;
 };
 
 // Struct to hold metadata stored in a particular memory region,
@@ -225,18 +297,26 @@ struct naaice_communication_context
   struct naaice_mr_local *mr_local_data;
   uint8_t no_local_mrs;
 
-  // Index indicating which memory region is the return region.
+  // Index indicating which local memory region is the return region.
   // Set when the return address is set, in naaice_set_metadata.
   // Should be in range [1, no_local_mrs].
   uint8_t mr_return_idx;
 
   // Array of peer memory regions, i.e. information about memory regions of the
   // commuication partner.
+  // Includes only symmetric memory regions, i.e. only MRs representing parameters
+  // and not internal MRs used on the NAA just for computation.
   struct naaice_mr_peer *mr_peer_data;
   uint8_t no_peer_mrs;
 
   // Used for MRSP.
   struct naaice_mr_local *mr_local_message;
+
+  // Array of internal memory regions, i.e. information about memory regions
+  // on the NAA used only for computation which are not communicated during
+  // data transfer.
+  struct naaice_mr_internal *mr_internal;
+  uint8_t no_internal_mrs;
 
   // Function code indicating which NAA routine to be called.
   uint8_t fncode;
@@ -409,6 +489,9 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx);
  *  Specifically, this sets the return_addr field, which specifies which
  *  memory region the NAA should write results back to.
  * 
+ *  Should only be called once. Each call to this function overwrites the
+ *  previous call.
+ * 
  *  TODO: additionally handle routine-specific metadata fields.
  * 
  * params:
@@ -422,6 +505,37 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx);
  */
 int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
   uintptr_t return_addr);
+
+/**
+ * naaice_set_internal_mrs
+ *  Adds information about internal memory regions to the communication
+ *  context. Such memory regions exist only on the NAA side and are used for
+ *  computation. The contents of these memory region are not communicated
+ *  during data transfer.
+ * 
+ *  Must be called before naaice_init_mrsp. The internal memory regions will
+ *  then be included in the memory region announcement message, indicating that
+ *  they should be allocated by the NAA.
+ * 
+ *  Should only be called once. Each call to this function overwrites the
+ *  previous call.
+ * 
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *  unsigned int n_internal_mrs:
+ *    Number of internal memory regions.
+ *  uintptr_t *addrs:
+ *    Array of addresses of the internal memory regions in NAA memory space.
+ *    These addresses will be requested of the NAA during MRSP.
+ *  uint32_t *sizes:
+ *    Sizes of the internal memory region, in bytes.
+ * 
+ * returns:
+ *  0 if sucessful, -1 if not.
+ */
+int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
+  unsigned int n_internal_mrs, uintptr_t *addrs, size_t *sizes);
 
 /**
  * naaice_init_mrsp:
