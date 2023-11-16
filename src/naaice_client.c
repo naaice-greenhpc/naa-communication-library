@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
   // Request internal memory regions.
   printf("-- Specifying NAA Internal Memory Regions --\n");
   uintptr_t internal_addrs[1] = {0};
-  size_t internal_sizes[1] = {8};
+  size_t internal_sizes[1] = {32};
   if (naaice_set_internal_mrs(comm_ctx, 1,
         internal_addrs, internal_sizes)) { return -1; }
 

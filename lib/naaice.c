@@ -857,10 +857,6 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
       debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
       */
 
-      // Print written data.
-      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr;
-      debug_print("param data: %u\n", data[0]);
-
       // If no error, go to finished state.
       comm_ctx->state = FINISHED;
       return 0;
@@ -1156,7 +1152,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
         i * sizeof(struct naaice_mr_advertisement_request));
 
       // Set fields of the packet.
-      curr->mrflags = htonl(0);
+      curr->mrflags = 0;
       // TODO: fpgaaddresses need to be settable.
       // FM: Only 7 fields, so <7?
       for(int j = 0; j < 7; j++) {
@@ -1188,7 +1184,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
         i * sizeof(struct naaice_mr_advertisement_request));
 
       // Set fields of the packet.
-      curr->mrflags = htonl(MRFLAG_INTERNAL);
+      curr->mrflags = MRFLAG_INTERNAL;
       // TODO: fpgaaddresses need to be settable.
       for(int j = 0; j < 7; j++) {
         curr->fpgaaddress[j]= 0;

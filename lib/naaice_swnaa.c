@@ -600,9 +600,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
       (i) * sizeof(struct naaice_mr_advertisement_request)));
 
     // If this is an internal memory region...
-    if (ntohll(curr->mrflags) && MRFLAG_INTERNAL) {
-
-      debug_print("Processing internal memory region\n");
+    if (curr->mrflags & MRFLAG_INTERNAL) {
 
       // Allocate memory for the region.
       // TODO: This address needs to be set based on the fpgaaddr field.
@@ -628,14 +626,10 @@ int naaice_swnaa_handle_mr_announce_and_request(
     // Otherwise, if this is a "normal" memory region...
     else {
 
-      debug_print("Processing local memory region\n");
-
       // Set peer memory region fields.
       comm_ctx->mr_peer_data[local_count].addr = ntohll(curr->addr);
       comm_ctx->mr_peer_data[local_count].rkey = ntohl(curr->rkey);
       comm_ctx->mr_peer_data[local_count].size = ntohl(curr->size);
-
-      debug_print("1\n");
 
       // Allocate memory for the region.
       comm_ctx->mr_local_data[local_count].addr =
@@ -645,9 +639,6 @@ int naaice_swnaa_handle_mr_announce_and_request(
           "Failed to allocate memory for local memory region buffer.\n");
         return -1;
       }
-
-      debug_print("2\n");
-
 
       // Register the memory region.
       comm_ctx->mr_local_data[local_count].ibv =
@@ -659,15 +650,9 @@ int naaice_swnaa_handle_mr_announce_and_request(
         return -1;
       }
 
-      debug_print("3\n");
-
-
       // Set the size of the memory region.
       comm_ctx->mr_local_data[local_count].size =
         comm_ctx->mr_local_data[local_count].ibv->length;
-
-      debug_print("4\n");
-
 
       debug_print("Local MR %d: Addr: %lX, Size: %lu\n", local_count + 1,
        (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
