@@ -849,10 +849,6 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   // Allow multiple wrs? multiple return addresses?
   debug_print("In naaice_swnaa_write_data\n");
 
-  // Print data to be written.
-  unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[comm_ctx->mr_return_idx].addr;
-  debug_print("param data: %u\n", data[0]);
-
   // Update state.
   comm_ctx->state = DATA_SENDING;
 

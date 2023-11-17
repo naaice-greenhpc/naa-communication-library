@@ -43,7 +43,6 @@
 
 /**
  * Command line arguments:
- *  local-ip, ex. 10.3.10.135
  *  remote-ip, ex. 10.3.10.136
  *  number-of-regions, ex. 1
  *  'region-sizes', ex '1024'
@@ -53,17 +52,17 @@ int main(int argc, char *argv[]) {
   printf("-- Handling Command Line Arguments --\n");
   
   // Check number of arguments.
-  if (argc != 5) {
+  if (argc != 4) {
     fprintf(stderr, "Wrong number of arguments. use: "
-      "./naaice_client local-ip remote-ip number-of-regions 'region-sizes' \n "
-      "Example: ./naaice_client 10.3.10.135 10.3.10.136 1 '1024'\n");
+      "./naaice_client remote-ip number-of-regions 'region-sizes' \n "
+      "Example: ./naaice_client 10.3.10.135 1 '1024'\n");
     return -1;
   };
 
   // Check against maximum number of memory regions.
   char *ptr;
-  long int params_amount = strtol(argv[3], &ptr, 10);
-  if(params_amount < 1 || params_amount > 32) {
+  long int params_amount = strtol(argv[2], &ptr, 10);
+  if(params_amount < 1 || params_amount > MAX_MRS) {
     fprintf(stderr, "Chosen number of arguments %ld is not supported.\n",
       params_amount);
     return -1;
@@ -73,7 +72,7 @@ int main(int argc, char *argv[]) {
   unsigned int param_sizes[params_amount];
 
   // First (non-metadata) region.
-  char *token = strtok(argv[4], " ");
+  char *token = strtok(argv[3], " ");
   param_sizes[0] = atoi(token);
 
   // If more sizes provided than the specified number of regions, exit.
@@ -110,7 +109,7 @@ int main(int argc, char *argv[]) {
 
   // Initialize the communication context struct.
   if (naaice_init_communication_context(&comm_ctx, param_sizes, params,
-    params_amount, FNCODE, argv[1], argv[2], CONNECTION_PORT)) { return -1; }
+    params_amount, FNCODE, argv[1], CONNECTION_PORT)) { return -1; }
 
   // First, handle connection setup.
   printf("-- Set Up Connection --\n");
