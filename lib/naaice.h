@@ -40,6 +40,7 @@
  *    This is a reallocation of the input parameters. Should we instead
  *    require that the user ensure memory alignment, or find a way to ensure it
  *    without reallocation?
+ *    Aligned memory isn't strictly necessary, it just has some performance implications
  * 
  * - Add support for running multiple RPCs before disconnecting.
  * 
@@ -393,7 +394,6 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
  *  The events handled by these functions are, in order:
  *  RDMA_CM_EVENT_ADDR_RESOLVED
  *  RDMA_CM_EVENT_ROUTE_RESOLVED
- *  RDMA_CM_EVENT_CONNECT_REQUEST
  *  RDMA_CM_EVENT_CONNECT_ESTABLISHED
  * 
  *  Also, the following are handled by naaice_handle_error:
@@ -416,9 +416,6 @@ int naaice_handle_addr_resolved(
   struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev);
 int naaice_handle_route_resolved(
-  struct naaice_communication_context *comm_ctx,
-  struct rdma_cm_event *ev);
-int naaice_handle_connection_requests(
   struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev);
 int naaice_handle_connection_established(
@@ -596,6 +593,25 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
  */
 int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx);
 
+/**
+ * naaice_poll_cq_blocking:
+ *  Polls the completion queue for any work completion once and blocks until any completion
+ *  is available. Then it handles them using naaice_handle_work_completion.
+ *
+ *  Subsequently, comm_ctx->state is updated to reflect the current state
+ *  of the NAA connection and routine.
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *
+ * returns:
+ *  0 if sucessful (regardless of whether any work completions are recieved),
+ * -1 if not.
+ */
+int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx);
+// FM TODO: Allow both version in the same function and maybe set a flag in comm_ctx to decide
+// on blocking until receive or poll again.
 /**
  * naaice_disconnect_and_cleanup:
  *  Terminates the connection and frees all communication context memory.

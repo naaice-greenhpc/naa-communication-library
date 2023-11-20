@@ -75,6 +75,55 @@ int naaice_swnaa_init_communication_context(
  */
 int naaice_swnaa_setup_connection(
   struct naaice_communication_context *comm_ctx);
+/**
+ * swnaa connection event handlers:
+ *  These functions each handle a specific connection event. If the provided
+ *  event's type matches the event type of the handler function, it executes
+ *  the necessary logic to handle it.
+ *
+ *  Subsequently, flags in the communication context are updated to represent
+ *  the current status of connection establishment.
+ *
+ *  The events handled by these functions are, in order:
+ *  RDMA_CM_EVENT_CONNECTION_REQUEST
+ *  RDMA_CM_EVENT_CONNECT_ESTABLISHED
+ *
+ *  Also, the following are handled by naaice_handle_error:
+ *  RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR,
+ *  RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE,
+ *  RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL,
+ *  RDMA_CM_EVENT_DISCONNECTED.
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection with events to handle.
+ *  struct rdma_cm_event *ev:
+ *    Pointer to event to be checked and possibly handled.
+ *
+ * returns:
+ *  0 if sucessful (i.e. either the event was the matching type and was handled
+ *  successfully, or the event was not the matching type), -1 if not.
+ */
+int naaice_swnaa_handle_connection_requests(struct naaice_communication_context *comm_ctx,
+                                struct rdma_cm_event *ev);
+int naaice_swnaa_handle_connection_established(
+    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
+
+/**
+ * naaice_swnaa_poll_and_handle_connection_event:
+ *  Polls for a connection event on the RDMA event channel stored in the
+ *  communication context and handles the event if one is received.
+ *  Simply uses the poll and handle functions above.
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *
+ * returns:
+ *  0 if sucessful (regardless of whether an event is received), -1 if not.
+ */
+int naaice_swnaa_poll_and_handle_connection_event(
+    struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_swnaa_init_mrsp:
@@ -183,7 +232,7 @@ int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_swnaa_handle_metadata
- *  Updates information in the communication context based on recieved
+ *  Updates information in the communication context based on received
  *  metadata, which before this call should be available in the local metadata
  *  memory region.
  * 
@@ -261,7 +310,7 @@ int naaice_swnaa_receive_data_transfer(
 /**
  * naaice_swnaa_poll_cq_nonblocking:
  *  Polls the completion queue for any work completions, and handles them if
- *  any are recieved using naaice_handle_work_completion.
+ *  any are received using naaice_handle_work_completion.
  *  
  *  Subsequently, comm_ctx->state is updated to reflect the current state
  *  of the NAA connection and routine.
@@ -271,7 +320,7 @@ int naaice_swnaa_receive_data_transfer(
  *    Pointer to struct describing the connection.
  * 
  * returns:
- *  0 if sucessful (regardless of whether any work completions are recieved),
+ *  0 if sucessful (regardless of whether any work completions are received),
  * -1 if not.
  */
 int naaice_swnaa_poll_cq_nonblocking(
