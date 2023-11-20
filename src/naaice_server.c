@@ -1,74 +1,132 @@
-#include <naaice.h>
+/**************************************************************************//**
+ *
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM  
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7  
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d    
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM    
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  , 
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M 
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM 
+ * 
+ *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
+ * 
+ * naaice_server.c
+ *
+ * Application implementing a basic use case of the AP1 NAAICE communication
+ * layer.
+ * For use on a loopback test setup, in conjunction with naaice_client.c.
+ * 
+ * The actual logic of the NAA procedure can be changed by putting whatever
+ * you like in the implementation of do_procedure().
+ * 
+ * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
+ * Dylan Everingham, everingham@zib.de
+ * 
+ * 08-11-2023
+ * 
+ *****************************************************************************/
+
+/* Dependencies **************************************************************/
+
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdint.h>
+#include <naaice.h>
+#include <debug.h>
+#include <naaice_swnaa.h>
 
+
+/* Constants *****************************************************************/
+
+#define CONNECTION_PORT 12345
+
+
+/* Implementation of NAA Procedure *******************************************/
+
+// The routine should return 0 if successful, or some nonzero number if not.
+// This nonzero error code is sent to the host in the case of an error.
+uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
+
+  printf("in do_procedure\n");
+
+  // Can switch on function code.
+  // Here, do nothing if code is 0. Otherwise do something.
+  if (comm_ctx->fncode) {
+
+    // Example:
+    // Assume all data in the memory regions is arrays of chars.
+    // Increment all chars in all memory regions by one.
+
+    // Be sure not to include the metadata region.
+
+    for (unsigned int i = 1; i < comm_ctx->no_local_mrs; i++) {
+
+      // Get pointer to data.
+      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[i].addr;
+
+      for(unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
+
+        // Increment a char.
+        //printf("data value (old/new): %u", data[j]);
+        data[j]++;
+        //printf("/%u\n", data[j]);
+      }
+    }
+  }
+
+  return 0;
+}
+
+
+/* Main **********************************************************************/
+
+/**
+ * Command line arguments:
+ *  None. Port is hardcoded.
+ */
 int main(int argc, __attribute__((unused)) char *argv[]) {
-  // TODO maybe make port flexible
+
+  // Handle command line arguments.
+  printf("-- Handling Command Line Arguments --\n");
   if (argc != 1) {
     fprintf(stderr,
-            "Server should be called with no arguments prot is hardcoded :) ");
-    exit(EXIT_FAILURE);
-  };
-
-  // maybe not on the stack?!
-  struct rdma_event_channel *rdma_ev_channel;
-  struct rdma_cm_id *rdma_comm_id;
-  struct sockaddr loc_addr;
-  struct rdma_cm_event *ev = NULL;
-
-  rdma_ev_channel = rdma_create_event_channel();
-  if (rdma_ev_channel == NULL) {
-    perror("Failed to create rdma event channel");
-    exit(EXIT_FAILURE);
-  }
-
-  // Third argument is context, null for now
-  if (rdma_create_id(rdma_ev_channel, &rdma_comm_id, NULL, RDMA_PS_TCP) == -1) {
-    perror("Failed to create a communication id.");
-    exit(EXIT_FAILURE);
-  }
-  //Allocate communication context earlier than before.
-  struct naaice_communication_context *comm_ctx =
-      (struct naaice_communication_context *)malloc(
-          sizeof(struct naaice_communication_context));
-  if (comm_ctx == NULL) {
-    fprintf(stderr,
-            "Failed to allocate memory for communication context. Exiting.");
+            "Server should be called without arguments.\n");
     return -1;
   }
 
-  //Bind address to communication ID and start listening for connections
-  rdma_comm_id->context = comm_ctx;
-  //comm_ctx->id = rdma_comm_id;
-  //Make port flexible?
-  memset(&loc_addr, 0, sizeof(loc_addr));
-  loc_addr.sa_family = AF_INET;
-  ((struct sockaddr_in *)&loc_addr)->sin_port = htons(CONNECTION_PORT);
+  // Communication context struct. 
+  // This will hold all information necessary for the connection.
+  printf("-- Initializing Communication Context --\n");
+  struct naaice_communication_context *comm_ctx = NULL;
 
-  if (rdma_bind_addr(rdma_comm_id, &loc_addr)) {
-    perror("Binding Communication ID to local address failed. Exiting.\n");
-  }
+  // Initialize the communication context struct.
+  if(naaice_swnaa_init_communication_context(&comm_ctx, CONNECTION_PORT)) {
+    return -1; }
 
-  if (rdma_listen(rdma_comm_id, 10)) { // backlog queue length 10
-    perror("Listening on specified port failed.\n");
-  }
+  // First, handle connection setup.
+    printf("-- Setting Up Connection --\n");
+  if (naaice_swnaa_setup_connection(comm_ctx)) { return -1; }
 
-  int port = ntohs(rdma_get_src_port(rdma_comm_id));
-  printf("listening on port %d.\n", port);
-  //Enter event loop.
-  while (rdma_get_cm_event(rdma_ev_channel, &ev) == 0) {
-    struct rdma_cm_event ev_cp;
-    memcpy(&ev_cp, ev, sizeof(*ev));
-    rdma_ack_cm_event(ev);
-    if (naaice_on_event_server(&ev_cp,comm_ctx))
-      break;
-  }
-  // clean_id:
-  if (rdma_destroy_id(rdma_comm_id) == -1) {
-    perror("Failed to destroy RDMA communication id.");
-  }
-  //printf("Destroyed rdma_comm_id successfully\n");
-  rdma_destroy_event_channel(rdma_ev_channel);
-  printf("All cleaned up. Exiting\n");
-  exit(EXIT_SUCCESS);
+  // Receive MRSP message from the host.
+  printf("-- Doing MRSP --\n");
+  if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
+
+  // Receive data transfer from host.
+  printf("-- Receiving Data Transfer --\n");
+  if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
+
+  // Now that all data has arrived, perform the RPC.
+  printf("-- Doing RPC --\n");
+  printf("Function Code: %d\n", comm_ctx->fncode);
+  uint8_t errorcode = do_procedure(comm_ctx);
+
+  // Finally, write back the results to the host.
+  printf("-- Writing Back Data --\n");
+  if (naaice_swnaa_write_data(comm_ctx, errorcode)) { return -1; }
+
+  // Disconnect and clean up.
+  printf("-- Cleaning Up --\n");
+  if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
+
+  return 0;
 }
