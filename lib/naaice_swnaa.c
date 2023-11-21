@@ -75,9 +75,6 @@ int naaice_swnaa_init_communication_context(
   }
   (*comm_ctx)->ibv_ctx = rdma_comm_id->verbs;
 
-  // TODO: This is circular. Why do it like this?
-  rdma_comm_id->context = (*comm_ctx);
-
   // Initialize fields of the communication context.
   (*comm_ctx)->state = INIT;
   (*comm_ctx)->id = rdma_comm_id;
@@ -108,7 +105,7 @@ int naaice_swnaa_init_communication_context(
   }
 
   // Configure connection.
-  // TODO: make port flexible?
+  // TODO: make port flexible? Probably with RMS support, when we ask for the NAA ip, we will also get port num
   debug_print("Configuring connection.\n");
   struct sockaddr loc_addr;
   memset(&loc_addr, 0, sizeof(loc_addr));
@@ -142,11 +139,85 @@ int naaice_swnaa_setup_connection(
   // Loop handling events and updating the completion flag until finished.
   while (comm_ctx->state < CONNECTED) {
 
-    naaice_poll_and_handle_connection_event(comm_ctx);
+    naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
   }
 
   return 0;
 }
+int naaice_swnaa_poll_and_handle_connection_event(
+    struct naaice_communication_context *comm_ctx) {
+
+  debug_print("In naaice_poll_and_handle_connection_event\n");
+
+  // If we've received an event...
+  struct rdma_cm_event ev;
+  struct rdma_cm_event ev_cp;
+
+  if (!naaice_poll_connection_event(comm_ctx, &ev, &ev_cp)) {
+    comm_ctx->id = ev_cp.id;
+
+    if (naaice_swnaa_handle_connection_requests(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+    if (naaice_swnaa_handle_connection_established(comm_ctx,&ev_cp)){
+      return -1;
+    }
+      if (naaice_handle_error(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+    if (naaice_handle_other(comm_ctx, &ev_cp)) {
+      return -1;
+    }
+  }
+
+  // If we sucessfully handled an event (or haven't received one), success.
+  return 0;
+}
+int naaice_swnaa_handle_connection_requests(
+    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
+
+  debug_print("In naaice_handle_connection_requests\n");
+
+  if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
+    struct rdma_conn_param cm_params;
+    memset(&cm_params, 0, sizeof(cm_params));
+    cm_params.retry_count = 1;
+    cm_params.initiator_depth = 1;
+    cm_params.responder_resources = 1;
+    cm_params.rnr_retry_count = 6; // 7 would be indefinite
+
+    if (naaice_init_rdma_resources(comm_ctx)) {
+      fprintf(stderr, "Failed in allocating RDMA resources\n");
+    }
+
+    // Register the memory region used for MRSP on the server side.
+    comm_ctx->mr_local_message->ibv =
+        ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MRSP,
+                   (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
+    if (comm_ctx->mr_local_message->ibv == NULL) {
+      fprintf(stderr,
+              "Failed to register memory for memory region setup protocol.\n");
+      return -1;
+    }
+
+    if(naaice_swnaa_post_recv_mrsp(comm_ctx)){
+      //FM TODO: Set up private data for rdma_reject? Do we even need an explicit reject?
+      long privdata = 0;
+      if(rdma_reject(comm_ctx->id,(void*) privdata,sizeof(privdata))){
+        fprintf(stderr,"Rejecting RDMA connection due to error failed. Exiting\n");
+      }
+    }
+    if (rdma_accept(comm_ctx->id, &cm_params)) {
+      fprintf(stderr, "RDMA connection failed, in rdma_accept.\n");
+      return -1;
+    }
+  }
+
+  return 0;
+}
+int naaice_swnaa_handle_connection_established(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev){
+  return naaice_handle_connection_established(comm_ctx, ev);
+  }
 
 int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
@@ -234,19 +305,8 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       struct naaice_mr_hdr *msg =
           (struct naaice_mr_hdr *)comm_ctx->mr_local_message->addr;
       
-      // If the message was an announce...
-      // TODO: probably no longer necessary, host always sends A+R.
-
-      if (msg->type == MSG_MR_A) {
-
-        // Handle the packet.
-        if(naaice_swnaa_handle_mr_announce(comm_ctx)) { return -1; }
-
-        return 0;
-      }
-
       // If the message was an announce + request...
-      else if (msg->type == MSG_MR_AAR) {
+      if (msg->type == MSG_MR_AAR) {
 
         // Print all information about the work completion.
         /*
@@ -460,51 +520,6 @@ int naaice_swnaa_poll_cq_nonblocking(
   return 0;
 }
 
-// FM: No longer needed?
-int naaice_swnaa_handle_mr_announce(
-  struct naaice_communication_context *comm_ctx) {
-
-  debug_print("In naaice_swnaa_handle_mr_announce\n");
-  
-  // First read the header.
-  struct naaice_mr_dynamic_hdr *dyn =
-      (struct naaice_mr_dynamic_hdr *)(comm_ctx->mr_local_message->addr +
-                                       sizeof(struct naaice_mr_hdr));
-  
-  // Get the number of host memory regions.
-  comm_ctx->no_peer_mrs = dyn->count;
-
-
-  // Allocate memory to hold information about host memory regions.
-  comm_ctx->mr_peer_data =
-      calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
-  if (comm_ctx->mr_peer_data == NULL) {
-    fprintf(stderr,
-            "Failed to allocate memory remote memory region structure.\n");
-    return -1;
-  }
-
-  // Pointer to current position in packet being read.
-  struct naaice_mr_advertisement *mr;
-
-  // For each host memory region...
-  for (int i = 0; i < comm_ctx->no_peer_mrs; i++) {
-
-    // Point to next position in the packet.
-    mr = (struct naaice_mr_advertisement
-              *)(comm_ctx->mr_local_message->addr +
-                 (sizeof(struct naaice_mr_hdr) +
-                  sizeof(struct naaice_mr_dynamic_hdr) +
-                  (i + 1) * sizeof(struct naaice_mr_advertisement)));
-
-    // Set fields.
-    comm_ctx->mr_peer_data[i].addr = ntohll(mr->addr);
-    comm_ctx->mr_peer_data[i].rkey = ntohl(mr->rkey);
-    comm_ctx->mr_peer_data[i].size = ntohl(mr->size);
-  }
-
-  return 0;
-}
 
 int naaice_swnaa_handle_mr_announce_and_request(
     struct naaice_communication_context *comm_ctx) {
@@ -794,6 +809,7 @@ int naaice_swnaa_post_recv_data(
     (void*) sge.addr, sge.length, sge.lkey);
 
   // TODO: Maybe hardcode a wr_id for each communication type.
+  // How about 0 for MRSP answer and i for ith iteration/write request in data transfer
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 1;
   wr.sg_list = &sge;
@@ -846,6 +862,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t errorcode) {
 
   // FM TODO: What if we have more than one region to return? For example ping_pong example
+  // Just a reminder: POET is actual use case where we might write back multiple MRs
   // Allow multiple wrs? multiple return addresses?
   debug_print("In naaice_swnaa_write_data\n");
 

@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
   // First, handle connection setup.
   printf("-- Set Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) { return -1; }
-
+  
   // Request internal memory regions.
   printf("-- Specifying NAA Internal Memory Regions --\n");
   uintptr_t internal_addrs[1] = {0};

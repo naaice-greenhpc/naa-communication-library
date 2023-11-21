@@ -117,9 +117,6 @@ int naaice_init_communication_context(
     return -1;
   }
 
-  // TODO: This is circular. Why do it like this?
-  rdma_comm_id->context = (*comm_ctx);
-
   // Initialize fields of the communication context.
   (*comm_ctx)->state = INIT;
   (*comm_ctx)->id = rdma_comm_id;
@@ -147,6 +144,7 @@ int naaice_init_communication_context(
 
     // TODO: consider if this alignment needs to be handled by AP1 or by
     // the user. Currently, it is entirely on the user side.
+    // Memory alignment isn't strictly necessary, just has better performance
     /*
     posix_memalign((void **)&(comm_ctx->mr_local_data[i].addr),
            sysconf(_SC_PAGESIZE), comm_ctx->mr_local_data[i].size);
@@ -293,53 +291,6 @@ int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
   return 0;
 }
 
-int naaice_handle_connection_requests(
-
-  // FM: Maybe move this into naaice_swnaa?
-  struct naaice_communication_context *comm_ctx,
-  struct rdma_cm_event *ev) {
-
-  debug_print("In naaice_handle_connection_requests\n");
-
-  if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
-
-    // TODO: can unify this with the cm_params used in handle_route_resolved,
-    // because all the values are the same.
-    struct rdma_conn_param cm_params;
-    memset(&cm_params, 0, sizeof(cm_params));
-    cm_params.retry_count = 1;
-    cm_params.initiator_depth = 1;
-    cm_params.responder_resources = 1;
-    cm_params.rnr_retry_count = 6; // 7 would be indefinite
-
-    if (naaice_init_rdma_resources(comm_ctx)){
-      fprintf(stderr, "Failed in allocating RDMA resources\n");
-    }
-
-    // Register the memory region used for MRSP on the server side. 
-    comm_ctx->mr_local_message->ibv = ibv_reg_mr(
-        comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MRSP,
-        (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
-    if (comm_ctx->mr_local_message->ibv == NULL) {
-      fprintf(stderr,
-              "Failed to register memory for memory region setup protocol.\n");
-      return -1;
-    }
-
-    // FM TODO: We currently have a race condition between client and server. 
-    // Server should post receive before accept to circumvent this. Method only
-    // available in naaice_swnaa.c.
-    // We could put the naaice_handle_connect_requests methods into naaice_swnaa.c
-    // maybe? 
-    if (rdma_accept(comm_ctx->id, &cm_params)) {
-      fprintf(stderr, "RDMA connection failed, in rdma_accept.\n");
-      return -1;
-    }
-  }
-
-  return 0;
-}
-
 int naaice_handle_connection_established(
   struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
@@ -363,31 +314,46 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
   // the following identified error types.
   // Otherwise returns 0.
 
+  // set error state to be able to exit upstream loop in
+  // naaice_setup_connection
+  //comm_ctx->state = ERROR;
+
+  //FM: Due to upstream handling of events, each handler is called for each event: thus error state can 
+  // only be set within if states for connection errors:
+  // Would it be better to call event handlers based on the actual event?
   if (ev->event == RDMA_CM_EVENT_ADDR_ERROR) {
+    comm_ctx->state = ERROR;
     fprintf(stderr, "RDMA address resolution failed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_ROUTE_ERROR) {
+    comm_ctx->state = ERROR;
     fprintf(stderr, "RDMA route resolution failed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
+    comm_ctx->state = ERROR;
     fprintf(stderr, "Error during connection establishment.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_UNREACHABLE) {
+    comm_ctx->state = ERROR;
     fprintf(stderr, "Remote peer unreachable.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_REJECTED) {
+    comm_ctx->state = ERROR;
     fprintf(stderr, "Connection request rejected by peer.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
+    comm_ctx->state = ERROR;
     fprintf(stderr, "RDMA device was removed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
+    //FM What to do here? is this an error state in this case? Check what needs 
+    // to be cleaned up in which state...
     // We're not expecting disconnect at this point, so we should exit.
     fprintf(stderr, "RDMA disconnected unexpectedly.\n");
 
@@ -419,19 +385,11 @@ int naaice_poll_and_handle_connection_event(
   struct rdma_cm_event ev_cp;
 
   if (!naaice_poll_connection_event(comm_ctx, &ev,&ev_cp)) {
-    // FM: TODO:Somehow we always loop through all of them. If we find the right handler, we should not call other handlers
-    // Handle possible events.
-    // If we fail in handling an event, return.
-    // FM many calls using comm_ctx seem to fail if the ibv_ctx of the communication id is not set. 
-    // However, any connection event also returns the communication id, so we can just update it here. I don't know if that's a dirty way of doing it though.
     comm_ctx->id = ev_cp.id;
     if (naaice_handle_addr_resolved(comm_ctx, &ev_cp)) {
       return -1;
     }
     if (naaice_handle_route_resolved(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_handle_connection_requests(comm_ctx, &ev_cp)) {
       return -1;
     }
     if (naaice_handle_connection_established(comm_ctx, &ev_cp)) {
@@ -458,7 +416,9 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
 
     naaice_poll_and_handle_connection_event(comm_ctx);
   }
-
+  if(comm_ctx->state != CONNECTED){
+    return -1;
+  }
   return 0;
 }
 
@@ -512,6 +472,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
       .sq_sig_all = 1,
       // Exceeding the maximum number of wrs (sometimes by a lot more than 1)
       // will lead to an ENOMEM error in ibv_post_send()
+      // TODO: Maybe investigate memory foot print and choose a low number if not doing data transfer performance measurement 
       .cap =
           {.max_send_wr = RX_DEPTH,
            .max_recv_wr = RX_DEPTH,
@@ -649,9 +610,18 @@ int naaice_init_mrsp(struct naaice_communication_context *comm_ctx) {
 int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx) {
 
   //FM TODO: Error handling 
-  naaice_post_recv_data(comm_ctx);
+  if(naaice_post_recv_data(comm_ctx)){
+    // we encountered some error, set fncode 0
+    comm_ctx->fncode = 0;
+    //If we encountered error, after sending data with fncode 0 
+    //we should exit connection
+  }
 
-  naaice_write_data(comm_ctx, comm_ctx->fncode);
+  if(naaice_write_data(comm_ctx, comm_ctx->fncode)){
+    //there's some problem in writing data. 
+    //How do we tell the server? Some message on MRSP MR?
+    //Enter error state and exit connection
+  };
 
   return 0;
 }
@@ -761,14 +731,6 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
         comm_ctx->state = MRSP_DONE;
 
         return 0;
-
-        // FM TODO: We need to split this up probably. Handling completions
-        // should finish after the MRSP is done. Then through some higher-level
-        // API we will initiate data transfer. This is necessary to facilitate a
-        // semantic split between naa_init() and naa_invoke() from middleware
-        // API Write data to the NAA. Go to finished state if successful.
-
-        // Dylan: I'm handling this now using the state machine.
       }
 
       // Return with error if a remote error has occured.
@@ -899,7 +861,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   }
   else if (poll_result == 0) {
 
-    // We hav simply not recieved any events.
+    // We have simply not recieved any events.
     return 0;
   }
 
@@ -1347,6 +1309,7 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
   sge.lkey = comm_ctx->mr_local_message->ibv->lkey;
 
   // TODO: Maybe hardcode a wr_id for each communication type.
+  // see comment in naaice_swnaa_post_recv_data
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 1;
   wr.next = NULL;
@@ -1381,6 +1344,7 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
     (void*) sge.addr, sge.length, sge.lkey);
 
   // TODO: Maybe hardcode a wr_id for each communication type.
+  // see comment in naaice_swnaa_post_recv_data
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 1;
   wr.next = NULL;
