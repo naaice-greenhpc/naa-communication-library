@@ -28,14 +28,21 @@
 
 
 /* Constants *****************************************************************/
-
+//TODO: Check with HHI on current limits for MRs
 #define MAX_PARAMS 32
 #define TIMEOUT_INVOKE 100 	// All timeouts given in ms.
 #define TIMEOUT_TEST 100
 #define TIMEOUT_WAIT 100
 #define CONNECTION_PORT 12345
-static const char *LOCAL_IP = "10.32.56.10";
+
+// TODO: Check if local ip still necessary
+/*static const char *LOCAL_IP = "10.32.56.10";
 static const char *REMOTE_IP = "10.32.56.20";
+*/
+//UP IPs
+
+static const char *LOCAL_IP = "10.3.10.135";
+static const char *REMOTE_IP = "10.3.10.136";
 
 // Struct used to hold configuration info about NAA hardware.
 typedef struct naa_hardware_config {
@@ -71,6 +78,7 @@ const struct naa_routineset_config naa_routinesets[N_NAA_ROUTINESETS] =
 // Function to retrieve network parameters.
 // Should eventually read from config file (with help from RMS / memory
 // management service?).
+// TODO: Check if local ip still necessary
 int get_network_params(char *local_ip, char *remote_ip, uint16_t *port) {
 	// For now, dummy implementation:
 	// Just return some locally defined constants.
@@ -130,7 +138,9 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 	// TODO: Get rotine config info from file here.
 
 	// Check validity of parameters.
-	if (check_params(function_code, params, params_amount)) { return -1; }
+	// TODO: Enable checking again
+	// FM: Check disabled for now
+	//if (check_params(function_code, params, params_amount)) { return -1; }
 
 	// Get port and IP from RMS / configuration file.
 	// TODO: Handle errors from this.
@@ -161,23 +171,29 @@ int naa_create(unsigned int function_code, naa_param_t *params,
   // Register the memory regions.
   if (naaice_register_mrs(handle->comm_ctx)) { return -1; }
 
-	
-	return 0;
-}
+  // FM: Moved MRSP from naa_invoke to here. It's only done once
+  // Do the memory region setup protocol.
+  if (naaice_do_mrsp(handle->comm_ctx)) {
+    return -1;
+  }
 
+  return 0;
+}
+//if
+// TODO: Actually use input_params to set which data gets transferred.
+// Make input types the same for input/output? 
 int naa_invoke(__attribute__((unused)) naa_param_t *input_params,
 	__attribute__((unused)) unsigned int input_amount, 
 	naa_param_t output_param,
 	naa_handle *handle) {
 
 	// TODO: check that everything from naa_create is in fact complete.
+	// FM: Do we not cover this by the state machine. 
 
+	//TODO: Set which MRS are transferred to the NAA
 	// Set metadata (i.e. return address).
   if (naaice_set_metadata(handle->comm_ctx, (uintptr_t) output_param.addr))
   	{ return -1; }
-
-  // Do the memory region setup protocol.
-  if (naaice_do_mrsp(handle->comm_ctx)) { return -1; }
 
   // Initialize data transfer to the NAA.
   if (naaice_init_data_transfer(handle->comm_ctx)) { return -1; }
@@ -192,14 +208,18 @@ int naa_test(naa_handle *handle, bool *flag,
 	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }
 
 	// Update completion flag.
-	*flag = handle->comm_ctx->state == FINISHED;
-
+	// FM: I've never seen this. Is this something like a ternary statement? There's segmentation fault
+	//*flag = handle->comm_ctx->state == FINISHED;
+	if(handle->comm_ctx->state == FINISHED){
+		*flag = true;
+	}
+                                      
 	// Update the status struct,
 	status->state = handle->comm_ctx->state;
 
 	return 0;
 }
-
+//TODO: When blocking method is implemented, change this to do blocking
 int naa_wait(naa_handle *handle, naa_status *status) {
 
 	// Loop calling naa_test until it returns true,

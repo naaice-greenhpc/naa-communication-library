@@ -779,7 +779,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
   // If we're receiving data...
   else if (comm_ctx->state == DATA_RECEIVING) {
-
+    // FM: Technically, a Write from the client does not trigger a work completion on the server
     // If we recieved data without an immediate...
     if (wc->opcode == IBV_WC_RECV) {
 

@@ -242,6 +242,14 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
   // Poll the completion queue and handle work completions until the MRSP is
   // complete.
   while (comm_ctx->state < MRSP_DONE) {
+    //FM: I think I encountered a race condition where we are still in MRSP_DONE
+    // but have already received a wc for the recv data with imm....I just can't reproduce it reliably
+    /*** example output:
+    In naaice_swnaa_handle_work_completion
+    state: MRSP_DONE, opcode: IBV_WC_RECV_RDMA_WITH_IMM
+    Work completion opcode (wc opcode): 129, not handled for state:  12.
+    Error while handling work completion.
+*/
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
   }
 
