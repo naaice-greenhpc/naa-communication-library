@@ -355,8 +355,8 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
     //FM What to do here? is this an error state in this case? Check what needs 
     // to be cleaned up in which state...
     // We're not expecting disconnect at this point, so we should exit.
-    fprintf(stderr, "RDMA disconnected unexpectedly.\n");
-
+    fprintf(stderr, "RDMA disconnected by client request.\n");
+    comm_ctx->state = DISCONNECTED;
     // Handle disconnect.
     naaice_disconnect_and_cleanup(comm_ctx);
     return -1;
@@ -762,7 +762,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // Increment the number of completed writes.
       comm_ctx->rdma_writes_done++;
-
+      // TODO FM: This might change later to the number we actually send
       // If all writes have been completed, start waiting for the response.
       if (comm_ctx->rdma_writes_done == comm_ctx->no_local_mrs) {
 
@@ -770,6 +770,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
         // We skip straight to DATA_RECEIVING; the CALCULATING state is used
         // only by the software NAA.
         comm_ctx->state = DATA_RECEIVING;
+        comm_ctx->rdma_writes_done = 0;
       }
 
       return 0;
@@ -827,6 +828,66 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
       "Work completion opcode (wc opcode): %d, not handled for state:  %d.\n",
       wc->opcode, comm_ctx->state);
   return -1;
+}
+// TODO: Combine Blocking and Non-blo   cking into one function 
+int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
+  debug_print("In naaice_poll_cq_nonblocking\n");
+
+  struct ibv_cq *ev_cq;
+  void *ev_ctx;
+  
+  // Ensure completion channel is in blocking mode.
+  int fd_flags = fcntl(comm_ctx->comp_channel->fd, F_GETFL);
+  if (fcntl(comm_ctx->comp_channel->fd, F_SETFL, fd_flags & ~O_NONBLOCK) < 0) {
+    fprintf(stderr, "Failed to change file descriptor of completion event "
+                    "channel.\n");
+    return -1;
+  }
+
+    // If something is received, get the completion event.
+  if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
+    fprintf(stderr, "Failed to get completion queue event.\n");
+    return -1;
+  }
+
+  // Ack the completion event.
+  ibv_ack_cq_events(ev_cq, 1);
+
+  // While there are work completions in the completion queue, handle them.
+  struct ibv_wc wc;
+  int n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
+
+  // If ibv_poll_cq returns an error, return.
+  if (n_wcs < 0) {
+    fprintf(stderr, "ibv_poll_cq() failed.\n");
+    return -1;
+  }
+
+  while (n_wcs) {
+
+    // Handle the work completion.
+    if (naaice_handle_work_completion(&wc, comm_ctx)) {
+      fprintf(stderr, "Error while handling work completion.\n");
+      return -1;
+    }
+
+    // Find any remaining work completions in the queue.
+    n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
+    if (n_wcs < 0) {
+      fprintf(stderr, "ibv_poll_cq() failed.\n");
+      return -1;
+    }
+  }
+
+  // Request completion channel notifications for the next event.
+  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+    fprintf(stderr,
+            "Failed to request completion channel notifications on completion "
+            "queue.\n");
+    return -1;
+  }
+
+  return 0;
 }
 
 int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {

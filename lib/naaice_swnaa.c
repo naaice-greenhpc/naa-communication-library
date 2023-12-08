@@ -255,12 +255,51 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   return 0;
 }
-
+// FM TODO: Harmonize function names for data sending an receiving
+// FM TODO: Check state machine. Either do state changes within higher level functions or in posting recv/write, but not mixed if possible
+int naaice_swnaa_write_data_transfer(struct naaice_communication_context *comm_ctx,uint8_t errorcode){
+  debug_print("In naaice_swnaa_send_data\n");
+  // Update state.
+  comm_ctx->state = DATA_SENDING;
+  naaice_swnaa_write_data(comm_ctx,
+                          errorcode);
+  while (comm_ctx->state == DATA_SENDING) {
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) {
+      return -1;
+    }
+  }
+  return 0;
+}
 int naaice_swnaa_receive_data_transfer(
   struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_receive_data_transfer\n");
+  // Check if connection event is available
+  int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
+  if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
+    fprintf(stderr, "Failed to change file descriptor of rdma event "
+                    "channel.\n");
+    return -1;
+  }
 
+  struct pollfd my_pollfd;
+  int ms_timeout = 100;
+  // Poll the completion channel, returning with flag unchanged if nothing
+  // is received.
+  my_pollfd.fd = comm_ctx->ev_channel->fd;
+  my_pollfd.events = POLLIN;
+  my_pollfd.revents = 0;
+
+  // Nonblocking: if poll times out, just return.
+  int poll_result = poll(&my_pollfd, 1, ms_timeout);
+  if (poll_result < 0) {
+    fprintf(stderr, "Error occured when polling completion channel.\n");
+    return -1;
+  } else if (poll_result > 0) {
+    int result = naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
+    return result;
+  }
+// else continue, there was no event
   // Update state.
   comm_ctx->state = DATA_RECEIVING;
 
@@ -384,7 +423,8 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
     // If we recieved data without an immediate...
     if (wc->opcode == IBV_WC_RECV) {
-
+      // FM: TODO This shouldnt happen, receiving a write does not trigger a recv. we should not handle this and 
+      // throw an error
       // No need to do anything.
       return 0;
     }
@@ -395,7 +435,7 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       // Check if the immediate value is zero, indicating an error.
       if (!ntohl(wc->imm_data)) {
         fprintf(stderr,
-                "Recieved write with immediate value zero.\n");
+                "Received write with immediate value zero.\n");
         return -1;
       }
 
@@ -433,6 +473,19 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       // Now we are ready to perform the NAA procedure.
       return 0;
     }
+  } 
+  else if (comm_ctx->state == DATA_SENDING) {
+    // We're sending back data
+    // If we recieved data without an immediate...
+    if (wc->opcode == IBV_WC_RDMA_WRITE) {
+
+      // Change state to allow receiving data
+      // TODO if we write multiple regions back we will get multiple wcs, need
+      // to keep track then
+      comm_ctx->state = DATA_RECEIVING;
+
+      return 0;
+    }
   }
 
   // If we've reached this point, the work completion had an opcode which is
@@ -460,7 +513,7 @@ int naaice_swnaa_poll_cq_nonblocking(
   }
 
   struct pollfd my_pollfd;
-  int ms_timeout = 100;
+  int ms_timeout = 1000;
   // Poll the completion channel, returning with flag unchanged if nothing
   // is received.
   my_pollfd.fd = comm_ctx->comp_channel->fd;
@@ -491,6 +544,7 @@ int naaice_swnaa_poll_cq_nonblocking(
 
   // While there are work completions in the completion queue, handle them.
   struct ibv_wc wc;
+  enum naaice_communication_state state = comm_ctx->state;
   int n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
 
   // If ibv_poll_cq returns an error, return.
@@ -507,7 +561,11 @@ int naaice_swnaa_poll_cq_nonblocking(
       return -1;
     }
 
-
+    if (state != comm_ctx->state && comm_ctx->state > MRSP_SENDING) {
+      printf("State has changed\n");
+      // State has changed, so we should move forward before polling the next event
+      break;
+    }
     // Find any remaining work completions in the queue.
     n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
     if (n_wcs < 0) {
@@ -967,7 +1025,8 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   }
 
   // Update state.
-  comm_ctx->state = FINISHED;
+  // FM TODO: No update if we want to support multiple rpc invokes
+  //comm_ctx->state = FINISHED;
 
   return 0;
 }
@@ -981,8 +1040,8 @@ int naaice_swnaa_disconnect_and_cleanup(
   // All local memory regions can be freed because they do not exist in user
   // memory space.
 
-  // Disconnect.
-  rdma_disconnect(comm_ctx->id);
+  // Disconnect: Done by client exclusively
+  //rdma_disconnect(comm_ctx->id);
 
   // Deregister memory regions.
   int err = 0;

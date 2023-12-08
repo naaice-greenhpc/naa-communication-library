@@ -208,7 +208,7 @@ int naa_test(naa_handle *handle, bool *flag,
 	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }
 
 	// Update completion flag.
-	// FM: I've never seen this. Is this something like a ternary statement? There's segmentation fault
+	// FM: I've never seen this. Is this something like a ternary statement? There's a segmentation fault
 	//*flag = handle->comm_ctx->state == FINISHED;
 	if(handle->comm_ctx->state == FINISHED){
 		*flag = true;
@@ -224,13 +224,9 @@ int naa_wait(naa_handle *handle, naa_status *status) {
 
 	// Loop calling naa_test until it returns true,
 	// or an error occurs.
-	bool flag = false;
-	int poll_result = 0;
-	while (!flag && !poll_result) { 
-		poll_result = naa_test(handle, &flag, status);
-	}
-
-	return poll_result;
+	int result = 0;
+	result = naaice_poll_cq_nonblocking(handle->comm_ctx);
+	return result;
 }
 
 int naa_finalize(naa_handle *handle) {

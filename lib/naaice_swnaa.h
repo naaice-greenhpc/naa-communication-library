@@ -307,6 +307,12 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
 int naaice_swnaa_receive_data_transfer(
   struct naaice_communication_context *comm_ctx);
 
+/** TODO: WRITE function doc
+
+*/
+int naaice_swnaa_write_data_transfer(
+    struct naaice_communication_context *comm_ctx, uint8_t errorcode);
+
 /**
  * naaice_swnaa_poll_cq_nonblocking:
  *  Polls the completion queue for any work completions, and handles them if

@@ -111,20 +111,30 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   printf("-- Doing MRSP --\n");
   if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
-  // Receive data transfer from host.
-  printf("-- Receiving Data Transfer --\n");
-  if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
+  while (comm_ctx->state >= MRSP_DONE){
+      // Receive data transfer from host.
+      printf("-- Receiving Data Transfer --\n");
+    if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
+    if (comm_ctx->state < MRSP_DONE){
+      break;
+    }
+    // Now that all data has arrived, perform the RPC.
+    printf("-- Doing RPC --\n");
+    printf("Function Code: %d\n", comm_ctx->fncode);
+    uint8_t errorcode = do_procedure(comm_ctx);
 
-  // Now that all data has arrived, perform the RPC.
-  printf("-- Doing RPC --\n");
-  printf("Function Code: %d\n", comm_ctx->fncode);
-  uint8_t errorcode = do_procedure(comm_ctx);
-
-  // Finally, write back the results to the host.
-  printf("-- Writing Back Data --\n");
-  if (naaice_swnaa_write_data(comm_ctx, errorcode)) { return -1; }
-
-  // Disconnect and clean up.
+    // Finally, write back the results to the host.
+    printf("-- Writing Back Data --\n");
+    if (naaice_swnaa_write_data_transfer(comm_ctx,errorcode)) {
+      return -1;
+    }
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)){
+      return -1;
+    }
+  }
+        // if (naaice_swnaa_write_data(comm_ctx, errorcode)) { return -1; }
+        // }
+  //Disconnect and clean up.
   printf("-- Cleaning Up --\n");
   if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
 

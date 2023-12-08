@@ -142,7 +142,17 @@ int main(int argc, char *argv[]) {
   // back from NAA.
   printf("-- Doing Data Transfer --\n");
   if (naaice_do_data_transfer(comm_ctx)) { return -1; }
-  
+  int invokes = 1;
+  printf("-- Doing Data Transfer --\n");
+
+  if (naaice_do_data_transfer(comm_ctx)) {
+    return -1;
+  }
+  invokes++;
+    if (naaice_do_data_transfer(comm_ctx)) {
+    return -1;
+  }
+  invokes++;
   // Disconnect and cleanup.
   printf("-- Cleaning Up --\n");
   if (naaice_disconnect_and_cleanup(comm_ctx)) { return -1; }
@@ -160,7 +170,7 @@ int main(int argc, char *argv[]) {
       unsigned char el = data[j];
 
       if (i == return_param_idx) {
-        if (el != i+1) { success = false; }
+        if (el != i+invokes) { success = false; }
       }
       else {
         if (el != i) { success = false; }

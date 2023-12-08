@@ -268,6 +268,7 @@ enum naaice_communication_state
   INIT            = 00,
   READY           = 01,
   CONNECTED       = 02,
+  DISCONNECTED    = 03,
   MRSP_SENDING    = 10,
   MRSP_RECEIVING  = 11,
   MRSP_DONE       = 12,
