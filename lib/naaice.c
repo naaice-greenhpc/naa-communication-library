@@ -84,7 +84,7 @@ const char* get_state_str(enum naaice_communication_state state) {
 int naaice_init_communication_context(
   struct naaice_communication_context **comm_ctx,
   unsigned int *param_sizes, char **params, unsigned int params_amount,
-  uint8_t fncode, const char *remote_ip, uint16_t port) {
+  uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port) {
 
   debug_print("In naaice_init_communication_context\n");
 
@@ -190,23 +190,44 @@ int naaice_init_communication_context(
   char *port_str = malloc(128);
   snprintf(port_str, 128, "%u", port);
 
-  // Get local and remote addresses from getaddrinfo.
-  struct addrinfo *rem_addr;
-
+  // Get remote address from getaddrinfo.
+  struct addrinfo *rem_addr = NULL, *loc_addr = NULL;
   if (getaddrinfo(remote_ip, port_str, NULL, &rem_addr)) {
     fprintf(stderr, "Failed to get address info for remote address.\n");
     return -1;
   }
 
+  // Get local address from getaddrinfo, if provided.
+  if (local_ip != NULL) {
+    if (getaddrinfo(local_ip, port_str, NULL, &loc_addr)) {
+      fprintf(stderr, "Failed to get address info for local address.\n");
+      return -1;
+    }
+  }
+
   // Resolve address with communication id, using rdma_resolve_addr.
-  if (rdma_resolve_addr(rdma_comm_id, NULL, rem_addr->ai_addr,
-              TIMEOUT_RESOLVE_ADDR) == -1) {
+  // Provide local ip only if provided by user.
+  int resolve_addr_result = 0;
+  if (local_ip != NULL) {
+    debug_print("Local IP provided.\n");
+    resolve_addr_result = rdma_resolve_addr(
+      rdma_comm_id, loc_addr->ai_addr, rem_addr->ai_addr,
+      TIMEOUT_RESOLVE_ADDR);
+  }
+  else {
+    debug_print("No local IP provided.\n");
+    resolve_addr_result = rdma_resolve_addr(
+      rdma_comm_id, NULL, rem_addr->ai_addr,
+      TIMEOUT_RESOLVE_ADDR);
+  }
+  if (resolve_addr_result == -1) {
     fprintf(stderr, "Failed to resolve addresses.\n");
     fprintf(stderr, "errno: %d\n", errno);
     return -1;
   }
 
   // Addresses no longer needed, call freeaddrinfo on each of them.
+  freeaddrinfo(loc_addr);
   freeaddrinfo(rem_addr);
 
   return 0;

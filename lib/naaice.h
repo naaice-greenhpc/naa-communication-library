@@ -351,6 +351,11 @@ struct naaice_communication_context
  *    should correspond to params_amount.
  *  uint8_t fncode:
  *    Function code specifying which NAA routine to be called.
+ *  const char *local_ip:
+ *    String specifying local address, ex. "10.3.10.136".
+ *    Optional argument - if NULL, not used.
+ *    When running system on a loopback setup, do not provide local address.
+ *    In normal operation, local address should be provided.
  *  const char *remote_ip:
  *    String specifying remote address, ex. "10.3.10.135".
  *  uint16_t port:
@@ -362,7 +367,7 @@ struct naaice_communication_context
 int naaice_init_communication_context(
   struct naaice_communication_context **comm_ctx,
   unsigned int *param_sizes, char **params, unsigned int params_amount,
-  uint8_t fncode, const char *remote_ip, uint16_t port);
+  uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
 
 /**
  * naaice_poll_connection_event:
