@@ -2,7 +2,7 @@
 
 # Set to any non-empty value to enable compiling EMA version.
 # EMA expected to be located in naa-comminication-prototype/ema/.
-ENABLE_EMA := true
+ENABLE_EMA :=
 
 OPTIONS :=
 CC      := gcc
