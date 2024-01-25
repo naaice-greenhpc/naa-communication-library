@@ -57,9 +57,7 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
     // Assume all data in the memory regions is arrays of chars.
     // Increment all chars in all memory regions by one.
 
-    // Be sure not to include the metadata region.
-
-    for (unsigned int i = 1; i < comm_ctx->no_local_mrs; i++) {
+    for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
 
       // Get pointer to data.
       unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[i].addr;
@@ -103,21 +101,31 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   if(naaice_swnaa_init_communication_context(&comm_ctx, CONNECTION_PORT)) {
     return -1; }
 
-  // First, handle connection setup.
-    printf("-- Setting Up Connection --\n");
+  // Now, handle connection setup.
+  printf("-- Setting Up Connection --\n");
   if (naaice_swnaa_setup_connection(comm_ctx)) { return -1; }
 
   // Receive MRSP message from the host.
   printf("-- Doing MRSP --\n");
   if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
-  while (comm_ctx->state >= MRSP_DONE){
-      // Receive data transfer from host.
-      printf("-- Receiving Data Transfer --\n");
+  // Specify input and output parameters.
+  // As an example, specify the first two parameters as intputs and the second
+  // parameter as an output.
+  printf("-- Specifying Input and Output Memory Regions --\n");
+  if (naaice_swnaa_set_input_mr(comm_ctx, 0)) { return -1; }
+  if (naaice_swnaa_set_input_mr(comm_ctx, 1)) { return -1; }
+  if (naaice_swnaa_set_output_mr(comm_ctx, 1)) { return -1; }
+
+  while (comm_ctx->state >= MRSP_DONE) {
+    
+    // Receive data transfer from host.
+    printf("-- Receiving Data Transfer --\n");
     if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
     if (comm_ctx->state < MRSP_DONE){
       break;
     }
+
     // Now that all data has arrived, perform the RPC.
     printf("-- Doing RPC --\n");
     printf("Function Code: %d\n", comm_ctx->fncode);
@@ -125,16 +133,12 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
 
     // Finally, write back the results to the host.
     printf("-- Writing Back Data --\n");
-    if (naaice_swnaa_write_data_transfer(comm_ctx,errorcode)) {
-      return -1;
-    }
-    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)){
-      return -1;
-    }
+    if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) { return -1; }
+
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)) { return -1; }
   }
-        // if (naaice_swnaa_write_data(comm_ctx, errorcode)) { return -1; }
-        // }
-  //Disconnect and clean up.
+
+  // Disconnect and clean up.
   printf("-- Cleaning Up --\n");
   if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
 

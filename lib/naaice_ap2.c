@@ -152,7 +152,7 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 	// Convert the params into the representation expected by the API layer
 	// (i.e. without the naa_param_t type).
 	char *param_addrs[params_amount];
-	unsigned int param_sizes[params_amount];
+	size_t param_sizes[params_amount];
 	for (unsigned int i = 0; i < params_amount; i++) {
 		param_addrs[i] = (char*) params[i].addr;
 		param_sizes[i] = params[i].size;
@@ -179,21 +179,57 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 
   return 0;
 }
-//if
+
 // TODO: Actually use input_params to set which data gets transferred.
 // Make input types the same for input/output? 
-int naa_invoke(__attribute__((unused)) naa_param_t *input_params,
-	__attribute__((unused)) unsigned int input_amount, 
-	naa_param_t output_param,
-	naa_handle *handle) {
+int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
+	naa_param_t *output_params, unsigned int output_amount,
+  naa_handle *handle) {
 
 	// TODO: check that everything from naa_create is in fact complete.
-	// FM: Do we not cover this by the state machine. 
+	// FM: Do we not cover this by the state machine.
 
-	//TODO: Set which MRS are transferred to the NAA
-	// Set metadata (i.e. return address).
-  if (naaice_set_metadata(handle->comm_ctx, (uintptr_t) output_param.addr))
-  	{ return -1; }
+	// Set input and output parameters.
+	// For each input and output parameter pointer, check that it refers to one
+	// of the parameters previously passed and registered during naa_create.
+	// If it is, set it as an input or output parameter appropriately.
+	// Otherwise return with an error.
+	for (unsigned int i = 0; i < input_amount; i++) {
+
+		bool param_exists = false;
+		for (int j = 0; j < handle->comm_ctx->no_local_mrs; j++) {
+
+			if (input_params[i].addr == (void*) handle->comm_ctx->mr_local_data[j].addr) {
+
+				param_exists = true;
+				if (naaice_set_input_mr(handle->comm_ctx, j)) { return -1; }
+				break;
+			}
+		}
+		if (!param_exists) {
+			fprintf(stderr, "Requested input parameter which was not previously"
+				"passed to naa_create.\n");
+			return -1;
+		}
+	}
+	for (unsigned int i = 0; i < output_amount; i++) {
+
+		bool param_exists = false;
+		for (int j = 0; j < handle->comm_ctx->no_local_mrs; j++) {
+
+			if (output_params[i].addr == (void*) handle->comm_ctx->mr_local_data[j].addr) {
+
+				param_exists = true;
+				if (naaice_set_output_mr(handle->comm_ctx, j)) { return -1; }
+				break;
+			}
+		}
+		if (!param_exists) {
+			fprintf(stderr, "Requested output parameter which was not previously"
+				"passed to naa_create.\n");
+			return -1;
+		}
+	}
 
   // Initialize data transfer to the NAA.
   if (naaice_init_data_transfer(handle->comm_ctx)) { return -1; }
@@ -220,7 +256,8 @@ int naa_test(naa_handle *handle, bool *flag,
 	return 0;
 }
 //TODO: When blocking method is implemented, change this to do blocking
-int naa_wait(naa_handle *handle, naa_status *status) {
+int naa_wait(naa_handle *handle,
+	__attribute__((unused)) naa_status *status) {
 
 	// Loop calling naa_test until it returns true,
 	// or an error occurs.

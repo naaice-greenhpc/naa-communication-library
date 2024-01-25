@@ -75,8 +75,8 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 			   unsigned params_amount, naa_handle *handle);
 
 int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
-			   naa_param_t output_param,
-			   naa_handle *handle);
+			   naa_param_t *output_params, unsigned int output_amount,
+         naa_handle *handle);
 
 int naa_test(naa_handle *handle, bool *flag, naa_status *status);
 

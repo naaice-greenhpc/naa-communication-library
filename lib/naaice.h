@@ -42,10 +42,6 @@
  *    without reallocation?
  *    Aligned memory isn't strictly necessary, it just has some performance implications
  * 
- * - Add support for running multiple RPCs before disconnecting.
- * 
- * - Add support for routine-specific metadata fields.
- * 
  * - Add timeouts.
  *
  * - Handle errors better, utilizing errno and ERROR state in state machine.
@@ -151,7 +147,8 @@ struct naaice_mr_advertisement
 
 // Struct to hold memory region advertisement and request message.
 // TODO: Could have a naaice_mr_advertisement struct as member.
-struct naaice_mr_advertisement_request{
+struct naaice_mr_advertisement_request
+{
   uint8_t mrflags;
   uint8_t fpgaaddress[7];
   uint64_t addr;
@@ -167,13 +164,6 @@ enum naaice_mrflags_value {
   // Indicates that memory region is for internal use on the NAA only, and
   // should not be written to or read from during data transfer.
   MRFLAG_INTERNAL = 0x01,
-
-  // Indicates that memory region should be written back to the host during
-  // memory transfer in addition to the return parameter memory region
-  // specified in the metadata.
-  // Does not override MRFLAG_INTERNAL; if both are set, the memory region
-  // is not written back.
-  MRFLAG_WRITEBACK = 0x02
 };
 
 // Struct to hold memory region request message.
@@ -204,9 +194,16 @@ struct naaice_mr_dynamic_hdr
 // Struct to hold information about a remote (i.e. peer) memory region.
 struct naaice_mr_peer
 {
-  uint64_t addr;
+  union 
+  {
+    uint64_t addr;
+    uint8_t fpgaaddr[8];
+  };
   uint32_t rkey;
   size_t size;
+
+  // Indicates that the MR should be written back from NAA.
+  bool to_write;
 };
 
 // Struct to hold information about a local memory region.
@@ -216,11 +213,8 @@ struct naaice_mr_local
   char *addr;
   size_t size;
 
-  // Used by the software NAA implementation. Ignored in normal host-side
-  // operation. If set, this memory region is always written back to the host
-  // in addition to the return parameter memory region specified in the
-  // metadata.
-  bool writeback;
+  // Indicates that the MR should be written to remote.
+  bool to_write;
 };
 
 // Struct to hold information about a memory region used internally for
@@ -228,8 +222,12 @@ struct naaice_mr_local
 // The addr field represents the MR's address in NAA memory space.
 struct naaice_mr_internal
 {
-  char *addr;
-  uint32_t size;
+  union
+  {
+    uint64_t addr;
+    uint8_t fpgaaddr[8];
+  };
+  size_t size;
 };
 
 // Struct to hold metadata stored in a particular memory region,
@@ -325,6 +323,10 @@ struct naaice_communication_context
 
   // Keeps track of number of writes done to NAA.
   uint8_t rdma_writes_done;
+
+  // Number of input and output parameters.
+  uint8_t no_input_mrs;
+  uint8_t no_output_mrs;
 };
 
 
@@ -366,7 +368,7 @@ struct naaice_communication_context
  */
 int naaice_init_communication_context(
   struct naaice_communication_context **comm_ctx,
-  unsigned int *param_sizes, char **params, unsigned int params_amount,
+  size_t *param_sizes, char **params, unsigned int params_amount,
   uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
 
 /**
@@ -504,8 +506,18 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx);
  * returns:
  *  0 if sucessful, -1 if not.
  */
-int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
-  uintptr_t return_addr);
+//int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
+//  uintptr_t return_addr);
+
+int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
+  unsigned int n_parameter_mrs, uint64_t *local_addrs, uint64_t *remote_addrs,
+  size_t *sizes);
+
+int naaice_set_input_mr(struct naaice_communication_context *comm_ctx,
+  unsigned int input_mr_idx);
+
+int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
+  unsigned int output_mr_idx);
 
 /**
  * naaice_set_internal_mrs
@@ -536,7 +548,7 @@ int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
  *  0 if sucessful, -1 if not.
  */
 int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
-  unsigned int n_internal_mrs, uintptr_t *addrs, size_t *sizes);
+  unsigned int n_internal_mrs, uint64_t *addrs, size_t *sizes);
 
 /**
  * naaice_init_mrsp:

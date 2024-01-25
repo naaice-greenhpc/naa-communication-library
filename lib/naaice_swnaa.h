@@ -243,8 +243,14 @@ int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
  * returns:
  *  0 if successful, -1 if not.
  */ 
-int naaice_swnaa_handle_metadata(
-  struct naaice_communication_context *comm_ctx);
+//int naaice_swnaa_handle_metadata(
+//  struct naaice_communication_context *comm_ctx);
+
+int naaice_swnaa_set_input_mr(struct naaice_communication_context *comm_ctx,
+  unsigned int input_mr_idx);
+
+int naaice_swnaa_set_output_mr(struct naaice_communication_context *comm_ctx,
+  unsigned int output_mr_idx);
 
 /**
  * naaice_swnaa_write_data:
@@ -310,7 +316,7 @@ int naaice_swnaa_receive_data_transfer(
 /** TODO: WRITE function doc
 
 */
-int naaice_swnaa_write_data_transfer(
+int naaice_swnaa_do_data_transfer(
     struct naaice_communication_context *comm_ctx, uint8_t errorcode);
 
 /**

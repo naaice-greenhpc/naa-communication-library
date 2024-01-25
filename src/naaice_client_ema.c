@@ -39,6 +39,9 @@
 #define CONNECTION_PORT 12345
 #define FNCODE 1
 
+// Number of times to repeat the RPC.
+#define N_INVOKES 3
+
 
 /* Main **********************************************************************/
 
@@ -75,7 +78,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Get sizes of memory regions from command line.
-  unsigned int param_sizes[params_amount];
+  size_t param_sizes[params_amount];
 
   // First (non-metadata) region.
   char *token = strtok(argv[3+arg_offset], " ");
@@ -104,7 +107,13 @@ int main(int argc, char *argv[]) {
   // array of chars of value 1, etc.
   char *params[params_amount];
   for (unsigned char i = 0; i < params_amount; i++) {
+
     params[i] = malloc(param_sizes[i] * sizeof(char));
+    if (params[i] == NULL) {
+      fprintf(stderr, "Failed to allocate memory for parameters.\n");
+      return -1;
+    }
+
     params[i] = memset(params[i], i, param_sizes[i]);
   }
 
@@ -131,27 +140,39 @@ int main(int argc, char *argv[]) {
       return -1;
   }
 
-  // First, handle connection setup.
-  printf("-- Set Up Connection --\n");
+  // Now, handle connection setup.
+  printf("-- Setting Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) { return -1; }
-  
-  // Request internal memory regions.
+
+  // Specify input and output parameters.
+  // As an example, specify the first two parameters as intputs and the second
+  // parameter as an output.
+  printf("-- Specifying Input and Output Memory Regions --\n");
+  if (naaice_set_input_mr(comm_ctx, 0)) { return -1; }
+  if (naaice_set_input_mr(comm_ctx, 1)) { return -1; }
+  if (naaice_set_output_mr(comm_ctx, 1)) { return -1; }
+
+  // Then, register the memory regions with IBV.
+  printf("-- Registering Memory Regions with IBV --\n");
+  if (naaice_register_mrs(comm_ctx)) { return -1; }
+
+  // Also configure internal memory regions.
+  // As an example, specify a single internal memory region with address 0
+  // and size 32.
   printf("-- Specifying NAA Internal Memory Regions --\n");
   uintptr_t internal_addrs[1] = {0};
   size_t internal_sizes[1] = {32};
   if (naaice_set_internal_mrs(comm_ctx, 1,
         internal_addrs, internal_sizes)) { return -1; }
 
-  // Then, register the memory regions.
-  printf("-- Registering Memory Regions --\n");
-  if (naaice_register_mrs(comm_ctx)) { return -1; }
-
+  /*
   // Set metadata (i.e. return address).
   // For our example, the return parameter is the last one.
   unsigned char return_param_idx = params_amount - 1;
   printf("-- Setting Metadata --\n");
   if (naaice_set_metadata(comm_ctx, (uintptr_t) params[return_param_idx])) {
     return -1; }
+  */
 
   // Do the memory region setup protocol.
   printf("-- Doing MRSP --\n");
@@ -160,19 +181,14 @@ int main(int argc, char *argv[]) {
   // Do the data transfer, including commnication of parameters to NAA,
   // waiting for calculation to complete, and receiving return parameter
   // back from NAA.
+  // Repeat RPC N_INVOKES times.
   printf("-- Doing Data Transfer --\n");
-  if (naaice_do_data_transfer(comm_ctx)) { return -1; }
-  int invokes = 1;
-  printf("-- Doing Data Transfer --\n");
+  for (int i = 0; i < N_INVOKES; i++) {
 
-  if (naaice_do_data_transfer(comm_ctx)) {
-    return -1;
+    printf("-- invocation #%d --\n", i);
+    if (naaice_do_data_transfer(comm_ctx)) { return -1; }
   }
-  invokes++;
-    if (naaice_do_data_transfer(comm_ctx)) {
-    return -1;
-  }
-  invokes++;
+
   // Disconnect and cleanup.
   printf("-- Cleaning Up --\n");
   if (naaice_disconnect_and_cleanup(comm_ctx)) { return -1; }
@@ -184,7 +200,7 @@ int main(int argc, char *argv[]) {
   EMA_finalize();
 
   // At this point, we can check the data for correctness.
-  // For the simple SWNAA example, we expect all values in the return parameter
+  // For the simple SWNAA example, we expect all values in the last parameter
   // to have been incremented, and the other parameters to be unchanged.
   printf("-- Checking Results --\n");
   for (unsigned char i = 0; i < params_amount; i++) {
@@ -195,8 +211,8 @@ int main(int argc, char *argv[]) {
 
       unsigned char el = data[j];
 
-      if (i == return_param_idx) {
-        if (el != i+invokes) { success = false; }
+      if (i == params_amount-1) {
+        if (el != (i + N_INVOKES)) { success = false; }
       }
       else {
         if (el != i) { success = false; }
