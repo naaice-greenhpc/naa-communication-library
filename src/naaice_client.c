@@ -20,7 +20,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 08-11-2023
+ * 26-01-2024
  * 
  *****************************************************************************/
 
@@ -64,8 +64,9 @@ int main(int argc, char *argv[]) {
   };
 
   // Check if optional local IP argument was provided.
+  char empty_str[1] = "";
   int arg_offset = (argc == 4) ? 0 : 1;
-  char *local_ip = (argc == 4) ? NULL : argv[1];
+  char *local_ip = (argc == 4) ? empty_str : argv[1];
 
   // Check against maximum number of memory regions.
   char *ptr;
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
   // Get sizes of memory regions from command line.
   size_t param_sizes[params_amount];
 
-  // First (non-metadata) region.
+  // First region.
   char *token = strtok(argv[3+arg_offset], " ");
   param_sizes[0] = atoi(token);
 
@@ -132,7 +133,7 @@ int main(int argc, char *argv[]) {
   if (naaice_setup_connection(comm_ctx)) { return -1; }
 
   // Specify input and output parameters.
-  // As an example, specify the first two parameters as intputs and the second
+  // As an example, specify the first two parameters as inputs and the second
   // parameter as an output.
   printf("-- Specifying Input and Output Memory Regions --\n");
   if (naaice_set_input_mr(comm_ctx, 0)) { return -1; }
@@ -152,15 +153,6 @@ int main(int argc, char *argv[]) {
   if (naaice_set_internal_mrs(comm_ctx, 1,
         internal_addrs, internal_sizes)) { return -1; }
 
-  /*
-  // Set metadata (i.e. return address).
-  // For our example, the return parameter is the last one.
-  unsigned char return_param_idx = params_amount - 1;
-  printf("-- Setting Metadata --\n");
-  if (naaice_set_metadata(comm_ctx, (uintptr_t) params[return_param_idx])) {
-    return -1; }
-  */
-
   // Do the memory region setup protocol.
   printf("-- Doing MRSP --\n");
   if (naaice_do_mrsp(comm_ctx)) { return -1; }
@@ -172,7 +164,7 @@ int main(int argc, char *argv[]) {
   printf("-- Doing Data Transfer --\n");
   for (int i = 0; i < N_INVOKES; i++) {
 
-    printf("-- invocation #%d --\n", i);
+    printf("-- RPC Invocation #%d --\n", i+1);
     if (naaice_do_data_transfer(comm_ctx)) { return -1; }
   }
 
@@ -192,8 +184,10 @@ int main(int argc, char *argv[]) {
 
       unsigned char el = data[j];
 
-      if (i == params_amount-1) {
-        if (el != (i + N_INVOKES)) { success = false; }
+      if (i == (params_amount - 1)) {
+        if (el != (i + N_INVOKES)) {
+          success = false;
+        }
       }
       else {
         if (el != i) { success = false; }

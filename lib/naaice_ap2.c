@@ -17,14 +17,13 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 12-10-2023
+ * 26-01-2024
  * 
  *****************************************************************************/
 
 /* Dependencies **************************************************************/
 
 #include <naaice_ap2.h>
-//#include <naaice.h>	// Moved to header.
 
 
 /* Constants *****************************************************************/
@@ -35,14 +34,16 @@
 #define TIMEOUT_WAIT 100
 #define CONNECTION_PORT 12345
 
-// TODO: Check if local ip still necessary
-/*static const char *LOCAL_IP = "10.32.56.10";
-static const char *REMOTE_IP = "10.32.56.20";
-*/
-//UP IPs
+// TODO: Provided by RMS in the future.
+// UP IPs.
+//static const char *LOCAL_IP = "10.3.10.135";
+//static const char *REMOTE_IP = "10.3.10.136";
 
-static const char *LOCAL_IP = "10.3.10.135";
-static const char *REMOTE_IP = "10.3.10.136";
+// ZIB IPs.
+static const char *LOCAL_IP = ""; // Indicate that we don't provide the
+																	// optional local ip argument with an
+																	// empty string.
+static const char *REMOTE_IP = "10.32.56.10";
 
 // Struct used to hold configuration info about NAA hardware.
 typedef struct naa_hardware_config {
@@ -78,7 +79,6 @@ const struct naa_routineset_config naa_routinesets[N_NAA_ROUTINESETS] =
 // Function to retrieve network parameters.
 // Should eventually read from config file (with help from RMS / memory
 // management service?).
-// TODO: Check if local ip still necessary
 int get_network_params(char *local_ip, char *remote_ip, uint16_t *port) {
 	// For now, dummy implementation:
 	// Just return some locally defined constants.
@@ -238,16 +238,17 @@ int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
 }
 
 int naa_test(naa_handle *handle, bool *flag,
-	__attribute__((unused)) naa_status *status) {
+	naa_status *status) {
 
 	// Check for NAA completion. If this returns -1, an error occured.
 	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }
 
 	// Update completion flag.
-	// FM: I've never seen this. Is this something like a ternary statement? There's a segmentation fault
-	//*flag = handle->comm_ctx->state == FINISHED;
-	if(handle->comm_ctx->state == FINISHED){
+	if (handle->comm_ctx->state >= FINISHED){
 		*flag = true;
+	}
+	else {
+		*flag = false;
 	}
                                       
 	// Update the status struct,
@@ -255,15 +256,19 @@ int naa_test(naa_handle *handle, bool *flag,
 
 	return 0;
 }
-//TODO: When blocking method is implemented, change this to do blocking
-int naa_wait(naa_handle *handle,
-	__attribute__((unused)) naa_status *status) {
 
-	// Loop calling naa_test until it returns true,
-	// or an error occurs.
-	int result = 0;
-	result = naaice_poll_cq_nonblocking(handle->comm_ctx);
-	return result;
+// TODO: When blocking method is implemented, change this to do blocking
+int naa_wait(naa_handle *handle,
+	naa_status *status) {
+
+	bool flag = false;
+  while (!flag) {
+    if (naa_test(handle, &flag, status)) {
+      fprintf(stderr, "Error occured during naa_test. Exiting.\n");
+      return -1;
+    }
+  }
+  return 0;
 }
 
 int naa_finalize(naa_handle *handle) {

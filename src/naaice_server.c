@@ -22,7 +22,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 08-11-2023
+ * 26-01-2024
  * 
  *****************************************************************************/
 
@@ -110,7 +110,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
   // Specify input and output parameters.
-  // As an example, specify the first two parameters as intputs and the second
+  // As an example, specify the first two parameters as inputs and the second
   // parameter as an output.
   printf("-- Specifying Input and Output Memory Regions --\n");
   if (naaice_swnaa_set_input_mr(comm_ctx, 0)) { return -1; }

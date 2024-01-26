@@ -17,7 +17,7 @@ LDS_EMA  := -L${PWD}/ema/lib/ -lEMA
 #-lpthread
 .PRECIOUS: %.o
 
-APPS_DEFAULT := naaice_client naaice_server
+APPS_DEFAULT := naaice_client naaice_server naaice_client_ap2
 APPS_EMA := naaice_client_ema
 
 all: check-ema apps

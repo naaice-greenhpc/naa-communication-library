@@ -10,17 +10,17 @@
  * 
  *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
  * 
- * naaice_client.c
+ * naaice_client_ema.c
  *
  * Application implementing a basic use case of the AP1 NAAICE communication
- * layer.
+ * layer. Uses PERFAACT's EMA for CPU energy measurement.
  * 
- * For use on a loopback test setup, in conjunction with naaice_server.c.
+ * For use in conjunction with naaice_server.c.
  * 
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 08-11-2023
+ * 26-01-2024
  * 
  *****************************************************************************/
 

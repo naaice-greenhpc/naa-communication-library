@@ -17,7 +17,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 08-11-2023
+ * 26-01-2024
  * 
  *****************************************************************************/
 
@@ -166,7 +166,7 @@ int naaice_init_communication_context(
   }
 
   // Get local address from getaddrinfo, if provided.
-  if (local_ip != NULL) {
+  if (local_ip[0] != '\0') {
     if (getaddrinfo(local_ip, port_str, NULL, &loc_addr)) {
       fprintf(stderr, "Failed to get address info for local address.\n");
       return -1;
@@ -176,7 +176,7 @@ int naaice_init_communication_context(
   // Resolve address with communication id, using rdma_resolve_addr.
   // Provide local ip only if provided by user.
   int resolve_addr_result = 0;
-  if (local_ip != NULL) {
+  if (local_ip[0] != '\0') {
     debug_print("Local IP provided.\n");
     resolve_addr_result = rdma_resolve_addr(
       rdma_comm_id, loc_addr->ai_addr, rem_addr->ai_addr,
@@ -511,52 +511,8 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
     return -1;
   }
 
-  debug_print("!!!\n");
-
   return 0;
 }
-
-/*
-int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
-  uintptr_t return_addr) {
-
-  debug_print("In naaice_set_metadata\n");
-
-  // Check that the passed address points to one of the registered regions.
-  // Returning to the metadata region (i.e. #0) is not allowed.
-  bool flag = false;
-  // FM: Why 1 to < comm_ctx->no_local_mrs-1 -> that way we can neither specify
-  // the last nor the first mr
-  // Dylan: We start with 1 because 0 is the metadata memory region, and
-  // returning to that is not allowed. You're right about the upper bound!
-  for (int i = 1; i < comm_ctx->no_local_mrs; i++) {
-    if (return_addr == (uintptr_t) comm_ctx->mr_local_data[i].addr) {
-
-      // Keep track of which memory region is the return parameter.
-      comm_ctx->mr_return_idx = i;
-      flag = true;
-      break;
-    }
-  }
-
-  // If it doesn't, return with an error.
-  if (!flag) {
-    fprintf(stderr, "Requested return address is not a "
-      "registered parameter.\n");
-    return -1;
-  }
-
-  // Metadata region is already allocated in init_communication_context.
-  // Therefore, we just need to set the fields.
-  // FM: Somehow this doesn't work?
-  // Dylan: Seems to be working to me
-  struct naaice_rpc_metadata *metadata = 
-    (struct naaice_rpc_metadata*) (comm_ctx->mr_local_data[0].addr);
-  metadata->return_addr = htonll((uintptr_t)return_addr);
-
-  return 0;
-}
-*/
 
 int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
   unsigned int n_parameter_mrs, uint64_t *local_addrs, uint64_t *remote_addrs,
@@ -646,9 +602,12 @@ int naaice_set_input_mr(struct naaice_communication_context *comm_ctx,
     return -1;
   }
 
-  // Otherwise set the appropriate flag and keep track of number of inputs.
-  comm_ctx->mr_local_data[input_mr_idx].to_write = true;
-  comm_ctx->no_input_mrs++;
+  // If the MR was not already set as input, set it so and increment the
+  // number of inputs.
+  if (!comm_ctx->mr_local_data[input_mr_idx].to_write) {
+    comm_ctx->mr_local_data[input_mr_idx].to_write = true;
+    comm_ctx->no_input_mrs++;
+  }
 
   return 0;
 }
@@ -666,9 +625,12 @@ int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
     return -1;
   }
 
-  // Otherwise set the appropriate flag and keep track of number of outputs.
-  comm_ctx->mr_peer_data[output_mr_idx].to_write = true;
-  comm_ctx->no_output_mrs++;
+  // If the MR was not already set as output, set it so and increment the
+  // number of outputs.
+  if (!comm_ctx->mr_peer_data[output_mr_idx].to_write) {
+    comm_ctx->mr_peer_data[output_mr_idx].to_write = true;
+    comm_ctx->no_output_mrs++;
+  }
 
   return 0;
 }
@@ -856,7 +818,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // Increment the number of completed writes.
       comm_ctx->rdma_writes_done++;
-
+      
       // TODO FM: This might change later to the number we actually send
       // If all writes have been completed, start waiting for the response.
       if (comm_ctx->rdma_writes_done == comm_ctx->no_input_mrs) {
@@ -875,6 +837,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
   // If we're receiving data...
   else if (comm_ctx->state == DATA_RECEIVING) {
+
     // FM: Technically, a Write from the client does not trigger a work completion on the server
     // If we recieved data without an immediate...
     if (wc->opcode == IBV_WC_RECV) {
@@ -920,8 +883,8 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   // If we've reached this point, the work completion had an opcode which is
   // not handled for the current state, so return with error.
   fprintf(stderr,
-      "Work completion opcode (wc opcode): %d, not handled for state:  %d.\n",
-      wc->opcode, comm_ctx->state);
+      "Work completion opcode (wc opcode): %s, not handled for state: %s.\n",
+      get_ibv_wc_opcode_str(wc->opcode), get_state_str(comm_ctx->state));
   return -1;
 }
 

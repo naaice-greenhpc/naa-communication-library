@@ -17,7 +17,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 08-11-2023
+ * 26-01-2024
  * 
  *****************************************************************************/
 
@@ -548,7 +548,7 @@ int naaice_swnaa_poll_cq_nonblocking(
   }
   else if (poll_result == 0) {
 
-    // We hav simply not recieved any events.
+    // We have simply not recieved any events.
     return 0;
   }
 
@@ -589,6 +589,7 @@ int naaice_swnaa_poll_cq_nonblocking(
       // event.
       break;
     }
+
     // Find any remaining work completions in the queue.
     n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
     if (n_wcs < 0) {
@@ -999,9 +1000,12 @@ int naaice_swnaa_set_input_mr(struct naaice_communication_context *comm_ctx,
     return -1;
   }
 
-  // Otherwise set the appropriate flag and keep track of number of inputs.
-  comm_ctx->mr_peer_data[input_mr_idx].to_write = true;
-  comm_ctx->no_input_mrs++;
+  // If the MR was not already set as input, set it so and increment the
+  // number of inputs.
+  if (!comm_ctx->mr_peer_data[input_mr_idx].to_write) {
+    comm_ctx->mr_peer_data[input_mr_idx].to_write = true;
+    comm_ctx->no_input_mrs++;
+  }
 
   return 0;
 }
@@ -1019,9 +1023,12 @@ int naaice_swnaa_set_output_mr(struct naaice_communication_context *comm_ctx,
     return -1;
   }
 
-  // Otherwise set the appropriate flag and keep track of number of outputs.
-  comm_ctx->mr_local_data[output_mr_idx].to_write = true;
-  comm_ctx->no_output_mrs++;
+  // If the MR was not already set as output, set it so and increment the
+  // number of outputs.
+  if (!comm_ctx->mr_local_data[output_mr_idx].to_write) {
+    comm_ctx->mr_local_data[output_mr_idx].to_write = true;
+    comm_ctx->no_output_mrs++;
+  }
 
   return 0;
 }
