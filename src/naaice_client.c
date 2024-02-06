@@ -128,6 +128,10 @@ int main(int argc, char *argv[]) {
       return -1;
   }
 
+  // Set immediate value which will be sent later as part of the data transfer.
+  uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
+  if (naaice_set_immediate(comm_ctx, imm_bytes)) { return -1; }
+
   // Now, handle connection setup.
   printf("-- Setting Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) { return -1; }

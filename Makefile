@@ -7,8 +7,8 @@ ENABLE_EMA :=
 OPTIONS :=
 CC      := gcc
 DISABLEWARNINGS :=
-CPPFLAGS := -D_POSIX_C_SOURCE=200112L -D_DEFAULT_SOURCE -Wall -std=c17 -pedantic -g -Wextra $(DISABLEWARNINGS)
-CFLAGS  := -fstack-protector-all ${OPTIONS}
+CPPFLAGS := -Wall -pedantic -g -Wextra $(DISABLEWARNINGS)
+CFLAGS  := -fstack-protector-all ${OPTIONS} -gdwarf-2
 LD      := gcc
 INCS_DEFAULT := -I${PWD}/lib/
 LDS_DEFAULT := ${LDLIBS} -lrdmacm -libverbs

@@ -87,6 +87,9 @@
 
 /* Dependencies **************************************************************/
 
+//#define _BSD_SOURCE
+#include <endian.h>
+
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -97,12 +100,60 @@
 #include <string.h>
 #include <sys/poll.h>
 #include <unistd.h>
+
+
+#ifndef _ENDIAN_H
+#error You need to include endian.h
+#endif
+
+/*
+#if defined __USE_BSD && !defined __ASSEMBLER__
+# include <bits/byteswap.h>
+
+# if __BYTE_ORDER == __LITTLE_ENDIAN
+#  define htobe16(x) __bswap_16 (x)
+#  define htole16(x) (x)
+#  define be16toh(x) __bswap_16 (x)
+#  define le16toh(x) (x)
+
+#  define htobe32(x) __bswap_32 (x)
+#  define htole32(x) (x)
+#  define be32toh(x) __bswap_32 (x)
+#  define le32toh(x) (x)
+
+#  if __GLIBC_HAVE_LONG_LONG
+#   define htobe64(x) __bswap_64 (x)
+#   define htole64(x) (x)
+#   define be64toh(x) __bswap_64 (x)
+#   define le64toh(x) (x)
+#  endif
+
+# else
+#  define htobe16(x) (x)
+#  define htole16(x) __bswap_16 (x)
+#  define be16toh(x) (x)
+#  define le16toh(x) __bswap_16 (x)
+
+#  define htobe32(x) (x)
+#  define htole32(x) __bswap_32 (x)
+#  define be32toh(x) (x)
+#  define le32toh(x) __bswap_32 (x)
+
+#  if __GLIBC_HAVE_LONG_LONG
+#   define htobe64(x) (x)
+#   define htole64(x) __bswap_64 (x)
+#   define be64toh(x) (x)
+#   define le64toh(x) __bswap_64 (x)
+#  endif
+# endif
+#endif
+*/
+
 #include <sys/socket.h>
 #include <limits.h>
 #include <netdb.h>
 #include <rdma/rdma_cma.h>
 #include <rdma/rdma_verbs.h>
-
 
 /* Constants *****************************************************************/
 
@@ -126,6 +177,9 @@
 // multiplied by the maximum allowed number of memory regions.
 // TODO: add header size.
 #define MR_SIZE_MRSP sizeof(struct naaice_mr_advertisement_request) * MAX_MRS
+
+// FPGA addresses are sent in a 7-byte region, so this is the maximum value
+// the can take (2^56-1)
 
 /* Structs and Enums *********************************************************/
 
@@ -327,6 +381,16 @@ struct naaice_communication_context
   // Number of input and output parameters.
   uint8_t no_input_mrs;
   uint8_t no_output_mrs;
+
+  // 32 bit value sent in RDMA immediate value during data transfer.
+  // The first byte will hold the function code, set with
+  // naaice_init_communication_context. The remaining bytes can be set using
+  // naaice_set_immediate.
+  union 
+  {
+    uint32_t immediate;
+    uint8_t immediate_bytearr[4];
+  };
 };
 
 
@@ -549,6 +613,10 @@ int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
  */
 int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   unsigned int n_internal_mrs, uint64_t *addrs, size_t *sizes);
+
+
+int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
+  unsigned char *imm_bytes);
 
 /**
  * naaice_init_mrsp:

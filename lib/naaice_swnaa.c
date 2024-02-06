@@ -86,6 +86,7 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->fncode = 0;
   (*comm_ctx)->no_input_mrs = 0;
   (*comm_ctx)->no_output_mrs = 0;
+  (*comm_ctx)->immediate = 0;
 
   // The memory region used for MRSP is allocated here, but the ones for the
   // parameters and the internal memory regions used for NAA scratch

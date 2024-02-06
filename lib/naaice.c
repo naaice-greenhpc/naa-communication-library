@@ -128,6 +128,7 @@ int naaice_init_communication_context(
   (*comm_ctx)->fncode = fncode;
   (*comm_ctx)->no_input_mrs = 0;
   (*comm_ctx)->no_output_mrs = 0;
+  (*comm_ctx)->immediate = 0;
 
   // Dummy FPGA addresses.
   // TODO: do this with memory mangement service.
@@ -137,6 +138,10 @@ int naaice_init_communication_context(
   // correspond to parameters.
   if (naaice_set_parameter_mrs(*comm_ctx,
     params_amount, (uint64_t *) params, fpgaaddresses, param_sizes)) { return -1; }
+
+  // Set immediate value which will be sent later as part of the data transfer.
+  uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
+  if (naaice_set_immediate(*comm_ctx, imm_bytes)) { return -1; }
 
   // Initialize memory region used to construct messages sent during MRSP.
   // Currently this is a fixed size region, the size of an advertisement + 
@@ -662,6 +667,21 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   return 0;
 }
 
+int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
+  unsigned char *imm_bytes) {
+
+  // Immediate byte array should hold no more than 3 bytes.
+  // These are placed in the 3 higher bytes of the immediate value.
+  for (unsigned int i = 1; i < 3; i++) {
+    comm_ctx->immediate_bytearr[i] = imm_bytes[i];
+  }
+
+  // First byte should always be the function code.
+  comm_ctx->immediate_bytearr[0] = comm_ctx->fncode;
+
+  return 0;
+}
+
 int naaice_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_init_mrsp\n");
@@ -818,7 +838,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // Increment the number of completed writes.
       comm_ctx->rdma_writes_done++;
-      
+
       // TODO FM: This might change later to the number we actually send
       // If all writes have been completed, start waiting for the response.
       if (comm_ctx->rdma_writes_done == comm_ctx->no_input_mrs) {
@@ -1400,12 +1420,13 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         wr[mr_idx].wr.rdma.rkey = comm_ctx->mr_peer_data[i].rkey;
         
         // If this is the last memory region to be written, do a write with
-        // immediate. The immediate value holds the function code.
+        // immediate. The immediate value holds the function code as well as
+        // 24 bits configured using naaice_set_immediate.
         // Otherwise, do a normal write.
         if(mr_idx == n_input_mrs-1) {
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
-          wr[mr_idx].imm_data = htonl(fncode);
+          wr[mr_idx].imm_data = htonl(comm_ctx->immediate);
           wr[mr_idx].next = NULL;
         }
         else {
