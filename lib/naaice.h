@@ -203,8 +203,15 @@ struct naaice_mr_advertisement
 // TODO: Could have a naaice_mr_advertisement struct as member.
 struct naaice_mr_advertisement_request
 {
-  uint8_t mrflags;
-  uint8_t fpgaaddress[7];
+  union{
+    uint64_t mr_info;
+
+    // The first (0th) byte holds MR flags.
+    // The following 7 hold the requested NAA MR address.
+    uint8_t mr_info_bytearray[8];
+  };
+  //uint8_t mrflags;
+  //uint8_t fpgaaddress[7];
   uint64_t addr;
   uint32_t rkey;
   uint32_t size;

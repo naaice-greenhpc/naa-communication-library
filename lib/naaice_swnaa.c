@@ -649,10 +649,16 @@ int naaice_swnaa_handle_mr_announce_and_request(
       sizeof(struct naaice_mr_dynamic_hdr) +
       (i) * sizeof(struct naaice_mr_advertisement_request)));
 
+    // Get memory region info. Includes MR flags and requested address.
+    //debug_print("naa: mr_info: %lX\n", curr->mr_info);
+    uint64_t mr_info = ntohll(curr->mr_info);
+    uint8_t *mr_info_bytearray = (uint8_t*) &mr_info;
+    uint8_t mr_flags = mr_info_bytearray[0];
+
     // If the memory region flags indicate that this is an internal memory
     // region, increment the number of those. Otherwise this is a "normal"
     // memory region.
-    if (ntohll(curr->mrflags) && MRFLAG_INTERNAL) {
+    if (mr_flags && MRFLAG_INTERNAL) {
       comm_ctx->no_internal_mrs++;
     }
     else {
@@ -706,8 +712,22 @@ int naaice_swnaa_handle_mr_announce_and_request(
       sizeof(struct naaice_mr_dynamic_hdr) +
       (i) * sizeof(struct naaice_mr_advertisement_request)));
 
+    // Get memory region info. Includes MR flags and requested address.
+    uint64_t mr_info = ntohll(curr->mr_info);
+    uint8_t *mr_info_bytearray = (uint8_t*) &mr_info;
+    uint8_t mr_flags = mr_info_bytearray[0];
+
     // If this is an internal memory region...
-    if (curr->mrflags & MRFLAG_INTERNAL) {
+    if (mr_flags & MRFLAG_INTERNAL) {
+
+      // Check requested FPGA MR address.
+      // These are not actually needed for the software NAA; just print them
+      // to be sure they are being set properly.
+      uint8_t fpgaaddress[8];
+      for (int j = 0; j < 7; j++) {
+        fpgaaddress[j] = mr_info_bytearray[j+1];
+      }
+      fpgaaddress[7] = 0;
 
       // Allocate memory for the region.
       // TODO: This address needs to be set based on the fpgaaddr field.
@@ -722,9 +742,10 @@ int naaice_swnaa_handle_mr_announce_and_request(
       // Set the size of the memory region.
       comm_ctx->mr_internal[internal_count].size = ntohl(curr->size);
 
-      debug_print("Internal MR %d: Addr: %lX, Size: %d\n", internal_count + 1,
+      debug_print("Internal MR %d: Addr: %lX, Size: %d, Requested Addr: %lX\n", internal_count + 1,
         (uintptr_t) comm_ctx->mr_internal[internal_count].addr,
-        (int) comm_ctx->mr_internal[internal_count].size);
+        (int) comm_ctx->mr_internal[internal_count].size,
+        (uint64_t) *fpgaaddress);
 
       // Increment count.
       internal_count++;
@@ -737,6 +758,15 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_peer_data[local_count].addr = ntohll(curr->addr);
       comm_ctx->mr_peer_data[local_count].rkey = ntohl(curr->rkey);
       comm_ctx->mr_peer_data[local_count].size = ntohl(curr->size);
+
+      // Check requested FPGA MR address.
+      // These are not actually needed for the software NAA; just print them
+      // to be sure they are being set properly.
+      uint8_t fpgaaddress[8];
+      for (int j = 0; j < 7; j++) {
+        fpgaaddress[j] = mr_info_bytearray[j+1];
+      }
+      fpgaaddress[7] = 0;
 
       // Allocate memory for the region.
       comm_ctx->mr_local_data[local_count].addr =
@@ -767,9 +797,10 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_local_data[local_count].to_write = false;
       comm_ctx->mr_peer_data[local_count].to_write = false;
 
-      debug_print("Local MR %d: Addr: %lX, Size: %lu\n", local_count + 1,
+      debug_print("Local MR %d: Addr: %lX, Size: %lu, Requested Addr: %lX\n", local_count + 1,
        (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
-       comm_ctx->mr_local_data[local_count].ibv->length);
+       comm_ctx->mr_local_data[local_count].ibv->length,
+       (uint64_t) *fpgaaddress);
 
       debug_print("Peer MR %d: Addr: %lX, Size: %lu, rkey: %u\n", local_count + 1,
        (uintptr_t)comm_ctx->mr_peer_data[local_count].addr,

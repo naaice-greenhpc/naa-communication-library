@@ -78,6 +78,20 @@ const char* get_state_str(enum naaice_communication_state state) {
   }
 }
 
+// Used to generate dummy requested NAA memory region addresses.
+// Will eventually be replaced by a request to the memory management service.
+// Addresses start at 0 and are sequencial in the memory region sizes.
+void get_sequential_naa_addresses(unsigned int n_mrs, size_t *mr_sizes,
+  uint64_t *sequential_addrs) {
+
+  // Set addresses.
+  uint64_t curr_addr = 0;
+  for (unsigned int i = 0; i < n_mrs; i++) {
+    sequential_addrs[i] = curr_addr;
+    curr_addr += mr_sizes[i];
+  }
+}
+
 
 /* Function Implementations **************************************************/
 
@@ -130,14 +144,26 @@ int naaice_init_communication_context(
   (*comm_ctx)->no_output_mrs = 0;
   (*comm_ctx)->immediate = 0;
 
-  // Dummy FPGA addresses.
-  // TODO: do this with memory mangement service.
-  uint64_t *fpgaaddresses = calloc(params_amount, sizeof(uint64_t));
+  // Dummy FPGA addresses, sequential and starting at 0.
+  // We add a single internal memory region with size 32, for testing.
+  // TODO: do this with a call to the memory mangement service.
+  uint64_t fpgaaddresses[100];
+  size_t mr_sizes[params_amount+1];
+  for (unsigned int i = 0; i < params_amount; i++) {
+    mr_sizes[i] = param_sizes[i];
+  }
+  mr_sizes[params_amount] = 32;
+  get_sequential_naa_addresses(params_amount+1, mr_sizes, fpgaaddresses);
 
   // Initialize structs which hold information about memory regions which
   // correspond to parameters.
   if (naaice_set_parameter_mrs(*comm_ctx,
     params_amount, (uint64_t *) params, fpgaaddresses, param_sizes)) { return -1; }
+
+  // Initialize structs which hold information about internal memory regions,
+  // i.e. those used internally on NAA for calculation.
+  if (naaice_set_internal_mrs(*comm_ctx, 1,
+    &fpgaaddresses[params_amount], &mr_sizes[params_amount])) { return -1; }
 
   // Set immediate value which will be sent later as part of the data transfer.
   uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
@@ -202,6 +228,8 @@ int naaice_init_communication_context(
   // Addresses no longer needed, call freeaddrinfo on each of them.
   freeaddrinfo(loc_addr);
   freeaddrinfo(rem_addr);
+
+  // Free some misc. memory.
 
   return 0;
 }
@@ -659,6 +687,7 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   }
 
   // Set struct fields.
+  // Addresses must fit in 7 bytes.
   for (unsigned int i = 0; i < n_internal_mrs; i++) {
     comm_ctx->mr_internal[i].addr = addrs[i];
     comm_ctx->mr_internal[i].size = sizes[i];
@@ -1250,22 +1279,25 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
         i * sizeof(struct naaice_mr_advertisement_request));
 
       // Set fields of the packet.
-      curr->mrflags = 0;
-      
-      // During set_parameter_mrs, the peer memory region addresses are checked
-      // to be sure they fit into 7 bytes.
-      for(int j = 0; j < 7; j++) {
-        curr->fpgaaddress[j]= comm_ctx->mr_peer_data[i].fpgaaddr[j];
-      }
       curr->addr = htonll((uintptr_t)comm_ctx->mr_local_data[i].addr);
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
-
       
-      debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d\n", i + 1,
+      // MR flags only used to indicate internal MRs for now.
+      curr->mr_info_bytearray[0] = 0;
+
+      // During set_parameter_mrs, the peer memory region addresses are checked
+      // to be sure they fit into 7 bytes.
+      for(int j = 0; j < 7; j++) {
+        curr->mr_info_bytearray[j+1] = comm_ctx->mr_peer_data[i].fpgaaddr[j];
+      }
+      curr->mr_info = htonll(curr->mr_info);
+
+      debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d, Requested NAA Addr: %lX\n", i + 1,
         (uintptr_t) comm_ctx->mr_local_data[i].addr,
         comm_ctx->mr_local_data[i].ibv->length,
-        comm_ctx->mr_local_data[i].ibv->rkey);
+        comm_ctx->mr_local_data[i].ibv->rkey,
+        comm_ctx->mr_peer_data[i].addr);
       
 
       // Update packet size.
@@ -1283,23 +1315,24 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
         i * sizeof(struct naaice_mr_advertisement_request));
 
       // Set fields of the packet.
-      curr->mrflags = MRFLAG_INTERNAL;
-
-      // During set_internal_mrs, the peer memory region addresses are checked
-      // to be sure they fit into 7 bytes.
-      for(int j = 0; j < 7; j++) {
-        curr->fpgaaddress[j]= comm_ctx->mr_internal[i].fpgaaddr[j];
-      }
-
       // Internal memory regions only exist on the NAA, so local address here
       // is just 0. No rkey is required, so that's also just 0.
       curr->addr = htonll(0);
       curr->size = htonl(comm_ctx->mr_internal[i].size);
       curr->rkey = htonl(0); 
+      curr->mr_info_bytearray[0] = MRFLAG_INTERNAL;
 
-      debug_print("Internal MR %d: Addr: %lX, Size: %d\n", i + 1,
+      // During set_internal_mrs, the peer memory region addresses are checked
+      // to be sure they fit into 7 bytes.
+      for(int j = 0; j < 7; j++) {
+        curr->mr_info_bytearray[j+1] = comm_ctx->mr_internal[i].fpgaaddr[j];
+      }
+      curr->mr_info = htonll(curr->mr_info);
+
+      debug_print("Internal MR %d: Addr: %lX, Size: %d, Requested NAA Addr: %lX\n", i + 1,
         (uintptr_t) comm_ctx->mr_internal[i].addr,
-        (int) comm_ctx->mr_internal[i].size);
+        (int) comm_ctx->mr_internal[i].size,
+        comm_ctx->mr_internal[i].addr);
 
       // Update packet size.
       msg_size += sizeof(struct naaice_mr_advertisement_request);
