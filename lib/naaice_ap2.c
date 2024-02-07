@@ -17,7 +17,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 26-01-2024
+ * 07-02-2024
  * 
  *****************************************************************************/
 
@@ -27,6 +27,7 @@
 
 
 /* Constants *****************************************************************/
+
 //TODO: Check with HHI on current limits for MRs
 #define MAX_PARAMS 32
 #define TIMEOUT_INVOKE 100 	// All timeouts given in ms.
@@ -126,8 +127,10 @@ int check_params(unsigned int function_code,
 
 /* Public Function Implementations *******************************************/
 
-int naa_create(unsigned int function_code, naa_param_t *params,
-	unsigned int params_amount, naa_handle *handle) {
+int naa_create(unsigned int function_code, 
+  naa_param_t *input_params, unsigned int input_amount,
+  naa_param_t *output_params, unsigned int output_amount,
+  naa_handle *handle) {
 
 	// Clear the naa_handle.
 	memset(handle, 0, sizeof(naa_handle));
@@ -151,11 +154,16 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 
 	// Convert the params into the representation expected by the API layer
 	// (i.e. without the naa_param_t type).
+	size_t params_amount = input_amount + output_amount;
 	char *param_addrs[params_amount];
 	size_t param_sizes[params_amount];
-	for (unsigned int i = 0; i < params_amount; i++) {
-		param_addrs[i] = (char*) params[i].addr;
-		param_sizes[i] = params[i].size;
+	for (unsigned int i = 0; i < input_amount; i++) {
+		param_addrs[i] = (char*) input_params[i].addr;
+		param_sizes[i] = input_params[i].size;
+	}
+	for (unsigned int i = 0; i < output_amount; i++) {
+		param_addrs[i+input_amount] = (char*) output_params[i].addr;
+		param_sizes[i+input_amount] = output_params[i].size;
 	}
 
 	// Initialize the communication context.
@@ -165,33 +173,16 @@ int naa_create(unsigned int function_code, naa_param_t *params,
 		return -1;
 	}
 
+	// Set immediate value which will be sent later as part of the data transfer.
+  uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
+  if (naaice_set_immediate(handle->comm_ctx, imm_bytes)) { return -1; }
+
 	// Setup the connection to the NAA.
   if (naaice_setup_connection(handle->comm_ctx)) { return -1; }
 
-  // Register the memory regions.
-  if (naaice_register_mrs(handle->comm_ctx)) { return -1; }
-
-  // FM: Moved MRSP from naa_invoke to here. It's only done once
-  // Do the memory region setup protocol.
-  if (naaice_do_mrsp(handle->comm_ctx)) {
-    return -1;
-  }
-
-  return 0;
-}
-
-// TODO: Actually use input_params to set which data gets transferred.
-// Make input types the same for input/output? 
-int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
-	naa_param_t *output_params, unsigned int output_amount,
-  naa_handle *handle) {
-
-	// TODO: check that everything from naa_create is in fact complete.
-	// FM: Do we not cover this by the state machine.
-
 	// Set input and output parameters.
 	// For each input and output parameter pointer, check that it refers to one
-	// of the parameters previously passed and registered during naa_create.
+	// of the parameters already saved in the communication context.
 	// If it is, set it as an input or output parameter appropriately.
 	// Otherwise return with an error.
 	for (unsigned int i = 0; i < input_amount; i++) {
@@ -208,7 +199,7 @@ int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
 		}
 		if (!param_exists) {
 			fprintf(stderr, "Requested input parameter which was not previously"
-				"passed to naa_create.\n");
+				"passed to naaice_init_communication_context.\n");
 			return -1;
 		}
 	}
@@ -226,10 +217,26 @@ int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
 		}
 		if (!param_exists) {
 			fprintf(stderr, "Requested output parameter which was not previously"
-				"passed to naa_create.\n");
+				"passed to naaice_init_communication_context.\n");
 			return -1;
 		}
 	}
+
+  // Register the memory regions.
+  if (naaice_register_mrs(handle->comm_ctx)) { return -1; }
+
+  // FM: Moved MRSP from naa_invoke to here. It's only done once
+  // Do the memory region setup protocol.
+  if (naaice_do_mrsp(handle->comm_ctx)) {
+    return -1;
+  }
+
+  return 0;
+}
+
+// TODO: Actually use input_params to set which data gets transferred.
+// Make input types the same for input/output? 
+int naa_invoke(naa_handle *handle) {
 
   // Initialize data transfer to the NAA.
   if (naaice_init_data_transfer(handle->comm_ctx)) { return -1; }

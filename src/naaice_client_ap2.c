@@ -17,7 +17,7 @@
 * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
 * Dylan Everingham, everingham@zib.de
 *
-* 26-01-2024
+* 07-02-2024
 *
 ******************************************************************************/
 
@@ -121,20 +121,21 @@ int main(int argc, char *argv[]) {
   // These structs hold separately input and output parameters.
   // As an example, specify the first two parameters as inputs and the second
   // parameter as an output.
-  int n_input_params = 2;
+  int input_amount = 2;
   struct naa_param_t input_params[] = {
     {(void *) params[0], param_sizes[0]},
     {(void *) params[1], param_sizes[1]}
   };
 
-  int n_output_params = 1;
+  int output_amount = 1;
   struct naa_param_t output_params[] = {
     {(void *) params[1], param_sizes[1]}
   };
 
   // naa_create: establishes connection with NAA.
   printf("-- Setting Up Connection --\n");
-  if (naa_create(FNCODE, all_params, params_amount, handle)) {
+  if (naa_create(FNCODE, input_params, input_amount,
+      output_params, output_amount, handle)) {
     fprintf(stderr, "Error durning naa_create. Exiting.\n");
     return -1;
   };
@@ -144,8 +145,7 @@ int main(int argc, char *argv[]) {
 
     // naa_invoke: call RPC on NAA.
     printf("-- RPC Invocation #%d --\n", i+1);
-    if (naa_invoke(input_params, n_input_params,
-      output_params, n_output_params, handle)) {
+    if (naa_invoke(handle)) {
       fprintf(stderr, "Error durning naa_invoke. Exiting.\n");
       return -1;
     }

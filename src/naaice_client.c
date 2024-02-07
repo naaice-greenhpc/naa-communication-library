@@ -144,23 +144,12 @@ int main(int argc, char *argv[]) {
   if (naaice_set_input_mr(comm_ctx, 1)) { return -1; }
   if (naaice_set_output_mr(comm_ctx, 1)) { return -1; }
 
+  // Specification of internal memory regions moved inside
+  // naaice_init_communication_context.
+  
   // Then, register the memory regions with IBV.
   printf("-- Registering Memory Regions with IBV --\n");
   if (naaice_register_mrs(comm_ctx)) { return -1; }
-
-  // Specification of internal memory regions moved inside
-  // naaice_init_communication_context.
-
-  // Also configure internal memory regions.
-  // As an example, specify a single internal memory region with address 0
-  // and size 32.
-  /*
-  printf("-- Specifying NAA Internal Memory Regions --\n");
-  uintptr_t internal_addrs[1] = {0};
-  size_t internal_sizes[1] = {32};
-  if (naaice_set_internal_mrs(comm_ctx, 1,
-        internal_addrs, internal_sizes)) { return -1; }
-  */
 
   // Do the memory region setup protocol.
   printf("-- Doing MRSP --\n");

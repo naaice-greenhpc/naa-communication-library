@@ -17,7 +17,7 @@
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
  * 
- * 26-01-2024
+ * 07-02-2024
  * 
  *****************************************************************************/
 
@@ -71,12 +71,12 @@ typedef struct naa_status {
 
 /* Public Functions **********************************************************/
 
-int naa_create(unsigned int function_code, naa_param_t *params,
-  unsigned params_amount, naa_handle *handle);
-
-int naa_invoke(naa_param_t *input_params, unsigned int input_amount,
-	naa_param_t *output_params, unsigned int output_amount,
+int naa_create(unsigned int function_code, 
+  naa_param_t *input_params, unsigned int input_amount,
+  naa_param_t *output_params, unsigned int output_amount,
   naa_handle *handle);
+
+int naa_invoke(naa_handle *handle);
 
 int naa_test(naa_handle *handle, bool *flag, naa_status *status);
 
