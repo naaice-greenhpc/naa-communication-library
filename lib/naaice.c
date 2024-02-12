@@ -39,6 +39,7 @@
 
 #define TIMEOUT_RESOLVE_ADDR 100
 #define CONNECTION_PORT 12345
+#define NAA_WORD_WIDTH 64
 
 
 /* Helper Functions **********************************************************/
@@ -88,7 +89,7 @@ void get_sequential_naa_addresses(unsigned int n_mrs, size_t *mr_sizes,
   uint64_t curr_addr = 0;
   for (unsigned int i = 0; i < n_mrs; i++) {
     sequential_addrs[i] = curr_addr;
-    curr_addr += mr_sizes[i];
+    curr_addr += ((mr_sizes[i] + NAA_WORD_WIDTH - 1) / NAA_WORD_WIDTH) * NAA_WORD_WIDTH; // align to NAA word width
   }
 }
 
@@ -598,7 +599,6 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
     // 7 bytes. Make sure this is the case.
 
     comm_ctx->mr_peer_data[i].addr = remote_addrs[i];
-
     // The to_write field for remote MRs indicates that the MR is an output
     // parameter and should be written back from the NAA.
     // We initialize them all to false, but they should be updated prior to
@@ -1289,7 +1289,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       // During set_parameter_mrs, the peer memory region addresses are checked
       // to be sure they fit into 7 bytes.
       for(int j = 0; j < 7; j++) {
-        curr->mr_info_bytearray[j+1] = comm_ctx->mr_peer_data[i].fpgaaddr[j];
+        curr->mr_info_bytearray[j] = comm_ctx->mr_peer_data[i].fpgaaddr[j];
       }
       curr->mr_info = htonll(curr->mr_info);
 
