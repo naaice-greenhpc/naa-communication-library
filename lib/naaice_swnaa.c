@@ -653,7 +653,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
     //debug_print("naa: mr_info: %lX\n", curr->mr_info);
     uint64_t mr_info = ntohll(curr->mr_info);
     uint8_t *mr_info_bytearray = (uint8_t*) &mr_info;
-    uint8_t mr_flags = mr_info_bytearray[0];
+    uint8_t mr_flags = mr_info_bytearray[7];
 
     // If the memory region flags indicate that this is an internal memory
     // region, increment the number of those. Otherwise this is a "normal"
@@ -715,7 +715,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
     // Get memory region info. Includes MR flags and requested address.
     uint64_t mr_info = ntohll(curr->mr_info);
     uint8_t *mr_info_bytearray = (uint8_t*) &mr_info;
-    uint8_t mr_flags = mr_info_bytearray[0];
+    uint8_t mr_flags = mr_info_bytearray[7];
 
     // If this is an internal memory region...
     if (mr_flags & MRFLAG_INTERNAL) {
@@ -725,7 +725,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
       // to be sure they are being set properly.
       uint8_t fpgaaddress[8];
       for (int j = 0; j < 7; j++) {
-        fpgaaddress[j] = mr_info_bytearray[j+1];
+        fpgaaddress[j] = mr_info_bytearray[j];
       }
       fpgaaddress[7] = 0;
 
@@ -764,7 +764,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
       // to be sure they are being set properly.
       uint8_t fpgaaddress[8];
       for (int j = 0; j < 7; j++) {
-        fpgaaddress[j] = mr_info_bytearray[j+1];
+        fpgaaddress[j] = mr_info_bytearray[j];
       }
       fpgaaddress[7] = 0;
 

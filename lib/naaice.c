@@ -1139,11 +1139,6 @@ int naaice_disconnect_and_cleanup(
     }
   }
 
-  // Free allocated memory of memory regions.
-  // Dylan: only do this for the first memory region (the metadata region) -
-  // all the others are parameters and exist in user memory space.
-  //free((void *)(comm_ctx->mr_local_data[0].addr));
-
   if (comm_ctx->state >= MRSP_DONE) {
     free(comm_ctx->mr_peer_data);
   }
@@ -1284,7 +1279,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
       
       // MR flags only used to indicate internal MRs for now.
-      curr->mr_info_bytearray[0] = 0;
+      curr->mr_info_bytearray[7] = 0;
 
       // During set_parameter_mrs, the peer memory region addresses are checked
       // to be sure they fit into 7 bytes.
@@ -1320,12 +1315,12 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       curr->addr = htonll(0);
       curr->size = htonl(comm_ctx->mr_internal[i].size);
       curr->rkey = htonl(0); 
-      curr->mr_info_bytearray[0] = MRFLAG_INTERNAL;
+      curr->mr_info_bytearray[7] = MRFLAG_INTERNAL;
 
       // During set_internal_mrs, the peer memory region addresses are checked
       // to be sure they fit into 7 bytes.
       for(int j = 0; j < 7; j++) {
-        curr->mr_info_bytearray[j+1] = comm_ctx->mr_internal[i].fpgaaddr[j];
+        curr->mr_info_bytearray[j] = comm_ctx->mr_internal[i].fpgaaddr[j];
       }
       curr->mr_info = htonll(curr->mr_info);
 
