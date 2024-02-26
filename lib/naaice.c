@@ -701,8 +701,9 @@ int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
 
   // Immediate byte array should hold no more than 3 bytes.
   // These are placed in the 3 higher bytes of the immediate value.
-  for (unsigned int i = 1; i < 3; i++) {
-    comm_ctx->immediate_bytearr[i] = imm_bytes[i];
+  for (unsigned int i = 1; i < 4; i++)
+  {
+    comm_ctx->immediate_bytearr[i] = imm_bytes[i - 1];
   }
 
   // First byte should always be the function code.
