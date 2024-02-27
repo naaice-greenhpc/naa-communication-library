@@ -167,19 +167,19 @@ int naaice_init_communication_context(
     &fpgaaddresses[params_amount], &mr_sizes[params_amount])) { return -1; }
 
   // Set immediate value which will be sent later as part of the data transfer.
-  uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
+  uint8_t *imm_bytes = (uint8_t*) calloc(3, sizeof(uint8_t));
   if (naaice_set_immediate(*comm_ctx, imm_bytes)) { return -1; }
 
   // Initialize memory region used to construct messages sent during MRSP.
   // Currently this is a fixed size region, the size of an advertisement + 
   // request message.
-  (*comm_ctx)->mr_local_message = calloc(1, sizeof(struct naaice_mr_local));
+  (*comm_ctx)->mr_local_message = (naaice_mr_local*) calloc(1, sizeof(struct naaice_mr_local));
   if ((*comm_ctx)->mr_local_message == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
-  (*comm_ctx)->mr_local_message->addr = calloc(1, MR_SIZE_MRSP);
+  (*comm_ctx)->mr_local_message->addr = (char*) calloc(1, MR_SIZE_MRSP);
   if ((*comm_ctx)->mr_local_message->addr == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
@@ -187,7 +187,7 @@ int naaice_init_communication_context(
   }
 
   // Convert port to string for getaddrinfo.
-  char *port_str = malloc(128);
+  char *port_str = (char*) malloc(128);
   snprintf(port_str, 128, "%u", port);
 
   // Get remote address from getaddrinfo.
@@ -492,7 +492,6 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
   struct ibv_qp_init_attr init_attr = {
       .send_cq = comm_ctx->cq,
       .recv_cq = comm_ctx->cq,
-      .sq_sig_all = 1,
       // Exceeding the maximum number of wrs (sometimes by a lot more than 1)
       // will lead to an ENOMEM error in ibv_post_send()
       // TODO: Maybe investigate memory foot print and choose a low number if not doing data transfer performance measurement 
@@ -503,7 +502,8 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
            .max_send_sge = 32,
            .max_recv_sge = 32},
       // DEFINE COMMUNICATION TYPE!
-      .qp_type = IBV_QPT_RC};
+      .qp_type = IBV_QPT_RC,
+      .sq_sig_all = 1};
 
   // Make a queue pair, checking for allocation success.
   debug_print("Making queue pair.\n");
@@ -563,7 +563,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
 
   // Initialize memory to store information about local memory regions.
   comm_ctx->mr_local_data =
-    calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
+    (naaice_mr_local*) calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
   if (!comm_ctx->mr_local_data) {
     fprintf(stderr,
       "Failed to allocate memory for local mr info structures.\n");
@@ -584,7 +584,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
 
   // Allocate memory to store information about remote memory regions.
   comm_ctx->mr_peer_data =
-      calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
+      (naaice_mr_peer*) calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
   if (!comm_ctx->mr_peer_data) {
     fprintf(stderr,
         "Failed to allocate memory for remote mr info structures.\n");
@@ -677,7 +677,7 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   comm_ctx->no_internal_mrs = n_internal_mrs;
 
   // Allocate space for internal memory region info structs.
-  comm_ctx->mr_internal = calloc(comm_ctx->no_internal_mrs,
+  comm_ctx->mr_internal = (naaice_mr_internal*) calloc(comm_ctx->no_internal_mrs,
     sizeof(struct naaice_mr_internal));
 
   if (!comm_ctx->mr_internal) {

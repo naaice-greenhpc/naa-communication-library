@@ -94,13 +94,13 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->mr_local_data = NULL;
   
   debug_print("Allocating memory region for MRSP.\n");
-  (*comm_ctx)->mr_local_message = calloc(1, sizeof(struct naaice_mr_local));
+  (*comm_ctx)->mr_local_message = (naaice_mr_local*) calloc(1, sizeof(struct naaice_mr_local));
   if ((*comm_ctx)->mr_local_message == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
-  (*comm_ctx)->mr_local_message->addr = calloc(1, MR_SIZE_MRSP);
+  (*comm_ctx)->mr_local_message->addr = (char*) calloc(1, MR_SIZE_MRSP);
   if ((*comm_ctx)->mr_local_message->addr == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
@@ -669,7 +669,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
   // Allocate memory to hold information about local memory regions.
   // This doesn't include the internal memory regions.
   comm_ctx->mr_local_data =
-    calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
+    (naaice_mr_local*) calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
   if (comm_ctx->mr_local_data == NULL) {
     fprintf(stderr,
             "Failed to allocate memory for local memory region structures.\n");
@@ -682,7 +682,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
   
   // Allocate memory to hold information about peer memory regions.
   comm_ctx->mr_peer_data =
-    calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
+    (naaice_mr_peer*) calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
   if (comm_ctx->mr_peer_data == NULL) {
     fprintf(stderr,
             "Failed to allocate memory for remote memory region "
@@ -692,7 +692,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
 
   // Allocate memory to hold information about internal memory regions.
   comm_ctx->mr_internal = 
-    calloc(comm_ctx->no_internal_mrs, sizeof(struct naaice_mr_internal));
+    (naaice_mr_internal*) calloc(comm_ctx->no_internal_mrs, sizeof(struct naaice_mr_internal));
 
   // Now iterate through the memory regions again.
   // For a "normal" (aka not internal) memory region, set the fields in the
@@ -770,7 +770,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
 
       // Allocate memory for the region.
       comm_ctx->mr_local_data[local_count].addr =
-        calloc(1, comm_ctx->mr_peer_data[local_count].size);
+        (char*) calloc(1, comm_ctx->mr_peer_data[local_count].size);
       if (comm_ctx->mr_local_data[local_count].addr == NULL) {
         fprintf(stderr,
           "Failed to allocate memory for local memory region buffer.\n");

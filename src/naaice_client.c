@@ -15,7 +15,7 @@
  * Application implementing a basic use case of the AP1 NAAICE communication
  * layer.
  * 
- * For use on a loopback test setup, in conjunction with naaice_server.c.
+ * For use in conjunction with naaice_server.c.
  * 
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
@@ -108,13 +108,13 @@ int main(int argc, char *argv[]) {
   char *params[params_amount];
   for (unsigned char i = 0; i < params_amount; i++) {
 
-    params[i] = malloc(param_sizes[i] * sizeof(char));
+    params[i] = (char*) malloc(param_sizes[i] * sizeof(char));
     if (params[i] == NULL) {
       fprintf(stderr, "Failed to allocate memory for parameters.\n");
       return -1;
     }
 
-    params[i] = memset(params[i], i, param_sizes[i]);
+    params[i] = (char*) memset(params[i], i, param_sizes[i]);
   }
 
   // Communication context struct. 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Set immediate value which will be sent later as part of the data transfer.
-  uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
+  uint8_t *imm_bytes = (uint8_t*) calloc(3, sizeof(uint8_t));
   if (naaice_set_immediate(comm_ctx, imm_bytes)) { return -1; }
 
   // Now, handle connection setup.

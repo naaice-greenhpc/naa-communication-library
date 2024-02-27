@@ -10,9 +10,11 @@
 *
 *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
 *
-* naaice_ap2.c
+* naaice_client_ap2.c
 *
-* Implementations for functions in naaice_ap2.c.
+* Application implementing a basic use case of the AP2 NAAICE interface.
+* 
+* For use in conjunction with naaice_server.c.
 *
 * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
 * Dylan Everingham, everingham@zib.de
@@ -94,24 +96,24 @@ int main(int argc, char *argv[]) {
   char *params[params_amount];
   for (unsigned char i = 0; i < params_amount; i++) {
 
-    params[i] = malloc(param_sizes[i] * sizeof(char));
+    params[i] = (char*) malloc(param_sizes[i] * sizeof(char));
     if (params[i] == NULL) {
       fprintf(stderr, "Failed to allocate memory for parameters.\n");
       return -1;
     }
 
-    params[i] = memset(params[i], i, param_sizes[i]);
+    params[i] = (char*) memset(params[i], i, param_sizes[i]);
   }
   
   // Handle struct holds all information about a NAA session.
-  struct naa_handle *handle = calloc(1,sizeof(struct naa_handle));
+  struct naa_handle *handle = (naa_handle*) calloc(1,sizeof(struct naa_handle));
   if (!handle) {
     fprintf(stderr,"Failed to create naa handle. Exiting.\n");
     return -1;
   }
 
   // Param structs encapsulate parameters and their sizes.
-  struct naa_param_t *all_params = calloc(
+  struct naa_param_t *all_params = (naa_param_t*) calloc(
     params_amount, sizeof(struct naa_param_t));
   for (int i = 0; i < params_amount; i++) {
     all_params[i].addr = (void*) params[i];

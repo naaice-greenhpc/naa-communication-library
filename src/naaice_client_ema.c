@@ -108,13 +108,13 @@ int main(int argc, char *argv[]) {
   char *params[params_amount];
   for (unsigned char i = 0; i < params_amount; i++) {
 
-    params[i] = malloc(param_sizes[i] * sizeof(char));
+    params[i] = (char*) malloc(param_sizes[i] * sizeof(char));
     if (params[i] == NULL) {
       fprintf(stderr, "Failed to allocate memory for parameters.\n");
       return -1;
     }
 
-    params[i] = memset(params[i], i, param_sizes[i]);
+    params[i] = (char*) memset(params[i], i, param_sizes[i]);
   }
 
   // Measure energy usage of the client application, using EMA.

@@ -174,7 +174,7 @@ int naa_create(unsigned int function_code,
 	}
 
 	// Set immediate value which will be sent later as part of the data transfer.
-  uint8_t *imm_bytes = calloc(3, sizeof(uint8_t));
+  uint8_t *imm_bytes = (uint8_t*) calloc(3, sizeof(uint8_t));
   if (naaice_set_immediate(handle->comm_ctx, imm_bytes)) { return -1; }
 
 	// Setup the connection to the NAA.
