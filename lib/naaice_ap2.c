@@ -41,10 +41,11 @@
 //static const char *REMOTE_IP = "10.3.10.136";
 
 // ZIB IPs.
-static const char *LOCAL_IP = ""; // Indicate that we don't provide the
+static const char *LOCAL_IP = "10.42.50.24"; // Indicate that we don't provide the
 																	// optional local ip argument with an
 																	// empty string.
-static const char *REMOTE_IP = "10.32.56.10";
+static const char *REMOTE_IP = "speedy-uncle.fpgas.esg";
+// static const char *REMOTE_IP = "10.42.50.1";
 
 // Struct used to hold configuration info about NAA hardware.
 typedef struct naa_hardware_config {
