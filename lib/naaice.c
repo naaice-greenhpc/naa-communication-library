@@ -1452,10 +1452,11 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         // immediate. The immediate value holds the function code as well as
         // 24 bits configured using naaice_set_immediate.
         // Otherwise, do a normal write.
+        // We set the 8th bit to 1 in order to indicate host to NAA transmission.
         if(mr_idx == n_input_mrs-1) {
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
-          wr[mr_idx].imm_data = htonl(comm_ctx->immediate);
+          wr[mr_idx].imm_data = htonl(comm_ctx->immediate | 0x08);
           wr[mr_idx].next = NULL;
         }
         else {
