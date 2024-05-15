@@ -40,7 +40,7 @@
 #define TIMEOUT_RESOLVE_ADDR 100
 #define CONNECTION_PORT 12345
 #define NAA_WORD_WIDTH 64
-
+#define START_RPC_MASK 0x80
 
 /* Helper Functions **********************************************************/
 
@@ -1456,7 +1456,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         if(mr_idx == n_input_mrs-1) {
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
-          wr[mr_idx].imm_data = htonl(comm_ctx->immediate | 0x08);
+          wr[mr_idx].imm_data = htonl(comm_ctx->immediate | START_RPC_MASK);
           wr[mr_idx].next = NULL;
         }
         else {
