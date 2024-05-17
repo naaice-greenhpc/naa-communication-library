@@ -37,14 +37,14 @@
 
 // TODO: Provided by RMS in the future.
 // UP IPs.
-static const char *LOCAL_IP = "10.3.10.41";
-static const char *REMOTE_IP = "10.3.10.42";
+//static const char *LOCAL_IP = "10.3.10.41";
+//static const char *REMOTE_IP = "10.3.10.42";
 
 // ZIB IPs.
-//static const char *LOCAL_IP = ""; // Indicate that we don't provide the
+static const char *LOCAL_IP = ""; // Indicate that we don't provide the
 																	// optional local ip argument with an
 																	// empty string.
-//static const char *REMOTE_IP = "10.32//.56.10";
+static const char *REMOTE_IP = "10.32.56.10";
 
 // Struct used to hold configuration info about NAA hardware.
 typedef struct naa_hardware_config {
