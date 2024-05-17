@@ -161,6 +161,7 @@
 #define ntohll be64toh
 #define htonll htobe64
 #define TIMEOUT_RESOLVE_ROUTE 500 // in ms.
+#define POLLING_TIMEOUT 500 // in ms
 
 // Maximum allowed number of memory regions.
 // Total of parameters and internal NAA memory regions.
@@ -381,9 +382,11 @@ struct naaice_communication_context
 
   // Function code indicating which NAA routine to be called.
   uint8_t fncode;
-
+  // Return code indicating whether NAA routine was succesful.
+  uint8_t naa_returncode;
   // Keeps track of number of writes done to NAA.
   uint8_t rdma_writes_done;
+  uint32_t bytes_received;
 
   // Number of input and output parameters.
   uint8_t no_input_mrs;

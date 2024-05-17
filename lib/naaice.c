@@ -144,6 +144,8 @@ int naaice_init_communication_context(
   (*comm_ctx)->no_input_mrs = 0;
   (*comm_ctx)->no_output_mrs = 0;
   (*comm_ctx)->immediate = 0;
+  (*comm_ctx)->bytes_received = 0;
+  (*comm_ctx)->naa_returncode = 0;
 
   // Dummy FPGA addresses, sequential and starting at 0.
   // We add a single internal memory region with size 32, for testing.
@@ -173,7 +175,7 @@ int naaice_init_communication_context(
   // Initialize memory region used to construct messages sent during MRSP.
   // Currently this is a fixed size region, the size of an advertisement + 
   // request message.
-  (*comm_ctx)->mr_local_message = (naaice_mr_local*) calloc(1, sizeof(struct naaice_mr_local));
+  (*comm_ctx)->mr_local_message = (struct naaice_mr_local*) calloc(1, sizeof(struct naaice_mr_local));
   if ((*comm_ctx)->mr_local_message == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
@@ -482,7 +484,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
 
   // Request completion queue notifications, checking for success.
   debug_print("Requesting completion queue notifications.\n");
-  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+  if (ibv_req_notify_cq(comm_ctx->cq, 1)) {
     fprintf(stderr, "Failed to request completion channel notifications "
                     "on completion queue.\n");
     return -1;
@@ -498,7 +500,6 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
       .cap =
           {.max_send_wr = RX_DEPTH,
            .max_recv_wr = RX_DEPTH,
-           // TODO: Maybe this needs to be changed if we write from multiple MRs
            .max_send_sge = 32,
            .max_recv_sge = 32},
       // DEFINE COMMUNICATION TYPE!
@@ -563,7 +564,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
 
   // Initialize memory to store information about local memory regions.
   comm_ctx->mr_local_data =
-    (naaice_mr_local*) calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
+    (struct naaice_mr_local*) calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
   if (!comm_ctx->mr_local_data) {
     fprintf(stderr,
       "Failed to allocate memory for local mr info structures.\n");
@@ -584,7 +585,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
 
   // Allocate memory to store information about remote memory regions.
   comm_ctx->mr_peer_data =
-      (naaice_mr_peer*) calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
+      (struct naaice_mr_peer*) calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
   if (!comm_ctx->mr_peer_data) {
     fprintf(stderr,
         "Failed to allocate memory for remote mr info structures.\n");
@@ -677,7 +678,7 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   comm_ctx->no_internal_mrs = n_internal_mrs;
 
   // Allocate space for internal memory region info structs.
-  comm_ctx->mr_internal = (naaice_mr_internal*) calloc(comm_ctx->no_internal_mrs,
+  comm_ctx->mr_internal = (struct naaice_mr_internal*) calloc(comm_ctx->no_internal_mrs,
     sizeof(struct naaice_mr_internal));
 
   if (!comm_ctx->mr_internal) {
@@ -926,6 +927,8 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // If no error, go to finished state.
       comm_ctx->state = FINISHED;
+      comm_ctx->naa_returncode = wc->imm_data;
+      comm_ctx->bytes_received = wc->byte_len;
       return 0;
     }
   }
@@ -938,7 +941,6 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   return -1;
 }
 
-// TODO: Combine Blocking and Non-blocking into one function 
 int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
   debug_print("In naaice_poll_cq_blocking\n");
 
@@ -989,7 +991,7 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
   }
 
   // Request completion channel notifications for the next event.
-  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+  if (ibv_req_notify_cq(comm_ctx->cq, 1)) {
     fprintf(stderr,
             "Failed to request completion channel notifications on completion "
             "queue.\n");
@@ -1015,7 +1017,6 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   }
 
   struct pollfd my_pollfd;
-  int ms_timeout = 1000;
   // Poll the completion channel, returning with flag unchanged if nothing
   // is received.
   my_pollfd.fd = comm_ctx->comp_channel->fd;
@@ -1023,10 +1024,10 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   my_pollfd.revents = 0;
 
   // Nonblocking: if poll times out, just return.
-  int poll_result = poll(&my_pollfd, 1, ms_timeout);
+  int poll_result = poll(&my_pollfd, 1, POLLING_TIMEOUT);
   if (poll_result < 0) {
     //FM: This is probably an error. If none is received, we get back 0.
-    fprintf(stderr, "Error occured when polling completion channel.\n");
+    fprintf(stderr, "Error occurred when polling completion channel.\n");
     return -1;
   }
   else if (poll_result == 0) {
@@ -1070,9 +1071,9 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
       return -1;
     }
   }
-
+  // FM TODO: We need the solicited event to ensure blocking behavior? We don't want to be woken up by our own successful write request comletions but only by receiving and rmda_with_imm
   // Request completion channel notifications for the next event.
-  if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
+  if (ibv_req_notify_cq(comm_ctx->cq, 1)) {
     fprintf(
         stderr,
         "Failed to request completion channel notifications on completion "
@@ -1496,8 +1497,6 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
   sge.length = MR_SIZE_MRSP;
   sge.lkey = comm_ctx->mr_local_message->ibv->lkey;
 
-  // TODO: Maybe hardcode a wr_id for each communication type.
-  // see comment in naaice_swnaa_post_recv_data
   memset(&wr, 0, sizeof(wr));
   wr.wr_id = 1;
   wr.next = NULL;

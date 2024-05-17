@@ -47,7 +47,14 @@
 #include <stdbool.h>
 #include <naaice.h>   // Included here to get enum naaice_communication_state.
 
-
+/* Enums **********************************************************************/
+enum naa_error {
+  NAA_SUCCESS = 0x00,    // Successful RPC.
+  SOCKET_UNAVAIL = 0x01, // Socket unavailable
+  KERNEL_TIMEOUT = 0x02  // Kernel timed out (time out to be defined).
+  // 0x03-0x0f // reserved for the future
+  // 0x10-0x7f // application specific errors
+};
 /* Structs *******************************************************************/
 
 // Struct to hold information about a single (input or output) parameter to
@@ -66,6 +73,8 @@ typedef struct naa_handle {
 // Struct to hold status information about the NAA session.
 typedef struct naa_status {
   enum naaice_communication_state state;
+  enum naa_error naa_error;
+  uint32_t bytes_received;
 } naa_status;
 
 

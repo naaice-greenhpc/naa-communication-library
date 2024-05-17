@@ -28,7 +28,7 @@
 
 /* Constants *****************************************************************/
 
-//TODO: Check with HHI on current limits for MRs
+//TODO: HHI prefers as little MRs as possible/usable by the user.
 #define MAX_PARAMS 32
 #define TIMEOUT_INVOKE 100 	// All timeouts given in ms.
 #define TIMEOUT_TEST 100
@@ -37,14 +37,14 @@
 
 // TODO: Provided by RMS in the future.
 // UP IPs.
-//static const char *LOCAL_IP = "10.3.10.135";
-//static const char *REMOTE_IP = "10.3.10.136";
+static const char *LOCAL_IP = "10.3.10.41";
+static const char *REMOTE_IP = "10.3.10.42";
 
 // ZIB IPs.
-static const char *LOCAL_IP = ""; // Indicate that we don't provide the
+//static const char *LOCAL_IP = ""; // Indicate that we don't provide the
 																	// optional local ip argument with an
 																	// empty string.
-static const char *REMOTE_IP = "10.32.56.10";
+//static const char *REMOTE_IP = "10.32//.56.10";
 
 // Struct used to hold configuration info about NAA hardware.
 typedef struct naa_hardware_config {
@@ -233,7 +233,7 @@ int naa_create(unsigned int function_code,
 
   return 0;
 }
-
+// FM: This is obsolete right? we implemented sending only specific regions
 // TODO: Actually use input_params to set which data gets transferred.
 // Make input types the same for input/output? 
 int naa_invoke(naa_handle *handle) {
@@ -260,23 +260,27 @@ int naa_test(naa_handle *handle, bool *flag,
                                       
 	// Update the status struct,
 	status->state = handle->comm_ctx->state;
-
+	status->naa_error = (enum naa_error) handle->comm_ctx->naa_returncode;
+	status->bytes_received = handle->comm_ctx->bytes_received;
 	return 0;
 }
 
 // TODO: When blocking method is implemented, change this to do blocking
 int naa_wait(naa_handle *handle,
 	naa_status *status) {
-
-	bool flag = false;
-  while (!flag) {
-    if (naa_test(handle, &flag, status)) {
-      fprintf(stderr, "Error occured during naa_test. Exiting.\n");
-      return -1;
-    }
-  }
+  if(naaice_poll_cq_blocking(handle->comm_ctx)){return -1;}
+    /*	bool flag = false
+	      while (!flag) {
+        if (naa_test(handle, &flag, status)) {
+          fprintf(stderr, "Error occurred during naa_test. Exiting.\n");
+          return -1;
+        }
+      }*/
+  status->state = handle->comm_ctx->state;
+  status->naa_error = (enum naa_error)handle->comm_ctx->naa_returncode;
+  status->bytes_received = handle->comm_ctx->bytes_received;
   return 0;
-}
+  }
 
 int naa_finalize(naa_handle *handle) {
 

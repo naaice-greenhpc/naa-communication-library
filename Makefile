@@ -27,7 +27,7 @@ LD_DEFAULT := ${LDLIBS} -lrdmacm -libverbs
 LD_EMA := -L${PWD}/ema/lib/ -lEMA
 
 CPPFLAGS ?= $(INC) -MMD -MP -std=c++20 -Wall -pedantic -g -Wextra -gdwarf-2
-CXXFLAGS ?= $(INC)
+CXXFLAGS ?= $(INC) -g
 
 all: check-ema apps
 

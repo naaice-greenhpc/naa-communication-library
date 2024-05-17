@@ -94,7 +94,8 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->mr_local_data = NULL;
   
   debug_print("Allocating memory region for MRSP.\n");
-  (*comm_ctx)->mr_local_message = (naaice_mr_local*) calloc(1, sizeof(struct naaice_mr_local));
+  (*comm_ctx)->mr_local_message =
+      (struct naaice_mr_local *)calloc(1, sizeof(struct naaice_mr_local));
   if ((*comm_ctx)->mr_local_message == NULL) {
     fprintf(stderr,
             "Failed to allocate local memory for MRSP messages.\n");
@@ -206,8 +207,6 @@ int naaice_swnaa_handle_connection_requests(
     }
 
     if (naaice_swnaa_post_recv_mrsp(comm_ctx)) {
-      //FM TODO: Set up private data for rdma_reject?
-      // Do we even need an explicit reject?
       long privdata = 0;
       if(rdma_reject(comm_ctx->id,(void*) privdata, sizeof(privdata))) {
         fprintf(stderr,
@@ -266,9 +265,6 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
   return 0;
 }
 
-// FM TODO: Harmonize function names for data sending an receiving
-// FM TODO: Check state machine. Either do state changes within higher level
-// functions or in posting recv/write, but not mixed if possible
 int naaice_swnaa_do_data_transfer(
   struct naaice_communication_context *comm_ctx,uint8_t errorcode) {
 
@@ -441,7 +437,7 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
     // If we recieved data without an immediate...
     if (wc->opcode == IBV_WC_RECV) {
-      // FM: TODO This shouldnt happen, receiving a write does not trigger a recv. we should not handle this and 
+      // FM: This shouldnt happen, receiving a write does not trigger a recv. we should not handle this and 
       // throw an error
       // No need to do anything.
       return 0;
@@ -489,7 +485,6 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
       // Update state.
       comm_ctx->state = CALCULATING;
-
       // Now we are ready to perform the NAA procedure.
       return 0;
     }
@@ -500,6 +495,7 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
     if (wc->opcode == IBV_WC_RDMA_WRITE) {
 
       // Change state to allow receiving data
+      // FM: Multiple regions can be written back already? So this is obsolete?
       // TODO if we write multiple regions back we will get multiple wcs, need
       // to keep track then
       comm_ctx->state = DATA_RECEIVING;
@@ -669,7 +665,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
   // Allocate memory to hold information about local memory regions.
   // This doesn't include the internal memory regions.
   comm_ctx->mr_local_data =
-    (naaice_mr_local*) calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
+    (struct naaice_mr_local*) calloc(comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
   if (comm_ctx->mr_local_data == NULL) {
     fprintf(stderr,
             "Failed to allocate memory for local memory region structures.\n");
@@ -682,7 +678,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
   
   // Allocate memory to hold information about peer memory regions.
   comm_ctx->mr_peer_data =
-    (naaice_mr_peer*) calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
+    (struct naaice_mr_peer*) calloc(comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
   if (comm_ctx->mr_peer_data == NULL) {
     fprintf(stderr,
             "Failed to allocate memory for remote memory region "
@@ -691,8 +687,8 @@ int naaice_swnaa_handle_mr_announce_and_request(
   }
 
   // Allocate memory to hold information about internal memory regions.
-  comm_ctx->mr_internal = 
-    (naaice_mr_internal*) calloc(comm_ctx->no_internal_mrs, sizeof(struct naaice_mr_internal));
+  comm_ctx->mr_internal = (struct naaice_mr_internal *)calloc(
+      comm_ctx->no_internal_mrs, sizeof(struct naaice_mr_internal));
 
   // Now iterate through the memory regions again.
   // For a "normal" (aka not internal) memory region, set the fields in the
@@ -881,7 +877,6 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
     struct naaice_mr_error *err =
         (struct naaice_mr_error*) (msg + sizeof(struct naaice_mr_hdr));
 
-    // TODO: Specify meanings of different error codes. 
     // Currently only use one (non-zero).
     err->code = errorcode;
 
@@ -1067,7 +1062,7 @@ int naaice_swnaa_set_output_mr(struct naaice_communication_context *comm_ctx,
 
 int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t errorcode) {
-
+  // FM: Multiple regions can be written back already? So this is obsolete?
   // FM TODO: What if we have more than one region to return? For example ping_pong example
   // Just a reminder: POET is actual use case where we might write back multiple MRs
   // Allow multiple wrs? multiple return addresses?
@@ -1106,7 +1101,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
     wr.imm_data = htonl(errorcode);
     wr.opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
     wr.send_flags = IBV_SEND_SOLICITED;
-
+    //FM: Multiple regions can be written back already? So this is obsolete?
     // TODO: Include multiple return regions in the future?
     wr.wr.rdma.remote_addr = 
       comm_ctx->mr_peer_data[comm_ctx->mr_return_idx].addr;
@@ -1195,7 +1190,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   }
 
   // Update state.
-  // FM TODO: No update if we want to support multiple rpc invokes
+  // FM: No update if we want to support multiple rpc invokes
   //comm_ctx->state = FINISHED;
 
   return 0;

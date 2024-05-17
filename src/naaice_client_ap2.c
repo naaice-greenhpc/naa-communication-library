@@ -152,17 +152,27 @@ int main(int argc, char *argv[]) {
       return -1;
     }
 
-    // naa_test: keep tabs on the status of the RPC.
-    bool flag = false;
     struct naa_status status;
-    while (!flag) {
-      if (naa_test(handle, &flag, &status)) {
-        fprintf(stderr, "Error occured during naa_test. Exiting.\n");
+    // Do blocking and non-blocking wait/test for alternatingly
+    if(i % 2 == 0){
+      // naa_test: keep tabs on the status of the RPC.
+      bool flag = false;
+      while (!flag) {
+        if (naa_test(handle, &flag, &status)) {
+          fprintf(stderr, "Error occurred during naa_test. Exiting.\n");
+          return -1;
+        }
+      }
+    }
+    else{
+      if (naa_wait(handle, &status)) {
+        fprintf(stderr, "Error occurred during naa_wait. Exiting.\n");
         return -1;
       }
     }
+    printf("Bytes received: %d, RPC Return code: %d\n",
+           status.bytes_received, status.naa_error);
   }
-
   // naa_finalize: clean up connection.
   printf("-- Cleaning Up --\n");
   naa_finalize(handle);
