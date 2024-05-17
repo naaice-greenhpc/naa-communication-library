@@ -22,6 +22,7 @@
  *****************************************************************************/
 
 // Enable debug messages.
+#include <rdma/rdma_cma.h>
 #define DEBUG 1
 
 /* Dependencies **************************************************************/
@@ -272,7 +273,7 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
       // FM: This needs to happen before the event for route resolution
       // Dylan: Enforced this using the state machine.
       if (rdma_resolve_route(comm_ctx->id, TIMEOUT_RESOLVE_ROUTE)) {
-        fprintf(stderr, "RDMA route resolution failed.\n");
+        fprintf(stderr, "RDMA route resolution initiation failed.\n");
         return -1;
       }
 
@@ -342,10 +343,6 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
   // set error state to be able to exit upstream loop in
   // naaice_setup_connection
   //comm_ctx->state = ERROR;
-
-  //FM: Due to upstream handling of events, each handler is called for each event: thus error state can 
-  // only be set within if states for connection errors:
-  // Would it be better to call event handlers based on the actual event?
   if (ev->event == RDMA_CM_EVENT_ADDR_ERROR) {
     comm_ctx->state = ERROR;
     fprintf(stderr, "RDMA address resolution failed.\n");
@@ -380,8 +377,9 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
     //FM What to do here? is this an error state in this case? Check what needs 
     // to be cleaned up in which state...
     // We're not expecting disconnect at this point, so we should exit.
-    fprintf(stderr, "RDMA disconnected by client request.\n");
-    comm_ctx->state = DISCONNECTED;
+    fprintf(stderr, "RDMA disconnected by server.\n");
+    // Keep current state to have clean clean-up: depending onstate different structures have been allocated
+    //comm_ctx->state = DISCONNECTED;
     // Handle disconnect.
     naaice_disconnect_and_cleanup(comm_ctx);
     return -1;
@@ -408,27 +406,48 @@ int naaice_poll_and_handle_connection_event(
   // If we've received an event...
   struct rdma_cm_event ev;
   struct rdma_cm_event ev_cp;
-
   if (!naaice_poll_connection_event(comm_ctx, &ev,&ev_cp)) {
     comm_ctx->id = ev_cp.id;
-    if (naaice_handle_addr_resolved(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_handle_route_resolved(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_handle_connection_established(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_handle_error(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_handle_other(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-  }
+  switch (ev_cp.event){
 
-  // If we sucessfully handled an event (or haven't received one), success.
+    case RDMA_CM_EVENT_ADDR_RESOLVED:
+     if(naaice_handle_addr_resolved(comm_ctx, &ev_cp)) {
+      return -1;
+     }
+     break;
+    case RDMA_CM_EVENT_ROUTE_RESOLVED
+         : if (naaice_handle_route_resolved(comm_ctx, &ev_cp)) {
+       return -1;
+     }
+     break;
+
+    case RDMA_CM_EVENT_ESTABLISHED:
+      if (naaice_handle_connection_established(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+
+    case RDMA_CM_EVENT_ADDR_ERROR:
+    case RDMA_CM_EVENT_ROUTE_ERROR:
+    case RDMA_CM_EVENT_CONNECT_ERROR:
+    case RDMA_CM_EVENT_UNREACHABLE:
+    case RDMA_CM_EVENT_DEVICE_REMOVAL:
+    case RDMA_CM_EVENT_REJECTED:
+    // TODO: Not really happy about disconnected being treated as an error event
+    case RDMA_CM_EVENT_DISCONNECTED:
+      if (naaice_handle_error(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+
+    default:
+      if (naaice_handle_other(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+  }
+  }
+  // If we successfully handled an event (or haven't received one), success.
   return 0;
 }
 
@@ -1118,7 +1137,7 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 
 int naaice_disconnect_and_cleanup(
   struct naaice_communication_context *comm_ctx) {
-
+  // FM TODO: Fix clean up: look if stuff to clean up can be derived by communication state
   debug_print("In naaice_disconnect_and_cleanup\n");
 
   // Disconnect.

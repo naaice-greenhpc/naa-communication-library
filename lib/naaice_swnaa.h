@@ -88,7 +88,7 @@ int naaice_swnaa_setup_connection(
  *  RDMA_CM_EVENT_CONNECTION_REQUEST
  *  RDMA_CM_EVENT_CONNECT_ESTABLISHED
  *
- *  Also, the following are handled by naaice_handle_error:
+ *  Also, the following are handled by naaice_swnaa_handle_error:
  *  RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR,
  *  RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE,
  *  RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL,
@@ -108,22 +108,24 @@ int naaice_swnaa_handle_connection_requests(struct naaice_communication_context 
                                 struct rdma_cm_event *ev);
 int naaice_swnaa_handle_connection_established(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
+int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
 
-/**
- * naaice_swnaa_poll_and_handle_connection_event:
- *  Polls for a connection event on the RDMA event channel stored in the
- *  communication context and handles the event if one is received.
- *  Simply uses the poll and handle functions above.
- *
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- *
- * returns:
- *  0 if sucessful (regardless of whether an event is received), -1 if not.
- */
-int naaice_swnaa_poll_and_handle_connection_event(
-    struct naaice_communication_context *comm_ctx);
+    /**
+     * naaice_swnaa_poll_and_handle_connection_event:
+     *  Polls for a connection event on the RDMA event channel stored in the
+     *  communication context and handles the event if one is received.
+     *  Simply uses the poll and handle functions above.
+     *
+     * params:
+     *  naaice_communication_context *comm_ctx:
+     *    Pointer to struct describing the connection.
+     *
+     * returns:
+     *  0 if sucessful (regardless of whether an event is received), -1 if not.
+     */
+    int
+    naaice_swnaa_poll_and_handle_connection_event(
+        struct naaice_communication_context *comm_ctx);
 
 /**
  * naaice_swnaa_init_mrsp:

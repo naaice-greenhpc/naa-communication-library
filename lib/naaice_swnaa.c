@@ -24,6 +24,7 @@
 // Enable debug messages.
 #include "naaice.h"
 #include <infiniband/verbs.h>
+#include <rdma/rdma_cma.h>
 #define DEBUG 1
 
 /* Dependencies **************************************************************/
@@ -160,19 +161,32 @@ int naaice_swnaa_poll_and_handle_connection_event(
 
   if (!naaice_poll_connection_event(comm_ctx, &ev, &ev_cp)) {
     comm_ctx->id = ev_cp.id;
-
-    if (naaice_swnaa_handle_connection_requests(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_swnaa_handle_connection_established(comm_ctx,&ev_cp)){
-      return -1;
-    }
-    if (naaice_handle_error(comm_ctx, &ev_cp)) {
-      return -1;
-    }
-    if (naaice_handle_other(comm_ctx, &ev_cp)) {
-      return -1;
-    }
+    switch (ev_cp.event){
+      case RDMA_CM_EVENT_CONNECT_REQUEST:
+        if (naaice_swnaa_handle_connection_requests(comm_ctx, &ev_cp)) {
+          return -1;
+        }
+        break;
+      case RDMA_CM_EVENT_ESTABLISHED:
+        if (naaice_swnaa_handle_connection_established(comm_ctx,&ev_cp)){
+          return -1;
+        }
+        break;
+      case RDMA_CM_EVENT_CONNECT_ERROR:
+      case RDMA_CM_EVENT_DISCONNECTED:
+      case RDMA_CM_EVENT_DEVICE_REMOVAL:
+        if (naaice_swnaa_handle_error(comm_ctx, &ev_cp)) {
+          return -1;
+        }
+        break;
+        // Since we're the server we don't handle addr resolution etc (we never make calls that would create such an event)
+    
+      default:
+        if (naaice_handle_other(comm_ctx, &ev_cp)) {
+          return -1;
+        }
+        break;
+  }
   }
 
   // If we sucessfully handled an event (or haven't received one), success.
@@ -238,6 +252,41 @@ int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
   return 0;
 }
 
+int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
+                        struct rdma_cm_event *ev) {
+
+  debug_print("In naaice_handle_error\n");
+
+  // Returns -1 and prints an error message if the event is one of
+  // the following identified error types.
+  // Otherwise returns 0.
+
+  // set error state to be able to exit upstream loop in
+  // naaice_setup_connection
+  // comm_ctx->state = ERROR;
+
+  if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
+    comm_ctx->state = ERROR;
+    fprintf(stderr, "Error during connection establishment.\n");
+    return -1;
+  } else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
+    comm_ctx->state = ERROR;
+    fprintf(stderr, "RDMA device was removed.\n");
+    return -1;
+  } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
+    // FM What to do here? is this an error state in this case? Check what needs
+    //  to be cleaned up in which state...
+    //  We're not expecting disconnect at this point, so we should exit.
+    fprintf(stderr, "RDMA disconnected by client request.\n");
+    // Keep current state for error free cleanup (depending on the state, we allocated different structures)
+    //comm_ctx->state = DISCONNECTED;
+    // Handle disconnect.
+    naaice_swnaa_disconnect_and_cleanup(comm_ctx);
+    return -1;
+  }
+
+  return 0;
+}
 int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_do_mrsp\n");
@@ -1198,6 +1247,8 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 
 int naaice_swnaa_disconnect_and_cleanup(
   struct naaice_communication_context *comm_ctx) {
+  // FM TODO: Fix clean up: look if stuff to clean up can be derived by
+  // communication state
 
   debug_print("In naaice_swnaa_disconnect_and_cleanup\n");
 
