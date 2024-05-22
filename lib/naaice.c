@@ -147,6 +147,7 @@ int naaice_init_communication_context(
   (*comm_ctx)->immediate = 0;
   (*comm_ctx)->bytes_received = 0;
   (*comm_ctx)->naa_returncode = 0;
+  (*comm_ctx)->no_rpc_calls = 0;
 
   // Dummy FPGA addresses, sequential and starting at 0.
   // We add a single internal memory region with size 32, for testing.
@@ -168,10 +169,6 @@ int naaice_init_communication_context(
   // i.e. those used internally on NAA for calculation.
   if (naaice_set_internal_mrs(*comm_ctx, 1,
     &fpgaaddresses[params_amount], &mr_sizes[params_amount])) { return -1; }
-
-  // Set immediate value which will be sent later as part of the data transfer.
-  uint8_t *imm_bytes = (uint8_t*) calloc(3, sizeof(uint8_t));
-  if (naaice_set_immediate(*comm_ctx, imm_bytes)) { return -1; }
 
   // Initialize memory region used to construct messages sent during MRSP.
   // Currently this is a fixed size region, the size of an advertisement + 
@@ -600,6 +597,12 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
     // We initialize them all to false, but they should be updated prior to
     // the first RPC with naaice_set_input_mr.
     comm_ctx->mr_local_data[i].to_write = false;
+
+    // The single_send field for local MRs indicates that the MR should only
+    // be sent on the first RPC on this connection.
+    // We initialize to false, but they should be updated prior to the first
+    // RPC with naaice_set_singlesend_mr.
+    comm_ctx->mr_local_data[i].single_send = false;
   }
 
   // Allocate memory to store information about remote memory regions.
@@ -617,13 +620,19 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
 
     // Remote addresses (i.e. those to be requested on the NAA) must fit within
     // 7 bytes. Make sure this is the case.
-
     comm_ctx->mr_peer_data[i].addr = remote_addrs[i];
+
     // The to_write field for remote MRs indicates that the MR is an output
     // parameter and should be written back from the NAA.
     // We initialize them all to false, but they should be updated prior to
     // the first RPC with naaice_set_output_mr.
     comm_ctx->mr_peer_data[i].to_write = false;
+
+    // The single_send field for remote MRs indicates that the MR should only
+    // be expected to be sent on the first RPC on this connection.
+    // We initialize to false, but they should be updated prior to the first
+    // RPC with naaice_set_singlesend_mr.
+    comm_ctx->mr_peer_data[i].single_send = false;
 
     // TODO: consider if this alignment needs to be handled by AP1 or by
     // the user. Currently, it is entirely on the user side.
@@ -683,6 +692,32 @@ int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
   if (!comm_ctx->mr_peer_data[output_mr_idx].to_write) {
     comm_ctx->mr_peer_data[output_mr_idx].to_write = true;
     comm_ctx->no_output_mrs++;
+  }
+
+  return 0;
+}
+
+int naaice_set_singlesend_mr(struct naaice_communication_context *comm_ctx,
+  unsigned int singlesend_mr_idx) {
+
+  debug_print("In naaice_set_singlesend_mr\n");
+
+  // Check if passed index is a valid parameter memory region index.
+  if (singlesend_mr_idx >= comm_ctx->no_peer_mrs) {
+    fprintf(stderr, "Tried to set invalid memory region #%d as single send, "
+      "there are only %d local memory regions.\n",
+      singlesend_mr_idx, comm_ctx->no_peer_mrs);
+    return -1;
+  }
+
+  // Set the MR as single send.
+  comm_ctx->mr_local_data[singlesend_mr_idx].single_send = true;
+
+  // If the MR was not already set as input, set it so and increment the
+  // number of inputs.
+  if (!comm_ctx->mr_local_data[singlesend_mr_idx].to_write) {
+    comm_ctx->mr_local_data[singlesend_mr_idx].to_write = true;
+    comm_ctx->no_input_mrs++;
   }
 
   return 0;
@@ -1123,6 +1158,9 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_do_data_transfer\n");
 
+  // Increment number of RPC calls.
+  comm_ctx->no_rpc_calls++;
+
   // Initialize the data transfer.
   if (naaice_init_data_transfer(comm_ctx)) { return -1; }
 
@@ -1299,8 +1337,10 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
       
-      // MR flags only used to indicate internal MRs for now.
+      // MR flag may indicate if the region should only be sent once.
       curr->mr_info_bytearray[7] = 0;
+      if (comm_ctx->mr_local_data[i].single_send) { 
+        curr->mr_info_bytearray[7] |= MRFLAG_SINGLESEND; }
 
       // During set_parameter_mrs, the peer memory region addresses are checked
       // to be sure they fit into 7 bytes.
@@ -1443,21 +1483,26 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
   // to_write flag. This can be updated with naaice_set_input_mr.
   else {
 
-    // Get number of input regions to be sent, and save this value.
-    uint8_t n_input_mrs = 0;
+    // Update write flag for single send regions.
     for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
-      if (comm_ctx->mr_local_data[i].to_write) { n_input_mrs++; }
+      if (comm_ctx->mr_local_data[i].single_send
+        && comm_ctx->mr_local_data[i].to_write
+        && (comm_ctx->no_rpc_calls > 1)) {
+        comm_ctx->mr_local_data[i].to_write = false;
+        comm_ctx->no_input_mrs--;
+      }
     }
 
     // We will have one write request (and one scatter/gather elements) for
     // each memory region to be written.
-    struct ibv_send_wr wr[n_input_mrs], *bad_wr = NULL;
-    struct ibv_sge sge[n_input_mrs];
+    struct ibv_send_wr wr[comm_ctx->no_input_mrs], *bad_wr = NULL;
+    struct ibv_sge sge[comm_ctx->no_input_mrs];
 
     // Construct write requests and scatter/gather elements for all memory
     // regions to be sent.
     uint8_t mr_idx = 0;
-    for (int i = 0; (i < comm_ctx->no_local_mrs) && (mr_idx < n_input_mrs); i++) {
+    for (int i = 0; (i < comm_ctx->no_local_mrs) 
+      && (mr_idx < comm_ctx->no_input_mrs); i++) {
 
       if (comm_ctx->mr_local_data[i].to_write) {
 
@@ -1473,7 +1518,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         // 24 bits configured using naaice_set_immediate.
         // Otherwise, do a normal write.
         // We set the 8th bit to 1 in order to indicate host to NAA transmission.
-        if(mr_idx == n_input_mrs-1) {
+        if(mr_idx == comm_ctx->no_input_mrs-1) {
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
           wr[mr_idx].imm_data = htonl(comm_ctx->immediate | START_RPC_MASK);

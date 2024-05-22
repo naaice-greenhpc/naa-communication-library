@@ -88,6 +88,7 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->no_input_mrs = 0;
   (*comm_ctx)->no_output_mrs = 0;
   (*comm_ctx)->immediate = 0;
+  (*comm_ctx)->no_rpc_calls = 0;
 
   // The memory region used for MRSP is allocated here, but the ones for the
   // parameters and the internal memory regions used for NAA scratch
@@ -336,6 +337,9 @@ int naaice_swnaa_receive_data_transfer(
 
   debug_print("In naaice_swnaa_receive_data_transfer\n");
 
+  // Increment number of RPC calls.
+  comm_ctx->no_rpc_calls++;
+
   // Check if connection event is available
   int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
   if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
@@ -524,16 +528,9 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
       //debug_print("transfer size: %d\n", wc->byte_len);
 
-      // Handle the metadata, recording the return address.
-      /*
-      if (naaice_swnaa_handle_metadata(comm_ctx)) {
-        fprintf(stderr, "Error during RPC metadata handling.\n");
-        return -1;
-      }
-      */
-
       // Update state.
       comm_ctx->state = CALCULATING;
+
       // Now we are ready to perform the NAA procedure.
       return 0;
     }
@@ -703,7 +700,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
     // If the memory region flags indicate that this is an internal memory
     // region, increment the number of those. Otherwise this is a "normal"
     // memory region.
-    if (mr_flags && MRFLAG_INTERNAL) {
+    if (mr_flags & MRFLAG_INTERNAL) {
       comm_ctx->no_internal_mrs++;
     }
     else {
@@ -842,6 +839,10 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_local_data[local_count].to_write = false;
       comm_ctx->mr_peer_data[local_count].to_write = false;
 
+      // Initialize the single_send flag based on info byte.
+      comm_ctx->mr_local_data[local_count].single_send = mr_flags & MRFLAG_SINGLESEND;
+      comm_ctx->mr_peer_data[local_count].single_send = mr_flags & MRFLAG_SINGLESEND;
+
       debug_print("Local MR %d: Addr: %lX, Size: %lu, Requested Addr: %lX\n", local_count + 1,
        (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
        comm_ctx->mr_local_data[local_count].ibv->length,
@@ -974,21 +975,29 @@ int naaice_swnaa_post_recv_data(
   // i.e. for each memory region indicated with the to_write flag in the peer
   // MR info structs. These can be set with naaice_swnaa_set_input_mr.
 
-  // Get number of input regions to be recieved.
-  uint8_t n_input_mrs = 0;
+  // DYL: Also tracks single send MRs, adjusting the number of posted recieves
+  // after the first RPC call accordingly.
+
+  // Update write flag for single send regions.
   for (unsigned int i = 0; i < comm_ctx->no_peer_mrs; i++) {
-    if (comm_ctx->mr_peer_data[i].to_write) { n_input_mrs++; }
+    if (comm_ctx->mr_peer_data[i].single_send
+      && comm_ctx->mr_peer_data[i].to_write
+      && (comm_ctx->no_rpc_calls > 1)) {
+      comm_ctx->mr_peer_data[i].to_write = false;
+      comm_ctx->no_input_mrs--;
+    }
   }
 
   // We will have one write request (and one scatter/gather elements) for
   // each memory region to be written.
-  struct ibv_recv_wr wr[n_input_mrs], *bad_wr = NULL;
-  struct ibv_sge sge[n_input_mrs];
+  struct ibv_recv_wr wr[comm_ctx->no_input_mrs], *bad_wr = NULL;
+  struct ibv_sge sge[comm_ctx->no_input_mrs];
 
   // Construct write requests and scatter/gather elements for all memory
   // regions to be sent.
   int8_t mr_idx = 0;
-  for (int i = 0; (i < comm_ctx->no_local_mrs) && (mr_idx < n_input_mrs); i++) {
+  for (int i = 0; (i < comm_ctx->no_local_mrs) 
+    && (mr_idx < comm_ctx->no_input_mrs); i++) {
 
     if (comm_ctx->mr_peer_data[i].to_write) {
 
@@ -1000,7 +1009,7 @@ int naaice_swnaa_post_recv_data(
 
       // If this is the last memory region to be recieved, then the wr.next
       // field should be null. Otherwise it points to the next request.
-      if(mr_idx == n_input_mrs-1) {
+      if(mr_idx == comm_ctx->no_input_mrs-1) {
         wr[mr_idx].next = NULL;
       }
       else {

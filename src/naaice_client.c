@@ -128,10 +128,6 @@ int main(int argc, char *argv[]) {
       return -1;
   }
 
-  // Set immediate value which will be sent later as part of the data transfer.
-  uint8_t *imm_bytes = (uint8_t*) calloc(3, sizeof(uint8_t));
-  if (naaice_set_immediate(comm_ctx, imm_bytes)) { return -1; }
-
   // Now, handle connection setup.
   printf("-- Setting Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) { return -1; }
@@ -144,8 +140,13 @@ int main(int argc, char *argv[]) {
   if (naaice_set_input_mr(comm_ctx, 1)) { return -1; }
   if (naaice_set_output_mr(comm_ctx, 1)) { return -1; }
 
-  // Specification of internal memory regions moved inside
-  // naaice_init_communication_context.
+  // Specify parameters which should only be sent once.
+  // As an example, specify the first parameter as a single send region.
+  if (naaice_set_singlesend_mr(comm_ctx, 0)) { return -1; }
+
+  // Set immediate value which can be used for testbed configuration.
+  uint8_t imm_bytes[4] = {0, 0, 0, 0};
+  if (naaice_set_immediate(comm_ctx, imm_bytes)) { return -1; }
   
   // Then, register the memory regions with IBV.
   printf("-- Registering Memory Regions with IBV --\n");
