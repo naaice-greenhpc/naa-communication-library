@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 
   // Initialize the communication context struct.
   if (naaice_init_communication_context(&comm_ctx, param_sizes, params,
-    params_amount, FNCODE, local_ip, argv[1+arg_offset], CONNECTION_PORT)) {
+    params_amount, 0, 0, FNCODE, local_ip, argv[1+arg_offset], CONNECTION_PORT)) {
       return -1;
   }
 

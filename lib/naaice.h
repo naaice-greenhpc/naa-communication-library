@@ -380,7 +380,7 @@ struct naaice_communication_context
  *  Initializes communication context struct.
  *  After a call to this function, the provied communication context struct is
  *  ready to be passed to all other AP1 functions.
- * 
+ *
  * params:
  *  naaice_communication_context **comm_ctx: (return param)
  *    Double pointer to communication context struct to be initialized.
@@ -394,6 +394,11 @@ struct naaice_communication_context
  *  unsigned int params_amount:
  *    Number of params. Used to index param_sizes and params, so their lengths
  *    should correspond to params_amount.
+ *  unsigned int internal_mr_amount:
+ *    Number of internal MRs. Used to index internal_mr_sizes, so its length
+ *    should correspond to internal_mr_amount.
+ *  unsigned int *internal_mr_sizes:
+ *    Array of sizes (in bytes) of the internal MRs.
  *  uint8_t fncode:
  *    Function code specifying which NAA routine to be called.
  *  const char *local_ip:
@@ -405,14 +410,15 @@ struct naaice_communication_context
  *    String specifying remote address, ex. "10.3.10.135".
  *  uint16_t port:
  *    Value specifying connection port, ex. 12345.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
 int naaice_init_communication_context(
-  struct naaice_communication_context **comm_ctx,
-  size_t *param_sizes, char **params, unsigned int params_amount,
-  uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
+    struct naaice_communication_context **comm_ctx,
+    size_t *param_sizes, char **params, unsigned int params_amount,
+    unsigned int internal_mr_amount, size_t *internal_mr_sizes,
+    uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
 
 /**
  * naaice_poll_connection_event:

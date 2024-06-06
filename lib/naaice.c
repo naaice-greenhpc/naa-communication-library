@@ -26,7 +26,6 @@
 #define DEBUG 1
 
 /* Dependencies **************************************************************/
-
 #include <debug.h>
 #include <errno.h>
 #include <infiniband/verbs.h>
@@ -37,10 +36,9 @@
 
 
 /* Constants *****************************************************************/
-
 #define TIMEOUT_RESOLVE_ADDR 100
 #define CONNECTION_PORT 12345
-#define NAA_WORD_WIDTH 64
+#define NAA_PAGE_WIDTH 4096
 #define START_RPC_MASK 0x80
 
 /* Helper Functions **********************************************************/
@@ -90,7 +88,7 @@ void get_sequential_naa_addresses(unsigned int n_mrs, size_t *mr_sizes,
   uint64_t curr_addr = 0;
   for (unsigned int i = 0; i < n_mrs; i++) {
     sequential_addrs[i] = curr_addr;
-    curr_addr += ((mr_sizes[i] + NAA_WORD_WIDTH - 1) / NAA_WORD_WIDTH) * NAA_WORD_WIDTH; // align to NAA word width
+    curr_addr += ((mr_sizes[i] + NAA_PAGE_WIDTH - 1) / NAA_PAGE_WIDTH) * NAA_PAGE_WIDTH; // align to NAA page width
   }
 }
 
@@ -98,9 +96,11 @@ void get_sequential_naa_addresses(unsigned int n_mrs, size_t *mr_sizes,
 /* Function Implementations **************************************************/
 
 int naaice_init_communication_context(
-  struct naaice_communication_context **comm_ctx,
-  size_t *param_sizes, char **params, unsigned int params_amount,
-  uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port) {
+    struct naaice_communication_context **comm_ctx,
+    size_t *param_sizes, char **params, unsigned int params_amount,
+    unsigned int internal_mr_amount, size_t *internal_mr_sizes, uint8_t fncode,
+    const char *local_ip, const char *remote_ip, uint16_t port)
+{
 
   debug_print("In naaice_init_communication_context\n");
 
@@ -138,7 +138,7 @@ int naaice_init_communication_context(
   (*comm_ctx)->id = rdma_comm_id;
   (*comm_ctx)->no_local_mrs = params_amount; // Symmetrical memory regions, so
   (*comm_ctx)->no_peer_mrs = params_amount;  // local and remote number same.
-  (*comm_ctx)->no_internal_mrs = 0;
+  (*comm_ctx)->no_internal_mrs = internal_mr_amount;
   (*comm_ctx)->mr_return_idx = 0;
   (*comm_ctx)->rdma_writes_done = 0;
   (*comm_ctx)->fncode = fncode;
@@ -149,26 +149,31 @@ int naaice_init_communication_context(
   (*comm_ctx)->naa_returncode = 0;
   (*comm_ctx)->no_rpc_calls = 0;
 
-  // Dummy FPGA addresses, sequential and starting at 0.
-  // We add a single internal memory region with size 32, for testing.
+  // Dummy NAA addresses, sequential and starting at 0.
   // TODO: do this with a call to the memory mangement service.
-  uint64_t fpgaaddresses[100];
-  size_t mr_sizes[params_amount+1];
-  for (unsigned int i = 0; i < params_amount; i++) {
-    mr_sizes[i] = param_sizes[i];
+  uint64_t naa_addresses[internal_mr_amount + params_amount];
+  size_t mr_sizes[internal_mr_amount + params_amount];
+  for (unsigned int i = 0; i < internal_mr_amount; i++)
+  {
+    mr_sizes[i] = internal_mr_sizes[i];
   }
-  mr_sizes[params_amount] = 32;
-  get_sequential_naa_addresses(params_amount+1, mr_sizes, fpgaaddresses);
-
-  // Initialize structs which hold information about memory regions which
-  // correspond to parameters.
-  if (naaice_set_parameter_mrs(*comm_ctx,
-    params_amount, (uint64_t *) params, fpgaaddresses, param_sizes)) { return -1; }
+  for (unsigned int i = 0; i < params_amount; i++) {
+    mr_sizes[i + internal_mr_amount] = param_sizes[i];
+  }
+  get_sequential_naa_addresses(internal_mr_amount+params_amount, mr_sizes, naa_addresses);
 
   // Initialize structs which hold information about internal memory regions,
   // i.e. those used internally on NAA for calculation.
-  if (naaice_set_internal_mrs(*comm_ctx, 1,
-    &fpgaaddresses[params_amount], &mr_sizes[params_amount])) { return -1; }
+  if (naaice_set_internal_mrs(*comm_ctx, (*comm_ctx)->no_internal_mrs, naa_addresses, mr_sizes))
+  {
+    return -1;
+  }
+
+  // Initialize structs which hold information about memory regions which correspond to parameters.
+  if (naaice_set_parameter_mrs(*comm_ctx, params_amount, (uint64_t *)params, &naa_addresses[internal_mr_amount], &mr_sizes[internal_mr_amount]))
+  {
+    return -1;
+  }
 
   // Initialize memory region used to construct messages sent during MRSP.
   // Currently this is a fixed size region, the size of an advertisement + 
@@ -229,9 +234,6 @@ int naaice_init_communication_context(
   // Addresses no longer needed, call freeaddrinfo on each of them.
   freeaddrinfo(loc_addr);
   freeaddrinfo(rem_addr);
-
-  // Free some misc. memory.
-
   return 0;
 }
 
