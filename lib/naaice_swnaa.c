@@ -345,7 +345,7 @@ int naaice_swnaa_receive_data_transfer(
   }
 
   struct pollfd my_pollfd;
-  int ms_timeout = 100;
+  int ms_timeout = 1;
   // Poll the completion channel, returning with flag unchanged if nothing
   // is received.
   my_pollfd.fd = comm_ctx->ev_channel->fd;
@@ -373,6 +373,14 @@ int naaice_swnaa_receive_data_transfer(
   // transfer to the NAA is complete.
   while (comm_ctx->state == DATA_RECEIVING) {
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    int poll_result = poll(&my_pollfd, 1, ms_timeout);
+    if (poll_result < 0) {
+      fprintf(stderr, "Error occured when polling completion channel.\n");
+      return -1;
+    } else if (poll_result > 0) {
+      int result = naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
+      return result;
+    }
   }
 
   return 0;
