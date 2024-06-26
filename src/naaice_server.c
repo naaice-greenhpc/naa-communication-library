@@ -122,7 +122,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     // Receive data transfer from host.
     printf("-- Receiving Data Transfer --\n");
     if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
-    if (comm_ctx->state < MRSP_DONE){
+    if (comm_ctx->state < MRSP_DONE || comm_ctx->state == FINISHED){
       break;
     }
 
@@ -135,7 +135,10 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     printf("-- Writing Back Data --\n");
     if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) { return -1; }
 
-    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)) { return -1; }
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)<0) { return -1; }
+    else if(comm_ctx->state==FINISHED){
+      break;
+    }
   }
 
   // Disconnect and clean up.
