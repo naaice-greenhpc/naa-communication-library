@@ -233,24 +233,25 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
 int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_handle_metadata
- *  Updates information in the communication context based on received
- *  metadata, which before this call should be available in the local metadata
- *  memory region.
+ * naaice_swnaa_set_input_mr, naaice_swnaa_set_output_mr
+ *  Adds information about to the communication context about whether a MR
+ *  contains an input or output parameter. Inputs are written to the NAA during
+ *  data transfer, and outputs are written back from the NAA. A MR can be both
+ *  an input and an output.
+ * 
+ *  Must be called before naaice_swnaa_init_mrsp.
  * 
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
+ *  unsigned int idx:
+ *    Index of memory region to be set as input or output.
  * 
  * returns:
- *  0 if successful, -1 if not.
- */ 
-//int naaice_swnaa_handle_metadata(
-//  struct naaice_communication_context *comm_ctx);
-
+ *  0 if sucessful, -1 if not.
+ */
 int naaice_swnaa_set_input_mr(struct naaice_communication_context *comm_ctx,
   unsigned int input_mr_idx);
-
 int naaice_swnaa_set_output_mr(struct naaice_communication_context *comm_ctx,
   unsigned int output_mr_idx);
 
@@ -315,9 +316,19 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
 int naaice_swnaa_receive_data_transfer(
   struct naaice_communication_context *comm_ctx);
 
-/** TODO: WRITE function doc
-
-*/
+/**
+ * naaice_swnaa_do_data_transfer
+ *  Does all logic for the data transfer, including recieving data from the 
+ *  NAA, wating for the NAA calculation, and writing the return data back, 
+ *  in a blocking fashion.
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *
+ * returns:
+ *  0 if successful, -1 if not.
+ */
 int naaice_swnaa_do_data_transfer(
     struct naaice_communication_context *comm_ctx, uint8_t errorcode);
 

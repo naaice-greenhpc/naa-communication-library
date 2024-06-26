@@ -64,8 +64,10 @@
  * 2. (in any order)
  *    naaice_setup_connection
  *    naaice_register_mrs
- *    naaice_set_metadata
  *    naaice_set_internal_mrs
+ *    naaice_set_input_mr
+ *    naaice_set_output_mr
+ *    naaice_set_singlesend_mr
  * 3. naaice_do_mrsp
  * 4. naaice_do_data_transfer
  * 5. naaice_disconnect_and_cleanup
@@ -87,7 +89,6 @@
 
 /* Dependencies **************************************************************/
 
-//#define _BSD_SOURCE
 #include <endian.h>
 
 #include <errno.h>
@@ -100,54 +101,6 @@
 #include <string.h>
 #include <sys/poll.h>
 #include <unistd.h>
-
-
-#ifndef _ENDIAN_H
-#error You need to include endian.h
-#endif
-
-/*
-#if defined __USE_BSD && !defined __ASSEMBLER__
-# include <bits/byteswap.h>
-
-# if __BYTE_ORDER == __LITTLE_ENDIAN
-#  define htobe16(x) __bswap_16 (x)
-#  define htole16(x) (x)
-#  define be16toh(x) __bswap_16 (x)
-#  define le16toh(x) (x)
-
-#  define htobe32(x) __bswap_32 (x)
-#  define htole32(x) (x)
-#  define be32toh(x) __bswap_32 (x)
-#  define le32toh(x) (x)
-
-#  if __GLIBC_HAVE_LONG_LONG
-#   define htobe64(x) __bswap_64 (x)
-#   define htole64(x) (x)
-#   define be64toh(x) __bswap_64 (x)
-#   define le64toh(x) (x)
-#  endif
-
-# else
-#  define htobe16(x) (x)
-#  define htole16(x) __bswap_16 (x)
-#  define be16toh(x) (x)
-#  define le16toh(x) __bswap_16 (x)
-
-#  define htobe32(x) (x)
-#  define htole32(x) __bswap_32 (x)
-#  define be32toh(x) (x)
-#  define le32toh(x) __bswap_32 (x)
-
-#  if __GLIBC_HAVE_LONG_LONG
-#   define htobe64(x) (x)
-#   define htole64(x) __bswap_64 (x)
-#   define be64toh(x) (x)
-#   define le64toh(x) __bswap_64 (x)
-#  endif
-# endif
-#endif
-*/
 
 #include <sys/socket.h>
 #include <limits.h>
@@ -226,6 +179,11 @@ enum naaice_mrflags_value {
   // Indicates that memory region is for internal use on the NAA only, and
   // should not be written to or read from during data transfer.
   MRFLAG_INTERNAL = 0x01,
+
+  // Indicates that memory region should only by sent once, upon the first
+  // RPC for an NAA connection. Subsequent RPCs will not result in the
+  // memory region being resent.
+  MRFLAG_SINGLESEND = 0x02,
 };
 
 // Struct to hold memory region request message.
@@ -266,6 +224,9 @@ struct naaice_mr_peer
 
   // Indicates that the MR should be written back from NAA.
   bool to_write;
+
+  // Indicates that the MR should be written only once, on the first invoke.
+  bool single_send;
 };
 
 // Struct to hold information about a local memory region.
@@ -277,6 +238,9 @@ struct naaice_mr_local
 
   // Indicates that the MR should be written to remote.
   bool to_write;
+
+  // Indicates that the MR should be written only once, on the first invoke.
+  bool single_send;
 };
 
 // Struct to hold information about a memory region used internally for
@@ -382,8 +346,10 @@ struct naaice_communication_context
 
   // Function code indicating which NAA routine to be called.
   uint8_t fncode;
+
   // Return code indicating whether NAA routine was succesful.
   uint8_t naa_returncode;
+
   // Keeps track of number of writes done to NAA.
   uint8_t rdma_writes_done;
   uint32_t bytes_received;
@@ -391,6 +357,9 @@ struct naaice_communication_context
   // Number of input and output parameters.
   uint8_t no_input_mrs;
   uint8_t no_output_mrs;
+
+  // Keeps track of number of RPC calls so far on this connection.
+  unsigned int no_rpc_calls;
 
   // 32 bit value sent in RDMA immediate value during data transfer.
   // The first byte will hold the function code, set with
@@ -561,37 +530,78 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx);
 int naaice_register_mrs(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_set_metadata:
- *  Sets the fields of the metadata memory region.
- *  Specifically, this sets the return_addr field, which specifies which
- *  memory region the NAA should write results back to.
- * 
- *  Should only be called once. Each call to this function overwrites the
- *  previous call.
- * 
- *  TODO: additionally handle routine-specific metadata fields.
+ * naaice_set_parameter_mrs:
+ *  Allocates and initializes structs for parameter (i.e., non-internal)
+ *  memory regions. Called in naaice_init_communication_context.
  * 
  * params:
  *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- *  uintptr_t return_addr:
- *    Address of memory region to be used as the return param for the RPC.
+ *    Pointer to struct describing the connection and memory regions.
+ *    Should be the same as the params_amount passed to 
+ *    naaice_init_communication_context.
+ *  unsigned int n_parameter_mrs:
+ *    Number of memory regions for which structs will be allocated.
+ *  uint64_t *local_addrs:
+ *    Array of pointers to the MRs in user space. Should be the same as the
+ *    array params passed to naaice_init_communication_context.
+ *  uint64_t *remote_addrs:
+ *    Addresses in NAA memory where these MRs will be requested to be stored.
+ *    These addresses are obtained from the memory management service.
+ *  size_t *sizes:
+ *    Array of sizes of the memory regions. Should be the same as the array
+ *    param_sizes passed to naaice_init_communication_context.
  * 
  * returns:
  *  0 if sucessful, -1 if not.
  */
-//int naaice_set_metadata(struct naaice_communication_context *comm_ctx,
-//  uintptr_t return_addr);
-
 int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
   unsigned int n_parameter_mrs, uint64_t *local_addrs, uint64_t *remote_addrs,
   size_t *sizes);
 
+/**
+ * naaice_set_input_mr, naaice_set_output_mr
+ *  Adds information about to the communication context about whether a MR
+ *  contains an input or output parameter. Inputs are written to the NAA during
+ *  data transfer, and outputs are written back from the NAA. A MR can be both
+ *  an input and an output.
+ * 
+ *  Must be called before naaice_init_mrsp.
+ * 
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *  unsigned int idx:
+ *    Index of memory region to be set as input or output.
+ * 
+ * returns:
+ *  0 if sucessful, -1 if not.
+ */
 int naaice_set_input_mr(struct naaice_communication_context *comm_ctx,
   unsigned int input_mr_idx);
-
 int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
   unsigned int output_mr_idx);
+
+/**
+ * naaice_set_input_mr, naaice_set_output_mr
+ *  Adds information about to the communication context about whether a MR
+ *  is a "single send" region. Single send regions are written once during the
+ *  first RPC on this connection, and not written again during subsequent RPCs.
+ * 
+ *  If the MR is not already set as an input region, it is set as one.
+ * 
+ *  Must be called before naaice_init_mrsp.
+ * 
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *  unsigned int idx:
+ *    Index of memory region to be set as a single send region.
+ * 
+ * returns:
+ *  0 if sucessful, -1 if not.
+ */
+int naaice_set_singlesend_mr(struct naaice_communication_context *comm_ctx,
+  unsigned int singlesend_mr_idx);
 
 /**
  * naaice_set_internal_mrs
@@ -625,6 +635,23 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   unsigned int n_internal_mrs, uint64_t *addrs, size_t *sizes);
 
 
+/**
+ * naaice_set_immediate
+ *  Set the immediate value written during data transfer.
+ * 
+ *  Must be called before naaice_init_data_transfer.
+ * 
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ *  unsigned char *imm_bytes:
+ *    Array of immediate value bytes. Should containt no more than 3 bytes,
+ *    which are placed in the upper 3 bytes of the immediate.
+ *    Lowest byte of the immediate is for the function code.
+ * 
+ * returns:
+ *  0 if sucessful, -1 if not.
+ */
 int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
   unsigned char *imm_bytes);
 
