@@ -1336,11 +1336,21 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       curr->addr = htonll((uintptr_t)comm_ctx->mr_local_data[i].addr);
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
+      curr->mr_info_bytearray[7] = 0;
       
       // MR flag may indicate if the region should only be sent once.
-      curr->mr_info_bytearray[7] = 0;
       if (comm_ctx->mr_local_data[i].single_send) { 
         curr->mr_info_bytearray[7] |= MRFLAG_SINGLESEND; }
+
+      // MR flag may indicate if MR is an input.
+      if (comm_ctx->mr_local_data[i].to_write) {
+        curr->mr_info_bytearray[7] |= MRFLAG_INPUT;
+      }
+
+      // MR flag may indicate if MR is an input.
+      if (comm_ctx->mr_peer_data[i].to_write) {
+        curr->mr_info_bytearray[7] |= MRFLAG_OUTPUT;
+      }
 
       // During set_parameter_mrs, the peer memory region addresses are checked
       // to be sure they fit into 7 bytes.

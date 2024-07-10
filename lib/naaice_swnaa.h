@@ -233,29 +233,6 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
 int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_set_input_mr, naaice_swnaa_set_output_mr
- *  Adds information about to the communication context about whether a MR
- *  contains an input or output parameter. Inputs are written to the NAA during
- *  data transfer, and outputs are written back from the NAA. A MR can be both
- *  an input and an output.
- * 
- *  Must be called before naaice_swnaa_init_mrsp.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- *  unsigned int idx:
- *    Index of memory region to be set as input or output.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
- */
-int naaice_swnaa_set_input_mr(struct naaice_communication_context *comm_ctx,
-  unsigned int input_mr_idx);
-int naaice_swnaa_set_output_mr(struct naaice_communication_context *comm_ctx,
-  unsigned int output_mr_idx);
-
-/**
  * naaice_swnaa_write_data:
  *  Writes the return memory region, specified by comm_ctx->mr_return_idx, to
  *  the remote peer. Done with a ibv_post_send using opcode 

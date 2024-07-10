@@ -109,14 +109,6 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   printf("-- Doing MRSP --\n");
   if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
-  // Specify input and output parameters.
-  // As an example, specify the first two parameters as inputs and the second
-  // parameter as an output.
-  printf("-- Specifying Input and Output Memory Regions --\n");
-  if (naaice_swnaa_set_input_mr(comm_ctx, 0)) { return -1; }
-  if (naaice_swnaa_set_input_mr(comm_ctx, 1)) { return -1; }
-  if (naaice_swnaa_set_output_mr(comm_ctx, 1)) { return -1; }
-
   while (comm_ctx->state >= MRSP_DONE) {
     
     // Receive data transfer from host.
