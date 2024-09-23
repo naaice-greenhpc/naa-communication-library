@@ -125,6 +125,13 @@ int naaice_init_communication_context(
     return -1;
   }
 
+  // Ensure event channel is in non-blocking mode.
+  int fd_flags = fcntl((*comm_ctx)->ev_channel->fd, F_GETFL);
+  if (fcntl((*comm_ctx)->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
+    fprintf(stderr, "Failed to change file descriptor of event channel.\n");
+    return -1;
+  }
+
   // Make a communication ID, checking for allocation success.
   struct rdma_cm_id *rdma_comm_id;
   if (rdma_create_id((*comm_ctx)->ev_channel,
@@ -186,20 +193,23 @@ int naaice_init_communication_context(
     return -1;
   }
 
-  // Convert port to string for getaddrinfo.
-  char *port_str = (char*) malloc(128);
-  snprintf(port_str, 128, "%u", port);
+  // Convert ports to strings for getaddrinfo.
+  char *loc_port_str = (char*) malloc(128);
+  snprintf(loc_port_str, 128, "%u", port);
+
+  char *rem_port_str = (char*) malloc(128);
+  snprintf(rem_port_str, 128, "%u", NAA_PORT);
 
   // Get remote address from getaddrinfo.
   struct addrinfo *rem_addr = NULL, *loc_addr = NULL;
-  if (getaddrinfo(remote_ip, port_str, NULL, &rem_addr)) {
+  if (getaddrinfo(remote_ip, rem_port_str, NULL, &rem_addr)) {
     fprintf(stderr, "Failed to get address info for remote address.\n");
     return -1;
   }
 
   // Get local address from getaddrinfo, if provided.
   if (local_ip[0] != '\0') {
-    if (getaddrinfo(local_ip, port_str, NULL, &loc_addr)) {
+    if (getaddrinfo(local_ip, loc_port_str, NULL, &loc_addr)) {
       fprintf(stderr, "Failed to get address info for local address.\n");
       return -1;
     }
@@ -230,8 +240,6 @@ int naaice_init_communication_context(
   freeaddrinfo(loc_addr);
   freeaddrinfo(rem_addr);
 
-  // Free some misc. memory.
-
   return 0;
 }
 
@@ -239,7 +247,7 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
                                  struct rdma_cm_event *ev,
                                  struct rdma_cm_event *ev_cp) {
 
-  debug_print("In naaice_poll_connection_event\n");
+  //debug_print("In naaice_poll_connection_event\n");
 
   if (!rdma_get_cm_event(comm_ctx->ev_channel, &ev)) {
 
@@ -333,13 +341,6 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
 
   debug_print("In naaice_handle_error\n");
 
-  // Returns -1 and prints an error message if the event is one of
-  // the following identified error types.
-  // Otherwise returns 0.
-
-  // set error state to be able to exit upstream loop in
-  // naaice_setup_connection
-  //comm_ctx->state = ERROR;
   if (ev->event == RDMA_CM_EVENT_ADDR_ERROR) {
     comm_ctx->state = ERROR;
     fprintf(stderr, "RDMA address resolution failed.\n");
@@ -398,7 +399,7 @@ int naaice_handle_other(
 int naaice_poll_and_handle_connection_event(
   struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_poll_and_handle_connection_event\n");
+  //debug_print("In naaice_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
@@ -408,12 +409,12 @@ int naaice_poll_and_handle_connection_event(
   switch (ev_cp.event){
 
     case RDMA_CM_EVENT_ADDR_RESOLVED:
-     if(naaice_handle_addr_resolved(comm_ctx, &ev_cp)) {
+     if (naaice_handle_addr_resolved(comm_ctx, &ev_cp)) {
       return -1;
      }
      break;
-    case RDMA_CM_EVENT_ROUTE_RESOLVED
-         : if (naaice_handle_route_resolved(comm_ctx, &ev_cp)) {
+    case RDMA_CM_EVENT_ROUTE_RESOLVED: 
+      if (naaice_handle_route_resolved(comm_ctx, &ev_cp)) {
        return -1;
      }
      break;
@@ -442,7 +443,7 @@ int naaice_poll_and_handle_connection_event(
         return -1;
       }
       break;
-  }
+    }
   }
   // If we successfully handled an event (or haven't received one), success.
   return 0;
@@ -455,11 +456,11 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
   // Loop handling events and updating the completion flag until finished.
   while (comm_ctx->state < CONNECTED) {
 
-    naaice_poll_and_handle_connection_event(comm_ctx);
+    if (naaice_poll_and_handle_connection_event(comm_ctx)) {
+      return -1;
+    }
   }
-  if(comm_ctx->state != CONNECTED){
-    return -1;
-  }
+
   return 0;
 }
 
@@ -575,6 +576,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
   // communication context.
   // Because we use symmetrical memory regions, the number is the same
   // (we don't count internal memory regions here).
+
   comm_ctx->no_local_mrs = n_parameter_mrs;
   comm_ctx->no_peer_mrs = n_parameter_mrs;
 
@@ -1009,7 +1011,7 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
     return -1;
   }
 
-    // If something is received, get the completion event.
+  // If something is received, get the completion event.
   if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
     fprintf(stderr, "Failed to get completion queue event.\n");
     return -1;
@@ -1245,6 +1247,9 @@ int naaice_disconnect_and_cleanup(
 
   // Destroy rdma event channel.
   rdma_destroy_event_channel(comm_ctx->ev_channel);
+
+  // Set state to indicate successful disconnect.
+  comm_ctx->state = DISCONNECTED;
 
   return 0;
 }

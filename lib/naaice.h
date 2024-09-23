@@ -110,6 +110,9 @@
 
 /* Constants *****************************************************************/
 
+// Port used on NAA side.
+#define NAA_PORT 12345
+
 #define RX_DEPTH 1025
 #define ntohll be64toh
 #define htonll htobe64
@@ -296,7 +299,6 @@ enum naaice_communication_state
   INIT            = 00,
   READY           = 01,
   CONNECTED       = 02,
-  DISCONNECTED    = 03,
   MRSP_SENDING    = 10,
   MRSP_RECEIVING  = 11,
   MRSP_DONE       = 12,
@@ -304,7 +306,8 @@ enum naaice_communication_state
   CALCULATING     = 21,
   DATA_RECEIVING  = 22,
   FINISHED        = 30,
-  ERROR           = 40,
+  DISCONNECTED    = 40,
+  ERROR           = 50,
 };
 
 // Struct which holds all information about the connection.

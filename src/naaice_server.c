@@ -85,57 +85,70 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
 int main(int argc, __attribute__((unused)) char *argv[]) {
 
   // Handle command line arguments.
-  printf("-- Handling Command Line Arguments --\n");
-  if (argc != 1) {
-    fprintf(stderr,
-            "Server should be called without arguments.\n");
+  printf("++ Handling Command Line Arguments ++\n");
+  if ((argc != 1) && (argc != 2)) {
+    fprintf(stderr, "Wrong number of arguments. use: "
+      "./naaice_server [local-ip]\n"
+      "Example: ./naaice_server 10.3.10.134\n");
     return -1;
+  }
+
+  // Get local IP argument, if provided.
+  char empty_str[1] = {'\0'}; //"";
+  char *local_ip = empty_str;
+  if (argc > 1) {
+    local_ip = argv[1];
   }
 
   // Communication context struct. 
   // This will hold all information necessary for the connection.
-  printf("-- Initializing Communication Context --\n");
+  printf("++ Initializing Communication Context ++\n");
   struct naaice_communication_context *comm_ctx = NULL;
 
   // Initialize the communication context struct.
-  if(naaice_swnaa_init_communication_context(&comm_ctx, CONNECTION_PORT)) {
+  if(naaice_swnaa_init_communication_context(&comm_ctx, local_ip, CONNECTION_PORT)) {
     return -1; }
 
   // Now, handle connection setup.
-  printf("-- Setting Up Connection --\n");
+  printf("++ Setting Up Connection ++\n");
   if (naaice_swnaa_setup_connection(comm_ctx)) { return -1; }
 
   // Receive MRSP message from the host.
-  printf("-- Doing MRSP --\n");
+  printf("++ Doing MRSP ++\n");
   if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
 
   while (comm_ctx->state >= MRSP_DONE) {
     
     // Receive data transfer from host.
-    printf("-- Receiving Data Transfer --\n");
+    printf("++ Receiving Data Transfer ++\n");
     if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
+    /*
     if (comm_ctx->state < MRSP_DONE || comm_ctx->state == FINISHED){
       break;
     }
+    */
 
     // Now that all data has arrived, perform the RPC.
-    printf("-- Doing RPC --\n");
+    printf("++ Doing RPC ++\n");
     printf("Function Code: %d\n", comm_ctx->fncode);
     uint8_t errorcode = do_procedure(comm_ctx);
 
     // Finally, write back the results to the host.
-    printf("-- Writing Back Data --\n");
+    printf("++ Writing Back Data ++\n");
     if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) { return -1; }
+    
+    // Check for disconnect.
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)) { return -1; }
 
-    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)<0) { return -1; }
-    else if(comm_ctx->state==FINISHED){
+    /*else if(comm_ctx->state == FINISHED){
       break;
     }
+    */
   }
 
   // Disconnect and clean up.
-  printf("-- Cleaning Up --\n");
-  if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
+  //printf("++ Cleaning Up ++\n");
+  //if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
 
   return 0;
 }

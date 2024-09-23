@@ -33,6 +33,7 @@
 #include <errno.h>
 #include <naaice_swnaa.h>
 #include <naaice.h>
+#include <arpa/inet.h>
 
 /* Helper Functions **********************************************************/
 
@@ -44,7 +45,7 @@ const char* get_state_str(enum naaice_communication_state state);
 /* Function Implementations **************************************************/
 
 int naaice_swnaa_init_communication_context(
-  struct naaice_communication_context **comm_ctx, uint16_t port) {
+  struct naaice_communication_context **comm_ctx, const char *local_ip, uint16_t port) {
 
   debug_print("In naaice_swnaa_init_communication_context\n");
 
@@ -63,6 +64,13 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->ev_channel = rdma_create_event_channel();
   if (!(*comm_ctx)->ev_channel) {
     fprintf(stderr, "Failed to create an RDMA event channel.\n");
+    return -1;
+  }
+
+  // Ensure event channel is in non-blocking mode.
+  int fd_flags = fcntl((*comm_ctx)->ev_channel->fd, F_GETFL);
+  if (fcntl((*comm_ctx)->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
+    fprintf(stderr, "Failed to change file descriptor of event channel.\n");
     return -1;
   }
 
@@ -111,19 +119,44 @@ int naaice_swnaa_init_communication_context(
   }
 
   // Configure connection.
-  // TODO: make port flexible?
-  // Probably with RMS support, when we ask for the NAA ip, we will also get port num.
   debug_print("Configuring connection.\n");
-  struct sockaddr loc_addr;
-  memset(&loc_addr, 0, sizeof(loc_addr));
-  loc_addr.sa_family = AF_INET;
-  ((struct sockaddr_in *)&loc_addr)->sin_port = htons(port);
+
+  // Convert port to string for getaddrinfo.
+  char *loc_port_str = (char*) malloc(128);
+  snprintf(loc_port_str, 128, "%u", port);
+
+  // Get local address from getaddrinfo, if provided.
+  struct addrinfo *loc_addr = NULL;
+  if (local_ip[0] != '\0') {
+    if (getaddrinfo(local_ip, loc_port_str, NULL, &loc_addr)) {
+      fprintf(stderr, "Failed to get address info for local address.\n");
+      return -1;
+    }
+  }
 
   // Bind communication ID to local address.
-  if (rdma_bind_addr(rdma_comm_id, &loc_addr)) {
-    fprintf(stderr, "Binding communication ID to local address failed.\n");
-    fprintf(stderr, "errno: %d\n", errno);
-    return -1;
+  // Provide local ip only if provided by user.
+  if (local_ip[0] != '\0') {
+    struct in_addr ip_addr;
+    ip_addr.s_addr = ((struct sockaddr_in *)(loc_addr->ai_addr))->sin_addr.s_addr;
+    debug_print("Local IP provided: %s, %s\n", local_ip, inet_ntoa(ip_addr));
+    if (rdma_bind_addr(rdma_comm_id, loc_addr->ai_addr)) {
+      fprintf(stderr, "Binding communication ID to local address failed.\n");
+      fprintf(stderr, "errno: %d\n", errno);
+      return -1;
+    }
+  }
+  else {
+    debug_print("No local IP provided.\n");
+    struct sockaddr loc_addr;
+    memset(&loc_addr, 0, sizeof(struct sockaddr_in));
+    loc_addr.sa_family = AF_INET;
+    ((struct sockaddr_in *)&loc_addr)->sin_port = htons(port);
+    if (rdma_bind_addr(rdma_comm_id, &loc_addr)) {
+      fprintf(stderr, "Binding communication ID to local address failed.\n");
+      fprintf(stderr, "errno: %d\n", errno);
+      return -1;
+    }
   }
 
   // Listen on the port.
@@ -154,7 +187,7 @@ int naaice_swnaa_setup_connection(
 int naaice_swnaa_poll_and_handle_connection_event(
     struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_poll_and_handle_connection_event\n");
+  //debug_print("In naaice_swnaa_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
@@ -162,32 +195,35 @@ int naaice_swnaa_poll_and_handle_connection_event(
 
   if (!naaice_poll_connection_event(comm_ctx, &ev, &ev_cp)) {
     comm_ctx->id = ev_cp.id;
-    switch (ev_cp.event){
-      case RDMA_CM_EVENT_CONNECT_REQUEST:
+    switch (ev_cp.event) {
+      case RDMA_CM_EVENT_CONNECT_REQUEST: {
         if (naaice_swnaa_handle_connection_requests(comm_ctx, &ev_cp)) {
           return -1;
         }
         break;
-      case RDMA_CM_EVENT_ESTABLISHED:
+      }
+      case RDMA_CM_EVENT_ESTABLISHED: {
         if (naaice_swnaa_handle_connection_established(comm_ctx,&ev_cp)){
           return -1;
         }
         break;
+      }
       case RDMA_CM_EVENT_CONNECT_ERROR:
       case RDMA_CM_EVENT_DISCONNECTED:
-      case RDMA_CM_EVENT_DEVICE_REMOVAL:
+      case RDMA_CM_EVENT_DEVICE_REMOVAL: {
         if (naaice_swnaa_handle_error(comm_ctx, &ev_cp)) {
           return -1;
         }
         break;
         // Since we're the server we don't handle addr resolution etc (we never make calls that would create such an event)
-    
-      default:
+      }
+      default: {
         if (naaice_handle_other(comm_ctx, &ev_cp)) {
           return -1;
         }
         break;
-  }
+      }
+    }
   }
 
   // If we sucessfully handled an event (or haven't received one), success.
@@ -197,7 +233,7 @@ int naaice_swnaa_poll_and_handle_connection_event(
 int naaice_swnaa_handle_connection_requests(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_connection_requests\n");
+  debug_print("In naaice_swnaa_handle_connection_requests\n");
 
   if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
     struct rdma_conn_param cm_params;
@@ -208,7 +244,7 @@ int naaice_swnaa_handle_connection_requests(
     cm_params.rnr_retry_count = 6; // 7 would be indefinite
 
     if (naaice_init_rdma_resources(comm_ctx)) {
-      fprintf(stderr, "Failed in allocating RDMA resources\n");
+      fprintf(stderr, "Failed in allocating RDMA resources.\n");
     }
 
     // Register the memory region used for MRSP on the server side.
@@ -247,6 +283,9 @@ int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_init_mrsp\n");
 
+  // Update state.
+  comm_ctx->state = MRSP_RECEIVING;
+
   // Wait for memory region announcement and request from the host.
   naaice_swnaa_post_recv_mrsp(comm_ctx);
 
@@ -256,7 +295,7 @@ int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
                         struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_error\n");
+  debug_print("In naaice_swnaa_handle_error\n");
 
   // Returns -1 and prints an error message if the event is one of
   // the following identified error types.
@@ -275,7 +314,7 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     fprintf(stderr, "RDMA device was removed.\n");
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
-    comm_ctx->state = FINISHED;
+    //comm_ctx->state = FINISHED;
     // FM What to do here? is this an error state in this case? Check what needs
     //  to be cleaned up in which state...
     //  We're not expecting disconnect at this point, so we should exit.
@@ -283,8 +322,8 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     // Keep current state for error free cleanup (depending on the state, we allocated different structures)
     //comm_ctx->state = DISCONNECTED;
     // Handle disconnect.
-    //naaice_swnaa_disconnect_and_cleanup(comm_ctx);
-    return 0;
+    naaice_swnaa_disconnect_and_cleanup(comm_ctx);
+    return -1;
   }
 
   return 0;
@@ -292,9 +331,6 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
 int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_swnaa_do_mrsp\n");
-
-  // Update state.
-  comm_ctx->state = MRSP_RECEIVING;
 
   // Initialize the MRSP.
   if (naaice_swnaa_init_mrsp(comm_ctx)) { return -1; }
@@ -309,7 +345,7 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
     state: MRSP_DONE, opcode: IBV_WC_RECV_RDMA_WITH_IMM
     Work completion opcode (wc opcode): 129, not handled for state:  12.
     Error while handling work completion.
-*/
+    */
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
   }
 
@@ -317,7 +353,7 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 }
 
 int naaice_swnaa_do_data_transfer(
-  struct naaice_communication_context *comm_ctx,uint8_t errorcode) {
+  struct naaice_communication_context *comm_ctx, uint8_t errorcode) {
 
   debug_print("In naaice_swnaa_do_data_transfer\n");
 
@@ -341,7 +377,7 @@ int naaice_swnaa_receive_data_transfer(
   // Increment number of RPC calls.
   comm_ctx->no_rpc_calls++;
 
-  // Check if connection event is available
+  // Check if connection event is available.
   int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
   if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
     fprintf(stderr, "Failed to change file descriptor of rdma event "
@@ -368,8 +404,6 @@ int naaice_swnaa_receive_data_transfer(
   }
 
   // Else continue, there was no event.
-  // Update state.
-  comm_ctx->state = DATA_RECEIVING;
 
   // Post a receive for the data.
   naaice_swnaa_post_recv_data(comm_ctx);
@@ -543,6 +577,13 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       // Now we are ready to perform the NAA procedure.
       return 0;
     }
+
+    // If we recieved data without an immediate...
+    if (wc->opcode == IBV_WC_RDMA_WRITE) {
+
+      // No need to do anything.
+      return 0;
+    }
   } 
   else if (comm_ctx->state == DATA_SENDING) {
     // We're sending back data
@@ -562,8 +603,8 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   // If we've reached this point, the work completion had an opcode which is
   // not handled for the current state, so return with error.
   fprintf(stderr,
-      "Work completion opcode (wc opcode): %d, not handled for state:  %d.\n",
-      wc->opcode, comm_ctx->state);
+      "Work completion opcode (wc opcode): %s, not handled for state: %s.\n",
+      get_ibv_wc_opcode_str(wc->opcode), get_state_str(comm_ctx->state));
   return -1;
 }
 
@@ -980,6 +1021,9 @@ int naaice_swnaa_post_recv_data(
 
   debug_print("In naaice_swnaa_post_recv_data\n");
 
+  // Update state.
+  comm_ctx->state = DATA_RECEIVING;
+
   // DYL: Changed this back to constructing only a single, empty recv request.
   // Information about input and output regions is recieved from the host
   // during MRSP in the announcement packet MR flags.
@@ -1143,8 +1187,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   }
 
   // Update state.
-  // FM: No update if we want to support multiple rpc invokes
-  //comm_ctx->state = FINISHED;
+  comm_ctx->state = FINISHED;
 
   return 0;
 }
@@ -1159,9 +1202,6 @@ int naaice_swnaa_disconnect_and_cleanup(
   // Logic slightly different than on the host side:
   // All local memory regions can be freed because they do not exist in user
   // memory space.
-
-  // Disconnect: Done by client exclusively
-  //rdma_disconnect(comm_ctx->id);
 
   // Deregister memory regions.
   int err = 0;
@@ -1228,6 +1268,9 @@ int naaice_swnaa_disconnect_and_cleanup(
 
   // Destroy rdma event channel.
   rdma_destroy_event_channel(comm_ctx->ev_channel);
+
+  // Set state to indicate successful disconnect.
+  comm_ctx->state = DISCONNECTED;
 
   return 0;
 }

@@ -36,6 +36,24 @@
 /* Public Functions **********************************************************/
 
 /**
+ * naaice_swnaa_handle_connection_nonblocking:
+ *  Handles any work necessary on a connection in a nonblocking fashion.
+ *  Calls all other naaice_swnaa functions based on communication state.
+ *  i.e. calling this in a loop should be sufficient to handle all server
+ *  behavior for a single connection.
+ * 
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection.
+ * 
+ * returns:
+ *  0 if some work done on connection or no update on connection.
+ * -1 if aborted due to any error during communication.
+ */
+int naaice_swnaa_handle_connection_nonblocking(
+  struct naaice_communication_context *comm_ctx);
+
+/**
  * naaice_init_communication_context:
  *  Initializes communication context struct.
  *  
@@ -57,7 +75,7 @@
  *  0 if sucessful, -1 if not.
  */
 int naaice_swnaa_init_communication_context(
-  struct naaice_communication_context **comm_ctx, uint16_t port);
+  struct naaice_communication_context **comm_ctx, const char *local_ip, uint16_t port);
 
 /**
  * naaice_swnaa_setup_connection:

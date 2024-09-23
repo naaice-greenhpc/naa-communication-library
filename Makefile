@@ -13,7 +13,8 @@ INC_DIRS := $(shell find $(LIB_DIR) -type d)
 INC_DIRS += $(HDR_DIRS)
 INC := $(addprefix -I,$(INC_DIRS))
 
-APPS_C := naaice_client naaice_server naaice_client_ap2
+# naaice_client_multipleconnections naaice_server_multipleconnections
+APPS_C := naaice_client naaice_server naaice_client_ap2 naaice_client_multipleconnections naaice_server_multipleconnections
 APPS_CPP := #naaice_client_ap2_cpp
 APPS_EMA_C := naaice_client_ema
 APPS_DEFAULT := $(APPS_C) $(APPS_CPP)
