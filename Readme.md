@@ -7,11 +7,11 @@ It provides two examples:
 
 Data transfer is done by RDMA WRITE operations. The memory regions for data transfer are exchanged beforehand using a new protocol. Protocol details were discussed in NAAICE work meetings in Nov 2022/Jan 2023. Memory regions are exhanged using a single RDMA SEND operation (per direction) with a dynamic message. This message can hold a variable number of announced memory regions and a request for size of memory to allocate memory regions.
 
-Sample commands
-1. Node 1 (IP `10.3.10.136`):\
+Sample commands to run current example (requires two regions to set different input and output memory regions)
+1. Node 1 (IP `10.3.10.42`):\
    `src/naaice_server `
 2. Node 2 (IP `10.3.10.135`):\
-    `src/naaice_client 10.3.10.135 10.3.10.136 16474836480`
+    `src/naaice_client 10.3.10.41 10.3.10.42 2 "1024 1024`
 
 The port for the initial connection is fixed (but can be changed). All routines not taken from ibverbs or librdmacm libraries are named starting naaice_*. Testing for sending multiple memory regions can be sped up by changing the MAXIMUM_TRANSFER_LENGTH, a variable used to denote the maximum size of a single RDMA operation. By lowering the value, one can force the use of more and smaller memory regions.
 
