@@ -164,8 +164,6 @@ struct naaice_mr_advertisement_request
     // The following 7 hold the requested NAA MR address.
     uint8_t mr_info_bytearray[8];
   };
-  //uint8_t mrflags;
-  //uint8_t fpgaaddress[7];
   uint64_t addr;
   uint32_t rkey;
   uint32_t size;
@@ -184,6 +182,12 @@ enum naaice_mrflags_value {
   // RPC for an NAA connection. Subsequent RPCs will not result in the
   // memory region being resent.
   MRFLAG_SINGLESEND = 0x02,
+
+  // Indicates that a memory region represents an RPC input.
+  MRFLAG_INPUT = 0x04,
+
+  // Indicates that a memory region represents an RPC output.
+  MRFLAG_OUTPUT = 0x08,
 };
 
 // Struct to hold memory region request message.
@@ -415,7 +419,7 @@ struct naaice_communication_context
  *  0 if sucessful, -1 if not.
  */
 int naaice_init_communication_context(
-    struct naaice_communication_context **comm_ctx,
+    struct naaice_communication_context **comm_ctx, uint64_t addr_offset,
     size_t *param_sizes, char **params, unsigned int params_amount,
     unsigned int internal_mr_amount, size_t *internal_mr_sizes,
     uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
