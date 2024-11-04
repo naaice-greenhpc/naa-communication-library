@@ -194,9 +194,9 @@ int naa_create(unsigned int function_code,
 	}
 
 	// Initialize the communication context.
-	if (naaice_init_communication_context(&(handle->comm_ctx),
-		param_sizes, param_addrs, params_amount, function_code,
-		local_ip, remote_ip, port)) {
+	if (naaice_init_communication_context(&(handle->comm_ctx), 0,
+										  param_sizes, param_addrs, params_amount, 0, 0, function_code,
+										  local_ip, remote_ip, port)) {
 		return -1;
 	}
 
