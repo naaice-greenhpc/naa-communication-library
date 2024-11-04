@@ -275,6 +275,7 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     fprintf(stderr, "RDMA device was removed.\n");
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
+    comm_ctx->state = FINISHED;
     // FM What to do here? is this an error state in this case? Check what needs
     //  to be cleaned up in which state...
     //  We're not expecting disconnect at this point, so we should exit.
@@ -282,8 +283,8 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     // Keep current state for error free cleanup (depending on the state, we allocated different structures)
     //comm_ctx->state = DISCONNECTED;
     // Handle disconnect.
-    naaice_swnaa_disconnect_and_cleanup(comm_ctx);
-    return -1;
+    //naaice_swnaa_disconnect_and_cleanup(comm_ctx);
+    return 0;
   }
 
   return 0;
@@ -349,7 +350,7 @@ int naaice_swnaa_receive_data_transfer(
   }
 
   struct pollfd my_pollfd;
-  int ms_timeout = 100;
+  int ms_timeout = 1;
   // Poll the completion channel, returning with flag unchanged if nothing
   // is received.
   my_pollfd.fd = comm_ctx->ev_channel->fd;
@@ -377,6 +378,14 @@ int naaice_swnaa_receive_data_transfer(
   // transfer to the NAA is complete.
   while (comm_ctx->state == DATA_RECEIVING) {
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    int poll_result = poll(&my_pollfd, 1, ms_timeout);
+    if (poll_result < 0) {
+      fprintf(stderr, "Error occured when polling completion channel.\n");
+      return -1;
+    } else if (poll_result > 0) {
+      int result = naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
+      return result;
+    }
   }
 
   return 0;
@@ -833,25 +842,30 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_local_data[local_count].size =
         comm_ctx->mr_local_data[local_count].ibv->length;
 
-      // Initialize the to_write flag for all MRs to false.
-      // These can be set in naaice_swnaa_set_output_mr to indicate that a
-      // memory region should be written back to the host as output.
-      comm_ctx->mr_local_data[local_count].to_write = false;
-      comm_ctx->mr_peer_data[local_count].to_write = false;
+      // The to_write flag for all MRs is initialized based on the MR info byte.
+      comm_ctx->mr_peer_data[local_count].to_write = (bool) (mr_flags & MRFLAG_INPUT);
+      comm_ctx->no_input_mrs += (uint8_t) comm_ctx->mr_peer_data[local_count].to_write;
+      comm_ctx->mr_local_data[local_count].to_write = (bool) (mr_flags & MRFLAG_OUTPUT);
+      comm_ctx->no_output_mrs += (uint8_t) comm_ctx->mr_local_data[local_count].to_write;
 
       // Initialize the single_send flag based on info byte.
-      comm_ctx->mr_local_data[local_count].single_send = mr_flags & MRFLAG_SINGLESEND;
-      comm_ctx->mr_peer_data[local_count].single_send = mr_flags & MRFLAG_SINGLESEND;
+      comm_ctx->mr_peer_data[local_count].single_send = (bool) (mr_flags & MRFLAG_SINGLESEND);
+      comm_ctx->mr_local_data[local_count].single_send = (bool) (mr_flags & MRFLAG_SINGLESEND);
 
-      debug_print("Local MR %d: Addr: %lX, Size: %lu, Requested Addr: %lX\n", local_count + 1,
-       (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
-       comm_ctx->mr_local_data[local_count].ibv->length,
-       (uint64_t) *fpgaaddress);
 
-      debug_print("Peer MR %d: Addr: %lX, Size: %lu, rkey: %u\n", local_count + 1,
-       (uintptr_t)comm_ctx->mr_peer_data[local_count].addr,
-       comm_ctx->mr_peer_data[local_count].size,
-       comm_ctx->mr_peer_data[local_count].rkey);
+      debug_print("Local MR %d: Addr: %lX, Size: %lu, Requested Addr: %lX, is output: %d\n", 
+        local_count + 1,
+        (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
+        comm_ctx->mr_local_data[local_count].ibv->length,
+        (uint64_t) *fpgaaddress,
+        comm_ctx->mr_local_data[local_count].to_write);
+
+      debug_print("Peer MR %d: Addr: %lX, Size: %lu, rkey: %u, is input: %d\n",
+        local_count + 1,
+        (uintptr_t)comm_ctx->mr_peer_data[local_count].addr,
+        comm_ctx->mr_peer_data[local_count].size,
+        comm_ctx->mr_peer_data[local_count].rkey,
+        comm_ctx->mr_peer_data[local_count].to_write);
 
       // Increment count.
       local_count++;
@@ -966,153 +980,34 @@ int naaice_swnaa_post_recv_data(
 
   debug_print("In naaice_swnaa_post_recv_data\n");
 
-  // FM: only one recv request has to be constructed. Only the last write of the
-  // client triggers  completion of a recv request: the last RDMA_WRITE_WITH_IMM
-  // Construct the recieve request and scatter/gather elements,
-  // one for each memory region to be written to.
+  // DYL: Changed this back to constructing only a single, empty recv request.
+  // Information about input and output regions is recieved from the host
+  // during MRSP in the announcement packet MR flags.
 
-  // DYL: Now we post a recieve for as many inputs as the RPC expects.
-  // i.e. for each memory region indicated with the to_write flag in the peer
-  // MR info structs. These can be set with naaice_swnaa_set_input_mr.
+  // Construct a single, simple recv request.
+  struct ibv_recv_wr wr;
+  struct ibv_recv_wr *bad_wr = NULL;
+  struct ibv_sge sge;
 
-  // DYL: Also tracks single send MRs, adjusting the number of posted recieves
-  // after the first RPC call accordingly.
+  memset(&wr, 0, sizeof(struct ibv_recv_wr));
+  wr.wr_id = 0;
+  wr.sg_list = &sge;
+  wr.num_sge = 1;
+  wr.next = NULL;
 
-  // Update write flag for single send regions.
-  for (unsigned int i = 0; i < comm_ctx->no_peer_mrs; i++) {
-    if (comm_ctx->mr_peer_data[i].single_send
-      && comm_ctx->mr_peer_data[i].to_write
-      && (comm_ctx->no_rpc_calls > 1)) {
-      comm_ctx->mr_peer_data[i].to_write = false;
-      comm_ctx->no_input_mrs--;
-    }
-  }
+  sge.addr = 0;
+  sge.length = 0;
+  sge.lkey = comm_ctx->mr_local_data[0].ibv->lkey;
 
-  // We will have one write request (and one scatter/gather elements) for
-  // each memory region to be written.
-  struct ibv_recv_wr wr[comm_ctx->no_input_mrs], *bad_wr = NULL;
-  struct ibv_sge sge[comm_ctx->no_input_mrs];
-
-  // Construct write requests and scatter/gather elements for all memory
-  // regions to be sent.
-  int8_t mr_idx = 0;
-  for (int i = 0; (i < comm_ctx->no_local_mrs) 
-    && (mr_idx < comm_ctx->no_input_mrs); i++) {
-
-    if (comm_ctx->mr_peer_data[i].to_write) {
-
-      memset(&wr[mr_idx], 0, sizeof(wr[mr_idx]));
-      wr[mr_idx].wr_id = mr_idx;
-      wr[mr_idx].sg_list = &sge[mr_idx];
-      wr[mr_idx].num_sge = 1;
-      wr[mr_idx].next = &wr[mr_idx+1];
-
-      // If this is the last memory region to be recieved, then the wr.next
-      // field should be null. Otherwise it points to the next request.
-      if(mr_idx == comm_ctx->no_input_mrs-1) {
-        wr[mr_idx].next = NULL;
-      }
-      else {
-        wr[mr_idx].next = &wr[mr_idx+1];
-      }
-
-      sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
-      sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
-      sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
-
-      debug_print("recv addr: %p, length: %d, lkey %d\n",
-        (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
-
-      mr_idx++;
-    }
-  }
+  debug_print("recv addr: %p, length: %d, lkey %d\n",
+    (void*) sge.addr, sge.length, sge.lkey);
 
   // Post the recieve.
-  int post_result = ibv_post_recv(comm_ctx->qp, &wr[0], &bad_wr);
+  int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
     fprintf(stderr, "Posting recieve for data failed with error %d.\n",
       post_result);
     return post_result;
-  }
-
-  return 0;
-}
-
-/*
-int naaice_swnaa_handle_metadata(
-  struct naaice_communication_context *comm_ctx) {
-
-  debug_print("In naaice_swnaa_handle_metadata\n");
-  
-  // Get the return address from the metadata memory region.
-  struct naaice_rpc_metadata *metadata =
-      (struct naaice_rpc_metadata*) comm_ctx->mr_local_data[0].addr;
-  uintptr_t return_addr = ntohll(metadata->return_addr);
-
-  // Check that the passed address points to one of the registered regions.
-  // Returning to the metadata region (i.e. #0) is not allowed.
-  bool flag = false;
-  for (int i = 1; i < comm_ctx->no_peer_mrs; i++) {
-    if (return_addr == (uintptr_t)comm_ctx->mr_peer_data[i].addr) {
-      flag = true;
-
-      // Set this field in the communication context to indicate which
-      // parameter is the return parameter.
-      comm_ctx->mr_return_idx = i;
-      break;
-    }
-  }
-  if (!flag) {
-    fprintf(stderr, "Requested return address is not a registered "
-      "parameter.\n");
-    return -1;
-  }
-
-  return 0;
-}
-*/
-
-int naaice_swnaa_set_input_mr(struct naaice_communication_context *comm_ctx,
-  unsigned int input_mr_idx) {
-
-  debug_print("In naaice_swnaa_set_input_mr\n");
-
-  // Check if passed index is a valid parameter memory region index.
-  if (input_mr_idx >= comm_ctx->no_peer_mrs) {
-    fprintf(stderr, "Tried to set invalid memory region #%d as input, there "
-      "are only %d local memory regions.\n",
-      input_mr_idx, comm_ctx->no_peer_mrs);
-    return -1;
-  }
-
-  // If the MR was not already set as input, set it so and increment the
-  // number of inputs.
-  if (!comm_ctx->mr_peer_data[input_mr_idx].to_write) {
-    comm_ctx->mr_peer_data[input_mr_idx].to_write = true;
-    comm_ctx->no_input_mrs++;
-  }
-
-  return 0;
-}
-
-int naaice_swnaa_set_output_mr(struct naaice_communication_context *comm_ctx,
-  unsigned int output_mr_idx) {
-
-  debug_print("In naaice_swnaa_set_output_mr\n");
-
-  // Check if passed index is a valid parameter memory region index.
-  if (output_mr_idx >= comm_ctx->no_local_mrs) {
-    fprintf(stderr, "Tried to set invalid memory region #%d as output, there "
-      "are only %d local memory regions.\n",
-      output_mr_idx, comm_ctx->no_local_mrs);
-    return -1;
-  }
-
-  // If the MR was not already set as output, set it so and increment the
-  // number of outputs.
-  if (!comm_ctx->mr_local_data[output_mr_idx].to_write) {
-    comm_ctx->mr_local_data[output_mr_idx].to_write = true;
-    comm_ctx->no_output_mrs++;
   }
 
   return 0;

@@ -37,14 +37,14 @@
 
 // TODO: Provided by RMS in the future.
 // UP IPs.
-//static const char *LOCAL_IP = "10.3.10.41";
-//static const char *REMOTE_IP = "10.3.10.42";
+static const char *LOCAL_IP = "10.3.10.41";
+static const char *REMOTE_IP = "10.3.10.42";
 
 // ZIB IPs.
-static const char *LOCAL_IP = ""; // Indicate that we don't provide the
+//static const char *LOCAL_IP = ""; // Indicate that we don't provide the
 																	// optional local ip argument with an
 																	// empty string.
-static const char *REMOTE_IP = "10.32.56.10";
+//static const char *REMOTE_IP = "10.32.56.10";
 
 // Struct used to hold configuration info about NAA hardware.
 typedef struct naa_hardware_config {
@@ -132,7 +132,13 @@ int naa_create(unsigned int function_code,
   naa_param_t *output_params, unsigned int output_amount,
   naa_handle *handle) {
 
-	// Clear the naa_handle.
+  //check if we have regions that are input and ouput	
+  bool output_as_input[output_amount];
+  for (int i = 0; i < output_amount; i++) {
+    output_as_input[i] = false;
+  }
+
+        // Clear the naa_handle.
 	memset(handle, 0, sizeof(naa_handle));
 
 	// Add the function code to the handle.
@@ -155,15 +161,36 @@ int naa_create(unsigned int function_code,
 	// Convert the params into the representation expected by the API layer
 	// (i.e. without the naa_param_t type).
 	size_t params_amount = input_amount + output_amount;
-	char *param_addrs[params_amount];
+    for (unsigned int i = 0; i< output_amount; i++){
+		for (unsigned int j = 0; j < input_amount; j++) {
+          if ((char *)output_params[i].addr == (char *)input_params[j].addr) {
+            // we have the same input as output, but dont want to reallocate and
+            // reregister
+            params_amount--;
+            output_as_input[i] = true;
+			break;
+          }
+		}
+    }
+    char *param_addrs[params_amount];
 	size_t param_sizes[params_amount];
 	for (unsigned int i = 0; i < input_amount; i++) {
 		param_addrs[i] = (char*) input_params[i].addr;
 		param_sizes[i] = input_params[i].size;
 	}
+	unsigned idx=0;
 	for (unsigned int i = 0; i < output_amount; i++) {
-		param_addrs[i+input_amount] = (char*) output_params[i].addr;
-		param_sizes[i+input_amount] = output_params[i].size;
+		for(unsigned int j = 0; j < input_amount; j++){
+			if (output_as_input[i]==true){
+            	break;
+            }
+			else{
+              param_addrs[idx + input_amount] = (char *)output_params[i].addr;
+              param_sizes[idx + input_amount] = output_params[i].size;
+              idx++;
+			}
+		}
+		
 	}
 
 	// Initialize the communication context.

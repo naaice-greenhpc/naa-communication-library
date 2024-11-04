@@ -1356,7 +1356,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       if (comm_ctx->mr_peer_data[i].to_write) {
         curr->mr_info_bytearray[7] |= MRFLAG_OUTPUT;
       }
-      
+
       // During set_parameter_mrs, the peer memory region addresses are checked
       // to be sure they fit into 7 bytes.
       for(int j = 0; j < 7; j++) {
