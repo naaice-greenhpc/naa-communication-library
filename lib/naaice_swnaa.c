@@ -25,7 +25,6 @@
 #include "naaice.h"
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
-#define DEBUG 1
 
 /* Dependencies **************************************************************/
 

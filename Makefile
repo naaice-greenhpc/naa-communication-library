@@ -40,6 +40,9 @@ APPS = $(APPS_DEFAULT)
 LDFLAGS = $(LD_DEFAULT)
 endif
 
+release: CXXFLAGS += -DNDEBUG -g
+release: apps
+
 apps: $(addprefix $(BUILD_DIR), $(APPS))
 
 # Executables
