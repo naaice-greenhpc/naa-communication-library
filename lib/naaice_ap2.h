@@ -62,6 +62,7 @@ enum naa_error {
 typedef struct naa_param_t {
   void *addr;
   size_t size;
+  bool constant;
 } naa_param_t;
 
 // Struct to hold information about a NAA session.

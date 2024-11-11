@@ -23,6 +23,8 @@
 
 /* Dependencies **************************************************************/
 
+#include "naaice.h"
+#include <cstdio>
 #include <naaice_ap2.h>
 
 
@@ -207,28 +209,40 @@ int naa_create(unsigned int function_code,
 	// Setup the connection to the NAA.
   if (naaice_setup_connection(handle->comm_ctx)) { return -1; }
 
-	// Set input and output parameters.
-	// For each input and output parameter pointer, check that it refers to one
-	// of the parameters already saved in the communication context.
-	// If it is, set it as an input or output parameter appropriately.
-	// Otherwise return with an error.
-	for (unsigned int i = 0; i < input_amount; i++) {
+  // Set input and output parameters.
+  // For each input and output parameter pointer, check that it refers to one
+  // of the parameters already saved in the communication context.
+  // If it is, set it as an input or output parameter appropriately.
+  // Otherwise return with an error.
+  // Also check whether the constant value of naa_params_t has been set to
+  // true. If yes, then set memory region to singlesend.
+  for (unsigned int i = 0; i < input_amount; i++) {
 
-		bool param_exists = false;
-		for (int j = 0; j < handle->comm_ctx->no_local_mrs; j++) {
+    bool param_exists = false;
+    for (int j = 0; j < handle->comm_ctx->no_local_mrs; j++) {
 
-			if (input_params[i].addr == (void*) handle->comm_ctx->mr_local_data[j].addr) {
+      if (input_params[i].addr ==
+          (void *)handle->comm_ctx->mr_local_data[j].addr) {
 
-				param_exists = true;
-				if (naaice_set_input_mr(handle->comm_ctx, j)) { return -1; }
-				break;
-			}
-		}
-		if (!param_exists) {
-			fprintf(stderr, "Requested input parameter which was not previously"
-				"passed to naaice_init_communication_context.\n");
-			return -1;
-		}
+        param_exists = true;
+        if (input_params[i].constant == true) {
+          if (naaice_set_singlesend_mr(handle->comm_ctx, j)) {
+            fprintf(stderr, "Error on setting constant memory regions (single "
+                            "send regions).\n");
+            return -1;
+          };
+        }
+        if (naaice_set_input_mr(handle->comm_ctx, j)) {
+          return -1;
+        }
+        break;
+      }
+    }
+    if (!param_exists) {
+      fprintf(stderr, "Requested input parameter which was not previously"
+                      "passed to naaice_init_communication_context.\n");
+      return -1;
+    }
 	}
 	for (unsigned int i = 0; i < output_amount; i++) {
 
@@ -238,6 +252,12 @@ int naa_create(unsigned int function_code,
 			if (output_params[i].addr == (void*) handle->comm_ctx->mr_local_data[j].addr) {
 
 				param_exists = true;
+				if(output_params[i].constant == true){
+					if(naaice_set_singlesend_mr(handle->comm_ctx, j)){
+						fprintf(stderr, "Error on setting constant memory regions (single send regions).\n");
+						return -1;
+					};
+				}
 				if (naaice_set_output_mr(handle->comm_ctx, j)) { return -1; }
 				break;
 			}
