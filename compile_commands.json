@@ -1,0 +1,86 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/x86_64-linux-gnu-g++-10",
+      "-I./lib/",
+      "-g",
+      "-c",
+      "src/naaice_client.c",
+      "-o",
+      "src/naaice_client.c.o"
+    ],
+    "directory": "/mnt/scratch/signer/naa-communication-prototype",
+    "file": "/mnt/scratch/signer/naa-communication-prototype/src/naaice_client.c",
+    "output": "/mnt/scratch/signer/naa-communication-prototype/src/naaice_client.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/x86_64-linux-gnu-g++-10",
+      "-I./lib/",
+      "-g",
+      "-c",
+      "lib/naaice_swnaa.c",
+      "-o",
+      "lib/naaice_swnaa.c.o"
+    ],
+    "directory": "/mnt/scratch/signer/naa-communication-prototype",
+    "file": "/mnt/scratch/signer/naa-communication-prototype/lib/naaice_swnaa.c",
+    "output": "/mnt/scratch/signer/naa-communication-prototype/lib/naaice_swnaa.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/x86_64-linux-gnu-g++-10",
+      "-I./lib/",
+      "-g",
+      "-c",
+      "lib/naaice.c",
+      "-o",
+      "lib/naaice.c.o"
+    ],
+    "directory": "/mnt/scratch/signer/naa-communication-prototype",
+    "file": "/mnt/scratch/signer/naa-communication-prototype/lib/naaice.c",
+    "output": "/mnt/scratch/signer/naa-communication-prototype/lib/naaice.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/x86_64-linux-gnu-g++-10",
+      "-I./lib/",
+      "-g",
+      "-c",
+      "lib/naaice_ap2.c",
+      "-o",
+      "lib/naaice_ap2.c.o"
+    ],
+    "directory": "/mnt/scratch/signer/naa-communication-prototype",
+    "file": "/mnt/scratch/signer/naa-communication-prototype/lib/naaice_ap2.c",
+    "output": "/mnt/scratch/signer/naa-communication-prototype/lib/naaice_ap2.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/x86_64-linux-gnu-g++-10",
+      "-I./lib/",
+      "-g",
+      "-c",
+      "src/naaice_server.c",
+      "-o",
+      "src/naaice_server.c.o"
+    ],
+    "directory": "/mnt/scratch/signer/naa-communication-prototype",
+    "file": "/mnt/scratch/signer/naa-communication-prototype/src/naaice_server.c",
+    "output": "/mnt/scratch/signer/naa-communication-prototype/src/naaice_server.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/x86_64-linux-gnu-g++-10",
+      "-I./lib/",
+      "-g",
+      "-c",
+      "src/naaice_client_ap2.c",
+      "-o",
+      "src/naaice_client_ap2.c.o"
+    ],
+    "directory": "/mnt/scratch/signer/naa-communication-prototype",
+    "file": "/mnt/scratch/signer/naa-communication-prototype/src/naaice_client_ap2.c",
+    "output": "/mnt/scratch/signer/naa-communication-prototype/src/naaice_client_ap2.c.o"
+  }
+]

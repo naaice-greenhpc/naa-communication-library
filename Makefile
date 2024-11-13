@@ -27,7 +27,7 @@ LD_DEFAULT := ${LDLIBS} -lrdmacm -libverbs
 LD_EMA := -L${PWD}/ema/lib/ -lEMA
 
 CPPFLAGS ?= $(INC) -MMD -MP -std=c++20 -Wall -pedantic -g -Wextra -gdwarf-2
-CXXFLAGS ?= $(INC) -g
+CXXFLAGS ?= $(INC)
 
 all: check-ema apps
 
@@ -40,8 +40,11 @@ APPS = $(APPS_DEFAULT)
 LDFLAGS = $(LD_DEFAULT)
 endif
 
-release: CXXFLAGS += -DNDEBUG -g
+release: CXXFLAGS += -DNDEBUG -O3
 release: apps
+
+debug: CXXFLAGS += -g
+debug: apps
 
 apps: $(addprefix $(BUILD_DIR), $(APPS))
 
