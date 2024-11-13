@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
   // simulations, for example.
   int input_amount = 2;
   struct naa_param_t input_params[] = {
-    {(void *) params[0], param_sizes[0], true}, // single send options enabled
+    {(void *) params[0], param_sizes[0], true}, // single send option enabled
     {(void *) params[1], param_sizes[1]}
   };
 
