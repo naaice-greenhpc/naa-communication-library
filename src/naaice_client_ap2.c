@@ -25,6 +25,7 @@
 
 /* Dependencies **************************************************************/
 
+#include "debug.h"
 #include <naaice_ap2.h>
 
 
@@ -123,11 +124,15 @@ int main(int argc, char *argv[]) {
   // These structs hold separately input and output parameters.
   // As an example, specify the first two parameters as inputs and the second
   // parameter as an output.
+  // Additionally, single send regions can be specified to be sent only once
+  // with the first RPC. This can be useful for configuration parameters in
+  // simulations, for example.
   int input_amount = 2;
   struct naa_param_t input_params[] = {
-    {(void *) params[0], param_sizes[0]},
+    {(void *) params[0], param_sizes[0], true}, // single send options enabled
     {(void *) params[1], param_sizes[1]}
   };
+
 
   int output_amount = 1;
   struct naa_param_t output_params[] = {
@@ -141,6 +146,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Error durning naa_create. Exiting.\n");
     return -1;
   };
+
 
   // Repeat RPC N_INVOKES times.
   for (int i = 0; i < N_INVOKES; i++) {
