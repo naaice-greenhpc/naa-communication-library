@@ -803,6 +803,9 @@ int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx) {
     //Enter error state and exit connection
   };
 
+  // Increment number of RPC calls.
+  comm_ctx->no_rpc_calls++;
+
   return 0;
 }
 
@@ -1163,9 +1166,6 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 
   debug_print("In naaice_do_data_transfer\n");
 
-  // Increment number of RPC calls.
-  comm_ctx->no_rpc_calls++;
-
   // Initialize the data transfer.
   if (naaice_init_data_transfer(comm_ctx)) { return -1; }
 
@@ -1352,7 +1352,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
         curr->mr_info_bytearray[7] |= MRFLAG_INPUT;
       }
 
-      // MR flag may indicate if MR is an input.
+      // MR flag may indicate if MR is an output.
       if (comm_ctx->mr_peer_data[i].to_write) {
         curr->mr_info_bytearray[7] |= MRFLAG_OUTPUT;
       }
@@ -1498,11 +1498,12 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
   // to_write flag. This can be updated with naaice_set_input_mr.
   else {
 
-    // Update write flag for single send regions.
+    // Remove single send regions from regions to be sent after the first RPC
+    // call
     for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
       if (comm_ctx->mr_local_data[i].single_send
         && comm_ctx->mr_local_data[i].to_write
-        && (comm_ctx->no_rpc_calls > 1)) {
+        && (comm_ctx->no_rpc_calls > 0)) {
         comm_ctx->mr_local_data[i].to_write = false;
         comm_ctx->no_input_mrs--;
       }
@@ -1520,7 +1521,6 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
       && (mr_idx < comm_ctx->no_input_mrs); i++) {
 
       if (comm_ctx->mr_local_data[i].to_write) {
-
         memset(&wr[mr_idx], 0, sizeof(wr[mr_idx]));
         wr[mr_idx].wr_id = mr_idx+1;
         wr[mr_idx].sg_list = &sge[mr_idx];
