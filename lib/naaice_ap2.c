@@ -225,7 +225,7 @@ int naa_create(unsigned int function_code,
           (void *)handle->comm_ctx->mr_local_data[j].addr) {
 
         param_exists = true;
-        if (input_params[i].constant == true) {
+        if (input_params[i].single_send == true) {
           if (naaice_set_singlesend_mr(handle->comm_ctx, j)) {
             fprintf(stderr, "Error on setting constant memory regions (single "
                             "send regions).\n");
@@ -252,7 +252,7 @@ int naa_create(unsigned int function_code,
 			if (output_params[i].addr == (void*) handle->comm_ctx->mr_local_data[j].addr) {
 
 				param_exists = true;
-				if(output_params[i].constant == true){
+				if(output_params[i].single_send == true){
 					if(naaice_set_singlesend_mr(handle->comm_ctx, j)){
 						fprintf(stderr, "Error on setting constant memory regions (single send regions).\n");
 						return -1;
@@ -333,6 +333,5 @@ int naa_finalize(naa_handle *handle) {
 
 	// Disconnect and clean up.
 	return naaice_disconnect_and_cleanup(handle->comm_ctx);
-
 	// TODO: clean up handle memory.
 }
