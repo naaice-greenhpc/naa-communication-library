@@ -25,7 +25,6 @@
 #include "naaice.h"
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
-#define DEBUG 1
 
 /* Dependencies **************************************************************/
 
@@ -515,8 +514,9 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
         return -1;
       }
 
-      // Otherwise, we can set the function code based on the immediate value.
-      comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data);
+      // Otherwise, we can set the function code based on the 7 least
+      // significant bits of the immediate value
+      comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data) & 0x7F;;
 
       // Print all information about the work completion.
       /*

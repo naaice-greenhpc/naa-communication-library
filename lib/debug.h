@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 
-#ifdef DEBUG
+#ifndef NDEBUG
 #define DEBUG_ENABLED 1
 #else
 #define DEBUG_ENABLED 0
