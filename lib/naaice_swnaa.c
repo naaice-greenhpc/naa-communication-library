@@ -339,7 +339,6 @@ int naaice_swnaa_receive_data_transfer(
 
   // Increment number of RPC calls.
   comm_ctx->no_rpc_calls++;
-
   // Check if connection event is available
   int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
   if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
@@ -503,7 +502,6 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       // No need to do anything.
       return 0;
     }
-
     // If we have received a write with immediate (i.e. the last parameter)...
     else if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
 
@@ -547,13 +545,23 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   else if (comm_ctx->state == DATA_SENDING) {
     // We're sending back data
     // If we recieved data without an immediate...
+     // If we've written some data...
     if (wc->opcode == IBV_WC_RDMA_WRITE) {
+      // comm_ctx->state = DATA_RECEIVING;
+      // Increment the number of completed writes.
+      comm_ctx->rdma_writes_done++;
+      debug_print("rdma writes done: %d\n", comm_ctx->rdma_writes_done);
 
-      // Change state to allow receiving data
-      // FM: Multiple regions can be written back already? So this is obsolete?
-      // TODO if we write multiple regions back we will get multiple wcs, need
-      // to keep track then
-      comm_ctx->state = DATA_RECEIVING;
+      // TODO FM: This might change later to the number we actually send
+      // If all writes have been completed, start waiting for the response.
+      if (comm_ctx->rdma_writes_done == comm_ctx->no_output_mrs) {
+
+        // Update state.
+        // We skip straight to DATA_RECEIVING; the CALCULATING state is used
+        // only by the software NAA.
+        comm_ctx->state = DATA_RECEIVING;
+        comm_ctx->rdma_writes_done = 0;
+      }
 
       return 0;
     }
@@ -617,6 +625,7 @@ int naaice_swnaa_poll_cq_nonblocking(
   struct ibv_wc wc;
   enum naaice_communication_state state = comm_ctx->state;
   int n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
+  debug_print("number of polled elements: %d\n", n_wcs);
 
   // If ibv_poll_cq returns an error, return.
   if (n_wcs < 0) {
@@ -625,7 +634,6 @@ int naaice_swnaa_poll_cq_nonblocking(
   }
 
   while (n_wcs) {
-
     // Handle the work completion.
     if (naaice_swnaa_handle_work_completion(&wc, comm_ctx)) {
       fprintf(stderr, "Error while handling work completion.\n");
@@ -1103,9 +1111,9 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
         wr[mr_idx].wr.rdma.remote_addr = comm_ctx->mr_peer_data[i].addr;
         wr[mr_idx].wr.rdma.rkey = comm_ctx->mr_peer_data[i].rkey;
 
-        debug_print("remote address of return data: %p\n",
-          (void*) comm_ctx->mr_peer_data[i].addr);
-        debug_print("rkey: %d\n", wr[mr_idx].wr.rdma.rkey);
+        // debug_print("remote address of return data: %p\n",
+        //   (void*) comm_ctx->mr_peer_data[i].addr);
+        // debug_print("rkey: %d\n", wr[mr_idx].wr.rdma.rkey);
 
         // If this is the last memory region to be written, do a write with
         // immediate. The immediate value is simply 0.
@@ -1115,30 +1123,34 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
           wr[mr_idx].next = NULL;
+          debug_print("write with immediate\n");
         }
         else{
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE;
           wr[mr_idx].next = &wr[mr_idx+1];
+          debug_print("normal write\n");
         }
 
         sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
         sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
         sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
-        debug_print("send addr: %p, length: %d, lkey %d\n",
-          (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
+        // debug_print("send addr: %p, length: %d, lkey %d\n",
+        //   (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
 
         mr_idx++;
       }
     }
 
+    for(int i = 0; i < n_output_mrs; i++) {
     // Post the send.
-    int post_result = ibv_post_send(comm_ctx->qp, &wr[0], &bad_wr);
+    int post_result = ibv_post_send(comm_ctx->qp, &wr[i], &bad_wr);
     if (post_result) {
       fprintf(stderr, "Posting send for data write "
         "failed with error %d.\n",
         post_result);
       return post_result;
+    }
     }
   }
 
