@@ -511,6 +511,9 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
     return -1;
   }
 
+
+
+
   // Set queue pair attributes.
   struct ibv_qp_init_attr init_attr = {
       .send_cq = comm_ctx->cq,
