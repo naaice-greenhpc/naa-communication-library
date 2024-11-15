@@ -1118,7 +1118,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   }
 
   while (n_wcs) {
-
+    debug_print("number of work completions: %d\n", n_wcs);
     // Handle the work completion.
     if (naaice_handle_work_completion(&wc, comm_ctx)) {
       fprintf(stderr, "Error while handling work completion.\n");
@@ -1538,10 +1538,12 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
           wr[mr_idx].imm_data = htonl(comm_ctx->immediate | START_RPC_MASK);
           wr[mr_idx].next = NULL;
+          debug_print("write with immediate\n");
         }
         else {
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE;
           wr[mr_idx].next = &wr[mr_idx+1];
+          debug_print("normal write\n");
         }
 
         sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;

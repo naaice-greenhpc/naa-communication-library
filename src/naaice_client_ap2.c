@@ -127,16 +127,20 @@ int main(int argc, char *argv[]) {
   // Additionally, single send regions can be specified to be sent only once
   // with the first RPC. This can be useful for configuration parameters in
   // simulations, for example.
-  int input_amount = 2;
+  int input_amount = 4;
   struct naa_param_t input_params[] = {
     {(void *) params[0], param_sizes[0], true}, // single send option enabled
-    {(void *) params[1], param_sizes[1]}
+    {(void *) params[1], param_sizes[1]},
+    {(void *) params[2], param_sizes[2]},
+    {(void *) params[3], param_sizes[3]}
   };
 
 
-  int output_amount = 1;
+  int output_amount = 3;
   struct naa_param_t output_params[] = {
-    {(void *) params[1], param_sizes[1]}
+    {(void *) params[0], param_sizes[0]},
+    {(void *) params[1], param_sizes[1]},
+    {(void *) params[3], param_sizes[3]}
   };
 
   // naa_create: establishes connection with NAA.
