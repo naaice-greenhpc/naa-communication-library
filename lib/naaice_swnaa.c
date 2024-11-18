@@ -1102,8 +1102,8 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
       if (comm_ctx->mr_local_data[i].to_write) {
 
         debug_print("output mr %d (local index %d):\n", mr_idx, i);
+        memset(&wr[mr_idx], 0, sizeof(wr[mr_idx]));
 
-        memset(&wr, 0, sizeof(wr));
         wr[mr_idx].wr_id = mr_idx+1;
         wr[mr_idx].sg_list = &sge[mr_idx];
         wr[mr_idx].num_sge = 1;
@@ -1111,9 +1111,9 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
         wr[mr_idx].wr.rdma.remote_addr = comm_ctx->mr_peer_data[i].addr;
         wr[mr_idx].wr.rdma.rkey = comm_ctx->mr_peer_data[i].rkey;
 
-        // debug_print("remote address of return data: %p\n",
-        //   (void*) comm_ctx->mr_peer_data[i].addr);
-        // debug_print("rkey: %d\n", wr[mr_idx].wr.rdma.rkey);
+        debug_print("wr[%d]: id %ld, sg_list %p, num_sge %d, remote_addr %lX, rkey %d\n",
+          mr_idx, wr[mr_idx].wr_id, wr[mr_idx].sg_list, wr[mr_idx].num_sge,
+          wr[mr_idx].wr.rdma.remote_addr, wr[mr_idx].wr.rdma.rkey);
 
         // If this is the last memory region to be written, do a write with
         // immediate. The immediate value is simply 0.
@@ -1135,22 +1135,20 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
         sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
         sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
-        // debug_print("send addr: %p, length: %d, lkey %d\n",
-        //   (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
+        // Get pointer to data.
+      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[i].addr;
 
         mr_idx++;
       }
     }
 
-    for(int i = 0; i < n_output_mrs; i++) {
-    // Post the send.
-    int post_result = ibv_post_send(comm_ctx->qp, &wr[i], &bad_wr);
+     // Post the send.
+    int post_result = ibv_post_send(comm_ctx->qp, &wr[0], &bad_wr);
     if (post_result) {
       fprintf(stderr, "Posting send for data write "
         "failed with error %d.\n",
         post_result);
       return post_result;
-    }
     }
   }
 
