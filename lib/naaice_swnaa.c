@@ -301,7 +301,10 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   // Poll the completion queue and handle work completions until the MRSP is
   // complete.
+  time_t start, end;
+  time(&start);
   while (comm_ctx->state < MRSP_DONE) {
+    time(&end);
     //FM: I think I encountered a race condition where we are still in MRSP_DONE
     // but have already received a wc for the recv data with imm....I just can't reproduce it reliably
     /*** example output:
@@ -309,8 +312,12 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
     state: MRSP_DONE, opcode: IBV_WC_RECV_RDMA_WITH_IMM
     Work completion opcode (wc opcode): 129, not handled for state:  12.
     Error while handling work completion.
-*/
+    */
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    if (difftime(end, start) > LOOP_TIMEOUT) {
+      fprintf(stderr, "Timeout while receiving MRSP from client.\n");
+      return -1;
+    }
   }
 
   return 0;
@@ -330,7 +337,7 @@ int naaice_swnaa_do_data_transfer(
   while (comm_ctx->state == DATA_SENDING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
-    if (difftime(end, start) > LOOP_TIMEOUT/1000) {
+    if (difftime(end, start) > LOOP_TIMEOUT) {
       fprintf(stderr, "Timeout while sending data to client.\n");
       return -1;
     }
@@ -386,7 +393,7 @@ int naaice_swnaa_receive_data_transfer(
   while (comm_ctx->state == DATA_RECEIVING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
-    if (difftime(end, start) > LOOP_TIMEOUT/1000) {
+    if (difftime(end, start) > LOOP_TIMEOUT) {
       fprintf(stderr, "Timeout while receiving data from client.\n");
       return -1;
     }
