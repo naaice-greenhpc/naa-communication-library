@@ -1149,9 +1149,6 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
         sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
         sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
-        // Get pointer to data.
-      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[i].addr;
-
         mr_idx++;
       }
     }
