@@ -1020,7 +1020,7 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
     return -1;
   }
 
-    // If something is received, get the completion event.
+  // If something is received, get the completion event.
   if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
     fprintf(stderr, "Failed to get completion queue event.\n");
     return -1;
@@ -1158,8 +1158,15 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   // Poll the completion queue and handle work completions until the MRSP is
   // complete.
+  time_t start, end;
+  time(&start);
   while (comm_ctx->state < MRSP_DONE) {
+    time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    if(difftime(end, start) > LOOP_TIMEOUT){
+      fprintf(stderr, "Timeout while waiting for a response from the NAA\n");
+      return -1;
+    }
   }
 
   return 0;
@@ -1174,8 +1181,15 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 
   // Poll the completion queue and handle work completions until data transfer,
   // including sending, calculation, and receiving, is complete.
+  time_t start, end;
+  time(&start);
   while (comm_ctx->state < FINISHED) {
+    time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    if(difftime(end, start) > LOOP_TIMEOUT){
+      fprintf(stderr, "Timeout while waiting for a response from NAA\n");
+      return -1;
+    }
   }
 
   return 0;
@@ -1541,12 +1555,10 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
           wr[mr_idx].imm_data = htonl(comm_ctx->immediate | START_RPC_MASK);
           wr[mr_idx].next = NULL;
-          debug_print("write with immediate\n");
         }
         else {
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE;
           wr[mr_idx].next = &wr[mr_idx+1];
-          debug_print("normal write\n");
         }
 
         sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
