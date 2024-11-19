@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 
 /* Constants *****************************************************************/
 #define TIMEOUT_RESOLVE_ADDR 100
@@ -72,6 +73,10 @@ const char* get_state_str(enum naaice_communication_state state) {
     case ERROR: return "ERROR";
     default: return "Unknown State";
   }
+}
+
+void alarm_handler(int signo) {
+  fprintf(stderr, "Timeout reached.\n");
 }
 
 // Used to generate dummy requested NAA memory region addresses.
@@ -1009,6 +1014,14 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
   debug_print("In naaice_poll_cq_blocking\n");
 
+  // signal handler to terminate blocking call after timeout
+  struct sigaction sa;
+  sa.sa_handler = alarm_handler;
+  sa.sa_flags = 0; // SA_RESTART is not set
+  sigemptyset(&sa.sa_mask);
+  sigaction(SIGALRM, &sa, NULL);
+  alarm(LOOP_TIMEOUT);
+
   struct ibv_cq *ev_cq;
   void *ev_ctx;
   
@@ -1023,6 +1036,9 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
   // If something is received, get the completion event.
   if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
     fprintf(stderr, "Failed to get completion queue event.\n");
+    if(naaice_disconnect_and_cleanup(comm_ctx)){
+      fprintf(stderr, "Error in cleanup procedure.\n");
+    };
     return -1;
   }
 
