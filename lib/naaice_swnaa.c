@@ -23,6 +23,7 @@
 
 // Enable debug messages.
 #include "naaice.h"
+#include <ctime>
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
 
@@ -322,10 +323,15 @@ int naaice_swnaa_do_data_transfer(
 
   // Update state.
   comm_ctx->state = DATA_SENDING;
-  naaice_swnaa_write_data(comm_ctx,
-                          errorcode);
+  naaice_swnaa_write_data(comm_ctx, errorcode);
+  time_t start, end;
+  time(&start);
+
   while (comm_ctx->state == DATA_SENDING) {
-    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) {
+    time(&end);
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
+    if (difftime(end, start) > LOOP_TIMEOUT/1000) {
+      fprintf(stderr, "Timeout while sending data to client.\n");
       return -1;
     }
   }
@@ -374,8 +380,16 @@ int naaice_swnaa_receive_data_transfer(
 
   // Poll the completion queue and handle work completions until the data
   // transfer to the NAA is complete.
+  time_t start, end;
+  time(&start);
+
   while (comm_ctx->state == DATA_RECEIVING) {
-    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    time(&end);
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
+    if (difftime(end, start) > LOOP_TIMEOUT/1000) {
+      fprintf(stderr, "Timeout while receiving data from client.\n");
+      return -1;
+    }
     int poll_result = poll(&my_pollfd, 1, ms_timeout);
     if (poll_result < 0) {
       fprintf(stderr, "Error occured when polling completion channel.\n");
@@ -552,10 +566,9 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       comm_ctx->rdma_writes_done++;
       debug_print("rdma writes done: %d\n", comm_ctx->rdma_writes_done);
 
-      // TODO FM: This might change later to the number we actually send
       // If all writes have been completed, start waiting for the response.
       if (comm_ctx->rdma_writes_done == comm_ctx->no_output_mrs) {
-
+ 
         // Update state.
         // We skip straight to DATA_RECEIVING; the CALCULATING state is used
         // only by the software NAA.
