@@ -1131,10 +1131,6 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
         wr[mr_idx].wr.rdma.remote_addr = comm_ctx->mr_peer_data[i].addr;
         wr[mr_idx].wr.rdma.rkey = comm_ctx->mr_peer_data[i].rkey;
 
-        debug_print("wr[%d]: id %ld, sg_list %p, num_sge %d, remote_addr %lX, rkey %d\n",
-          mr_idx, wr[mr_idx].wr_id, wr[mr_idx].sg_list, wr[mr_idx].num_sge,
-          wr[mr_idx].wr.rdma.remote_addr, wr[mr_idx].wr.rdma.rkey);
-
         // If this is the last memory region to be written, do a write with
         // immediate. The immediate value is simply 0.
         // Otherwise, do a normal write.
@@ -1143,12 +1139,10 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE_WITH_IMM;
           wr[mr_idx].send_flags = IBV_SEND_SOLICITED;
           wr[mr_idx].next = NULL;
-          debug_print("write with immediate\n");
         }
         else{
           wr[mr_idx].opcode = IBV_WR_RDMA_WRITE;
           wr[mr_idx].next = &wr[mr_idx+1];
-          debug_print("normal write\n");
         }
 
         sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
