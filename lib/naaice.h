@@ -114,7 +114,8 @@
 #define ntohll be64toh
 #define htonll htobe64
 #define TIMEOUT_RESOLVE_ROUTE 500 // in ms.
-#define POLLING_TIMEOUT 500 // in ms
+#define POLLING_TIMEOUT 500 // timeout of poll function in ms
+#define LOOP_TIMEOUT 5000.00 // timeout of polling loop in ms
 
 // Maximum allowed number of memory regions.
 // Total of parameters and internal NAA memory regions.
