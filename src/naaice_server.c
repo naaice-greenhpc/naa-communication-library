@@ -56,7 +56,7 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
     // Example:
     // Assume all data in the memory regions is arrays of chars.
     // Increment all chars in all memory regions by one.
-    
+
     for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
 
       // Get pointer to data.
@@ -65,9 +65,8 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
       for(unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
 
         // Increment a char.
-        printf("data value (old/new): %u\n", data[j]);
+        // printf("data value (old/new): %u\n", data[j]);
         data[j]++;
-        //printf("/%u\n", data[j]);
       }
     }
   }
