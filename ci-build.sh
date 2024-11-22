@@ -4,7 +4,7 @@ ROOT_DIR=$(pwd)
 mkdir ci-build && cd ci-build
 
 
-mkdir [ -e build ] && rm -r build
+[ -e build ] && rm -r build
 mkdir bin && cd bin
 
 make -C .. release
