@@ -1,0 +1,13 @@
+variables:
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_FORCE_HTTPS: "true"
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_UPDATE_FLAGS: --jobs 8
+
+build:
+  image: gcc:13.2.0-bookworm
+  interruptible: true
+  before_script:
+    - apt-get update && apt-get -y install cmake librdmacm-dev
+  script:
+    - bash ci-build.sh
