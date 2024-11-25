@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 
 /* Constants *****************************************************************/
 #define TIMEOUT_RESOLVE_ADDR 100
@@ -72,6 +73,10 @@ const char* get_state_str(enum naaice_communication_state state) {
     case ERROR: return "ERROR";
     default: return "Unknown State";
   }
+}
+
+void alarm_handler(int signo) {
+  fprintf(stderr, "Timeout reached.\n");
 }
 
 // Used to generate dummy requested NAA memory region addresses.
@@ -510,6 +515,9 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
                     "on completion queue.\n");
     return -1;
   }
+
+
+
 
   // Set queue pair attributes.
   struct ibv_qp_init_attr init_attr = {
@@ -1006,6 +1014,14 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
   debug_print("In naaice_poll_cq_blocking\n");
 
+  // signal handler to terminate blocking call after timeout
+  struct sigaction sa;
+  sa.sa_handler = alarm_handler;
+  sa.sa_flags = 0; // SA_RESTART is not set
+  sigemptyset(&sa.sa_mask);
+  sigaction(SIGALRM, &sa, NULL);
+  alarm(LOOP_TIMEOUT);
+
   struct ibv_cq *ev_cq;
   void *ev_ctx;
   
@@ -1017,9 +1033,12 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
     return -1;
   }
 
-    // If something is received, get the completion event.
+  // If something is received, get the completion event.
   if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
     fprintf(stderr, "Failed to get completion queue event.\n");
+    if(naaice_disconnect_and_cleanup(comm_ctx)){
+      fprintf(stderr, "Error in cleanup procedure.\n");
+    };
     return -1;
   }
 
@@ -1118,7 +1137,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   }
 
   while (n_wcs) {
-
+    debug_print("number of work completions: %d\n", n_wcs);
     // Handle the work completion.
     if (naaice_handle_work_completion(&wc, comm_ctx)) {
       fprintf(stderr, "Error while handling work completion.\n");
@@ -1155,8 +1174,15 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   // Poll the completion queue and handle work completions until the MRSP is
   // complete.
+  time_t start, end;
+  time(&start);
   while (comm_ctx->state < MRSP_DONE) {
+    time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    if(difftime(end, start) > LOOP_TIMEOUT){
+      fprintf(stderr, "Timeout while waiting for a response from the NAA\n");
+      return -1;
+    }
   }
 
   return 0;
@@ -1171,8 +1197,15 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 
   // Poll the completion queue and handle work completions until data transfer,
   // including sending, calculation, and receiving, is complete.
+  time_t start, end;
+  time(&start);
   while (comm_ctx->state < FINISHED) {
+    time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    if(difftime(end, start) > LOOP_TIMEOUT){
+      fprintf(stderr, "Timeout while waiting for a response from NAA\n");
+      return -1;
+    }
   }
 
   return 0;

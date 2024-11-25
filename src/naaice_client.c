@@ -39,7 +39,7 @@
 #define FNCODE 1
 
 // Number of times to repeat the RPC.
-#define N_INVOKES 3
+#define N_INVOKES 1
 
 
 /* Main **********************************************************************/
@@ -138,7 +138,11 @@ int main(int argc, char *argv[]) {
   printf("-- Specifying Input and Output Memory Regions --\n");
   if (naaice_set_input_mr(comm_ctx, 0)) { return -1; }
   if (naaice_set_input_mr(comm_ctx, 1)) { return -1; }
+  if (naaice_set_input_mr(comm_ctx, 2)) { return -1; }
+
+  if (naaice_set_output_mr(comm_ctx, 0)) { return -1; }
   if (naaice_set_output_mr(comm_ctx, 1)) { return -1; }
+
 
   // Specify parameters which should only be sent once.
   // As an example, specify the first parameter as a single send region.

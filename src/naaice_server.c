@@ -48,7 +48,7 @@
 uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
 
   printf("in do_procedure\n");
-
+  
   // Can switch on function code.
   // Here, do nothing if code is 0. Otherwise do something.
   if (comm_ctx->fncode) {
@@ -65,9 +65,8 @@ uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
       for(unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
 
         // Increment a char.
-        //printf("data value (old/new): %u", data[j]);
+        // printf("data value (old/new): %u\n", data[j]);
         data[j]++;
-        //printf("/%u\n", data[j]);
       }
     }
   }

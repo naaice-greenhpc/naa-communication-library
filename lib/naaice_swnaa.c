@@ -23,6 +23,7 @@
 
 // Enable debug messages.
 #include "naaice.h"
+#include <ctime>
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
 
@@ -300,7 +301,10 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   // Poll the completion queue and handle work completions until the MRSP is
   // complete.
+  time_t start, end;
+  time(&start);
   while (comm_ctx->state < MRSP_DONE) {
+    time(&end);
     //FM: I think I encountered a race condition where we are still in MRSP_DONE
     // but have already received a wc for the recv data with imm....I just can't reproduce it reliably
     /*** example output:
@@ -308,8 +312,12 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
     state: MRSP_DONE, opcode: IBV_WC_RECV_RDMA_WITH_IMM
     Work completion opcode (wc opcode): 129, not handled for state:  12.
     Error while handling work completion.
-*/
+    */
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    if (difftime(end, start) > LOOP_TIMEOUT) {
+      fprintf(stderr, "Timeout while receiving MRSP from client.\n");
+      return -1;
+    }
   }
 
   return 0;
@@ -322,10 +330,15 @@ int naaice_swnaa_do_data_transfer(
 
   // Update state.
   comm_ctx->state = DATA_SENDING;
-  naaice_swnaa_write_data(comm_ctx,
-                          errorcode);
+  naaice_swnaa_write_data(comm_ctx, errorcode);
+  time_t start, end;
+  time(&start);
+
   while (comm_ctx->state == DATA_SENDING) {
-    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) {
+    time(&end);
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
+    if (difftime(end, start) > LOOP_TIMEOUT) {
+      fprintf(stderr, "Timeout while sending data to client.\n");
       return -1;
     }
   }
@@ -339,7 +352,6 @@ int naaice_swnaa_receive_data_transfer(
 
   // Increment number of RPC calls.
   comm_ctx->no_rpc_calls++;
-
   // Check if connection event is available
   int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
   if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
@@ -375,8 +387,16 @@ int naaice_swnaa_receive_data_transfer(
 
   // Poll the completion queue and handle work completions until the data
   // transfer to the NAA is complete.
+  time_t start, end;
+  time(&start);
+
   while (comm_ctx->state == DATA_RECEIVING) {
-    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
+    time(&end);
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
+    if (difftime(end, start) > LOOP_TIMEOUT) {
+      fprintf(stderr, "Timeout while receiving data from client.\n");
+      return -1;
+    }
     int poll_result = poll(&my_pollfd, 1, ms_timeout);
     if (poll_result < 0) {
       fprintf(stderr, "Error occured when polling completion channel.\n");
@@ -503,7 +523,6 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       // No need to do anything.
       return 0;
     }
-
     // If we have received a write with immediate (i.e. the last parameter)...
     else if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
 
@@ -547,13 +566,22 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   else if (comm_ctx->state == DATA_SENDING) {
     // We're sending back data
     // If we recieved data without an immediate...
+     // If we've written some data...
     if (wc->opcode == IBV_WC_RDMA_WRITE) {
+      // comm_ctx->state = DATA_RECEIVING;
+      // Increment the number of completed writes.
+      comm_ctx->rdma_writes_done++;
+      debug_print("rdma writes done: %d\n", comm_ctx->rdma_writes_done);
 
-      // Change state to allow receiving data
-      // FM: Multiple regions can be written back already? So this is obsolete?
-      // TODO if we write multiple regions back we will get multiple wcs, need
-      // to keep track then
-      comm_ctx->state = DATA_RECEIVING;
+      // If all writes have been completed, start waiting for the response.
+      if (comm_ctx->rdma_writes_done == comm_ctx->no_output_mrs) {
+ 
+        // Update state.
+        // We skip straight to DATA_RECEIVING; the CALCULATING state is used
+        // only by the software NAA.
+        comm_ctx->state = DATA_RECEIVING;
+        comm_ctx->rdma_writes_done = 0;
+      }
 
       return 0;
     }
@@ -617,6 +645,7 @@ int naaice_swnaa_poll_cq_nonblocking(
   struct ibv_wc wc;
   enum naaice_communication_state state = comm_ctx->state;
   int n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
+  debug_print("number of polled elements: %d\n", n_wcs);
 
   // If ibv_poll_cq returns an error, return.
   if (n_wcs < 0) {
@@ -625,7 +654,6 @@ int naaice_swnaa_poll_cq_nonblocking(
   }
 
   while (n_wcs) {
-
     // Handle the work completion.
     if (naaice_swnaa_handle_work_completion(&wc, comm_ctx)) {
       fprintf(stderr, "Error while handling work completion.\n");
@@ -1094,18 +1122,14 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
       if (comm_ctx->mr_local_data[i].to_write) {
 
         debug_print("output mr %d (local index %d):\n", mr_idx, i);
+        memset(&wr[mr_idx], 0, sizeof(wr[mr_idx]));
 
-        memset(&wr, 0, sizeof(wr));
         wr[mr_idx].wr_id = mr_idx+1;
         wr[mr_idx].sg_list = &sge[mr_idx];
         wr[mr_idx].num_sge = 1;
 
         wr[mr_idx].wr.rdma.remote_addr = comm_ctx->mr_peer_data[i].addr;
         wr[mr_idx].wr.rdma.rkey = comm_ctx->mr_peer_data[i].rkey;
-
-        debug_print("remote address of return data: %p\n",
-          (void*) comm_ctx->mr_peer_data[i].addr);
-        debug_print("rkey: %d\n", wr[mr_idx].wr.rdma.rkey);
 
         // If this is the last memory region to be written, do a write with
         // immediate. The immediate value is simply 0.
@@ -1125,14 +1149,11 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
         sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
         sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
-        debug_print("send addr: %p, length: %d, lkey %d\n",
-          (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
-
         mr_idx++;
       }
     }
 
-    // Post the send.
+     // Post the send.
     int post_result = ibv_post_send(comm_ctx->qp, &wr[0], &bad_wr);
     if (post_result) {
       fprintf(stderr, "Posting send for data write "
