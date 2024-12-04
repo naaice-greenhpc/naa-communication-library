@@ -199,10 +199,14 @@ int naaice_init_communication_context(
     return -1;
   }
 
-  // Convert port to string for getaddrinfo.
-  char *port_str = (char*) malloc(128);
-  snprintf(port_str, 128, "%u", port);
-
+  char *port_str = NULL; // dynamic port allocation if port_str = NULL
+  if (port > 0)
+  {
+    // Convert port to string for getaddrinfo.
+    port_str = (char *)malloc(128);
+    snprintf(port_str, 128, "%u", port);
+  }
+  
   // Get remote address from getaddrinfo.
   struct addrinfo *rem_addr = NULL, *loc_addr = NULL;
   if (getaddrinfo(remote_ip, port_str, NULL, &rem_addr)) {

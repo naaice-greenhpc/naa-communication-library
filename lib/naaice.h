@@ -415,6 +415,7 @@ struct naaice_communication_context
  *    String specifying remote address, ex. "10.3.10.135".
  *  uint16_t port:
  *    Value specifying connection port, ex. 12345.
+ *    port 0 means dynamic port allocation
  *
  * returns:
  *  0 if sucessful, -1 if not.
