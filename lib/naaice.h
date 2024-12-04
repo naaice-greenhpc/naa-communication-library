@@ -295,18 +295,18 @@ struct naaice_rpc_metadata {
 //  FINISHED: Done!
 enum naaice_communication_state
 {
-  INIT            = 00,
-  READY           = 01,
-  CONNECTED       = 02,
-  DISCONNECTED    = 03,
-  MRSP_SENDING    = 10,
-  MRSP_RECEIVING  = 11,
-  MRSP_DONE       = 12,
-  DATA_SENDING    = 20,
-  CALCULATING     = 21,
-  DATA_RECEIVING  = 22,
-  FINISHED        = 30,
-  ERROR           = 40,
+  NAAICE_INIT            = 00,
+  NAAICE_READY           = 01,
+  NAAICE_CONNECTED       = 02,
+  NAAICE_DISCONNECTED    = 03,
+  NAAICE_MRSP_SENDING    = 10,
+  NAAICE_MRSP_RECEIVING  = 11,
+  NAAICE_MRSP_DONE       = 12,
+  NAAICE_DATA_SENDING    = 20,
+  NAAICE_CALCULATING     = 21,
+  NAAICE_DATA_RECEIVING  = 22,
+  NAAICE_FINISHED        = 30,
+  NAAICE_ERROR           = 40,
 };
 
 // Struct which holds all information about the connection.
