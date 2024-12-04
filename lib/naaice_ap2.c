@@ -295,7 +295,7 @@ int naa_test(naa_handle *handle, bool *flag,
 	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }
 
 	// Update completion flag.
-	if (handle->comm_ctx->state >= FINISHED){
+	if (handle->comm_ctx->state >= NAAICE_FINISHED){
 		*flag = true;
 	}
 	else {

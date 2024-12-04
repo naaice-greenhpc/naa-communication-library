@@ -77,7 +77,7 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->ibv_ctx = rdma_comm_id->verbs;
 
   // Initialize fields of the communication context.
-  (*comm_ctx)->state = INIT;
+  (*comm_ctx)->state = NAAICE_INIT;
   (*comm_ctx)->id = rdma_comm_id;
   (*comm_ctx)->no_local_mrs = 0;
   (*comm_ctx)->no_peer_mrs = 0;
@@ -144,7 +144,7 @@ int naaice_swnaa_setup_connection(
   debug_print("In naaice_swnaa_setup_connection\n");
 
   // Loop handling events and updating the completion flag until finished.
-  while (comm_ctx->state < CONNECTED) {
+  while (comm_ctx->state < NAAICE_CONNECTED) {
 
     naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
   }
@@ -267,15 +267,15 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
   // comm_ctx->state = ERROR;
 
   if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "Error during connection establishment.\n");
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "RDMA device was removed.\n");
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
-    comm_ctx->state = FINISHED;
+    comm_ctx->state = NAAICE_FINISHED;
     // FM What to do here? is this an error state in this case? Check what needs
     //  to be cleaned up in which state...
     //  We're not expecting disconnect at this point, so we should exit.
@@ -294,7 +294,7 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
   debug_print("In naaice_swnaa_do_mrsp\n");
 
   // Update state.
-  comm_ctx->state = MRSP_RECEIVING;
+  comm_ctx->state = NAAICE_MRSP_RECEIVING;
 
   // Initialize the MRSP.
   if (naaice_swnaa_init_mrsp(comm_ctx)) { return -1; }
@@ -303,7 +303,7 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
   // complete.
   time_t start, end;
   time(&start);
-  while (comm_ctx->state < MRSP_DONE) {
+  while (comm_ctx->state < NAAICE_MRSP_DONE) {
     time(&end);
     //FM: I think I encountered a race condition where we are still in MRSP_DONE
     // but have already received a wc for the recv data with imm....I just can't reproduce it reliably
@@ -329,12 +329,12 @@ int naaice_swnaa_do_data_transfer(
   debug_print("In naaice_swnaa_do_data_transfer\n");
 
   // Update state.
-  comm_ctx->state = DATA_SENDING;
+  comm_ctx->state = NAAICE_DATA_SENDING;
   naaice_swnaa_write_data(comm_ctx, errorcode);
   time_t start, end;
   time(&start);
 
-  while (comm_ctx->state == DATA_SENDING) {
+  while (comm_ctx->state == NAAICE_DATA_SENDING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
     if (difftime(end, start) > LOOP_TIMEOUT) {
@@ -380,7 +380,7 @@ int naaice_swnaa_receive_data_transfer(
 
   // Else continue, there was no event.
   // Update state.
-  comm_ctx->state = DATA_RECEIVING;
+  comm_ctx->state = NAAICE_DATA_RECEIVING;
 
   // Post a receive for the data.
   naaice_swnaa_post_recv_data(comm_ctx);
@@ -390,7 +390,7 @@ int naaice_swnaa_receive_data_transfer(
   time_t start, end;
   time(&start);
 
-  while (comm_ctx->state == DATA_RECEIVING) {
+  while (comm_ctx->state == NAAICE_DATA_RECEIVING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
     if (difftime(end, start) > LOOP_TIMEOUT) {
@@ -437,7 +437,7 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   }
 
   // If we are still waiting for the MRSP packet...
-  if (comm_ctx->state == MRSP_RECEIVING) {
+  if (comm_ctx->state == NAAICE_MRSP_RECEIVING) {
 
     // If we're recieving an MRSP packet...
     if (wc->opcode == IBV_WC_RECV) {
@@ -501,20 +501,20 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   }
 
   // If we are sending the MRSP response to the host...
-  else if (comm_ctx->state == MRSP_SENDING) {
+  else if (comm_ctx->state == NAAICE_MRSP_SENDING) {
 
     // If we have sent the packet...
     if (wc->opcode == IBV_WC_SEND) {
 
       // NAA-side of MRSP done.
       // Update state.
-      comm_ctx->state = MRSP_DONE;
+      comm_ctx->state = NAAICE_MRSP_DONE;
       return 0;
     }
   }
 
   // If we are waiting for data from the host...
-  else if (comm_ctx->state == DATA_RECEIVING) {
+  else if (comm_ctx->state == NAAICE_DATA_RECEIVING) {
 
     // If we recieved data without an immediate...
     if (wc->opcode == IBV_WC_RECV) {
@@ -557,13 +557,13 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
       //debug_print("transfer size: %d\n", wc->byte_len);
 
       // Update state.
-      comm_ctx->state = CALCULATING;
+      comm_ctx->state = NAAICE_CALCULATING;
 
       // Now we are ready to perform the NAA procedure.
       return 0;
     }
   } 
-  else if (comm_ctx->state == DATA_SENDING) {
+  else if (comm_ctx->state == NAAICE_DATA_SENDING) {
     // We're sending back data
     // If we recieved data without an immediate...
      // If we've written some data...
@@ -579,7 +579,7 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
         // Update state.
         // We skip straight to DATA_RECEIVING; the CALCULATING state is used
         // only by the software NAA.
-        comm_ctx->state = DATA_RECEIVING;
+        comm_ctx->state = NAAICE_DATA_RECEIVING;
         comm_ctx->rdma_writes_done = 0;
       }
 
@@ -663,7 +663,7 @@ int naaice_swnaa_poll_cq_nonblocking(
     // DYL TODO: As mentioned elsewhere by you Florian, this sort of logic is
     // not ideal. I should update it so that state changes all occur in one
     // function.
-    if (state != comm_ctx->state && comm_ctx->state > MRSP_SENDING) {
+    if (state != comm_ctx->state && comm_ctx->state > NAAICE_MRSP_SENDING) {
       debug_print("State has changed\n");
       // State has changed, so we should move forward before polling the next
       // event.
@@ -909,7 +909,7 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
   debug_print("In naaice_swnaa_send_message\n");
 
   // Update state.
-  comm_ctx->state = MRSP_SENDING;
+  comm_ctx->state = NAAICE_MRSP_SENDING;
   
   // This is the same as naaice_send_message, except that request messages are
   // not allowed to be sent from the server to host.
@@ -1050,7 +1050,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   debug_print("In naaice_swnaa_write_data\n");
 
   // Update state.
-  comm_ctx->state = DATA_SENDING;
+  comm_ctx->state = NAAICE_DATA_SENDING;
 
   // If there are no memory regions to write back, return an error.
   if (comm_ctx->no_local_mrs < 1) {
@@ -1202,7 +1202,7 @@ int naaice_swnaa_disconnect_and_cleanup(
     free((void *)(comm_ctx->mr_local_data[i].addr));
   }
 
-  if (comm_ctx->state >= MRSP_DONE) {
+  if (comm_ctx->state >= NAAICE_MRSP_DONE) {
     free(comm_ctx->mr_peer_data);
   }
 

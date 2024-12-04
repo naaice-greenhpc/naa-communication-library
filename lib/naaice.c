@@ -60,17 +60,17 @@ const char* get_ibv_wc_opcode_str(enum ibv_wc_opcode opcode) {
 // Used in debugging.
 const char* get_state_str(enum naaice_communication_state state) {
   switch (state) {
-    case INIT: return "INIT";
-    case READY: return "READY";
-    case CONNECTED: return "CONNECTED";
-    case MRSP_SENDING: return "MRSP_SENDING";
-    case MRSP_RECEIVING: return "MRSP_RECEIVING";
-    case MRSP_DONE: return "MRSP_DONE";
-    case DATA_SENDING: return "DATA_SENDING";
-    case CALCULATING: return "CALCULATING";
-    case DATA_RECEIVING: return "DATA_RECEIVING";
-    case FINISHED: return "FINISHED";
-    case ERROR: return "ERROR";
+    case NAAICE_INIT: return "NAAICE_INIT";
+    case NAAICE_READY: return "NAAICE_READY";
+    case NAAICE_CONNECTED: return "NAAICE_CONNECTED";
+    case NAAICE_MRSP_SENDING: return "NAAICE_MRSP_SENDING";
+    case NAAICE_MRSP_RECEIVING: return "NAAICE_MRSP_RECEIVING";
+    case NAAICE_MRSP_DONE: return "NAAICE_MRSP_DONE";
+    case NAAICE_DATA_SENDING: return "NAAICE_DATA_SENDING";
+    case NAAICE_CALCULATING: return "NAAICE_CALCULATING";
+    case NAAICE_DATA_RECEIVING: return "NAAICE_DATA_RECEIVING";
+    case NAAICE_FINISHED: return "NAAICE_FINISHED";
+    case NAAICE_ERROR: return "NAAICE_ERROR";
     default: return "Unknown State";
   }
 }
@@ -135,7 +135,7 @@ int naaice_init_communication_context(
   }
 
   // Initialize fields of the communication context.
-  (*comm_ctx)->state = INIT;
+  (*comm_ctx)->state = NAAICE_INIT;
   (*comm_ctx)->id = rdma_comm_id;
   (*comm_ctx)->no_local_mrs = params_amount; // Symmetrical memory regions, so
   (*comm_ctx)->no_peer_mrs = params_amount;  // local and remote number same.
@@ -272,10 +272,10 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
   if (ev->event == RDMA_CM_EVENT_ADDR_RESOLVED) {
 
     // Make sure we have not already handled this event...
-    if (comm_ctx->state != READY) {
+    if (comm_ctx->state != NAAICE_READY) {
 
       // Update state.
-      comm_ctx->state = READY;
+      comm_ctx->state = NAAICE_READY;
 
       // FM: This needs to happen before the event for route resolution
       // Dylan: Enforced this using the state machine.
@@ -299,12 +299,12 @@ int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
   if (ev->event == RDMA_CM_EVENT_ROUTE_RESOLVED) {
 
     // Make sure that address resolution is complete.
-    if (comm_ctx->state != READY) {
+    if (comm_ctx->state != NAAICE_READY) {
 
       struct rdma_cm_event ev;
       ev.event = RDMA_CM_EVENT_ADDR_RESOLVED;
       naaice_handle_addr_resolved(comm_ctx, &ev);
-      // After this, state should be READY.
+      // After this, state should be NAAICE_READY.
     }
 
     // Set connection parameters.
@@ -333,7 +333,7 @@ int naaice_handle_connection_established(
   if (ev->event == RDMA_CM_EVENT_ESTABLISHED) {
 
     // Update state.
-    comm_ctx->state = CONNECTED;
+    comm_ctx->state = NAAICE_CONNECTED;
   }
   return 0;
 }
@@ -349,34 +349,34 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
 
   // set error state to be able to exit upstream loop in
   // naaice_setup_connection
-  //comm_ctx->state = ERROR;
+  //comm_ctx->state = NAAICE_ERROR;
   if (ev->event == RDMA_CM_EVENT_ADDR_ERROR) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "RDMA address resolution failed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_ROUTE_ERROR) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "RDMA route resolution failed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "Error during connection establishment.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_UNREACHABLE) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "Remote peer unreachable.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_REJECTED) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "Connection request rejected by peer.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
-    comm_ctx->state = ERROR;
+    comm_ctx->state = NAAICE_ERROR;
     fprintf(stderr, "RDMA device was removed.\n");
     return -1;
   }
@@ -463,11 +463,11 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
   debug_print("In naaice_setup_connection\n");
 
   // Loop handling events and updating the completion flag until finished.
-  while (comm_ctx->state < CONNECTED) {
+  while (comm_ctx->state < NAAICE_CONNECTED) {
 
     naaice_poll_and_handle_connection_event(comm_ctx);
   }
-  if(comm_ctx->state != CONNECTED){
+  if(comm_ctx->state != NAAICE_CONNECTED){
     return -1;
   }
   return 0;
@@ -835,19 +835,19 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   }
 
   // If we're still sending the MRSP packet...
-  if (comm_ctx->state == MRSP_SENDING) {
+  if (comm_ctx->state == NAAICE_MRSP_SENDING) {
 
     // If we've finished sending the MRSP packet...
     if (wc->opcode == IBV_WC_SEND) {
 
       // Update state.
-      comm_ctx->state = MRSP_RECEIVING;
+      comm_ctx->state = NAAICE_MRSP_RECEIVING;
       return 0;
     }
   }
 
   // If we're waiting for an MRSP response from the NAA...
-  else if (comm_ctx->state == MRSP_RECEIVING) {
+  else if (comm_ctx->state == NAAICE_MRSP_RECEIVING) {
   
     // If we have received a write without immediate...
     if (wc->opcode == IBV_WC_RECV) {
@@ -905,7 +905,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
 
         // Update state.
-        comm_ctx->state = MRSP_DONE;
+        comm_ctx->state = NAAICE_MRSP_DONE;
 
         return 0;
       }
@@ -932,7 +932,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   }
 
   // If we're sending data...
-  else if (comm_ctx->state == DATA_SENDING) {
+  else if (comm_ctx->state == NAAICE_DATA_SENDING) {
 
     // If we've written some data...
     if (wc->opcode == IBV_WC_RDMA_WRITE) {
@@ -945,9 +945,9 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
       if (comm_ctx->rdma_writes_done == comm_ctx->no_input_mrs) {
 
         // Update state.
-        // We skip straight to DATA_RECEIVING; the CALCULATING state is used
+        // We skip straight to NAAICE_DATA_RECEIVING; the NAAICE_CALCULATING state is used
         // only by the software NAA.
-        comm_ctx->state = DATA_RECEIVING;
+        comm_ctx->state = NAAICE_DATA_RECEIVING;
         comm_ctx->rdma_writes_done = 0;
       }
 
@@ -957,7 +957,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   }
 
   // If we're receiving data...
-  else if (comm_ctx->state == DATA_RECEIVING) {
+  else if (comm_ctx->state == NAAICE_DATA_RECEIVING) {
 
     // FM: Technically, a Write from the client does not trigger a work completion on the server
     // If we recieved data without an immediate...
@@ -996,7 +996,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
       */
 
       // If no error, go to finished state.
-      comm_ctx->state = FINISHED;
+      comm_ctx->state = NAAICE_FINISHED;
       comm_ctx->naa_returncode = wc->imm_data;
       comm_ctx->bytes_received = wc->byte_len;
       return 0;
@@ -1176,7 +1176,7 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
   // complete.
   time_t start, end;
   time(&start);
-  while (comm_ctx->state < MRSP_DONE) {
+  while (comm_ctx->state < NAAICE_MRSP_DONE) {
     time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
     if(difftime(end, start) > LOOP_TIMEOUT){
@@ -1199,7 +1199,7 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
   // including sending, calculation, and receiving, is complete.
   time_t start, end;
   time(&start);
-  while (comm_ctx->state < FINISHED) {
+  while (comm_ctx->state < NAAICE_FINISHED) {
     time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
     if(difftime(end, start) > LOOP_TIMEOUT){
@@ -1236,7 +1236,7 @@ int naaice_disconnect_and_cleanup(
     }
   }
 
-  if (comm_ctx->state >= MRSP_DONE) {
+  if (comm_ctx->state >= NAAICE_MRSP_DONE) {
     free(comm_ctx->mr_peer_data);
   }
 
@@ -1293,7 +1293,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
   debug_print("In naaice_send_message\n");
 
   // Update state.
-  comm_ctx->state = MRSP_SENDING;
+  comm_ctx->state = NAAICE_MRSP_SENDING;
 
   // All messages start with a header.
   // We use a dedicated memory region to construct the message, allocated in
@@ -1492,7 +1492,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
   debug_print("fncode: %d\n", fncode);
 
   // Update state.
-  comm_ctx->state = DATA_SENDING;
+  comm_ctx->state = NAAICE_DATA_SENDING;
 
   // If provided function code is zero, send a write indicating a host-side
   // error. This takes the form of a single byte message with zero
