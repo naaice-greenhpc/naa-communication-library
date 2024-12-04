@@ -23,7 +23,6 @@
 
 // Enable debug messages.
 #include "naaice.h"
-#include <ctime>
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
 
