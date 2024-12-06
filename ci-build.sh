@@ -6,12 +6,13 @@ mkdir build
 cmake -S . -B build
 cmake --build build
 
-if [ ! -e /build/src/naaice_client ]; then
+cd /build/src/
+if [ ! -e naaice_client ]; then
     echo "Error: naaice_client is missing"
     exit 1  # Exit with a non-zero status to indicate failure
 fi
 
-if [ ! -e /build/src/naaice_server ]; then
+if [ ! -e naaice_server ]; then
     echo "Error: naaice_server is missing"
     exit 1  # Exit with a non-zero status to indicate failure
 fi
