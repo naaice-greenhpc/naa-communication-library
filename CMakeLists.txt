@@ -7,8 +7,7 @@ project(
 
 option(USE_EMA "Use EMA" OFF)
 
-add_compile_options(-MMD -MP -Wall -pedantic -g -Wextra -gdwarf-2)
-
+add_compile_options(-MMD -MP -Wall -pedantic -Wextra -gdwarf-2 $<$<CONFIG:DEBUG>:-g> $<$<CONFIG:RELEASE>:-O3>)
 
 include(FetchContent)
 
