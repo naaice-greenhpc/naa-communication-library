@@ -21,8 +21,9 @@ The port for the initial connection is fixed (but can be changed). All routines 
 
 
 ### Bugs
-- [ ] Using multiple output memory regions results in endless polling on both the client and the host.
+- [ ] Multiple connection from different clients to same naaice_swnaa are not possible yet
 
 ### Fixed Bugs:
 - [x] So far, posting write work requests at once fails with a number of work requests > 15. The reason for this is yet unknown. Reason was the number of maximum outstanding write request during qp setup. This value was 10. Increasing this limit solved the problem
 - [x] So far, there is no error handling regarding the connection. Error messages are not yet send, however each communication partner has internal error handling mechanisms. Error messages are now send as was discussed for AP1 in April/May 2023.
+- [x] Using multiple output memory regions results in endless polling on both the client and the host. Reason was wrong memsetting of `sge` (scatter gather elements) in `naaice_swnaa_write_data` function
