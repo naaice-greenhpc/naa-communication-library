@@ -615,6 +615,9 @@ static void print_message(ulog_Event *ev, FILE *file) {
     fprintf(file, " %s:%d: ", ev->file, ev->line);  // file and line
 #endif
 
+#if FEATURE_FILE_STRING == false
+    fprintf(file, " ");
+#endif
     vfprintf(file, ev->message, ev->message_format_args);  // message
 }
 
