@@ -87,8 +87,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   // Handle command line arguments.
   log_info("-- Handling Command Line Arguments --\n");
   if (argc != 1) {
-    log_error(stderr,
-            "Server should be called without arguments.\n");
+    log_error("Server should be called without arguments.\n");
     return -1;
   }
 
