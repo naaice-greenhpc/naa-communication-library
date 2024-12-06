@@ -665,7 +665,7 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
  *  0 if sucessful, -1 if not.
  */
 int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
-  unsigned char *imm_bytes);
+  uint8_t *imm_bytes);
 
 /**
  * naaice_init_mrsp:

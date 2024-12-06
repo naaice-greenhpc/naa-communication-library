@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <ulog.h>
 
 /* Constants *****************************************************************/
 #define TIMEOUT_RESOLVE_ADDR 100
@@ -103,7 +104,7 @@ int naaice_init_communication_context(
     const char *local_ip, const char *remote_ip, uint16_t port)
 {
 
-  debug_print("In naaice_init_communication_context\n");
+  log_debug("In naaice_init_communication_context\n");
 
   // Check function code: should be positive.
   if (fncode < 1) {
@@ -222,13 +223,13 @@ int naaice_init_communication_context(
   // Provide local ip only if provided by user.
   int resolve_addr_result = 0;
   if (local_ip[0] != '\0') {
-    debug_print("Local IP provided.\n");
+    log_debug("Local IP provided.\n");
     resolve_addr_result = rdma_resolve_addr(
       rdma_comm_id, loc_addr->ai_addr, rem_addr->ai_addr,
       TIMEOUT_RESOLVE_ADDR);
   }
   else {
-    debug_print("No local IP provided.\n");
+    log_debug("No local IP provided.\n");
     resolve_addr_result = rdma_resolve_addr(
       rdma_comm_id, NULL, rem_addr->ai_addr,
       TIMEOUT_RESOLVE_ADDR);
@@ -249,7 +250,7 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
                                  struct rdma_cm_event *ev,
                                  struct rdma_cm_event *ev_cp) {
 
-  debug_print("In naaice_poll_connection_event\n");
+  log_debug("In naaice_poll_connection_event\n");
 
   if (!rdma_get_cm_event(comm_ctx->ev_channel, &ev)) {
 
@@ -267,7 +268,7 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
 int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_addr_resolved\n");
+  log_debug("In naaice_handle_addr_resolved\n");
 
   if (ev->event == RDMA_CM_EVENT_ADDR_RESOLVED) {
 
@@ -294,7 +295,7 @@ int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
 int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_route_resolved\n");
+  log_debug("In naaice_handle_route_resolved\n");
 
   if (ev->event == RDMA_CM_EVENT_ROUTE_RESOLVED) {
 
@@ -328,7 +329,7 @@ int naaice_handle_connection_established(
   struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_connection_established\n");
+  log_debug("In naaice_handle_connection_established\n");
 
   if (ev->event == RDMA_CM_EVENT_ESTABLISHED) {
 
@@ -341,7 +342,7 @@ int naaice_handle_connection_established(
 int naaice_handle_error(struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_error\n");
+  log_debug("In naaice_handle_error\n");
 
   // Returns -1 and prints an error message if the event is one of
   // the following identified error types.
@@ -352,39 +353,39 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
   //comm_ctx->state = NAAICE_ERROR;
   if (ev->event == RDMA_CM_EVENT_ADDR_ERROR) {
     comm_ctx->state = NAAICE_ERROR;
-    fprintf(stderr, "RDMA address resolution failed.\n");
+    log_error("RDMA address resolution failed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_ROUTE_ERROR) {
     comm_ctx->state = NAAICE_ERROR;
-    fprintf(stderr, "RDMA route resolution failed.\n");
+    log_error("RDMA route resolution failed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
     comm_ctx->state = NAAICE_ERROR;
-    fprintf(stderr, "Error during connection establishment.\n");
+    log_error("Error during connection establishment.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_UNREACHABLE) {
     comm_ctx->state = NAAICE_ERROR;
-    fprintf(stderr, "Remote peer unreachable.\n");
+    log_error("Remote peer unreachable.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_REJECTED) {
     comm_ctx->state = NAAICE_ERROR;
-    fprintf(stderr, "Connection request rejected by peer.\n");
+    log_error("Connection request rejected by peer.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
     comm_ctx->state = NAAICE_ERROR;
-    fprintf(stderr, "RDMA device was removed.\n");
+    log_error("RDMA device was removed.\n");
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
     //FM What to do here? is this an error state in this case? Check what needs 
     // to be cleaned up in which state...
     // We're not expecting disconnect at this point, so we should exit.
-    fprintf(stderr, "RDMA disconnected by server.\n");
+    log_error("RDMA disconnected by server.\n");
     // Keep current state to have clean clean-up: depending onstate different structures have been allocated
     //comm_ctx->state = DISCONNECTED;
     // Handle disconnect.
@@ -399,7 +400,7 @@ int naaice_handle_other(
   __attribute__((unused)) struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev) {
 
-  debug_print("In naaice_handle_other\n");
+  log_debug("In naaice_handle_other\n");
   if (DEBUG_ENABLED)
     fprintf(stderr, "Unknown event: %d.\n", ev->event);
   return -1;
@@ -408,7 +409,7 @@ int naaice_handle_other(
 int naaice_poll_and_handle_connection_event(
   struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_poll_and_handle_connection_event\n");
+  log_debug("In naaice_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
@@ -460,7 +461,7 @@ int naaice_poll_and_handle_connection_event(
 
 int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_setup_connection\n");
+  log_debug("In naaice_setup_connection\n");
 
   // Loop handling events and updating the completion flag until finished.
   while (comm_ctx->state < NAAICE_CONNECTED) {
@@ -475,7 +476,7 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx) {
 
 int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
 
-  debug_print("In naaice_init_rdma_resources\n");
+  log_debug("In naaice_init_rdma_resources\n");
 
   // Moved from naaice_handle_addr_resolved since server never encounters this
   // the rdma_cm_id member verbs is only set after rdma_resolve_addr or
@@ -484,7 +485,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
   comm_ctx->ibv_ctx = comm_ctx->id->verbs;
 
   // Make a protection domain, checking for allocation success.
-  debug_print("Making protection domain.\n");
+  log_debug("Making protection domain.\n");
   comm_ctx->pd = ibv_alloc_pd(comm_ctx->ibv_ctx);
   if (comm_ctx->pd == NULL) {
     fprintf(stderr, "Failed to create an RDMA protection domain.\n");
@@ -492,7 +493,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
   }
 
   // Make a completion channel, checking for allocation success.
-  debug_print("Making completion channel.\n");
+  log_debug("Making completion channel.\n");
   comm_ctx->comp_channel = ibv_create_comp_channel(comm_ctx->ibv_ctx);
   if (comm_ctx->comp_channel == NULL) {
     fprintf(stderr, "Failed to create an IBV completion channel.\n");
@@ -500,7 +501,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
   }
 
   // Make a completion queue, checking for allocation success.
-  debug_print("Making completion queue.\n");
+  log_debug("Making completion queue.\n");
   comm_ctx->cq = ibv_create_cq(comm_ctx->ibv_ctx, RX_DEPTH + 1, NULL,
                                comm_ctx->comp_channel, 0);
   if (comm_ctx->cq == NULL) {
@@ -509,7 +510,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
   }
 
   // Request completion queue notifications, checking for success.
-  debug_print("Requesting completion queue notifications.\n");
+  log_debug("Requesting completion queue notifications.\n");
   if (ibv_req_notify_cq(comm_ctx->cq, 1)) {
     fprintf(stderr, "Failed to request completion channel notifications "
                     "on completion queue.\n");
@@ -536,7 +537,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
       .sq_sig_all = 1};
 
   // Make a queue pair, checking for allocation success.
-  debug_print("Making queue pair.\n");
+  log_debug("Making queue pair.\n");
   if (rdma_create_qp(comm_ctx->id, comm_ctx->pd, &init_attr)) {
     perror("Failed to create an RDMA queue pair.\n");
     return -1;
@@ -548,7 +549,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
 
 int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_register_mrs\n");
+  log_debug("In naaice_register_mrs\n");
 
   // Register all memory regions corresponding to parameters and the metadata
   // memory region.
@@ -582,7 +583,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
   unsigned int n_parameter_mrs, uint64_t *local_addrs, uint64_t *remote_addrs,
   size_t *sizes) {
 
-  debug_print("In naaice_set_parameter_mrs\n");
+  log_debug("In naaice_set_parameter_mrs\n");
 
   // Set number of local and peer (i.e. remote) memory regions in
   // communication context.
@@ -667,7 +668,7 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
 int naaice_set_input_mr(struct naaice_communication_context *comm_ctx,
   unsigned int input_mr_idx) {
 
-  debug_print("In naaice_set_input_mr\n");
+  log_debug("In naaice_set_input_mr\n");
 
   // Check if passed index is a valid parameter memory region index.
   if (input_mr_idx >= comm_ctx->no_local_mrs) {
@@ -690,7 +691,7 @@ int naaice_set_input_mr(struct naaice_communication_context *comm_ctx,
 int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
   unsigned int output_mr_idx) {
 
-  debug_print("In naaice_set_output_mr\n");
+  log_debug("In naaice_set_output_mr\n");
 
   // Check if passed index is a valid parameter memory region index.
   if (output_mr_idx >= comm_ctx->no_peer_mrs) {
@@ -713,7 +714,7 @@ int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
 int naaice_set_singlesend_mr(struct naaice_communication_context *comm_ctx,
   unsigned int singlesend_mr_idx) {
 
-  debug_print("In naaice_set_singlesend_mr\n");
+  log_debug("In naaice_set_singlesend_mr\n");
 
   // Check if passed index is a valid parameter memory region index.
   if (singlesend_mr_idx >= comm_ctx->no_peer_mrs) {
@@ -739,7 +740,7 @@ int naaice_set_singlesend_mr(struct naaice_communication_context *comm_ctx,
 int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
   unsigned int n_internal_mrs, uint64_t *addrs, size_t *sizes) {
 
-  debug_print("In naaice_set_internal_mrs\n");
+  log_debug("In naaice_set_internal_mrs\n");
 
   // Update number of internal memory regions.
   comm_ctx->no_internal_mrs = n_internal_mrs;
@@ -765,7 +766,13 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
 }
 
 int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
-  unsigned char *imm_bytes) {
+  uint8_t *imm_bytes) {
+
+  // if user wants to use first byte for encoding information print a warning
+  // since it is overwritten with the function code
+  if(imm_bytes != 0){
+    log_warn("First byte of immediate value is overwritten with function code");
+  }
 
   // Immediate byte array should hold no more than 3 bytes.
   // These are placed in the 3 higher bytes of the immediate value.
@@ -782,7 +789,7 @@ int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
 
 int naaice_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_init_mrsp\n");
+  log_debug("In naaice_init_mrsp\n");
 
   // TODO: handle errors from these.
   // Post receive for response before sending message. Otherwise data race.
@@ -820,9 +827,9 @@ int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx) {
 int naaice_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_handle_work_completion\n");
+  log_debug("In naaice_handle_work_completion\n");
 
-  debug_print("state: %s, opcode: %s\n",
+  log_debug("state: %s, opcode: %s\n",
     get_state_str(comm_ctx->state),
     get_ibv_wc_opcode_str(wc->opcode));
   
@@ -856,19 +863,19 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // Print all information about the work completion.
       /*
-      debug_print("Work Completion (MRSP):\n");
-      debug_print("wr_id: %ld\n", wc->wr_id);
-      debug_print("status: %d\n", wc->status);
-      debug_print("opcode: %d\n", wc->opcode);
-      debug_print("vendor_err: %08X\n", wc->vendor_err);
-      debug_print("byte_len: %d\n", wc->byte_len);
-      debug_print("imm_data: %d\n", wc->imm_data);
-      debug_print("qp_num: %d\n", wc->qp_num);
-      debug_print("src_qp: %d\n", wc->src_qp);
-      debug_print("wc_flags: %d\n", wc->wc_flags);
-      debug_print("slid: %d\n", wc->slid);
-      debug_print("sl: %d\n", wc->sl);
-      debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
+      log_debug("Work Completion (MRSP):\n");
+      log_debug("wr_id: %ld\n", wc->wr_id);
+      log_debug("status: %d\n", wc->status);
+      log_debug("opcode: %d\n", wc->opcode);
+      log_debug("vendor_err: %08X\n", wc->vendor_err);
+      log_debug("byte_len: %d\n", wc->byte_len);
+      log_debug("imm_data: %d\n", wc->imm_data);
+      log_debug("qp_num: %d\n", wc->qp_num);
+      log_debug("src_qp: %d\n", wc->src_qp);
+      log_debug("wc_flags: %d\n", wc->wc_flags);
+      log_debug("slid: %d\n", wc->slid);
+      log_debug("sl: %d\n", wc->sl);
+      log_debug("dlid_path_bits: %d\n", wc->dlid_path_bits);
       */
 
       struct naaice_mr_hdr *msg =
@@ -893,7 +900,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
           comm_ctx->mr_peer_data[i].addr = ntohll(mr->addr);
           comm_ctx->mr_peer_data[i].rkey = ntohl(mr->rkey);
           comm_ctx->mr_peer_data[i].size = ntohl(mr->size);
-          debug_print("Peer MR %d: Addr: %lX, Size: %lu, rkey: %d\n", i + 1,
+          log_debug("Peer MR %d: Addr: %lX, Size: %lu, rkey: %d\n", i + 1,
             comm_ctx->mr_peer_data[i].addr, comm_ctx->mr_peer_data[i].size,
             comm_ctx->mr_peer_data[i].rkey);
           mr = (struct naaice_mr_advertisement
@@ -980,19 +987,19 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
       // Print all information about the work completion.
       /*
-      debug_print("Work Completion (Data):\n");
-      debug_print("wr_id: %ld\n", wc->wr_id);
-      debug_print("status: %d\n", wc->status);
-      debug_print("opcode: %d\n", wc->opcode);
-      debug_print("vendor_err: %08X\n", wc->vendor_err);
-      debug_print("byte_len: %d\n", wc->byte_len);
-      debug_print("imm_data: %d\n", wc->imm_data);
-      debug_print("qp_num: %d\n", wc->qp_num);
-      debug_print("src_qp: %d\n", wc->src_qp);
-      debug_print("wc_flags: %d\n", wc->wc_flags);
-      debug_print("slid: %d\n", wc->slid);
-      debug_print("sl: %d\n", wc->sl);
-      debug_print("dlid_path_bits: %d\n", wc->dlid_path_bits);
+      log_debug("Work Completion (Data):\n");
+      log_debug("wr_id: %ld\n", wc->wr_id);
+      log_debug("status: %d\n", wc->status);
+      log_debug("opcode: %d\n", wc->opcode);
+      log_debug("vendor_err: %08X\n", wc->vendor_err);
+      log_debug("byte_len: %d\n", wc->byte_len);
+      log_debug("imm_data: %d\n", wc->imm_data);
+      log_debug("qp_num: %d\n", wc->qp_num);
+      log_debug("src_qp: %d\n", wc->src_qp);
+      log_debug("wc_flags: %d\n", wc->wc_flags);
+      log_debug("slid: %d\n", wc->slid);
+      log_debug("sl: %d\n", wc->sl);
+      log_debug("dlid_path_bits: %d\n", wc->dlid_path_bits);
       */
 
       // If no error, go to finished state.
@@ -1012,7 +1019,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 }
 
 int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
-  debug_print("In naaice_poll_cq_blocking\n");
+  log_debug("In naaice_poll_cq_blocking\n");
 
   // signal handler to terminate blocking call after timeout
   struct sigaction sa;
@@ -1084,7 +1091,7 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
 
 int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_poll_cq_nonblocking\n");
+  log_debug("In naaice_poll_cq_nonblocking\n");
 
   struct ibv_cq *ev_cq;
   void *ev_ctx;
@@ -1137,7 +1144,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   }
 
   while (n_wcs) {
-    debug_print("number of work completions: %d\n", n_wcs);
+    log_debug("number of work completions: %d\n", n_wcs);
     // Handle the work completion.
     if (naaice_handle_work_completion(&wc, comm_ctx)) {
       fprintf(stderr, "Error while handling work completion.\n");
@@ -1167,7 +1174,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
 
 int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_do_mrsp\n");
+  log_debug("In naaice_do_mrsp\n");
 
   // Initialize the MRSP.
   if (naaice_init_mrsp(comm_ctx)) { return -1; }
@@ -1190,7 +1197,7 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
 int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_do_data_transfer\n");
+  log_debug("In naaice_do_data_transfer\n");
 
   // Initialize the data transfer.
   if (naaice_init_data_transfer(comm_ctx)) { return -1; }
@@ -1214,7 +1221,7 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
 int naaice_disconnect_and_cleanup(
   struct naaice_communication_context *comm_ctx) {
   // FM TODO: Fix clean up: look if stuff to clean up can be derived by communication state
-  debug_print("In naaice_disconnect_and_cleanup\n");
+  log_debug("In naaice_disconnect_and_cleanup\n");
 
   // Disconnect.
   rdma_disconnect(comm_ctx->id);
@@ -1290,7 +1297,7 @@ int naaice_disconnect_and_cleanup(
 int naaice_send_message(struct naaice_communication_context *comm_ctx,
   enum message_id message_type, uint8_t errorcode) {
 
-  debug_print("In naaice_send_message\n");
+  log_debug("In naaice_send_message\n");
 
   // Update state.
   comm_ctx->state = NAAICE_MRSP_SENDING;
@@ -1397,7 +1404,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       }
       curr->mr_info = htonll(curr->mr_info);
 
-      debug_print("Local MR %d: Addr: %lX, Size: %ld, rkey: %d, Requested NAA Addr: %lX\n", i + 1,
+      log_debug("Local MR %d: Addr: %lX, Size: %ld, rkey: %d, Requested NAA Addr: %lX\n", i + 1,
         (uintptr_t) comm_ctx->mr_local_data[i].addr,
         comm_ctx->mr_local_data[i].ibv->length,
         comm_ctx->mr_local_data[i].ibv->rkey,
@@ -1433,7 +1440,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       }
       curr->mr_info = htonll(curr->mr_info);
 
-      debug_print("Internal MR %d: Addr: %lX, Size: %d, Requested NAA Addr: %lX\n", i + 1,
+      log_debug("Internal MR %d: Addr: %lX, Size: %d, Requested NAA Addr: %lX\n", i + 1,
         (uintptr_t) comm_ctx->mr_internal[i].addr,
         (int) comm_ctx->mr_internal[i].size,
         comm_ctx->mr_internal[i].addr);
@@ -1488,8 +1495,8 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
 int naaice_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t fncode) {
 
-  debug_print("In naaice_write_data\n");
-  debug_print("fncode: %d\n", fncode);
+  log_debug("In naaice_write_data\n");
+  log_debug("fncode: %d\n", fncode);
 
   // Update state.
   comm_ctx->state = NAAICE_DATA_SENDING;
@@ -1599,7 +1606,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
 
 int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_post_recv_mrsp\n");
+  log_debug("In naaice_post_recv_mrsp\n");
 
   // Construct the receive request and scatter/gather elements.
   struct ibv_recv_wr wr, *bad_wr = NULL;
@@ -1628,7 +1635,7 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
 
 int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_post_recv_data\n");
+  log_debug("In naaice_post_recv_data\n");
 
   // Construct the receive request and scatter/gather elements.
   // We expect a write back from each peer memory region indicated as outputs
@@ -1671,7 +1678,7 @@ int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
       sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
       sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
-      debug_print("recv addr: %p, length: %d, lkey %d\n",
+      log_debug("recv addr: %p, length: %d, lkey %d\n",
         (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
 
       mr_idx++;
