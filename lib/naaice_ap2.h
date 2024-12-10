@@ -42,10 +42,15 @@
  */
 
 /* Dependencies **************************************************************/
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <stddef.h>
 #include <stdbool.h>
 #include <naaice.h>   // Included here to get enum naaice_communication_state.
+#ifdef __cplusplus
+}
+#endif
 
 /* Enums **********************************************************************/
 enum naa_error {

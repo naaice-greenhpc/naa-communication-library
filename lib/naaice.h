@@ -90,8 +90,10 @@
 
 /* Dependencies **************************************************************/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <endian.h>
-
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -108,7 +110,9 @@
 #include <netdb.h>
 #include <rdma/rdma_cma.h>
 #include <rdma/rdma_verbs.h>
-
+#ifdef __cplusplus
+}
+#endif
 /* Constants *****************************************************************/
 
 #define RX_DEPTH 1025
