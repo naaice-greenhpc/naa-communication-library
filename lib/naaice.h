@@ -90,9 +90,6 @@
 
 /* Dependencies **************************************************************/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -110,9 +107,7 @@ extern "C" {
 #include <netdb.h>
 #include <rdma/rdma_cma.h>
 #include <rdma/rdma_verbs.h>
-#ifdef __cplusplus
-}
-#endif
+
 /* Constants *****************************************************************/
 
 #define RX_DEPTH 1025
@@ -121,6 +116,10 @@ extern "C" {
 #define TIMEOUT_RESOLVE_ROUTE 500 // in ms.
 #define POLLING_TIMEOUT 500 // timeout of poll function in ms
 #define LOOP_TIMEOUT 5 // timeout of polling loop in s
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Maximum allowed number of memory regions.
 // Total of parameters and internal NAA memory regions.
@@ -899,5 +898,9 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx);
  *  0 if succesful, -1 if not.
  */
 int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx, int mr_idx, size_t number_bytes);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
