@@ -57,7 +57,7 @@ extern "C"
  *    and returned by this function.
  *  const char *port:
  *    String specifying connection port, ex. "12345".
- * 
+ * about:blank#blocked
  * returns:
  *  0 if sucessful, -1 if not.
  */

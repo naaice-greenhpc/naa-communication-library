@@ -771,7 +771,7 @@ int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
   // if user wants to use first byte for encoding information print a warning
   // since it is overwritten with the function code
   if(imm_bytes != 0){
-    log_warn("First byte of immediate value is overwritten with function code");
+    log_warn("First byte of immediate value is overwritten with function code\n");
   }
 
   // Immediate byte array should hold no more than 3 bytes.

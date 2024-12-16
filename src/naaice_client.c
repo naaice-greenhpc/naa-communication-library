@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
   printf("-- Handling Command Line Arguments --\n");
   
   // Check number of arguments.
+  // TODO add command line parser getopt
   if ((argc != 4) && (argc != 5)) {
     log_error("Wrong number of arguments. use: "
       "./naaice_client [local-ip] remote-ip number-of-regions 'region-sizes'\n"
