@@ -280,7 +280,7 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     // FM What to do here? is this an error state in this case? Check what needs
     //  to be cleaned up in which state...
     //  We're not expecting disconnect at this point, so we should exit.
-    log_error("RDMA disconnected by client request.\n");
+    log_warn("RDMA disconnected by client request.\n");
     // Keep current state for error free cleanup (depending on the state, we allocated different structures)
     //comm_ctx->state = DISCONNECTED;
     // Handle disconnect.
