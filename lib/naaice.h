@@ -64,13 +64,14 @@
  * 2. (in any order)
  *    naaice_setup_connection
  *    naaice_register_mrs
- *    naaice_set_internal_mrs
+ *    naaice_set_internal_mrs (optional)
  *    naaice_set_input_mr
  *    naaice_set_output_mr
- *    naaice_set_singlesend_mr
- * 3. naaice_do_mrsp
- * 4. naaice_do_data_transfer
- * 5. naaice_disconnect_and_cleanup
+ *    naaice_set_singlesend_mr (optional)
+ * 3. naaice_set_bytes_to_send (optional)
+ * 4. naaice_do_mrsp
+ * 5. naaice_do_data_transfer
+ * 6. naaice_disconnect_and_cleanup
  * 
  * naaice_do_mrsp blocks until MRSP is complete. For a non-blocking version,
  * use instead:
@@ -876,5 +877,24 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx);
  *  0 if successful, -1 if not.
  */
 int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx);
+
+/**
+ * naaice_set_bytes_to_send
+ *
+ *
+ * params:
+ *  naaice_communication_context *comm_ctx:
+ *    Pointer to struct describing the connection
+ *  int mr_idx:
+ *    Index to memory region to be modified
+ *  size_t number_bytes:
+ *    Number of bytes to be sent from specified memory region
+ *    Using 0 as the parameter resets the size to the original size of the memory
+ *    region
+ *
+ * returns:
+ *  0 if succesful, -1 if not.
+ */
+int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx, int mr_idx, int number_bytes);
 
 #endif

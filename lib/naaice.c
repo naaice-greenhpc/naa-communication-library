@@ -264,8 +264,9 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
     // Send an ack in response.
     rdma_ack_cm_event(ev);
     return 0;
+  } else {
+    return -1;
   }
-  else { return -1; }
 }
 
 int naaice_handle_addr_resolved(struct naaice_communication_context *comm_ctx,
@@ -1489,6 +1490,39 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
   return 0;
 }
 
+int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx, int mr_idx, int number_bytes){
+
+
+  if(mr_idx > comm_ctx->no_local_mrs-1){
+    fprintf(stderr, "Index of memory region is out if bounds!\n");
+    return -1;
+  }
+  
+  if(comm_ctx->mr_local_data[mr_idx].ibv == NULL){
+    fprintf(stderr, "Memory regions are not yet registered. Please call "
+                    "function after naaice_register_mrs!\n");
+    return -1;
+  }
+
+  // reset number of bytes size of the memory region
+  if(number_bytes < 0){
+    comm_ctx->mr_local_data[mr_idx].size = comm_ctx->mr_local_data[mr_idx].ibv->length;
+    return 0;
+  }
+  
+  if(number_bytes > comm_ctx->mr_local_data[mr_idx].ibv->length){
+    fprintf(stderr, "Number of specified bytes larger than size of memory region!\n");
+    return -1;
+  }
+  
+  comm_ctx->mr_local_data[mr_idx].size = number_bytes;
+  
+
+  return 0;
+}
+
+
+
 int naaice_write_data(struct naaice_communication_context *comm_ctx,
   uint8_t fncode) {
 
@@ -1582,7 +1616,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         }
 
         sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
-        sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
+        sge[mr_idx].length = comm_ctx->mr_local_data[i].size;
         sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
         mr_idx++;

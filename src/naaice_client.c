@@ -26,6 +26,7 @@
 
 /* Dependencies **************************************************************/
 
+#include "debug.h"
 #include <naaice.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -39,7 +40,7 @@
 #define FNCODE 1
 
 // Number of times to repeat the RPC.
-#define N_INVOKES 1
+#define N_INVOKES 2
 
 
 /* Main **********************************************************************/
@@ -150,11 +151,18 @@ int main(int argc, char *argv[]) {
 
   // Set immediate value which can be used for testbed configuration.
   uint8_t imm_bytes[4] = {0, 0, 0, 0};
-  if (naaice_set_immediate(comm_ctx, imm_bytes)) { return -1; }
-  
+ 
+
   // Then, register the memory regions with IBV.
   printf("-- Registering Memory Regions with IBV --\n");
+
   if (naaice_register_mrs(comm_ctx)) { return -1; }
+
+  // specify the number of bytes to be sent of a specific memory region
+  // As an example the seconds memory region should only send to bytes
+  if (naaice_set_bytes_to_send(comm_ctx, 1, 2)) { return -1; }
+
+  if (naaice_set_immediate(comm_ctx, imm_bytes)) { return -1; }
 
   // Do the memory region setup protocol.
   printf("-- Doing MRSP --\n");
@@ -169,6 +177,10 @@ int main(int argc, char *argv[]) {
 
     printf("-- RPC Invocation #%d --\n", i+1);
     if (naaice_do_data_transfer(comm_ctx)) { return -1; }
+    // reset the number of bytes to be sent from the second memory region to the
+    // full size of the memory region
+    if (naaice_set_bytes_to_send(comm_ctx, 1, 0)) { return -1;}
+    
   }
 
   // Disconnect and cleanup.
@@ -199,6 +211,10 @@ int main(int argc, char *argv[]) {
 
     printf("Parameter %u: first element: %u. Success? %s\n",
           i, data[0], success ? "yes" : "no");
+  }
+
+  for(int i=0;i<params_amount;i++){
+    free(params[i]);
   }
 
   return 0;
