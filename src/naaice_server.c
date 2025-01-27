@@ -46,31 +46,7 @@
 // The routine should return 0 if successful, or some nonzero number if not.
 // This nonzero error code is sent to the host in the case of an error.
 uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
-
   printf("in do_procedure\n");
-  
-  // Can switch on function code.
-  // Here, do nothing if code is 0. Otherwise do something.
-  if (comm_ctx->fncode) {
-
-    // Example:
-    // Assume all data in the memory regions is arrays of chars.
-    // Increment all chars in all memory regions by one.
-
-    for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
-
-      // Get pointer to data.
-      unsigned char *data = (unsigned char*) comm_ctx->mr_local_data[i].addr;
-
-      for(unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
-
-        // Increment a char.
-        // printf("data value (old/new): %u\n", data[j]);
-        data[j]++;
-      }
-    }
-  }
-
   return 0;
 }
 
@@ -91,7 +67,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1;
   }
 
-  // Communication context struct. 
+  // Communication context struct.
   // This will hold all information necessary for the connection.
   printf("-- Initializing Communication Context --\n");
   struct naaice_communication_context *comm_ctx = NULL;
@@ -131,7 +107,6 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
       break;
     }
   }
-
   // Disconnect and clean up.
   printf("-- Cleaning Up --\n");
   if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
