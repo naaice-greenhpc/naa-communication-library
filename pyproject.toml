@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "naa-communication-prototype"
+version = "0.1.0"
+description = ""
+authors = ["Niklas Schelten <niklas.schelten@hhi.fraunhofer.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+numpy = "^2.2.2"
+tenacity = "^9.0.0"
+matplotlib = "^3.10.0"
+pandas = "^2.2.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
