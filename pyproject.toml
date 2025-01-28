@@ -2,6 +2,7 @@
 name = "naa-communication-prototype"
 version = "0.1.0"
 description = ""
+package-mode = false
 authors = ["Niklas Schelten <niklas.schelten@hhi.fraunhofer.de>"]
 readme = "README.md"
 
