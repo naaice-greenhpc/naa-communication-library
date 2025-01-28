@@ -1,5 +1,4 @@
 from pathlib import Path
-import time
 import numpy as np
 import subprocess as sp
 
@@ -50,7 +49,7 @@ for dma_length in generate_lengths(1024**3):
     @retry(wait=wait_fixed(0.2))
     def run():
         sp.check_call(
-            ["bin/naaice_client", "10.42.50.21", "10.42.50.110", str(dma_length), file]
+            ["bin/naaice_client", "10.42.50.1", "10.42.50.110", str(dma_length), file]
         )
     for i in range(N):
         print(f"Testing {dma_length}B ({i+1}/{N})")

@@ -6,11 +6,11 @@ import pandas as pd
 from matplotlib import ticker
 
 def formatter_byte(num: float, pos: None=None):
-    for unit in ["B", "kB", "MB", "GB"]:
+    for unit in ["B", "kiB", "MiB", "GiB"]:
         if num < 1024:
             return f"{num:g} {unit}"
         num /= 1024
-    return f"{num:g} TB"
+    return f"{num:g} TiB"
 
 def plot(host2naa: pd.DataFrame, host2host: pd.DataFrame):
     """
