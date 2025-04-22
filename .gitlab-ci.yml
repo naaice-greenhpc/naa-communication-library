@@ -24,9 +24,8 @@ build:
 
 run:
     stage: run
-    needs:
-        - job: build
-          artifacts: true
+    dependencies:
+        - build
     script:
         - echo "Start SWNAA"
         - ls -la /build/src/
