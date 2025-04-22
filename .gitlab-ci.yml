@@ -28,6 +28,7 @@ run:
         - build
     script:
         - echo "Start SWNAA"
+        - ibv_devinfo
         - apt-get update
         - apt-get install -y librdmacm-dev libibverbs1
         - ls -la build/src
