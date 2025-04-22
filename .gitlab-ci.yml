@@ -28,5 +28,8 @@ run:
         - build
     script:
         - echo "Start SWNAA"
+        - apt-get update
+        - apt-get install -y librdmacm-dev libibverbs1
         - ls -la build/src
+        - chmod +x build/src/naaice_server
         - ./build/src/naaice_server
