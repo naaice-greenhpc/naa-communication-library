@@ -35,6 +35,7 @@ run_server:
         - ibv_devinfo
         - ls -la build/src
         - ./build/src/naaice_server
+        - sleep 10
     tags:
         - naaice2-runner
 
