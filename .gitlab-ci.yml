@@ -17,7 +17,7 @@ build:
         - bash ci-build.sh
     artifacts:
         paths:
-            - build/src/naaice_server
+            - build/
         expire_in: 1 hour
     tags:
         - naaice2-runner
@@ -28,5 +28,4 @@ run:
         - build
     script:
         - echo "Start SWNAA"
-        - ls -la /build/src/
-        - ./build/src/naaice_server
+        - ls -la build
