@@ -15,7 +15,6 @@ build:
         - apt-get update && apt-get -y install cmake librdmacm-dev
     script:
         - bash ci-build.sh
-        - ls -la /dev
     artifacts:
         paths:
             - build/
@@ -31,7 +30,8 @@ run:
         - echo "Start SWNAA"
         - apt-get update
         - apt-get install -y librdmacm-dev libibverbs1 ibverbs-utils
-        - ls -la /dev
+        - ls -la /dev/infiniband
+        - ibv_devinfo
         - ls -la build/src
       
     tags:
