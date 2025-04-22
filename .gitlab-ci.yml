@@ -30,7 +30,7 @@ run:
         - echo "Start SWNAA"
         - apt-get update
         - apt-get install -y librdmacm-dev libibverbs1 ibverbs-utils
-        - ibv_devinfo
+        - ls -la /dev/infiniband
         - ls -la build/src
         - chmod +x build/src/naaice_server
         - ./build/src/naaice_server
