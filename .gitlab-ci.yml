@@ -21,4 +21,5 @@ build:
 run:
     stage: run
     script:
-        - echo "Running tests..."
+        - echo "Start SWNAA"
+        - ./build/src/naaice_server
