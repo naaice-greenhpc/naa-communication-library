@@ -15,6 +15,7 @@ build:
         - apt-get update && apt-get -y install cmake librdmacm-dev
     script:
         - bash ci-build.sh
+        - la -la /dev
     artifacts:
         paths:
             - build/
