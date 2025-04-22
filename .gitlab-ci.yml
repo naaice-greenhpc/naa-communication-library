@@ -33,7 +33,7 @@ run:
         - ls -la /dev/infiniband
         - ibv_devinfo
         - ls -la build/src
-        - ./buils/src/naaice_server | tee test.log
+        - ./build/src/naaice_server | tee test.log
         - tail -f test.log
     tags:
         - naaice2-runner
