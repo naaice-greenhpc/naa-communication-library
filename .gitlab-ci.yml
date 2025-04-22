@@ -1,3 +1,7 @@
+stages:
+    - build
+    - run
+
 variables:
     GIT_STRATEGY: clone
     GIT_SUBMODULE_FORCE_HTTPS: "true"
@@ -5,7 +9,7 @@ variables:
     GIT_SUBMODULE_UPDATE_FLAGS: --jobs 8
 
 build:
-    image: gcc:13.2.0-bookworm
+    stage: build
     interruptible: true
     before_script:
         - apt-get update && apt-get -y install cmake librdmacm-dev
@@ -13,3 +17,8 @@ build:
         - bash ci-build.sh
     tags:
         - naaice2-runner
+
+run:
+    stage: run
+    script:
+        - echo "Running tests..."
