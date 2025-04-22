@@ -1,6 +1,6 @@
 stages:
     - build
-    # - run_server
+    - run_server
     - run_client
 
 variables:
