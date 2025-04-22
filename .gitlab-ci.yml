@@ -1,6 +1,7 @@
 stages:
     - build
-    - run
+    - run_server
+    - run_client
 
 variables:
     GIT_STRATEGY: clone
@@ -10,6 +11,8 @@ variables:
 
 build:
     stage: build
+    tags:
+        - naaice2-runner
     interruptible: true
     before_script:
         - apt-get update && apt-get -y install cmake librdmacm-dev
@@ -19,11 +22,9 @@ build:
         paths:
             - build/
         expire_in: 1 hour
-    tags:
-        - naaice2-runner
-
-run:
-    stage: run
+    
+run_server:
+    stage: run_server
     dependencies:
         - build
     script:
@@ -36,3 +37,18 @@ run:
         - ./build/src/naaice_server
     tags:
         - naaice2-runner
+
+run_client:
+    stage: run_client
+    dependencies:
+        - build
+    script:
+        - echo "Start SWNAA"
+        - apt-get update
+        - apt-get install -y librdmacm-dev libibverbs1 ibverbs-utils
+        - ls -la /dev/infiniband
+        - ibv_devinfo
+        - ls -la build/src
+        - ./build/src/naaice_client 10.3.10.42 3 "10 10 10"
+    tags:
+        - naaice1-runner
