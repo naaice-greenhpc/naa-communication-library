@@ -3,7 +3,7 @@ ROOT_DIR=$(pwd)
 
 [ -e build ] && rm -r build
 mkdir build
-cmake -S . -B build
+cmake -S . -B build -D CMAKE_BUILD_TYPE=Debug
 cmake --build build
 
 cd "$ROOT_DIR/build/src/"
