@@ -29,3 +29,4 @@ run:
     script:
         - echo "Start SWNAA"
         - ls -la build
+        - /build/src/naaice_server
