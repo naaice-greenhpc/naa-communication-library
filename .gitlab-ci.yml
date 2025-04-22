@@ -24,7 +24,10 @@ build:
 
 run:
     stage: run
+    needs:
+        - job: build
+          artifacts: true
     script:
         - echo "Start SWNAA"
-        - ls -la build/src/
+        - ls -la /build/src/
         - ./build/src/naaice_server
