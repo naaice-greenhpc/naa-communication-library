@@ -15,6 +15,10 @@ build:
         - apt-get update && apt-get -y install cmake librdmacm-dev
     script:
         - bash ci-build.sh
+    artifacts:
+        paths:
+            - build/src/naaice_server
+        expire_in: 1 hour
     tags:
         - naaice2-runner
 
@@ -22,4 +26,5 @@ run:
     stage: run
     script:
         - echo "Start SWNAA"
-        - $ROOT_DIR/build/src/naaice_server
+        - ls -la build/src/
+        - ./build/src/naaice_server
