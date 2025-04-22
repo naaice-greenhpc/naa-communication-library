@@ -22,4 +22,4 @@ run:
     stage: run
     script:
         - echo "Start SWNAA"
-        - ./build/src/naaice_server
+        - $ROOT_DIR/build/src/naaice_server
