@@ -33,7 +33,7 @@ run_server:
         - apt-get install -y librdmacm-dev libibverbs1 ibverbs-utils
         - ibv_devinfo
         - ./build/src/naaice_server &
-        - sleep 5
+        - sleep 2
     tags:
         - naaice2-runner
 
@@ -41,6 +41,7 @@ run_client:
     stage: run_client
     dependencies:
         - build
+        - run_server
     script:
         - echo "Start client "
         - apt-get update
