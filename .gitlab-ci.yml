@@ -42,7 +42,7 @@ run_client:
     dependencies:
         - build
     script:
-        - echo "Start client "
+        - echo "Start client"
         - apt-get update
         - apt-get install -y librdmacm-dev libibverbs1 ibverbs-utils
         - ls -la /dev/infiniband
