@@ -149,6 +149,8 @@ int naaice_init_communication_context(
   (*comm_ctx)->bytes_received = 0;
   (*comm_ctx)->naa_returncode = 0;
   (*comm_ctx)->no_rpc_calls = 0;
+  (*comm_ctx)->timeout = DEFAULT_TIMEOUT;
+  (*comm_ctx)->retry_count = DEFAULT_RETRY_COUNT;
 
   // Dummy NAA addresses, sequential and starting at 0.
   // TODO: do this with a call to the memory mangement service.
@@ -315,7 +317,7 @@ int naaice_handle_route_resolved(struct naaice_communication_context *comm_ctx,
     // Set connection parameters.
     struct rdma_conn_param cm_params;
     memset(&cm_params, 0, sizeof(cm_params));
-    cm_params.retry_count = 1;
+    cm_params.retry_count = comm_ctx->retry_count;
     cm_params.initiator_depth = 1;
     cm_params.responder_resources = 1;
     cm_params.rnr_retry_count = 6; // 7 would be indefinite
@@ -811,6 +813,7 @@ int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx) {
   }
 
   if(naaice_write_data(comm_ctx, comm_ctx->fncode)){
+    
     //there's some problem in writing data. 
     //How do we tell the server? Some message on MRSP MR?
     //Enter error state and exit connection
@@ -965,7 +968,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   else if (comm_ctx->state == DATA_RECEIVING) {
 
     // FM: Technically, a Write from the client does not trigger a work completion on the server
-    // If we recieved data without an immediate...
+    // If we received data without an immediate...
     if (wc->opcode == IBV_WC_RECV) {
 
       // No need to do anything.
@@ -975,12 +978,13 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
     // If we have received data with an immediate...
     if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
 
+      uint32_t return_code = ntohl(wc->imm_data) >> IMMEDIATE_OFFSET;
       // Check whether an error occured.
-      if (ntohl(wc->imm_data)) {
+      if (return_code) {
         fprintf(stderr,
-                "Immediate value non-zero: %d.\n",
-                ntohl(wc->imm_data));
-        return ntohl(wc->imm_data);
+                "Immediate return code non-zero: %d.\n",
+                return_code);
+        return return_code;
       }
 
       // Print all information about the work completion.
@@ -1025,7 +1029,7 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
   sa.sa_flags = 0; // SA_RESTART is not set
   sigemptyset(&sa.sa_mask);
   sigaction(SIGALRM, &sa, NULL);
-  alarm(LOOP_TIMEOUT);
+  alarm((int)comm_ctx->timeout);
 
   struct ibv_cq *ev_cq;
   void *ev_ctx;
@@ -1184,8 +1188,8 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
   while (comm_ctx->state < MRSP_DONE) {
     time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
-    if(difftime(end, start) > LOOP_TIMEOUT){
-      fprintf(stderr, "Timeout while waiting for a response from the NAA\n");
+    if (comm_ctx->timeout > 0 && difftime(end, start) > comm_ctx->timeout) {
+      fprintf(stderr, "naaice_do_mrsp :: Timeout while waiting for a response from the NAA (max timeout %fs)\n", comm_ctx->timeout);
       return -1;
     }
   }
@@ -1206,9 +1210,11 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
   time(&start);
   while (comm_ctx->state < FINISHED) {
     time(&end);
-    if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
-    if(difftime(end, start) > LOOP_TIMEOUT){
-      fprintf(stderr, "Timeout while waiting for a response from NAA\n");
+    if (naaice_poll_cq_nonblocking(comm_ctx)) {
+      return -1;
+    }
+    if (comm_ctx->timeout > 0 && difftime(end, start) > comm_ctx->timeout) {
+      fprintf(stderr, "naaice_do_data_transfer ::Timeout while waiting for a response from the NAA (max timeout %fs) current state: %s \n", comm_ctx->timeout, get_state_str(comm_ctx->state));
       return -1;
     }
   }

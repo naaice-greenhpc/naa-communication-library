@@ -88,6 +88,8 @@ int naaice_swnaa_init_communication_context(
   (*comm_ctx)->no_output_mrs = 0;
   (*comm_ctx)->immediate = 0;
   (*comm_ctx)->no_rpc_calls = 0;
+  (*comm_ctx)->timeout = DEFAULT_TIMEOUT;
+  (*comm_ctx)->retry_count = DEFAULT_RETRY_COUNT;
 
   // The memory region used for MRSP is allocated here, but the ones for the
   // parameters and the internal memory regions used for NAA scratch
@@ -201,7 +203,7 @@ int naaice_swnaa_handle_connection_requests(
   if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
     struct rdma_conn_param cm_params;
     memset(&cm_params, 0, sizeof(cm_params));
-    cm_params.retry_count = 1;
+    cm_params.retry_count = 7;
     cm_params.initiator_depth = 1;
     cm_params.responder_resources = 1;
     cm_params.rnr_retry_count = 6; // 7 would be indefinite
@@ -313,8 +315,8 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
     Error while handling work completion.
     */
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1; }
-    if (difftime(end, start) > LOOP_TIMEOUT) {
-      fprintf(stderr, "Timeout while receiving MRSP from client.\n");
+    if (difftime(end, start) > comm_ctx->timeout) {
+      fprintf(stderr, "Timeout while receiving MRSP from client (timeout %f).\n", comm_ctx->timeout);
       return -1;
     }
   }
@@ -336,7 +338,7 @@ int naaice_swnaa_do_data_transfer(
   while (comm_ctx->state == DATA_SENDING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
-    if (difftime(end, start) > LOOP_TIMEOUT) {
+    if (difftime(end, start) > comm_ctx->timeout) {
       fprintf(stderr, "Timeout while sending data to client.\n");
       return -1;
     }
@@ -392,7 +394,7 @@ int naaice_swnaa_receive_data_transfer(
   while (comm_ctx->state == DATA_RECEIVING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
-    if (difftime(end, start) > LOOP_TIMEOUT) {
+    if (difftime(end, start) > comm_ctx->timeout) {
       fprintf(stderr, "Timeout while receiving data from client.\n");
       return -1;
     }

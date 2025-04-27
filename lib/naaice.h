@@ -116,11 +116,16 @@
 #define htonll htobe64
 #define TIMEOUT_RESOLVE_ROUTE 500 // in ms.
 #define POLLING_TIMEOUT 500 // timeout of poll function in ms
-#define LOOP_TIMEOUT 5 // timeout of polling loop in s
+#define DEFAULT_TIMEOUT 5
+#define DEFAULT_RETRY_COUNT 7
 
 // Maximum allowed number of memory regions.
 // Total of parameters and internal NAA memory regions.
 #define MAX_MRS 32
+
+// Immediate return code offset
+#define IMMEDIATE_OFFSET 8
+
 
 // size of MR for MR exchange
 // type + padding: 32 + Maximum number of regions:UINT_MAX+1
@@ -321,6 +326,8 @@ struct naaice_communication_context
   struct ibv_comp_channel *comp_channel;  // Completion channel.
   struct ibv_cq *cq;                      // Completion queue.
   struct ibv_qp *qp;                      // Queue pair.
+  double timeout;
+  uint8_t retry_count;
 
   // Current state.
   enum naaice_communication_state state;
