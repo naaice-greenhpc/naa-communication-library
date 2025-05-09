@@ -160,36 +160,32 @@ int naa_create(unsigned int function_code,
 	// Convert the params into the representation expected by the API layer
 	// (i.e. without the naa_param_t type).
 	size_t params_amount = input_amount + output_amount;
-    for (unsigned int i = 0; i< output_amount; i++){
+  for (unsigned int i = 0; i < output_amount; i++){
 		for (unsigned int j = 0; j < input_amount; j++) {
-          if ((char *)output_params[i].addr == (char *)input_params[j].addr) {
-            // we have the same input as output, but dont want to reallocate and
-            // reregister
-            params_amount--;
-            output_as_input[i] = true;
-			break;
-          }
+      if ((char *)output_params[i].addr == (char *)input_params[j].addr) {
+        // we have the same input as output, but dont want to reallocate and
+        // reregister
+        params_amount--;
+        output_as_input[i] = true;
+				break;
+      }
 		}
-    }
-    char *param_addrs[params_amount];
+  }
+
+  char *param_addrs[params_amount];
 	size_t param_sizes[params_amount];
 	for (unsigned int i = 0; i < input_amount; i++) {
 		param_addrs[i] = (char*) input_params[i].addr;
 		param_sizes[i] = input_params[i].size;
 	}
-	unsigned idx=0;
+
+	unsigned idx = 0;
 	for (unsigned int i = 0; i < output_amount; i++) {
-		for(unsigned int j = 0; j < input_amount; j++){
-			if (output_as_input[i]==true){
-            	break;
-            }
-			else{
-              param_addrs[idx + input_amount] = (char *)output_params[i].addr;
-              param_sizes[idx + input_amount] = output_params[i].size;
-              idx++;
-			}
+		if (output_as_input[i] == false) {
+      param_addrs[idx + input_amount] = (char *)output_params[i].addr;
+      param_sizes[idx + input_amount] = output_params[i].size;
+      idx++;
 		}
-		
 	}
 
 	// Initialize the communication context.
@@ -236,7 +232,7 @@ int naa_create(unsigned int function_code,
       }
     }
     if (!param_exists) {
-      fprintf(stderr, "Requested input parameter which was not previously"
+      fprintf(stderr, "Requested input parameter which was not previously "
                       "passed to naaice_init_communication_context.\n");
       return -1;
     }
@@ -260,7 +256,7 @@ int naa_create(unsigned int function_code,
 			}
 		}
 		if (!param_exists) {
-			fprintf(stderr, "Requested output parameter which was not previously"
+			fprintf(stderr, "Requested output parameter which was not previously "
 				"passed to naaice_init_communication_context.\n");
 			return -1;
 		}
