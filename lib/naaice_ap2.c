@@ -32,12 +32,12 @@
 #define TIMEOUT_INVOKE 100 	// All timeouts given in ms.
 #define TIMEOUT_TEST 100
 #define TIMEOUT_WAIT 100
-#define CONNECTION_PORT 12345
 
 // TODO: Provided by RMS in the future.
 // UP IPs.
-static const char *LOCAL_IP = "10.3.10.41";
-static const char *REMOTE_IP = "10.3.10.42";
+static char *LOCAL_IP = "10.3.10.41";
+static char *REMOTE_IP = "10.3.10.42";
+static uint16_t CONNECTION_PORT = 12345;
 
 // ZIB IPs.
 //static const char *LOCAL_IP = ""; // Indicate that we don't provide the
@@ -86,6 +86,12 @@ int get_network_params(char *local_ip, char *remote_ip, uint16_t *port) {
 	strcpy(remote_ip, REMOTE_IP);
 	*port = CONNECTION_PORT;
 	return 0;
+}
+
+void set_network_params(char *local_ip, char *remote_ip, uint16_t port) {
+	strcpy(LOCAL_IP, local_ip);
+	strcpy(REMOTE_IP, remote_ip);
+	CONNECTION_PORT = port;
 }
 
 // Function to check validity of parameters against configuration values.

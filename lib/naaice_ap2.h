@@ -142,4 +142,5 @@ int naa_wait(naa_handle *handle, naa_status *status);
  */
 int naa_finalize(naa_handle *handle);
 
+void set_network_params(char *local_ip, char *remote_ip, uint16_t port);
 #endif
