@@ -1,32 +1,33 @@
 /**************************************************************************//**
  *
- *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM  
- *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7  
- *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d    
- *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM    
- *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  , 
- *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M 
- *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM 
- * 
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
  *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
- * 
+ *
  * naaice.c
  *
  * Implementations for functions in naaice.h.
- * 
+ *
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
- * 
+ * Hannes Signer, signer@uni-potsdam.de
+ *
  * 26-01-2024
- * 
+ *
  *****************************************************************************/
 
 /* Dependencies **************************************************************/
 #include <rdma/rdma_cma.h>
-#include <debug.h>
+#include "debug.h"
 #include <errno.h>
 #include <infiniband/verbs.h>
-#include <naaice.h>
+#include "naaice.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -178,7 +179,7 @@ int naaice_init_communication_context(
   {
     return -1;
   }
-  
+
   // Set immediate value which will be sent later as part of the data transfer.
   uint8_t *imm_bytes = (uint8_t *)calloc(3, sizeof(uint8_t));
   if (naaice_set_immediate(*comm_ctx, imm_bytes))
@@ -187,7 +188,7 @@ int naaice_init_communication_context(
   }
 
   // Initialize memory region used to construct messages sent during MRSP.
-  // Currently this is a fixed size region, the size of an advertisement + 
+  // Currently this is a fixed size region, the size of an advertisement +
   // request message.
   (*comm_ctx)->mr_local_message = (struct naaice_mr_local*) calloc(1, sizeof(struct naaice_mr_local));
   if ((*comm_ctx)->mr_local_message == NULL) {
@@ -208,7 +209,7 @@ int naaice_init_communication_context(
     port_str = (char *)malloc(128);
     snprintf(port_str, 128, "%u", port);
   }
-  
+
   // Get remote address from getaddrinfo.
   struct addrinfo *rem_addr = NULL, *loc_addr = NULL;
   if (getaddrinfo(remote_ip, port_str, NULL, &rem_addr)) {
@@ -388,7 +389,7 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
     return -1;
   }
   else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
-    //FM What to do here? is this an error state in this case? Check what needs 
+    //FM What to do here? is this an error state in this case? Check what needs
     // to be cleaned up in which state...
     // We're not expecting disconnect at this point, so we should exit.
     fprintf(stderr, "RDMA disconnected by server.\n");
@@ -532,7 +533,7 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
       .recv_cq = comm_ctx->cq,
       // Exceeding the maximum number of wrs (sometimes by a lot more than 1)
       // will lead to an ENOMEM error in ibv_post_send()
-      // TODO: Maybe investigate memory foot print and choose a low number if not doing data transfer performance measurement 
+      // TODO: Maybe investigate memory foot print and choose a low number if not doing data transfer performance measurement
       .cap =
           {.max_send_wr = RX_DEPTH,
            .max_recv_wr = RX_DEPTH,
@@ -541,6 +542,18 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx){
       // DEFINE COMMUNICATION TYPE!
       .qp_type = IBV_QPT_RC,
       .sq_sig_all = 1};
+
+    int ret;
+    struct ibv_device_attr device_attr;
+    ret = ibv_query_device(comm_ctx->ibv_ctx, &device_attr);
+    if (ret) {
+        fprintf(stderr, "Failed to query device\n");
+    }
+
+    printf("Device capabilities:\n");
+    printf("  Max CQ size (max_cqe): %u\n", device_attr.max_cqe);
+    printf("max_qp_wr: %u\n", device_attr.max_qp_wr);
+
 
   // Make a queue pair, checking for allocation success.
   debug_print("Making queue pair.\n");
@@ -573,7 +586,7 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx) {
   }
 
   // Register the memory region used for MRSP.
-  comm_ctx->mr_local_message->ibv = 
+  comm_ctx->mr_local_message->ibv =
     ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_message->addr,
       MR_SIZE_MRSP, (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
   if (comm_ctx->mr_local_message->ibv == NULL) {
@@ -804,17 +817,16 @@ int naaice_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
 int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx) {
 
-  //FM TODO: Error handling 
+  //FM TODO: Error handling
   if(naaice_post_recv_data(comm_ctx)){
     // we encountered some error, set fncode 0
     comm_ctx->fncode = 0;
-    //If we encountered error, after sending data with fncode 0 
+    //If we encountered error, after sending data with fncode 0
     //we should exit connection
   }
 
   if(naaice_write_data(comm_ctx, comm_ctx->fncode)){
-    
-    //there's some problem in writing data. 
+    //there's some problem in writing data.
     //How do we tell the server? Some message on MRSP MR?
     //Enter error state and exit connection
   };
@@ -833,7 +845,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
   debug_print("state: %s, opcode: %s\n",
     get_state_str(comm_ctx->state),
     get_ibv_wc_opcode_str(wc->opcode));
-  
+
   // If the work completion status is not success, return with error.
   if (wc->status != IBV_WC_SUCCESS) {
     fprintf(stderr,
@@ -856,7 +868,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
   // If we're waiting for an MRSP response from the NAA...
   else if (comm_ctx->state == MRSP_RECEIVING) {
-  
+
     // If we have received a write without immediate...
     if (wc->opcode == IBV_WC_RECV) {
 
@@ -1033,7 +1045,7 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx){
 
   struct ibv_cq *ev_cq;
   void *ev_ctx;
-  
+
   // Ensure completion channel is in blocking mode.
   int fd_flags = fcntl(comm_ctx->comp_channel->fd, F_GETFL);
   if (fcntl(comm_ctx->comp_channel->fd, F_SETFL, fd_flags & ~O_NONBLOCK) < 0) {
@@ -1131,7 +1143,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
     fprintf(stderr, "Failed to get completion queue event.\n");
     return -1;
   }
-  
+
   // Ack the completion event.
   ibv_ack_cq_events(ev_cq, 1);
 
@@ -1386,9 +1398,9 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       curr->size = htonl(comm_ctx->mr_local_data[i].ibv->length);
       curr->rkey = htonl(comm_ctx->mr_local_data[i].ibv->rkey);
       curr->mr_info_bytearray[7] = 0;
-      
+
       // MR flag may indicate if the region should only be sent once.
-      if (comm_ctx->mr_local_data[i].single_send) { 
+      if (comm_ctx->mr_local_data[i].single_send) {
         curr->mr_info_bytearray[7] |= MRFLAG_SINGLESEND; }
 
       // MR flag may indicate if MR is an input.
@@ -1413,7 +1425,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
         comm_ctx->mr_local_data[i].ibv->length,
         comm_ctx->mr_local_data[i].ibv->rkey,
         comm_ctx->mr_peer_data[i].addr);
-      
+
 
       // Update packet size.
       msg_size += sizeof(struct naaice_mr_advertisement_request);
@@ -1434,7 +1446,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       // is just 0. No rkey is required, so that's also just 0.
       curr->addr = htonll(0);
       curr->size = htonl(comm_ctx->mr_internal[i].size);
-      curr->rkey = htonl(0); 
+      curr->rkey = htonl(0);
       curr->mr_info_bytearray[7] = MRFLAG_INTERNAL;
 
       // During set_internal_mrs, the peer memory region addresses are checked
@@ -1453,7 +1465,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
       msg_size += sizeof(struct naaice_mr_advertisement_request);
     }
   }
-    
+
   // If we're sending an error message...
   if (message_type == MSG_MR_ERR) {
 
@@ -1461,7 +1473,7 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
     struct naaice_mr_error *err =
         (struct naaice_mr_error*) (msg + sizeof(struct naaice_mr_hdr));
 
-    // TODO: Specify meanings of different error codes. 
+    // TODO: Specify meanings of different error codes.
     // Currently only use one (non-zero).
     err->code = errorcode;
 
@@ -1594,7 +1606,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
     // Construct write requests and scatter/gather elements for all memory
     // regions to be sent.
     uint8_t mr_idx = 0;
-    for (int i = 0; (i < comm_ctx->no_local_mrs) 
+    for (int i = 0; (i < comm_ctx->no_local_mrs)
       && (mr_idx < comm_ctx->no_input_mrs); i++) {
 
       if (comm_ctx->mr_local_data[i].to_write) {
@@ -1604,7 +1616,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
         wr[mr_idx].num_sge = 1;
         wr[mr_idx].wr.rdma.remote_addr = comm_ctx->mr_peer_data[i].addr;
         wr[mr_idx].wr.rdma.rkey = comm_ctx->mr_peer_data[i].rkey;
-        
+
         // If this is the last memory region to be written, do a write with
         // immediate. The immediate value holds the function code as well as
         // 24 bits configured using naaice_set_immediate.
@@ -1670,62 +1682,45 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
   return 0;
 }
 
-int naaice_post_recv_data(struct naaice_communication_context *comm_ctx) {
+int naaice_post_recv_data(
+  struct naaice_communication_context *comm_ctx) {
 
-  debug_print("In naaice_post_recv_data\n");
+  /**
+  * Hint: We only have to post one receive request for the data transfer, since
+  * we only get one completion queue element for an immediate write of the
+  * server application. Posting multiple receive requests will lead to errors
+  * when using more than one output memory region with a large amount of RPC
+  * calls.  This happends due to an overflow of the receive queue.
+  */
 
-  // Construct the receive request and scatter/gather elements.
-  // We expect a write back from each peer memory region indicated as outputs
-  // with the to_write flag. This can be set with naaice_set_output_mr.
+  debug_print("In naaice_swnaa_post_recv_data\n");
 
-  // Get number of output regions to be recieved.
-  uint8_t n_output_mrs = 0;
-  for (unsigned int i = 0; i < comm_ctx->no_peer_mrs; i++) {
-    if (comm_ctx->mr_peer_data[i].to_write) { n_output_mrs++; }
-  }
+  // DYL: Changed this back to constructing only a single, empty recv request.
+  // Information about input and output regions is recieved from the host
+  // during MRSP in the announcement packet MR flags.
 
-  // We will have one write request (and one scatter/gather elements) for
-  // each memory region to be written.
-  struct ibv_recv_wr wr[n_output_mrs], *bad_wr = NULL;
-  struct ibv_sge sge[n_output_mrs];
+  // Construct a single, simple recv request.
+  struct ibv_recv_wr wr;
+  struct ibv_recv_wr *bad_wr = NULL;
+  struct ibv_sge sge;
 
-  // Construct write requests and scatter/gather elements for all memory
-  // regions to be sent.
-  int8_t mr_idx = 0;
-  for (int i = 0; (i < comm_ctx->no_local_mrs) && (mr_idx < n_output_mrs); i++) {
+  memset(&wr, 0, sizeof(struct ibv_recv_wr));
+  wr.wr_id = 0;
+  wr.sg_list = &sge;
+  wr.num_sge = 1;
+  wr.next = NULL;
 
-    if (comm_ctx->mr_peer_data[i].to_write) {
+  sge.addr = 0;
+  sge.length = 0;
+  sge.lkey = comm_ctx->mr_local_data[0].ibv->lkey;
 
-      memset(&wr[mr_idx], 0, sizeof(wr[mr_idx]));
-      wr[mr_idx].wr_id = mr_idx;
-      wr[mr_idx].sg_list = &sge[mr_idx];
-      wr[mr_idx].num_sge = 1;
-      wr[mr_idx].next = &wr[mr_idx+1];
+  debug_print("recv addr: %p, length: %d, lkey %d\n",
+    (void*) sge.addr, sge.length, sge.lkey);
 
-      // If this is the last memory region to be recieved, then the wr.next
-      // field should be null. Otherwise it points to the next request.
-      if(mr_idx == n_output_mrs-1) {
-        wr[mr_idx].next = NULL;
-      }
-      else {
-        wr[mr_idx].next = &wr[mr_idx+1];
-      }
-
-      sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
-      sge[mr_idx].length = comm_ctx->mr_local_data[i].ibv->length;
-      sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
-
-      debug_print("recv addr: %p, length: %d, lkey %d\n",
-        (void*) sge[mr_idx].addr, sge[mr_idx].length, sge[mr_idx].lkey);
-
-      mr_idx++;
-    }
-  }
-
-  // Post the receive.
-  int post_result = ibv_post_recv(comm_ctx->qp, &wr[0], &bad_wr);
+  // Post the recieve.
+  int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
-    fprintf(stderr, "Posting receive for data failed with error %d.\n",
+    fprintf(stderr, "Posting recieve for data failed with error %d.\n",
       post_result);
     return post_result;
   }

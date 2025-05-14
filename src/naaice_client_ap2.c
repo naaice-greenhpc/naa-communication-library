@@ -26,7 +26,7 @@
 /* Dependencies **************************************************************/
 
 #include "debug.h"
-#include <naaice_ap2.h>
+#include "naaice_ap2.h"
 
 
 /* Constants *****************************************************************/
@@ -35,7 +35,7 @@
 #define FNCODE 1
 
 // Number of times to repeat the RPC.
-#define N_INVOKES 3
+#define N_INVOKES 255
 
 
 /* Main **********************************************************************/
@@ -151,6 +151,7 @@ int main(int argc, char *argv[]) {
     return -1;
   };
 
+ 
 
   // Repeat RPC N_INVOKES times.
   for (int i = 0; i < N_INVOKES; i++) {
@@ -163,23 +164,27 @@ int main(int argc, char *argv[]) {
     }
 
     struct naa_status status;
-    // Do blocking and non-blocking wait/test for alternatingly
-    if(i % 2 == 0){
-      // naa_test: keep tabs on the status of the RPC.
-      bool flag = false;
-      while (!flag) {
-        if (naa_test(handle, &flag, &status)) {
-          fprintf(stderr, "Error occurred during naa_test. Exiting.\n");
-          return -1;
-        }
-      }
-    }
-    else{
-      if (naa_wait(handle, &status)) {
+    if (naa_wait(handle, &status)) {
         fprintf(stderr, "Error occurred during naa_wait. Exiting.\n");
         return -1;
       }
-    }
+    // Do blocking and non-blocking wait/test for alternatingly
+    // if(i % 2 == 0){
+    //   // naa_test: keep tabs on the status of the RPC.
+    //   bool flag = false;
+    //   while (!flag) {
+    //     if (naa_test(handle, &flag, &status)) {
+    //       fprintf(stderr, "Error occurred during naa_test. Exiting.\n");
+    //       return -1;
+    //     }
+    //   }
+    // }
+    // else{
+    //   if (naa_wait(handle, &status)) {
+    //     fprintf(stderr, "Error occurred during naa_wait. Exiting.\n");
+    //     return -1;
+    //   }
+    // }
     printf("Bytes received: %d, RPC Return code: %d\n",
            status.bytes_received, status.naa_error);
   }

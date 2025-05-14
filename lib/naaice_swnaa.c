@@ -28,10 +28,10 @@
 
 /* Dependencies **************************************************************/
 
-#include <debug.h>
+#include "debug.h"
 #include <errno.h>
-#include <naaice_swnaa.h>
-#include <naaice.h>
+#include "naaice_swnaa.h"
+#include "naaice.h"
 
 /* Helper Functions **********************************************************/
 
