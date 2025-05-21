@@ -32,6 +32,11 @@
 
 #include "naaice.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 
 /* Public Functions **********************************************************/
 
@@ -52,7 +57,7 @@
  *    and returned by this function.
  *  const char *port:
  *    String specifying connection port, ex. "12345".
- * 
+ * about:blank#blocked
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -327,5 +332,9 @@ int naaice_swnaa_do_data_transfer(
  */
 int naaice_swnaa_poll_cq_nonblocking(
   struct naaice_communication_context *comm_ctx);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

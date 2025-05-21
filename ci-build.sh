@@ -1,11 +1,12 @@
 set -e
 ROOT_DIR=$(pwd)
 
-[ -e bin ] && rm -r bin
-mkdir bin && cd bin
+[ -e build ] && rm -r build
+mkdir build
+cmake -S . -B build
+cmake --build build
 
-make -C .. release
-
+cd "$ROOT_DIR/build/src/"
 if [ ! -e naaice_client ]; then
     echo "Error: naaice_client is missing"
     exit 1  # Exit with a non-zero status to indicate failure

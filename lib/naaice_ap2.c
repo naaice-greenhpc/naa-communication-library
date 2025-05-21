@@ -24,6 +24,7 @@
 /* Dependencies **************************************************************/
 
 #include "naaice_ap2.h"
+#include "ulog.h"
 
 /* Constants *****************************************************************/
 
@@ -106,7 +107,7 @@ int check_params(unsigned int function_code,
 				}
 				else {
 					// Number of params is wrong.
-					fprintf(stderr, "Invalid number of parameters provided.\n");
+					log_error( "Invalid number of parameters provided.\n");
 					return -1;
 				}
 			}
@@ -115,7 +116,7 @@ int check_params(unsigned int function_code,
 
 	// If flag is still false, this means that function_code is invalid.
 	if (!params_valid) {
-		fprintf(stderr, "Invalid function code provided.\n");
+		log_error("Invalid function code provided.\n");
 		return -1;
 	} 
 
@@ -220,7 +221,7 @@ int naa_create(unsigned int function_code,
         param_exists = true;
         if (input_params[i].single_send == true) {
           if (naaice_set_singlesend_mr(handle->comm_ctx, j)) {
-            fprintf(stderr, "Error on setting constant memory regions (single "
+            log_error("Error on setting constant memory regions (single "
                             "send regions).\n");
             return -1;
           };
@@ -232,7 +233,7 @@ int naa_create(unsigned int function_code,
       }
     }
     if (!param_exists) {
-      fprintf(stderr, "Requested input parameter which was not previously "
+      log_error( "Requested input parameter which was not previously "
                       "passed to naaice_init_communication_context.\n");
       return -1;
     }
@@ -247,7 +248,7 @@ int naa_create(unsigned int function_code,
 				param_exists = true;
 				if(output_params[i].single_send == true){
 					if(naaice_set_singlesend_mr(handle->comm_ctx, j)){
-						fprintf(stderr, "Error on setting constant memory regions (single send regions).\n");
+						log_error( "Error on setting constant memory regions (single send regions).\n");
 						return -1;
 					};
 				}
@@ -256,7 +257,7 @@ int naa_create(unsigned int function_code,
 			}
 		}
 		if (!param_exists) {
-			fprintf(stderr, "Requested output parameter which was not previously "
+			log_error( "Requested output parameter which was not previously "
 				"passed to naaice_init_communication_context.\n");
 			return -1;
 		}
@@ -291,7 +292,7 @@ int naa_test(naa_handle *handle, bool *flag,
 	if (naaice_poll_cq_nonblocking(handle->comm_ctx)) { return -1; }
 
 	// Update completion flag.
-	if (handle->comm_ctx->state >= FINISHED){
+	if (handle->comm_ctx->state >= NAAICE_FINISHED){
 		*flag = true;
 	}
 	else {

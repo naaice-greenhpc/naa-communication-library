@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <time.h>
+#include <ulog.h>
 
 
 /* Constants *****************************************************************/
@@ -54,11 +55,11 @@
  */
 int main(int argc, char *argv[]) {
 
-  printf("-- Handling Command Line Arguments --\n");
+  log_info("-- Handling Command Line Arguments --\n");
   
   // Check number of arguments.
   if ((argc != 4) && (argc != 5)) {
-    fprintf(stderr, "Wrong number of arguments. use: "
+    log_error("Wrong number of arguments. use: "
       "./naaice_client [local-ip] remote-ip number-of-regions 'region-sizes'\n"
       "Example: ./naaice_client 10.3.10.134 10.3.10.135 1 '1024'\n");
     return -1;
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
   char *ptr;
   long int params_amount = strtol(argv[2+arg_offset], &ptr, 10);
   if(params_amount < 1 || params_amount > MAX_MRS) {
-    fprintf(stderr, "Chosen number of arguments %ld is not supported.\n",
+    log_error( "Chosen number of arguments %ld is not supported.\n",
       params_amount);
     return -1;
   }
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
     token = strtok(NULL, " ");
     if(token == NULL) {
       if(i < params_amount) {
-        fprintf(stderr,"Higher number of memory regions requested "
+        log_error("Higher number of memory regions requested "
           "than size information given.\n");
         return -1;
       }
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]) {
 
     params[i] = (char*) malloc(param_sizes[i] * sizeof(char));
     if (params[i] == NULL) {
-      fprintf(stderr, "Failed to allocate memory for parameters.\n");
+      log_error("Failed to allocate memory for parameters.\n");
       return -1;
     }
 
@@ -135,8 +136,8 @@ int main(int argc, char *argv[]) {
   struct naaice_communication_context *comm_ctx = NULL;
 
   // Initialize the communication context struct.
-  if (naaice_init_communication_context(&comm_ctx, param_sizes, params,
-    params_amount, FNCODE, local_ip, argv[1+arg_offset], CONNECTION_PORT)) {
+  if (naaice_init_communication_context(&comm_ctx, 0, param_sizes, params,
+    params_amount, 0, 0, FNCODE, local_ip, argv[1+arg_offset], CONNECTION_PORT)) {
       return -1;
   }
 
@@ -153,7 +154,7 @@ int main(int argc, char *argv[]) {
   if (naaice_set_output_mr(comm_ctx, 1)) { return -1; }
 
   // Then, register the memory regions with IBV.
-  printf("-- Registering Memory Regions with IBV --\n");
+  log_info("-- Registering Memory Regions with IBV --\n");
   if (naaice_register_mrs(comm_ctx)) { return -1; }
 
   // Also configure internal memory regions.

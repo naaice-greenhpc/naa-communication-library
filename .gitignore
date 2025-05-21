@@ -48,8 +48,9 @@
 # lib output
 lib/*.o
 
-# bin output
+# bin/build output
 bin/*
+build/*
 
 # src output
 src/*.o

@@ -47,6 +47,10 @@
 #include <stdbool.h>
 #include "naaice.h"   // Included here to get enum naaice_communication_state.
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Enums **********************************************************************/
 enum naa_error {
   NAA_SUCCESS = 0x00,    // Successful RPC.
@@ -141,5 +145,9 @@ int naa_wait(naa_handle *handle, naa_status *status);
  * @return int if sucessful, -1 if not.
  */
 int naa_finalize(naa_handle *handle);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
