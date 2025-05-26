@@ -356,24 +356,6 @@ int naaice_swnaa_receive_data_transfer(
     return -1;
   }
 
-  struct pollfd my_pollfd;
-  int ms_timeout = 1;
-  // Poll the completion channel, returning with flag unchanged if nothing
-  // is received.
-  my_pollfd.fd = comm_ctx->ev_channel->fd;
-  my_pollfd.events = POLLIN;
-  my_pollfd.revents = 0;
-
-  // Nonblocking: if poll times out, just return.
-  int poll_result = poll(&my_pollfd, 1, ms_timeout);
-  if (poll_result < 0) {
-    log_error( "Error occured when polling completion channel.\n");
-    return -1;
-  } else if (poll_result > 0) {
-    int result = naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
-    return result;
-  }
-
   // Else continue, there was no event.
   // Update state.
   comm_ctx->state = NAAICE_DATA_RECEIVING;
@@ -389,17 +371,10 @@ int naaice_swnaa_receive_data_transfer(
   while (comm_ctx->state == NAAICE_DATA_RECEIVING) {
     time(&end);
     if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) { return -1;}
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)) {return -1;};
     if (difftime(end, start) > comm_ctx->timeout) {
       log_warn("Timeout while receiving data from client.\n");
       return -1;
-    }
-    int poll_result = poll(&my_pollfd, 1, ms_timeout);
-    if (poll_result < 0) {
-      log_warn( "Error occured when polling completion channel.\n");
-      return -1;
-    } else if (poll_result > 0) {
-      int result = naaice_swnaa_poll_and_handle_connection_event(comm_ctx);
-      return result;
     }
   }
 
@@ -608,7 +583,7 @@ int naaice_swnaa_poll_cq_nonblocking(
   }
 
   struct pollfd my_pollfd;
-  int ms_timeout = 1000;
+  int ms_timeout = 0;
   // Poll the completion channel, returning with flag unchanged if nothing
   // is received.
   my_pollfd.fd = comm_ctx->comp_channel->fd;
