@@ -17,6 +17,14 @@ include(ExternalProject)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
+
+set(SOURCE_IP "10.3.10.41" CACHE STRING "Source IP Address")
+set(REMOTE_IP "10.3.10.42" CACHE STRING "Remote IP Address")
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/lib/config.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/lib/config.h")
+
 if(USE_EMA)
 ExternalProject_Add(
     ema

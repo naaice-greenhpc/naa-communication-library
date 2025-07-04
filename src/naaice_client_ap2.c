@@ -35,7 +35,7 @@
 #define FNCODE 1
 
 // Number of times to repeat the RPC.
-#define N_INVOKES 255
+#define N_INVOKES 100
 
 
 /* Main **********************************************************************/
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
   // simulations, for example.
   int input_amount = 4;
   struct naa_param_t input_params[] = {
-    {(void *) params[0], param_sizes[0], true}, // single send option enabled
+    {(void *) params[0], param_sizes[0], false}, // single send option enabled
     {(void *) params[1], param_sizes[1], false},
     {(void *) params[2], param_sizes[2], false},
     {(void *) params[3], param_sizes[3], false}
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
   printf("-- Setting Up Connection --\n");
   if (naa_create(FNCODE, input_params, input_amount,
       output_params, output_amount, handle)) {
-    log_error("Error durning naa_create. Exiting.\n");
+    log_error("Error during naa_create. Exiting.\n");
     return -1;
   };
 

@@ -25,6 +25,7 @@
 
 #include "naaice_ap2.h"
 #include "ulog.h"
+#include "config.h"
 
 /* Constants *****************************************************************/
 
@@ -37,8 +38,8 @@
 
 // TODO: Provided by RMS in the future.
 // UP IPs.
-static const char *LOCAL_IP = "10.3.10.41";
-static const char *REMOTE_IP = "10.3.10.42";
+static const char *LOCAL_IP = SOURCE_IP;
+static const char *REMOTE_IP = TARGET_IP;
 
 // ZIB IPs.
 //static const char *LOCAL_IP = ""; // Indicate that we don't provide the
@@ -83,6 +84,10 @@ const struct naa_routineset_config naa_routinesets[N_NAA_ROUTINESETS] =
 int get_network_params(char *local_ip, char *remote_ip, uint16_t *port) {
 	// For now, dummy implementation:
 	// Just return some locally defined constants.
+
+	printf("Using local IP: %s, remote IP: %s, port: %d\n", 
+		LOCAL_IP, REMOTE_IP, CONNECTION_PORT);
+
 	strcpy(local_ip, LOCAL_IP);
 	strcpy(remote_ip, REMOTE_IP);
 	*port = CONNECTION_PORT;
@@ -134,7 +139,7 @@ int naa_create(unsigned int function_code,
 
   //check if we have regions that are input and ouput	
   bool output_as_input[output_amount];
-  for (int i = 0; i < output_amount; i++) {
+  for (unsigned int i = 0; i < output_amount; i++) {
     output_as_input[i] = false;
   }
 

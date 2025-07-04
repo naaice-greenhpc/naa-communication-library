@@ -77,7 +77,7 @@ const char* get_state_str(enum naaice_communication_state state) {
 }
 
 void alarm_handler(int signo) {
-  log_warn( "Timeout reached.\n");
+  log_warn( "Timeout reached. Signal: %d\n", signo);
 }
 
 // Used to generate dummy requested NAA memory region addresses.
@@ -1527,7 +1527,7 @@ int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx, int 
     return 0;
   }
   
-  if(number_bytes > comm_ctx->mr_local_data[mr_idx].ibv->length){
+  if((size_t)number_bytes > comm_ctx->mr_local_data[mr_idx].ibv->length){
     log_error( "Number of specified bytes larger than size of memory region!\n");
     return -1;
   }
