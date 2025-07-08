@@ -12,6 +12,8 @@ numpy = "^2.2.2"
 tenacity = "^9.0.0"
 matplotlib = "^3.10.0"
 pandas = "^2.2.3"
+black = "^25.1.0"
+isort = "^6.0.0"
 
 
 [build-system]

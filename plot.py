@@ -5,12 +5,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib import ticker
 
-def formatter_byte(num: float, pos: None=None):
+
+def formatter_byte(num: float, pos: None = None):
     for unit in ["B", "kiB", "MiB", "GiB"]:
         if num < 1024:
             return f"{num:g} {unit}"
         num /= 1024
     return f"{num:g} TiB"
+
 
 def plot(host2naa: pd.DataFrame, host2host: pd.DataFrame):
     """
@@ -43,7 +45,10 @@ def plot(host2naa: pd.DataFrame, host2host: pd.DataFrame):
 
     # ax1: setup time loglog
 
-    for column, label in [("h2n_setup_time", "host2naa"), ("h2h_setup_time", "host2host")]:
+    for column, label in [
+        ("h2n_setup_time", "host2naa"),
+        ("h2h_setup_time", "host2host"),
+    ]:
         ax1.loglog(mean.index.values, mean[column].values, label=label)  # type: ignore
         ax1.fill_between(
             mean.index.values,
@@ -61,7 +66,10 @@ def plot(host2naa: pd.DataFrame, host2host: pd.DataFrame):
     ax1.set_xlabel("Memory Region Size")
     ax1.legend()
 
-    for column, label in [("h2n_throughput", "host2naa"), ("h2h_throughput", "host2host")]:
+    for column, label in [
+        ("h2n_throughput", "host2naa"),
+        ("h2h_throughput", "host2host"),
+    ]:
         ax2.semilogx(mean.index.values, mean[column].values, label=label)  # type: ignore
         ax2.fill_between(
             mean.index.values,
@@ -79,7 +87,10 @@ def plot(host2naa: pd.DataFrame, host2host: pd.DataFrame):
     ax2.set_xlabel("Memory Region Size")
     ax2.legend()
 
-    for column, label in [("h2n_transfer_time", "host2naa"), ("h2h_transfer_time", "host2host")]:
+    for column, label in [
+        ("h2n_transfer_time", "host2naa"),
+        ("h2h_transfer_time", "host2host"),
+    ]:
         ax3.loglog(mean.index.values, mean[column].values, label=label)  # type: ignore
         ax3.fill_between(
             mean.index.values,
