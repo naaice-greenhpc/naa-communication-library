@@ -506,7 +506,9 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
       // Otherwise, we can set the function code based on the 7 least
       // significant bits of the immediate value
-      comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data) & 0x7F;;
+      comm_ctx->fncode = (uint8_t) ntohl(wc->imm_data) & 0x7F;
+      comm_ctx->immediate = ntohl(wc->imm_data) & 0xFFFFFF00;
+
 
       // Print all information about the work completion.
       /*
