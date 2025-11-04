@@ -39,6 +39,7 @@ const char* get_state_str(enum naaice_communication_state state);
 
 int naaice_swnaa_init_communication_context(
   struct naaice_communication_context **comm_ctx, uint16_t port) {
+  ulog_set_level(LOG_LEVEL);
 
   log_debug("In naaice_swnaa_init_communication_context\n");
 

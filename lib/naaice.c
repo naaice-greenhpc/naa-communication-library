@@ -103,6 +103,7 @@ int naaice_init_communication_context(
     unsigned int internal_mr_amount, size_t *internal_mr_sizes, uint8_t fncode,
     const char *local_ip, const char *remote_ip, uint16_t port)
 {
+  ulog_set_level(LOG_LEVEL);
 
   log_debug("In naaice_init_communication_context\n");
 
