@@ -39,9 +39,8 @@ const char* get_state_str(enum naaice_communication_state state);
 
 int naaice_swnaa_init_communication_context(
   struct naaice_communication_context **comm_ctx, uint16_t port) {
-  ulog_set_level(LOG_LEVEL);
 
-  log_debug("In naaice_swnaa_init_communication_context\n");
+  log_trace("In naaice_swnaa_init_communication_context\n");
 
   // Allocate memory for the communication context.
   log_debug("Allocating communication context.\n");
@@ -138,7 +137,7 @@ int naaice_swnaa_init_communication_context(
 int naaice_swnaa_setup_connection(
   struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_setup_connection\n");
+  log_trace("In naaice_swnaa_setup_connection\n");
 
   // Loop handling events and updating the completion flag until finished.
   while (comm_ctx->state < NAAICE_CONNECTED) {
@@ -151,7 +150,7 @@ int naaice_swnaa_setup_connection(
 int naaice_swnaa_poll_and_handle_connection_event(
     struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_poll_and_handle_connection_event\n");
+  log_trace("In naaice_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
@@ -194,7 +193,7 @@ int naaice_swnaa_poll_and_handle_connection_event(
 int naaice_swnaa_handle_connection_requests(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
 
-  log_debug("In naaice_handle_connection_requests\n");
+  log_trace("In naaice_handle_connection_requests\n");
 
   if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
     struct rdma_conn_param cm_params;
@@ -242,7 +241,7 @@ int naaice_swnaa_handle_connection_established(
 
 int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_init_mrsp\n");
+  log_trace("In naaice_swnaa_init_mrsp\n");
 
   // Wait for memory region announcement and request from the host.
   naaice_swnaa_post_recv_mrsp(comm_ctx);
@@ -253,7 +252,7 @@ int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
                         struct rdma_cm_event *ev) {
 
-  log_debug("In naaice_handle_error\n");
+  log_trace("In naaice_handle_error\n");
 
   // Returns -1 and prints an error message if the event is one of
   // the following identified error types.
@@ -288,7 +287,7 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
 }
 int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_do_mrsp\n");
+  log_trace("In naaice_swnaa_do_mrsp\n");
 
   // Update state.
   comm_ctx->state = NAAICE_MRSP_RECEIVING;
@@ -323,7 +322,7 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
 int naaice_swnaa_do_data_transfer(
   struct naaice_communication_context *comm_ctx,uint8_t errorcode) {
 
-  log_debug("In naaice_swnaa_do_data_transfer\n");
+  log_trace("In naaice_swnaa_do_data_transfer\n");
 
   // Update state.
   comm_ctx->state = NAAICE_DATA_SENDING;
@@ -345,7 +344,7 @@ int naaice_swnaa_do_data_transfer(
 int naaice_swnaa_receive_data_transfer(
   struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_receive_data_transfer\n");
+  log_trace("In naaice_swnaa_receive_data_transfer\n");
 
   // Increment number of RPC calls.
   comm_ctx->no_rpc_calls++;
@@ -385,7 +384,7 @@ int naaice_swnaa_receive_data_transfer(
 int naaice_swnaa_post_recv_mrsp(
   struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_post_recv_mrsp\n");
+  log_trace("In naaice_swnaa_post_recv_mrsp\n");
 
   // Can simply call same logic used on the host side here.
   return naaice_post_recv_mrsp(comm_ctx);
@@ -394,7 +393,7 @@ int naaice_swnaa_post_recv_mrsp(
 int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_handle_work_completion\n");
+  log_trace("In naaice_swnaa_handle_work_completion\n");
 
   log_debug("state: %s, opcode: %s\n",
     get_state_str(comm_ctx->state),
@@ -572,7 +571,7 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 int naaice_swnaa_poll_cq_nonblocking(
   struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_poll_cq_nonblocking\n");
+  log_trace("In naaice_swnaa_poll_cq_nonblocking\n");
 
   struct ibv_cq *ev_cq;
   void *ev_ctx;
@@ -676,7 +675,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
   // Dylan: Yes for sure. This info should come from the config files / memory
   // management service / RMS
 
-  log_debug("In naaice_swnaa_handle_mr_announce_and_request\n");
+  log_trace("In naaice_swnaa_handle_mr_announce_and_request\n");
 
   // First read the header.
   struct naaice_mr_dynamic_hdr *dyn =
@@ -880,7 +879,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
 int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
   enum message_id message_type, uint8_t errorcode) {
 
-  log_debug("In naaice_swnaa_send_message\n");
+  log_trace("In naaice_swnaa_send_message\n");
 
   // Update state.
   comm_ctx->state = NAAICE_MRSP_SENDING;
@@ -980,7 +979,7 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
 int naaice_swnaa_post_recv_data(
   struct naaice_communication_context *comm_ctx) {
 
-  log_debug("In naaice_swnaa_post_recv_data\n");
+  log_trace("In naaice_swnaa_post_recv_data\n");
 
   // DYL: Changed this back to constructing only a single, empty recv request.
   // Information about input and output regions is recieved from the host
@@ -1021,7 +1020,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   // FM TODO: What if we have more than one region to return? For example ping_pong example
   // Just a reminder: POET is actual use case where we might write back multiple MRs
   // Allow multiple wrs? multiple return addresses?
-  log_debug("In naaice_swnaa_write_data\n");
+  log_trace("In naaice_swnaa_write_data\n");
 
   // Update state.
   comm_ctx->state = NAAICE_DATA_SENDING;
@@ -1149,7 +1148,7 @@ int naaice_swnaa_disconnect_and_cleanup(
   // FM TODO: Fix clean up: look if stuff to clean up can be derived by
   // communication state
 
-  log_debug("In naaice_swnaa_disconnect_and_cleanup\n");
+  log_trace("In naaice_swnaa_disconnect_and_cleanup\n");
 
   // Logic slightly different than on the host side:
   // All local memory regions can be freed because they do not exist in user
