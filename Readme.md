@@ -7,6 +7,8 @@ It provides two examples:
 
 Data transfer is done by RDMA WRITE operations. The memory regions for data transfer are exchanged beforehand using a new protocol. Protocol details were discussed in NAAICE work meetings in Nov 2022/Jan 2023. Memory regions are exhanged using a single RDMA SEND operation (per direction) with a dynamic message. This message can hold a variable number of announced memory regions and a request for size of memory to allocate memory regions.
 
+## Build
+
 Configuration is done by `cmake -S . -B <build-directory>`. In this phase, the following options can be set:
 - `-DCMAKE_BUILD_TYPE=Debug/Release`
 - `-DLOG_LEVEL=LOG_INFO/LOG_DEBUG/LOG_WARN/LOG_ERROR` (set the logging verbosity)
@@ -14,17 +16,38 @@ Configuration is done by `cmake -S . -B <build-directory>`. In this phase, the f
 
 Compiling is done by running `cmake --build <build-directory>`.
 
+## Testing
+
 Sample commands to run current example (requires two regions to set different input and output memory regions)
 1. Node 1 (IP `10.3.10.42`):\
-   `src/naaice_server `
-2. Node 2 (IP `10.3.10.135`):\
+   `src/naaice_server`
+2. Node 2 (IP `10.3.10.41`):\
     `src/naaice_client 10.3.10.41 10.3.10.42 3 "1024 1024 1024"`
+   The local IP can be ommited, but it might be required in case of testing on a single node.\
+    `src/naaice_client 10.3.10.42 3 "1024 1024 1024"`
 
 The port for the initial connection is fixed (but can be changed). All routines not taken from ibverbs or librdmacm libraries are named starting `naaice_*`.
  Testing for sending multiple memory regions can be sped up by changing the `MAXIMUM_TRANSFER_LENGTH`, a variable used to denote the maximum size of a single RDMA operation. By lowering the value, one can force the use of more and smaller memory regions.
 
+## Application-Level Interface (Work Package 2)
 
-### Bugs
+On the application-level interface, no host names/ip addresses are to be specified, but should be provided via environment, either manually or via the resource management system.
+The following variables are supposed to be set:
+
+- `NAA_SPEC` -- Specification of the available NAAs for the application. The specification is a sequence of possibly multiple entries that describe address of the available NAA and the accelerator's function:  `NAA_SPEC := <address>:<port>:<fn_code>:<fn_num_args>[, ...]`.
+  - `address` --  IP or resolveable hostname of the NAA
+  - `port` -- numeric port identifier
+  - `fn_code` -- numeric function code of the accelerator
+  - `fn_num_args` -- number of parameters for the aforementioned function code
+- `NAA_LOCAL_IP` -- might be used to specify the IP address or associated hostname of the local interface through which the communication is going to take place
+
+Having the `naaice_server` running as shown in the example of the previous section, the client that the application-level interface should be invoked as follows:
+
+```
+NAA_SPEC=10.3.10.42:12345:1:3 src/naaice_client_ap2 4 "1024 1024 1024 1024"
+```
+
+## Bugs
 - [ ] Multiple connection from different clients to same naaice_swnaa are not possible yet
 
 ### Fixed Bugs:

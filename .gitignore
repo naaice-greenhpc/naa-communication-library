@@ -54,3 +54,5 @@ build/*
 
 # src output
 src/*.o
+
+.cache

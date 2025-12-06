@@ -201,52 +201,42 @@ int naaice_init_communication_context(
     return -1;
   }
 
-  char *port_str = NULL; // dynamic port allocation if port_str = NULL
-  if (port > 0)
-  {
-    // Convert port to string for getaddrinfo.
-    port_str = (char *)malloc(128);
-    snprintf(port_str, 128, "%u", port);
-  }
+  // port can't be larger than 65535, so 5+1 chars are sufficient here
+  char port_str[6];
+  snprintf(port_str, sizeof(port_str) / sizeof(port_str[0]), "%u", port);
 
   // Get remote address from getaddrinfo.
-  struct addrinfo *rem_addr = NULL, *loc_addr = NULL;
+  struct addrinfo *rem_addr = NULL;
   if (getaddrinfo(remote_ip, port_str, NULL, &rem_addr)) {
     log_error("Failed to get address info for remote address.\n");
     return -1;
   }
 
+  int resolve_addr_result = 0;
+
   // Get local address from getaddrinfo, if provided.
-  if (local_ip[0] != '\0') {
+  if (local_ip != NULL && strlen(local_ip) > 0) {
+    struct addrinfo *loc_addr = NULL;
     if (getaddrinfo(local_ip, port_str, NULL, &loc_addr)) {
       log_error("Failed to get address info for local address.\n");
       return -1;
     }
-  }
-
-  // Resolve address with communication id, using rdma_resolve_addr.
-  // Provide local ip only if provided by user.
-  int resolve_addr_result = 0;
-  if (local_ip[0] != '\0') {
     log_debug("Local IP provided.\n");
     resolve_addr_result = rdma_resolve_addr(
-      rdma_comm_id, loc_addr->ai_addr, rem_addr->ai_addr,
-      TIMEOUT_RESOLVE_ADDR);
-  }
-  else {
+      rdma_comm_id, loc_addr->ai_addr, rem_addr->ai_addr, TIMEOUT_RESOLVE_ADDR);
+
+    freeaddrinfo(loc_addr);
+  } else {
     log_debug("No local IP provided.\n");
-    resolve_addr_result = rdma_resolve_addr(
-      rdma_comm_id, NULL, rem_addr->ai_addr,
-      TIMEOUT_RESOLVE_ADDR);
+    resolve_addr_result = rdma_resolve_addr(rdma_comm_id, NULL, rem_addr->ai_addr, TIMEOUT_RESOLVE_ADDR);
   }
+
   if (resolve_addr_result == -1) {
-    log_error( "Failed to resolve addresses.\n");
-    log_error( "errno: %d\n", errno);
+    log_error( "Failed to resolve addresses (errno %d).\n", errno);
     return -1;
   }
 
   // Addresses no longer needed, call freeaddrinfo on each of them.
-  freeaddrinfo(loc_addr);
   freeaddrinfo(rem_addr);
   return 0;
 }
@@ -867,7 +857,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
 
   // If we're waiting for an MRSP response from the NAA...
   else if (comm_ctx->state == NAAICE_MRSP_RECEIVING) {
-  
+
     // If we have received a write without immediate...
     if (wc->opcode == IBV_WC_RECV) {
 
@@ -1018,7 +1008,7 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
       // If no error, go to finished state.
       comm_ctx->state = NAAICE_FINISHED;
       comm_ctx->naa_returncode = wc->imm_data;
-      comm_ctx->bytes_received = wc->byte_len;
+      comm_ctx->bytes_received += wc->byte_len;
       return 0;
     }
   }
@@ -1176,7 +1166,7 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   // Request completion channel notifications for the next event.
   if (ibv_req_notify_cq(comm_ctx->cq, 1)) {
     log_error(
-        
+
         "Failed to request completion channel notifications on completion "
         "queue.\n");
     return -1;
@@ -1514,7 +1504,7 @@ int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx, int 
     log_error( "Index of memory region is out if bounds!\n");
     return -1;
   }
-  
+
   if(comm_ctx->mr_local_data[mr_idx].ibv == NULL){
     log_error( "Memory regions are not yet registered. Please call "
                     "function after naaice_register_mrs!\n");
@@ -1526,14 +1516,14 @@ int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx, int 
     comm_ctx->mr_local_data[mr_idx].size = comm_ctx->mr_local_data[mr_idx].ibv->length;
     return 0;
   }
-  
+
   if((size_t)number_bytes > comm_ctx->mr_local_data[mr_idx].ibv->length){
     log_error( "Number of specified bytes larger than size of memory region!\n");
     return -1;
   }
-  
+
   comm_ctx->mr_local_data[mr_idx].size = number_bytes;
-  
+
 
   return 0;
 }

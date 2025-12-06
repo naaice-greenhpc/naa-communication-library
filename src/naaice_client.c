@@ -1,27 +1,27 @@
 /**************************************************************************//**
  *
- *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM  
- *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7  
- *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d    
- *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM    
- *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  , 
- *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M 
- *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM 
- * 
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
  *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
- * 
+ *
  * naaice_client.c
  *
  * Application implementing a basic use case of the AP1 NAAICE communication
  * layer.
- * 
+ *
  * For use in conjunction with naaice_server.c.
- * 
+ *
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
- * 
+ *
  * 26-01-2024
- * 
+ *
  *****************************************************************************/
 
 /* Dependencies **************************************************************/
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   ulog_set_level(LOG_LEVEL);
 
   log_info("-- Handling Command Line Arguments --\n");
-  
+
   // Check number of arguments.
   // TODO add command line parser getopt
   if ((argc != 4) && (argc != 5)) {
@@ -66,9 +66,9 @@ int main(int argc, char *argv[]) {
   };
 
   // Check if optional local IP argument was provided.
-  char empty_str[1] = "";
   int arg_offset = (argc == 4) ? 0 : 1;
-  char *local_ip = (argc == 4) ? empty_str : argv[1];
+  char *local_ip = (argc == 4) ? NULL : argv[1];
+  char *remote_ip = argv[1+arg_offset];
 
   // Check against maximum number of memory regions.
   char *ptr;
@@ -78,6 +78,8 @@ int main(int argc, char *argv[]) {
       params_amount);
     return -1;
   }
+
+  log_debug("Connecting to %s from %s, using %d memory regions", remote_ip, local_ip, params_amount);
 
   // Get sizes of memory regions from command line.
   size_t param_sizes[params_amount];
@@ -119,14 +121,14 @@ int main(int argc, char *argv[]) {
     params[i] = (char*) memset(params[i], i, param_sizes[i]);
   }
 
-  // Communication context struct. 
+  // Communication context struct.
   // This will hold all information necessary for the connection.
   log_info("-- Initializing Communication Context --\n");
   struct naaice_communication_context *comm_ctx = NULL;
 
   // Initialize the communication context struct.
   if (naaice_init_communication_context(&comm_ctx, 0, param_sizes, params,
-    params_amount, 0, 0, FNCODE, local_ip, argv[1+arg_offset], CONNECTION_PORT)) {
+    params_amount, 0, 0, FNCODE, local_ip, remote_ip, CONNECTION_PORT)) {
       return -1;
   }
 
@@ -162,7 +164,7 @@ int main(int argc, char *argv[]) {
 
   // Set immediate value which can be used for testbed configuration.
   uint8_t imm_bytes[4] = {0, 0, 0, 0};
- 
+
 
   // Then, register the memory regions with IBV.
   log_info("-- Registering Memory Regions with IBV --\n");
@@ -191,7 +193,7 @@ int main(int argc, char *argv[]) {
     // reset the number of bytes to be sent from the second memory region to the
     // full size of the memory region
     if (naaice_set_bytes_to_send(comm_ctx, 1, 0)) { return -1;}
-    
+
   }
 
   // Disconnect and cleanup.

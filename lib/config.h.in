@@ -1,4 +1,0 @@
-#pragma once
-
-#define SOURCE_IP "@SOURCE_IP@"
-#define TARGET_IP "@REMOTE_IP@"

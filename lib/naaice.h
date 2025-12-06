@@ -1,65 +1,65 @@
 /**************************************************************************//**
  *
- *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM  
- *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7  
- *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d    
- *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM    
- *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  , 
- *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M 
- *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM 
- * 
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
  *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
- * 
+ *
  * naaice.h
  *
  * Interface for NAAICE AP1 communication layer.
- * 
+ *
  * Acronyms used in the NAAICE documentation:
  *  MR: Memory Region
  *  MRSP: Memory Region Setup Protocol
  *  RPC: Remote Procedure Call
  *  RDMA: Remote Direct Memory Access
  *  IBV: InfiniBand Verbs
- * 
+ *
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
- * 
+ *
  * 26-01-2024
- * 
+ *
  *****************************************************************************/
 
 #ifndef NAAICE_H
 #define NAAICE_H
 
-/** 
+/**
  * TODO:
- * 
+ *
  * (functionality)
- * 
+ *
  * - Consider the use of posix_memalign in naaice_init_communication_context.
  *    This is a reallocation of the input parameters. Should we instead
  *    require that the user ensure memory alignment, or find a way to ensure it
  *    without reallocation?
  *    Aligned memory isn't strictly necessary, it just has some performance implications
- * 
+ *
  * - Add timeouts.
  *
  * - Handle errors better, utilizing errno and ERROR state in state machine.
- * 
+ *
  * (style)
- * 
+ *
  * - Unify some of the packet structs used in naaice_send_message, so that a
  *    single type can be used rather than concatenating headers, for example.
- * 
+ *
  * - Make type usage more uniform, i.e. single types for MR addr pointers and
  *    sizes.
- * 
+ *
  */
 
 /**
  * AP1 Usage
  * For standard operation, functions should be called in the following order:
- * 
+ *
  * 1. naaice_init_communication_context
  * 2. (in any order)
  *    naaice_setup_connection
@@ -72,17 +72,17 @@
  * 4. naaice_do_mrsp
  * 5. naaice_do_data_transfer
  * 6. naaice_disconnect_and_cleanup
- * 
+ *
  * naaice_do_mrsp blocks until MRSP is complete. For a non-blocking version,
  * use instead:
- * 
+ *
  * naaice_init_mrsp
  * while (communication_context->state < MRSP_DONE) {
  *  naaice_poll_cq_nonblocking }
- * 
+ *
  * naaice_do_data_transfer blocks until MRSP is complete. For a non-blocking
  * version, use instead:
- * 
+ *
  * naaice_init_data_transfer
  * while (communication_context->state < FINISHED) {
  *  naaice_poll_cq_nonblocking }
@@ -228,7 +228,7 @@ struct naaice_mr_dynamic_hdr
 // Struct to hold information about a remote (i.e. peer) memory region.
 struct naaice_mr_peer
 {
-  union 
+  union
   {
     uint64_t addr;
     uint8_t fpgaaddr[8];
@@ -381,7 +381,7 @@ struct naaice_communication_context
   // The first byte will hold the function code, set with
   // naaice_init_communication_context. The remaining bytes can be set using
   // naaice_set_immediate.
-  union 
+  union
   {
     uint32_t immediate;
     uint8_t immediate_bytearr[4];
@@ -417,12 +417,12 @@ struct naaice_communication_context
  *    Array of sizes (in bytes) of the internal MRs.
  *  uint8_t fncode:
  *    Function code specifying which NAA routine to be called.
- *  const char *local_ip:
+ *  const char *local_address:
  *    String specifying local address, ex. "10.3.10.136".
  *    Optional argument - if NULL, not used.
  *    When running system on a loopback setup, do not provide local address.
  *    In normal operation, local address should be provided.
- *  const char *remote_ip:
+ *  const char *remote_address:
  *    String specifying remote address, ex. "10.3.10.135".
  *  uint16_t port:
  *    Value specifying connection port, ex. 12345.
@@ -435,20 +435,20 @@ int naaice_init_communication_context(
     struct naaice_communication_context **comm_ctx, uint64_t addr_offset,
     size_t *param_sizes, char **params, unsigned int params_amount,
     unsigned int internal_mr_amount, size_t *internal_mr_sizes,
-    uint8_t fncode, const char *local_ip, const char *remote_ip, uint16_t port);
+    uint8_t fncode, const char *local_address, const char *remote_address, uint16_t port);
 
 /**
  * naaice_poll_connection_event:
  *  Polls for a connection event on the RDMA event channel stored in the
  *  communication context. If a connection event is recieved, stores it
  *  in the provided event pointer.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection to be polled.
  *  struct rdma_cm_event ev: (return param)
  *    Pointer to event recieved.
- * 
+ *
  * returns:
  *  0 if sucessful (regardless of whether an event is recieved), -1 if not.
  */
@@ -461,27 +461,27 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
  *  These functions each handle a specific connection event. If the provided
  *  event's type matches the event type of the handler function, it executes
  *  the necessary logic to handle it.
- * 
+ *
  *  Subsequently, flags in the communication context are updated to represent
  *  the current status of connection establishment.
- * 
+ *
  *  The events handled by these functions are, in order:
  *  RDMA_CM_EVENT_ADDR_RESOLVED
  *  RDMA_CM_EVENT_ROUTE_RESOLVED
  *  RDMA_CM_EVENT_CONNECT_ESTABLISHED
- * 
+ *
  *  Also, the following are handled by naaice_handle_error:
  *  RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR,
  *  RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE,
  *  RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL,
  *  RDMA_CM_EVENT_DISCONNECTED.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection with events to handle.
  *  struct rdma_cm_event *ev:
  *    Pointer to event to be checked and possibly handled.
- * 
+ *
  * returns:
  *  0 if sucessful (i.e. either the event was the matching type and was handled
  *  successfully, or the event was not the matching type), -1 if not.
@@ -499,7 +499,7 @@ int naaice_handle_error(
   struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev);
 int naaice_handle_other(
-  struct naaice_communication_context *comm_ctx, 
+  struct naaice_communication_context *comm_ctx,
   struct rdma_cm_event *ev);
 
 /**
@@ -507,11 +507,11 @@ int naaice_handle_other(
  *  Polls for a connection event on the RDMA event channel stored in the
  *  communication context and handles the event if one is recieved.
  *  Simply uses the poll and handle functions above.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if sucessful (regardless of whether an event is recieved), -1 if not.
  */
@@ -522,14 +522,14 @@ int naaice_poll_and_handle_connection_event(
  * naaice_setup_connection:
  *  Loops polling for and handling connection events until connection setup
  *  is complete. Simply uses naaice_poll_and_handle_connection_event.
- * 
+ *
  *  TODO: confirm that stopping condition is correct.
  *  TODO: implement timeout.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not (due to timeout).
  */
@@ -542,11 +542,11 @@ int naaice_setup_connection(struct naaice_communication_context *comm_ctx);
  *  the single metadata memory region, and the single memory region used
  *  for MRSP.
  *  If an error occurs, the remote peer is notified via naaice_send_message.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection and memory regions.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -556,11 +556,11 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx);
  * naaice_set_parameter_mrs:
  *  Allocates and initializes structs for parameter (i.e., non-internal)
  *  memory regions. Called in naaice_init_communication_context.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection and memory regions.
- *    Should be the same as the params_amount passed to 
+ *    Should be the same as the params_amount passed to
  *    naaice_init_communication_context.
  *  unsigned int n_parameter_mrs:
  *    Number of memory regions for which structs will be allocated.
@@ -573,7 +573,7 @@ int naaice_register_mrs(struct naaice_communication_context *comm_ctx);
  *  size_t *sizes:
  *    Array of sizes of the memory regions. Should be the same as the array
  *    param_sizes passed to naaice_init_communication_context.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -587,15 +587,15 @@ int naaice_set_parameter_mrs(struct naaice_communication_context *comm_ctx,
  *  contains an input or output parameter. Inputs are written to the NAA during
  *  data transfer, and outputs are written back from the NAA. A MR can be both
  *  an input and an output.
- * 
+ *
  *  Must be called before naaice_init_mrsp.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
  *  unsigned int idx:
  *    Index of memory region to be set as input or output.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -609,17 +609,17 @@ int naaice_set_output_mr(struct naaice_communication_context *comm_ctx,
  *  Adds information about to the communication context about whether a MR
  *  is a "single send" region. Single send regions are written once during the
  *  first RPC on this connection, and not written again during subsequent RPCs.
- * 
+ *
  *  If the MR is not already set as an input region, it is set as one.
- * 
+ *
  *  Must be called before naaice_init_mrsp.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
  *  unsigned int idx:
  *    Index of memory region to be set as a single send region.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -632,14 +632,14 @@ int naaice_set_singlesend_mr(struct naaice_communication_context *comm_ctx,
  *  context. Such memory regions exist only on the NAA side and are used for
  *  computation. The contents of these memory region are not communicated
  *  during data transfer.
- * 
+ *
  *  Must be called before naaice_init_mrsp. The internal memory regions will
  *  then be included in the memory region announcement message, indicating that
  *  they should be allocated by the NAA.
- * 
+ *
  *  Should only be called once. Each call to this function overwrites the
  *  previous call.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
@@ -650,7 +650,7 @@ int naaice_set_singlesend_mr(struct naaice_communication_context *comm_ctx,
  *    These addresses will be requested of the NAA during MRSP.
  *  uint32_t *sizes:
  *    Sizes of the internal memory region, in bytes.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -661,9 +661,9 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
 /**
  * naaice_set_immediate
  *  Set the immediate value written during data transfer.
- * 
+ *
  *  Must be called before naaice_init_data_transfer.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
@@ -671,7 +671,7 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
  *    Array of immediate value bytes. Should containt no more than 3 bytes,
  *    which are placed in the upper 3 bytes of the immediate.
  *    Lowest byte of the immediate is for the function code.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -682,11 +682,11 @@ int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
  * naaice_init_mrsp:
  *  Starts the MRSP. That is, sends advertise/request packets and posts a
  *  recieve for the response.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection and memory regions.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -696,11 +696,11 @@ int naaice_init_mrsp(struct naaice_communication_context *comm_ctx);
  * naaice_init_data_transfer:
  *  Starts the data transfer. That is, posts the write for memory regions to
  *  the NAA.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection and memory regions.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -710,11 +710,11 @@ int naaice_init_data_transfer(struct naaice_communication_context *comm_ctx);
  * naaice_handle_work_completion:
  *  Handles a single work completion from the completion queue.
  *  These represent memory region writes from host to NAA or NAA to host.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -725,14 +725,14 @@ int naaice_handle_work_completion(struct ibv_wc *wc,
  * naaice_poll_cq_nonblocking:
  *  Polls the completion queue for any work completions, and handles them if
  *  any are recieved using naaice_handle_work_completion.
- *  
+ *
  *  Subsequently, comm_ctx->state is updated to reflect the current state
  *  of the NAA connection and routine.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if sucessful (regardless of whether any work completions are recieved),
  * -1 if not.
@@ -761,11 +761,11 @@ int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx);
 /**
  * naaice_disconnect_and_cleanup:
  *  Terminates the connection and frees all communication context memory.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -776,7 +776,7 @@ int naaice_disconnect_and_cleanup(
  * naaice_send_message:
  *  Sends an MRSP packet to the remote peer. Done with a ibv_post_send using
  *  opcode IBV_WR_SEND.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
@@ -786,7 +786,7 @@ int naaice_disconnect_and_cleanup(
  *  uint8_t errorcode:
  *    Error code send in the packet, if message_type was MSG_MR_ERR.
  *    Unused for other message types.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -798,13 +798,13 @@ int naaice_send_message(struct naaice_communication_context *comm_ctx,
  *  Writes memory regions (metadata and input parameters) to the NAA. Done
  *  with a ibv_post_send using opcode IBV_WR_RDMA_WRITE or
  *  IBV_WR_RDMA_WRITE_WITH_IMM (for the final memory region).
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
  *  uint8_t fncode:
  *    Function Code for NAA routine. Positive, 0 on error.
- * 
+ *
  * returns:
  *  0 if sucessful, -1 if not.
  */
@@ -816,14 +816,14 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
  *  Posts a recieve for an MRSP message.
  *  A recieve request is added to the queue which specifies the memory region
  *  to be written to (in this case, the MRSP region).
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if successful, -1 if not.
- */ 
+ */
 int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
 
 /**
@@ -832,18 +832,18 @@ int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
  *  It is only necessary to post a recieve for the final memory region to be
  *  written, that is, the write with an immediate value. RDMA writes without
  *  an immediate simply occur without consuming a recieve request in the queue.
- *  
+ *
  *  The memory region specified in the recieve request is the MRSP region;
  *  this is just a dummy value, as the region written to is specified by the
  *  sender.
- * 
+ *
  * params:
  *  naaice_communication_context *comm_ctx:
  *    Pointer to struct describing the connection.
- * 
+ *
  * returns:
  *  0 if successful, -1 if not.
- */ 
+ */
 int naaice_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**

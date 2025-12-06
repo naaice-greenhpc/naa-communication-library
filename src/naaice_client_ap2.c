@@ -13,7 +13,7 @@
 * naaice_client_ap2.c
 *
 * Application implementing a basic use case of the AP2 NAAICE interface.
-* 
+*
 * For use in conjunction with naaice_server.c.
 *
 * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
@@ -48,7 +48,7 @@
 int main(int argc, char *argv[]) {
 
   printf("-- Handling Command Line Arguments --\n");
-  
+
   // Check number of arguments.
   if (argc != 3) {
     log_error("Wrong number of arguments. use: "
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
     params[i] = (char*) memset(params[i], i, param_sizes[i]);
   }
-  
+
   // Handle struct holds all information about a NAA session.
   struct naa_handle *handle = (naa_handle*) calloc(1,sizeof(struct naa_handle));
   if (!handle) {
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
     return -1;
   };
 
- 
+
 
   // Repeat RPC N_INVOKES times.
   for (int i = 0; i < N_INVOKES; i++) {
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     //     return -1;
     //   }
     // }
-    printf("Bytes received: %d, RPC Return code: %d\n",
+    printf("Bytes received: %zu, RPC Return code: %d\n",
            status.bytes_received, status.naa_error);
   }
   // naa_finalize: clean up connection.
@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
     printf("Parameter %u: first element: %u. Success? %s\n",
           i, data[0], success ? "yes" : "no");
   }
-  
+
 
   return 0;
 }
