@@ -1682,7 +1682,7 @@ int naaice_post_recv_data(
   * calls.  This happends due to an overflow of the receive queue.
   */
 
-  log_info("In naaice_swnaa_post_recv_data\n");
+  log_info("In naaice_post_recv_data\n");
 
   // DYL: Changed this back to constructing only a single, empty recv request.
   // Information about input and output regions is recieved from the host
