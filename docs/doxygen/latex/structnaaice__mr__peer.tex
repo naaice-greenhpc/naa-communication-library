@@ -1,0 +1,105 @@
+\doxysection{naaice\+\_\+mr\+\_\+peer Struct Reference}
+\hypertarget{structnaaice__mr__peer}{}\label{structnaaice__mr__peer}\index{naaice\_mr\_peer@{naaice\_mr\_peer}}
+
+
+Information about a remote (peer) memory region.  
+
+
+
+
+{\ttfamily \#include $<$naaice.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>uint64\_t \mbox{\hyperlink{structnaaice__mr__peer_acf2bcb7c541ef65fdb07d685076de99e}{addr}}\\
+\>\>{\em Address of the remote memory region. }\\
+\>uint8\_t \mbox{\hyperlink{structnaaice__mr__peer_ac64f401c529bff7d785d396facbf3063}{fpgaaddr}} \mbox{[}8\mbox{]}\\
+\>\>{\em Byte array representation of the remote address (e.g., FPGA address). }\\
+\}; \\
+
+\end{tabbing}\item 
+uint32\+\_\+t \mbox{\hyperlink{structnaaice__mr__peer_a2ece31e54c627c7a68ae6dd39e992a11}{rkey}}
+\begin{DoxyCompactList}\small\item\em Remote key (rkey) for RDMA access. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{structnaaice__mr__peer_a72be5998e29279524950390f02c56c26}{size}}
+\begin{DoxyCompactList}\small\item\em Size of the memory region, in bytes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structnaaice__mr__peer_a982ecdc40d066910ccee25174b24b2f1}{to\+\_\+write}}
+\begin{DoxyCompactList}\small\item\em Indicates that this memory region should be written back from the NAA. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structnaaice__mr__peer_a5aaf720eee8b675f46631b2dab8a3cff}{single\+\_\+send}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Information about a remote (peer) memory region. 
+
+Holds metadata for a memory region located on the remote NAA, including its address, remote key, size, and transfer behavior flags. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaaice__mr__peer_ab037824a7fdd38a7f4e5b68a8541b024}\doxysubsubsection{\texorpdfstring{[union]}{[union]}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_ab037824a7fdd38a7f4e5b68a8541b024} 
+union  \{ ... \}  \mbox{\hyperlink{structnaaice__mr__peer}{naaice\+\_\+mr\+\_\+peer}}}
+
+\Hypertarget{structnaaice__mr__peer_acf2bcb7c541ef65fdb07d685076de99e}\index{naaice\_mr\_peer@{naaice\_mr\_peer}!addr@{addr}}
+\index{addr@{addr}!naaice\_mr\_peer@{naaice\_mr\_peer}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_acf2bcb7c541ef65fdb07d685076de99e} 
+uint64\+\_\+t naaice\+\_\+mr\+\_\+peer\+::addr}
+
+
+
+Address of the remote memory region. 
+
+\Hypertarget{structnaaice__mr__peer_ac64f401c529bff7d785d396facbf3063}\index{naaice\_mr\_peer@{naaice\_mr\_peer}!fpgaaddr@{fpgaaddr}}
+\index{fpgaaddr@{fpgaaddr}!naaice\_mr\_peer@{naaice\_mr\_peer}}
+\doxysubsubsection{\texorpdfstring{fpgaaddr}{fpgaaddr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_ac64f401c529bff7d785d396facbf3063} 
+uint8\+\_\+t naaice\+\_\+mr\+\_\+peer\+::fpgaaddr\mbox{[}8\mbox{]}}
+
+
+
+Byte array representation of the remote address (e.\+g., FPGA address). 
+
+\Hypertarget{structnaaice__mr__peer_a2ece31e54c627c7a68ae6dd39e992a11}\index{naaice\_mr\_peer@{naaice\_mr\_peer}!rkey@{rkey}}
+\index{rkey@{rkey}!naaice\_mr\_peer@{naaice\_mr\_peer}}
+\doxysubsubsection{\texorpdfstring{rkey}{rkey}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_a2ece31e54c627c7a68ae6dd39e992a11} 
+uint32\+\_\+t naaice\+\_\+mr\+\_\+peer\+::rkey}
+
+
+
+Remote key (rkey) for RDMA access. 
+
+\Hypertarget{structnaaice__mr__peer_a5aaf720eee8b675f46631b2dab8a3cff}\index{naaice\_mr\_peer@{naaice\_mr\_peer}!single\_send@{single\_send}}
+\index{single\_send@{single\_send}!naaice\_mr\_peer@{naaice\_mr\_peer}}
+\doxysubsubsection{\texorpdfstring{single\_send}{single\_send}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_a5aaf720eee8b675f46631b2dab8a3cff} 
+bool naaice\+\_\+mr\+\_\+peer\+::single\+\_\+send}
+
+Indicates that this memory region is a single-\/send region (written only once). \Hypertarget{structnaaice__mr__peer_a72be5998e29279524950390f02c56c26}\index{naaice\_mr\_peer@{naaice\_mr\_peer}!size@{size}}
+\index{size@{size}!naaice\_mr\_peer@{naaice\_mr\_peer}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_a72be5998e29279524950390f02c56c26} 
+size\+\_\+t naaice\+\_\+mr\+\_\+peer\+::size}
+
+
+
+Size of the memory region, in bytes. 
+
+\Hypertarget{structnaaice__mr__peer_a982ecdc40d066910ccee25174b24b2f1}\index{naaice\_mr\_peer@{naaice\_mr\_peer}!to\_write@{to\_write}}
+\index{to\_write@{to\_write}!naaice\_mr\_peer@{naaice\_mr\_peer}}
+\doxysubsubsection{\texorpdfstring{to\_write}{to\_write}}
+{\footnotesize\ttfamily \label{structnaaice__mr__peer_a982ecdc40d066910ccee25174b24b2f1} 
+bool naaice\+\_\+mr\+\_\+peer\+::to\+\_\+write}
+
+
+
+Indicates that this memory region should be written back from the NAA. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice_8h}{naaice.\+h}}\end{DoxyCompactItemize}

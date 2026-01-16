@@ -11,3 +11,24 @@ build:
     - apt-get update && apt-get -y install cmake librdmacm-dev
   script:
     - bash ci-build.sh
+
+pages:
+  image: python:3.12-slim
+  stage: deploy
+  script:
+    - apt-get update && apt-get install -y doxygen make graphviz
+    - pip install sphinx breathe sphinx_rtd_theme
+    - cd docs
+    - doxygen Doxyfile
+    - make html
+    - cd ..
+    - mkdir public
+    - mv docs/build/html/* public/
+
+  artifacts:
+    paths:
+      - public
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+

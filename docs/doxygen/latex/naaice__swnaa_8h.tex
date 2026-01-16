@@ -1,0 +1,239 @@
+\doxysection{/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/naaice\+\_\+swnaa.h File Reference}
+\hypertarget{naaice__swnaa_8h}{}\label{naaice__swnaa_8h}\index{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_swnaa.h@{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_swnaa.h}}
+{\ttfamily \#include "{}naaice.\+h"{}}\newline
+Include dependency graph for naaice\+\_\+swnaa.\+h\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a2e304ccf78229d70b893def6eea01844}{naaice\+\_\+swnaa\+\_\+init\+\_\+communication\+\_\+context}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint16\+\_\+t port)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_af8a7cefb12eee651c6c055220bf0fc67}{naaice\+\_\+swnaa\+\_\+setup\+\_\+connection}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a090aa5dad1a291e1331e970071aa65d7}{naaice\+\_\+swnaa\+\_\+handle\+\_\+connection\+\_\+requests}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a035fce0f94485bed8bd89298b0a275c9}{naaice\+\_\+swnaa\+\_\+handle\+\_\+connection\+\_\+established}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_ad193f2b7634c79cb88f88d45f403a9c5}{naaice\+\_\+swnaa\+\_\+handle\+\_\+error}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_accd16824d60b2f865b90e13720b271fa}{naaice\+\_\+swnaa\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a12c843653bf1a3e09d3dfea183ae2c87}{naaice\+\_\+swnaa\+\_\+init\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a0c8a63de324d43fac3d053f4a49ff17b}{naaice\+\_\+swnaa\+\_\+post\+\_\+recv\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_abac978fd0af33cd063e701ce16f681f6}{naaice\+\_\+swnaa\+\_\+handle\+\_\+work\+\_\+completion}} (struct ibv\+\_\+wc \texorpdfstring{$\ast$}{*}wc, struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a788ed844b1653b50572d9e42dc7a0a68}{naaice\+\_\+swnaa\+\_\+handle\+\_\+mr\+\_\+announce}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a48579f2e7e439235f9247f07465a97bd}{naaice\+\_\+swnaa\+\_\+handle\+\_\+mr\+\_\+announce\+\_\+and\+\_\+request}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a37454381c7d8b6a8789a59cc1b3be774}{naaice\+\_\+swnaa\+\_\+send\+\_\+message}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}} message\+\_\+type, uint8\+\_\+t errorcode)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a42d9e03575369193d4b439dc14cd9996}{naaice\+\_\+swnaa\+\_\+post\+\_\+recv\+\_\+data}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_ad097a9b0b5c21da11b75ca5e41d5eabe}{naaice\+\_\+swnaa\+\_\+write\+\_\+data}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint8\+\_\+t errorcode)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a8de430c646b492b2ed48e02b5c605a98}{naaice\+\_\+swnaa\+\_\+disconnect\+\_\+and\+\_\+cleanup}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_ae641aa93b2c8bb44a7346cbc6df59560}{naaice\+\_\+swnaa\+\_\+do\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a29754b79027796b544949dddc0966588}{naaice\+\_\+swnaa\+\_\+receive\+\_\+data\+\_\+transfer}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_afcd7cfac00b5a22c00bfa9232951e762}{naaice\+\_\+swnaa\+\_\+do\+\_\+data\+\_\+transfer}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint8\+\_\+t errorcode)
+\item 
+int \mbox{\hyperlink{naaice__swnaa_8h_a699965b5aacdf718be4c95ac910a16cc}{naaice\+\_\+swnaa\+\_\+poll\+\_\+cq\+\_\+nonblocking}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{naaice__swnaa_8h_a8de430c646b492b2ed48e02b5c605a98}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_disconnect\_and\_cleanup@{naaice\_swnaa\_disconnect\_and\_cleanup}}
+\index{naaice\_swnaa\_disconnect\_and\_cleanup@{naaice\_swnaa\_disconnect\_and\_cleanup}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_disconnect\_and\_cleanup()}{naaice\_swnaa\_disconnect\_and\_cleanup()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a8de430c646b492b2ed48e02b5c605a98} 
+int naaice\+\_\+swnaa\+\_\+disconnect\+\_\+and\+\_\+cleanup (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+disconnect\+\_\+and\+\_\+cleanup\+: Terminates the connection and frees all communication context memory.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if sucessful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_afcd7cfac00b5a22c00bfa9232951e762}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_do\_data\_transfer@{naaice\_swnaa\_do\_data\_transfer}}
+\index{naaice\_swnaa\_do\_data\_transfer@{naaice\_swnaa\_do\_data\_transfer}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_do\_data\_transfer()}{naaice\_swnaa\_do\_data\_transfer()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_afcd7cfac00b5a22c00bfa9232951e762} 
+int naaice\+\_\+swnaa\+\_\+do\+\_\+data\+\_\+transfer (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{uint8\+\_\+t}]{errorcode}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+do\+\_\+data\+\_\+transfer Does all logic for the data transfer, including recieving data from the NAA, wating for the NAA calculation, and writing the return data back, in a blocking fashion.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if successful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_ae641aa93b2c8bb44a7346cbc6df59560}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_do\_mrsp@{naaice\_swnaa\_do\_mrsp}}
+\index{naaice\_swnaa\_do\_mrsp@{naaice\_swnaa\_do\_mrsp}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_do\_mrsp()}{naaice\_swnaa\_do\_mrsp()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_ae641aa93b2c8bb44a7346cbc6df59560} 
+int naaice\+\_\+swnaa\+\_\+do\+\_\+mrsp (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+do\+\_\+mrsp Does all logic for the MRSP in a blocking fashion.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if successful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a035fce0f94485bed8bd89298b0a275c9}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_handle\_connection\_established@{naaice\_swnaa\_handle\_connection\_established}}
+\index{naaice\_swnaa\_handle\_connection\_established@{naaice\_swnaa\_handle\_connection\_established}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_handle\_connection\_established()}{naaice\_swnaa\_handle\_connection\_established()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a035fce0f94485bed8bd89298b0a275c9} 
+int naaice\+\_\+swnaa\+\_\+handle\+\_\+connection\+\_\+established (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+\Hypertarget{naaice__swnaa_8h_a090aa5dad1a291e1331e970071aa65d7}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_handle\_connection\_requests@{naaice\_swnaa\_handle\_connection\_requests}}
+\index{naaice\_swnaa\_handle\_connection\_requests@{naaice\_swnaa\_handle\_connection\_requests}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_handle\_connection\_requests()}{naaice\_swnaa\_handle\_connection\_requests()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a090aa5dad1a291e1331e970071aa65d7} 
+int naaice\+\_\+swnaa\+\_\+handle\+\_\+connection\+\_\+requests (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+swnaa connection event handlers\+: These functions each handle a specific connection event. If the provided event\textquotesingle{}s type matches the event type of the handler function, it executes the necessary logic to handle it.
+
+Subsequently, flags in the communication context are updated to represent the current status of connection establishment.
+
+The events handled by these functions are, in order\+: RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECTION\+\_\+\+REQUEST RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ESTABLISHED
+
+Also, the following are handled by naaice\+\_\+swnaa\+\_\+handle\+\_\+error\+: RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+ERROR, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+ERROR, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ERROR, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+UNREACHABLE, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+REJECTED, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+DEVICE\+\_\+\+REMOVAL, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+DISCONNECTED.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection with events to handle. struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev\+: Pointer to event to be checked and possibly handled.
+
+returns\+: 0 if sucessful (i.\+e. either the event was the matching type and was handled successfully, or the event was not the matching type), -\/1 if not. \Hypertarget{naaice__swnaa_8h_ad193f2b7634c79cb88f88d45f403a9c5}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_handle\_error@{naaice\_swnaa\_handle\_error}}
+\index{naaice\_swnaa\_handle\_error@{naaice\_swnaa\_handle\_error}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_handle\_error()}{naaice\_swnaa\_handle\_error()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_ad193f2b7634c79cb88f88d45f403a9c5} 
+int naaice\+\_\+swnaa\+\_\+handle\+\_\+error (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+\Hypertarget{naaice__swnaa_8h_a788ed844b1653b50572d9e42dc7a0a68}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_handle\_mr\_announce@{naaice\_swnaa\_handle\_mr\_announce}}
+\index{naaice\_swnaa\_handle\_mr\_announce@{naaice\_swnaa\_handle\_mr\_announce}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_handle\_mr\_announce()}{naaice\_swnaa\_handle\_mr\_announce()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a788ed844b1653b50572d9e42dc7a0a68} 
+int naaice\+\_\+swnaa\+\_\+handle\+\_\+mr\+\_\+announce (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+handle\+\_\+mr\+\_\+announce, naaice\+\_\+swnaa\+\_\+handle\+\_\+mr\+\_\+announce\+\_\+and\+\_\+request\+:
+
+Handlers for MRSP packets. Processes the contents of a received MRSP packet of the corresponding type, populating relevant values in the communication context.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if sucessful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a48579f2e7e439235f9247f07465a97bd}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_handle\_mr\_announce\_and\_request@{naaice\_swnaa\_handle\_mr\_announce\_and\_request}}
+\index{naaice\_swnaa\_handle\_mr\_announce\_and\_request@{naaice\_swnaa\_handle\_mr\_announce\_and\_request}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_handle\_mr\_announce\_and\_request()}{naaice\_swnaa\_handle\_mr\_announce\_and\_request()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a48579f2e7e439235f9247f07465a97bd} 
+int naaice\+\_\+swnaa\+\_\+handle\+\_\+mr\+\_\+announce\+\_\+and\+\_\+request (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+\Hypertarget{naaice__swnaa_8h_abac978fd0af33cd063e701ce16f681f6}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_handle\_work\_completion@{naaice\_swnaa\_handle\_work\_completion}}
+\index{naaice\_swnaa\_handle\_work\_completion@{naaice\_swnaa\_handle\_work\_completion}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_handle\_work\_completion()}{naaice\_swnaa\_handle\_work\_completion()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_abac978fd0af33cd063e701ce16f681f6} 
+int naaice\+\_\+swnaa\+\_\+handle\+\_\+work\+\_\+completion (\begin{DoxyParamCaption}\item[{struct ibv\+\_\+wc \texorpdfstring{$\ast$}{*}}]{wc}{, }\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+handle\+\_\+work\+\_\+completion\+: Handles a single work completion from the completion queue. These represent memory region writes from host to NAA or NAA to host.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if sucessful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a2e304ccf78229d70b893def6eea01844}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_init\_communication\_context@{naaice\_swnaa\_init\_communication\_context}}
+\index{naaice\_swnaa\_init\_communication\_context@{naaice\_swnaa\_init\_communication\_context}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_init\_communication\_context()}{naaice\_swnaa\_init\_communication\_context()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a2e304ccf78229d70b893def6eea01844} 
+int naaice\+\_\+swnaa\+\_\+init\+\_\+communication\+\_\+context (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{uint16\+\_\+t}]{port}{}\end{DoxyParamCaption})}
+
+{\ttfamily 7MN.}7MF\textquotesingle{} db db `7MMF' .g8"{}"{}"{}bgd \`{}7\+MM"{}"{}"{}YMM ~\newline
+ MMN. M ;MM\+: ;MM\+: MM .dP\textquotesingle{} {\ttfamily M MM}7 ~\newline
+ M YMb M ,V\texorpdfstring{$^\wedge$}{\string^}\+MM. ,V\texorpdfstring{$^\wedge$}{\string^}\+MM. MM dM\textquotesingle{} {\ttfamily MM d \textbackslash{}ilinebr\texorpdfstring{$<$}{<}br\texorpdfstring{$>$}{>} M}MN. M ,M {\ttfamily MM ,M}MM MM MM MMmm\+MM ~\newline
+ M `MM.\+M Abmmmq\+MA Abmmmq\+MA MM MM. MM Y , M YMM A' VML A\textquotesingle{} VML MM `Mb. ,' MM ,M .JML. YM .AMA. .AMMA..AMA. .AMMA..JMML. `"{}bmmmd'  .\+JMMmmmm\+MMM    Network-\/\+Attached Accelerators for Energy-\/\+Efficient Heterogeneous Computing  naaice\+\_\+swnaa.\+h  \+Interface for NAAICE AP1 software dummy NAA (\+SWNAA).  \+These functions are used to set up a software mockup of an NAA, which behaves like a FPGA-\/based NAA should. Such an SWNAA can be used for testing the NAAICE middleware layers in the absence of an FPGA.  \+Florian Mikolajczak, florian.\+mikolajczak@uni-\/potsdam.\+de \+Dylan Everingham, everingham@zib.\+de  26-\/01-\/2024 naaice\+\_\+init\+\_\+communication\+\_\+context\+:  Initializes communication context struct.   The dummy software NAA reuses the communication context struct from the  host-\/side AP1 implementation, but doesn\textquotesingle{}t use all the fields in the  exact same way. Most importantly, the size and number of parameters  is not known (and related fields are not populated) until after the  MRSP is complete.  params\+:  naaice\+\_\+communication\+\_\+context \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: (return param)    Pointer to communication context struct to be initialized.    Should not point to an existing struct; the struct is allocated    and returned by this function.  const char \texorpdfstring{$\ast$}{*}port\+:    String specifying connection port, ex. "{}12345"{}. about\+:blank\#blocked returns\+: 0 if sucessful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a12c843653bf1a3e09d3dfea183ae2c87}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_init\_mrsp@{naaice\_swnaa\_init\_mrsp}}
+\index{naaice\_swnaa\_init\_mrsp@{naaice\_swnaa\_init\_mrsp}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_init\_mrsp()}{naaice\_swnaa\_init\_mrsp()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a12c843653bf1a3e09d3dfea183ae2c87} 
+int naaice\+\_\+swnaa\+\_\+init\+\_\+mrsp (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+init\+\_\+mrsp\+: Starts the MRSP on the NAA side. That is, posts a recieve for MRSP packets expected from the host.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection and memory regions.
+
+returns\+: 0 if sucessful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_accd16824d60b2f865b90e13720b271fa}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_poll\_and\_handle\_connection\_event@{naaice\_swnaa\_poll\_and\_handle\_connection\_event}}
+\index{naaice\_swnaa\_poll\_and\_handle\_connection\_event@{naaice\_swnaa\_poll\_and\_handle\_connection\_event}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_poll\_and\_handle\_connection\_event()}{naaice\_swnaa\_poll\_and\_handle\_connection\_event()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_accd16824d60b2f865b90e13720b271fa} 
+int naaice\+\_\+swnaa\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event\+: Polls for a connection event on the RDMA event channel stored in the communication context and handles the event if one is received. Simply uses the poll and handle functions above.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if sucessful (regardless of whether an event is received), -\/1 if not. \Hypertarget{naaice__swnaa_8h_a699965b5aacdf718be4c95ac910a16cc}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_poll\_cq\_nonblocking@{naaice\_swnaa\_poll\_cq\_nonblocking}}
+\index{naaice\_swnaa\_poll\_cq\_nonblocking@{naaice\_swnaa\_poll\_cq\_nonblocking}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_poll\_cq\_nonblocking()}{naaice\_swnaa\_poll\_cq\_nonblocking()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a699965b5aacdf718be4c95ac910a16cc} 
+int naaice\+\_\+swnaa\+\_\+poll\+\_\+cq\+\_\+nonblocking (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+poll\+\_\+cq\+\_\+nonblocking\+: Polls the completion queue for any work completions, and handles them if any are received using naaice\+\_\+handle\+\_\+work\+\_\+completion.
+
+Subsequently, comm\+\_\+ctx-\/\texorpdfstring{$>$}{>}state is updated to reflect the current state of the NAA connection and routine.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if sucessful (regardless of whether any work completions are received), -\/1 if not. \Hypertarget{naaice__swnaa_8h_a42d9e03575369193d4b439dc14cd9996}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_post\_recv\_data@{naaice\_swnaa\_post\_recv\_data}}
+\index{naaice\_swnaa\_post\_recv\_data@{naaice\_swnaa\_post\_recv\_data}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_post\_recv\_data()}{naaice\_swnaa\_post\_recv\_data()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a42d9e03575369193d4b439dc14cd9996} 
+int naaice\+\_\+swnaa\+\_\+post\+\_\+recv\+\_\+data (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+post\+\_\+recv\+\_\+data Posts a recieve for a memory region write. It is only necessary to post a recieve for the final memory region to be written, that is, the write with an immediate value. RDMA writes without an immediate simply occur without consuming a recieve request in the queue.
+
+The memory region specified in the recieve request is the MRSP region; this is just a dummy value, as the region written to is specified by the sender.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if successful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a0c8a63de324d43fac3d053f4a49ff17b}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_post\_recv\_mrsp@{naaice\_swnaa\_post\_recv\_mrsp}}
+\index{naaice\_swnaa\_post\_recv\_mrsp@{naaice\_swnaa\_post\_recv\_mrsp}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_post\_recv\_mrsp()}{naaice\_swnaa\_post\_recv\_mrsp()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a0c8a63de324d43fac3d053f4a49ff17b} 
+int naaice\+\_\+swnaa\+\_\+post\+\_\+recv\+\_\+mrsp (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+post\+\_\+recv\+\_\+mrsp Posts a recieve for an MRSP message. A recieve request is added to the queue which specifies the memory region to be written to (in this case, the MRSP region).
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if successful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a29754b79027796b544949dddc0966588}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_receive\_data\_transfer@{naaice\_swnaa\_receive\_data\_transfer}}
+\index{naaice\_swnaa\_receive\_data\_transfer@{naaice\_swnaa\_receive\_data\_transfer}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_receive\_data\_transfer()}{naaice\_swnaa\_receive\_data\_transfer()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a29754b79027796b544949dddc0966588} 
+int naaice\+\_\+swnaa\+\_\+receive\+\_\+data\+\_\+transfer (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+receive\+\_\+data\+\_\+transfer Handles recieving data from remote peer, blocking until this is finished. Information about the data is updated in the communication context.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if successful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_a37454381c7d8b6a8789a59cc1b3be774}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_send\_message@{naaice\_swnaa\_send\_message}}
+\index{naaice\_swnaa\_send\_message@{naaice\_swnaa\_send\_message}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_send\_message()}{naaice\_swnaa\_send\_message()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_a37454381c7d8b6a8789a59cc1b3be774} 
+int naaice\+\_\+swnaa\+\_\+send\+\_\+message (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}}}]{message\+\_\+type}{, }\item[{uint8\+\_\+t}]{errorcode}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+send\+\_\+message\+: Sends an MRSP packet to the remote peer. Done with a ibv\+\_\+post\+\_\+send using opcode IBV\+\_\+\+WR\+\_\+\+SEND.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection. enum \doxylink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id} message\+\_\+type\+: Specifies the packet type. Should be one of MSG\+\_\+\+MR\+\_\+\+ERR, MSG\+\_\+\+MR\+\_\+\+AAR, or MSG\+\_\+\+MR\+\_\+A. uint8\+\_\+t errorcode\+: Error code send in the packet, if message\+\_\+type was MSG\+\_\+\+MR\+\_\+\+ERR. Unused for other message types.
+
+returns\+: 0 if sucessful, -\/1 if not. \Hypertarget{naaice__swnaa_8h_af8a7cefb12eee651c6c055220bf0fc67}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_setup\_connection@{naaice\_swnaa\_setup\_connection}}
+\index{naaice\_swnaa\_setup\_connection@{naaice\_swnaa\_setup\_connection}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_setup\_connection()}{naaice\_swnaa\_setup\_connection()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_af8a7cefb12eee651c6c055220bf0fc67} 
+int naaice\+\_\+swnaa\+\_\+setup\+\_\+connection (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+setup\+\_\+connection\+: Loops polling for and handling connection events until connection setup is complete. Unlike the base naaice version, does not require handling the address or route resolution events, but does handle the connection requests complete event which is not handled on the host side.
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection.
+
+returns\+: 0 if sucessful, -\/1 if not (due to timeout). \Hypertarget{naaice__swnaa_8h_ad097a9b0b5c21da11b75ca5e41d5eabe}\index{naaice\_swnaa.h@{naaice\_swnaa.h}!naaice\_swnaa\_write\_data@{naaice\_swnaa\_write\_data}}
+\index{naaice\_swnaa\_write\_data@{naaice\_swnaa\_write\_data}!naaice\_swnaa.h@{naaice\_swnaa.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_swnaa\_write\_data()}{naaice\_swnaa\_write\_data()}}
+{\footnotesize\ttfamily \label{naaice__swnaa_8h_ad097a9b0b5c21da11b75ca5e41d5eabe} 
+int naaice\+\_\+swnaa\+\_\+write\+\_\+data (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{uint8\+\_\+t}]{errorcode}{}\end{DoxyParamCaption})}
+
+naaice\+\_\+swnaa\+\_\+write\+\_\+data\+: Writes the return memory region, specified by comm\+\_\+ctx-\/\texorpdfstring{$>$}{>}mr\+\_\+return\+\_\+idx, to the remote peer. Done with a ibv\+\_\+post\+\_\+send using opcode IBV\+\_\+\+WR\+\_\+\+RDMA\+\_\+\+WRITE\+\_\+\+WITH\+\_\+\+IMM. The immediate value indicates if an error has occured during calculation (nonzero = error).
+
+params\+: \doxylink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx\+: Pointer to struct describing the connection. uint8\+\_\+t fncode\+: Function Code for NAA routine. Positive, 0 on error.
+
+returns\+: 0 if sucessful, -\/1 if not. 

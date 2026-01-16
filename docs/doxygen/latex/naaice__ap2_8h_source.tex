@@ -1,0 +1,102 @@
+\doxysection{naaice\+\_\+ap2.\+h}
+\hypertarget{naaice__ap2_8h_source}{}\label{naaice__ap2_8h_source}\index{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_ap2.h@{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_ap2.h}}
+\mbox{\hyperlink{naaice__ap2_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/****************************************************************************}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ \ \ \ \`{}7MN.\ \ \ \`{}7MF'\ \ \ \ \ db\ \ \ \ \ \ \ \ \ \ \ \ db\ \ \ \ \ \ \`{}7MMF'\ \ .g8"{}"{}"{}bgd\ \`{}7MM"{}"{}"{}YMM}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ \ \ \ \ MMN.\ \ \ \ M\ \ \ \ \ \ ;MM:\ \ \ \ \ \ \ \ \ \ ;MM:\ \ \ \ \ \ \ MM\ \ .dP'\ \ \ \ \ \`{}M\ \ \ MM\ \ \ \ \`{}7}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ M\ YMb\ \ \ M\ \ \ \ \ ,V\string^MM.\ \ \ \ \ \ \ \ ,V\string^MM.\ \ \ \ \ \ MM\ \ dM'\ \ \ \ \ \ \ \`{}\ \ \ MM\ \ \ d}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ \ \ \ \ \ M\ \ \`{}MN.\ M\ \ \ \ ,M\ \ \`{}MM\ \ \ \ \ \ \ ,M\ \ \`{}MM\ \ \ \ \ \ MM\ \ MM\ \ \ \ \ \ \ \ \ \ \ \ MMmmMM}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ \ \ \ \ \ M\ \ \ \`{}MM.M\ \ \ \ AbmmmqMA\ \ \ \ \ \ AbmmmqMA\ \ \ \ \ MM\ \ MM.\ \ \ \ \ \ \ \ \ \ \ MM\ \ \ Y\ \ ,}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ \ \ \ \ \ M\ \ \ \ \ YMM\ \ \ A'\ \ \ \ \ VML\ \ \ \ A'\ \ \ \ \ VML\ \ \ \ MM\ \ \`{}Mb.\ \ \ \ \ ,'\ \ \ MM\ \ \ \ \ ,M}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ \ \ \ .JML.\ \ \ \ YM\ .AMA.\ \ \ .AMMA..AMA.\ \ \ .AMMA..JMML.\ \ \`{}"{}bmmmd'\ \ .JMMmmmmMMM}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ \ Network-\/Attached\ Accelerators\ for\ Energy-\/Efficient\ Heterogeneous\ Computing}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ naaice\_ap2.h}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ Interface\ for\ NAAICE\ AP2\ "{}MPI-\/Like"{}\ middleware\ layer.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Florian\ Mikolajczak,\ florian.mikolajczak@uni-\/potsdam.de}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Dylan\ Everingham,\ everingham@zib.de}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ Hannes\ Signer,\ signer@uni-\/potsdam.de}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ 18-\/12-\/2025}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifndef\ NAAICE\_AP2\_C\_H}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ NAAICE\_AP2\_C\_H}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{/*\ Dependencies\ **************************************************************/}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{naaice_8h}{naaice.h}}"{}}\ \textcolor{comment}{//\ Included\ here\ to\ get\ enum\ naaice\_communication\_state.}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <stddef.h>}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*\ Enums\ **********************************************************************/}}
+\DoxyCodeLine{00049\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{group__StructsEnums_ga45430261054a7041b457175c442cc626}{naa\_error}}\ \{}
+\DoxyCodeLine{00051\ \ \ \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381}{NAA\_SUCCESS}}\ =\ 0x00,}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2}{SOCKET\_UNAVAIL}}\ =\ 0x01,}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00057\ \ \ \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58}{KERNEL\_TIMEOUT}}\ =\ 0x02,}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \textcolor{comment}{//\ 0x03-\/0x0f:\ Reserved\ for\ future\ use.}}
+\DoxyCodeLine{00060\ \ \ \textcolor{comment}{//\ 0x10-\/0x7f:\ Application-\/specific\ errors.}}
+\DoxyCodeLine{00061\ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{/*\ Structs/Typedefs\ **********************************************************/}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{typedef}\ uint32\_t\ \mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\_function\_code\_t}};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00080\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnaa__param__t}{naa\_param\_t}}\ \{}
+\DoxyCodeLine{00082\ \ \ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{structnaa__param__t_ad5cb0da75bd8c82ce3b6aaadea4ec9f3}{addr}};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structnaa__param__t_a9538d353b558b49e63b4f2a84dbc604a}{size}};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structnaa__param__t_a005d6f65b65447b682d5eb56d8e8434d}{single\_send}};}
+\DoxyCodeLine{00089\ \}\ \mbox{\hyperlink{structnaa__param__t}{naa\_param\_t}};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnaa__handle}{naa\_handle}}\ \{}
+\DoxyCodeLine{00101\ \ \ \mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\_function\_code\_t}}\ \mbox{\hyperlink{structnaa__handle_a5c4b8a9ab94644b0c475284e69567d6b}{function\_code}};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00104\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *\mbox{\hyperlink{structnaa__handle_a71ad357cc6f416a6e43706df32519825}{comm\_ctx}};}
+\DoxyCodeLine{00105\ \}\ \mbox{\hyperlink{structnaa__handle}{naa\_handle}};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnaa__status}{naa\_status}}\ \{}
+\DoxyCodeLine{00116\ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\_communication\_state}}\ \mbox{\hyperlink{structnaa__status_a26c0f7905228c45ff6e22a11f2d934c1}{state}};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00119\ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{structnaa__status_a579b67bada0f6373937d56cb8c7661ce}{naa\_error}}\ \mbox{\hyperlink{structnaa__status_a579b67bada0f6373937d56cb8c7661ce}{naa\_error}};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00122\ \ \ uint64\_t\ \mbox{\hyperlink{structnaa__status_a5d98d226361e5fcca0d7af4b2f4cba34}{bytes\_received}};}
+\DoxyCodeLine{00123\ \}\ \mbox{\hyperlink{structnaa__status}{naa\_status}};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{/*\ Public\ Functions\ **********************************************************/}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{group__Functions_gaee9f8a2c0afbe3868e00685c06c94ce4}{naa\_create}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\_function\_code\_t}}\ function\_code,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnaa__param__t}{naa\_param\_t}}\ *input\_params,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ input\_amount,}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnaa__param__t}{naa\_param\_t}}\ *output\_params,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ output\_amount,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnaa__handle}{naa\_handle}}\ *handle);}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00183\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{group__Functions_ga978eb1295ce4e7b283b6d6b74286b2d2}{naa\_invoke}}(\mbox{\hyperlink{structnaa__handle}{naa\_handle}}\ *handle);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00193\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__ap2_8h_a6200e7134fc6961daa5d45e938dd6511}{naa\_test}}(\mbox{\hyperlink{structnaa__handle}{naa\_handle}}\ *handle,\ \textcolor{keywordtype}{bool}\ *flag,\ \mbox{\hyperlink{structnaa__status}{naa\_status}}\ *status);}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00202\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__ap2_8h_a6bba1a1b9e1467702339f2a6fbdbfdf9}{naa\_wait}}(\mbox{\hyperlink{structnaa__handle}{naa\_handle}}\ *handle,\ \mbox{\hyperlink{structnaa__status}{naa\_status}}\ *status);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00210\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__ap2_8h_a65c8b2bbcb09f4fd873983d1ed9fb293}{naa\_finalize}}(\mbox{\hyperlink{structnaa__handle}{naa\_handle}}\ *handle);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00213\ \}}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

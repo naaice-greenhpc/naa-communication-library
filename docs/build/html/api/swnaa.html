@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Software-NAA API Documentation &mdash; naa-communication-library 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/naaice.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Middleware API Documentation" href="middleware.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/naaice.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="low_level.html">NAAICE Low-Level API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="middleware.html">Middleware API Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Software-NAA API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv439naaice_swnaa_init_communication_contextPP28naaice_communication_context8uint16_t"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_init_communication_context()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv429naaice_swnaa_setup_connectionP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_setup_connection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv439naaice_swnaa_handle_connection_requestsP28naaice_communication_contextP13rdma_cm_event"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_handle_connection_requests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv442naaice_swnaa_handle_connection_establishedP28naaice_communication_contextP13rdma_cm_event"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_handle_connection_established()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv425naaice_swnaa_handle_errorP28naaice_communication_contextP13rdma_cm_event"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_handle_error()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv445naaice_swnaa_poll_and_handle_connection_eventP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_poll_and_handle_connection_event()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv422naaice_swnaa_init_mrspP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_init_mrsp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv427naaice_swnaa_post_recv_mrspP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_post_recv_mrsp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv435naaice_swnaa_handle_work_completionP6ibv_wcP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_handle_work_completion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv431naaice_swnaa_handle_mr_announceP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_handle_mr_announce()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv443naaice_swnaa_handle_mr_announce_and_requestP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_handle_mr_announce_and_request()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv425naaice_swnaa_send_messageP28naaice_communication_context10message_id7uint8_t"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_send_message()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv427naaice_swnaa_post_recv_dataP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_post_recv_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv423naaice_swnaa_write_dataP28naaice_communication_context7uint8_t"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_write_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv435naaice_swnaa_disconnect_and_cleanupP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_disconnect_and_cleanup()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv420naaice_swnaa_do_mrspP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_do_mrsp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv434naaice_swnaa_receive_data_transferP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_receive_data_transfer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv429naaice_swnaa_do_data_transferP28naaice_communication_context7uint8_t"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_do_data_transfer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv432naaice_swnaa_poll_cq_nonblockingP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_swnaa_poll_cq_nonblocking()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">naa-communication-library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Software-NAA API Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/swnaa.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="software-naa-api-documentation">
+<h1>Software-NAA API Documentation<a class="headerlink" href="#software-naa-api-documentation" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv439naaice_swnaa_init_communication_contextPP28naaice_communication_context8uint16_t">
+<span id="_CPPv339naaice_swnaa_init_communication_contextPP28naaice_communication_context8uint16_t"></span><span id="_CPPv239naaice_swnaa_init_communication_contextPP28naaice_communication_context8uint16_t"></span><span id="naaice_swnaa_init_communication_context__naaice_communication_contextPP.uint16_t"></span><span class="target" id="naaice__swnaa_8h_1a2e304ccf78229d70b893def6eea01844"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_init_communication_context</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">port</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv439naaice_swnaa_init_communication_contextPP28naaice_communication_context8uint16_t" title="Link to this definition"></a><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">7MN.</span></code><p>7MF’ db db 7MMF .g8”””bgd `7MM”””YMM</p>
+<p>MMN. M ;MM: ;MM: MM .dP’</p>
+<code class="docutils literal notranslate"><span class="pre">M</span> <span class="pre">MM</span></code><p>7</p>
+<p>M YMb M ,V^MM. ,V^MM. MM dM’</p>
+<code class="docutils literal notranslate"><span class="pre">MM</span> <span class="pre">d</span> <span class="pre">\ilinebr&lt;br&gt;</span> <span class="pre">M</span></code>MN. M ,M <code class="docutils literal notranslate"><span class="pre">MM</span> <span class="pre">,M</span></code><p>MM MM MM MMmmMM</p>
+<p>M</p>
+MM.M AbmmmqMA AbmmmqMA MM MM. MM Y , M YMM A VML A’ VML MM Mb. , MM ,M .JML. YM .AMA. .AMMA..AMA. .AMMA..JMML. <p>“bmmmd&amp;rsquo;  .JMMmmmmMMM</p>
+<p>Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing</p>
+<p>naaice_swnaa.h</p>
+<p>Interface for NAAICE AP1 software dummy NAA (SWNAA).</p>
+<p>These functions are used to set up a software mockup of an NAA, which</p>
+<p>behaves like a FPGA-based NAA should. Such an SWNAA can be used for testing</p>
+<p>the NAAICE middleware layers in the absence of an FPGA.</p>
+<p>Florian Mikolajczak, florian.mikolajczak&#64;uni-potsdam.de</p>
+<p>Dylan Everingham, everingham&#64;zib.de</p>
+<p>26-01-2024</p>
+<p>naaice_init_communication_context:</p>
+<p>Initializes communication context struct.</p>
+<p>The dummy software NAA reuses the communication context struct from the</p>
+<p>host-side AP1 implementation, but doesn’t use all the fields in the</p>
+<p>exact same way. Most importantly, the size and number of parameters</p>
+<p>is not known (and related fields are not populated) until after the</p>
+<p>MRSP is complete.</p>
+<p>params:</p>
+<p>naaice_communication_context *comm_ctx: (return param)</p>
+<p>Pointer to communication context struct to be initialized.</p>
+<p>Should not point to an existing struct; the struct is allocated</p>
+<p>and returned by this function.</p>
+<p>const char *port:</p>
+<p>String specifying connection port, ex. “12345”. about:blank#blocked returns: 0 if sucessful, -1 if not.</p>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429naaice_swnaa_setup_connectionP28naaice_communication_context">
+<span id="_CPPv329naaice_swnaa_setup_connectionP28naaice_communication_context"></span><span id="_CPPv229naaice_swnaa_setup_connectionP28naaice_communication_context"></span><span id="naaice_swnaa_setup_connection__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1af8a7cefb12eee651c6c055220bf0fc67"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_setup_connection</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429naaice_swnaa_setup_connectionP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_setup_connection: Loops polling for and handling connection events until connection setup is complete. Unlike the base naaice version, does not require handling the address or route resolution events, but does handle the connection requests complete event which is not handled on the host side.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if sucessful, -1 if not (due to timeout). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv439naaice_swnaa_handle_connection_requestsP28naaice_communication_contextP13rdma_cm_event">
+<span id="_CPPv339naaice_swnaa_handle_connection_requestsP28naaice_communication_contextP13rdma_cm_event"></span><span id="_CPPv239naaice_swnaa_handle_connection_requestsP28naaice_communication_contextP13rdma_cm_event"></span><span id="naaice_swnaa_handle_connection_requests__naaice_communication_contextP.rdma_cm_eventP"></span><span class="target" id="naaice__swnaa_8h_1a090aa5dad1a291e1331e970071aa65d7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_handle_connection_requests</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">rdma_cm_event</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv439naaice_swnaa_handle_connection_requestsP28naaice_communication_contextP13rdma_cm_event" title="Link to this definition"></a><br /></dt>
+<dd><p>swnaa connection event handlers: These functions each handle a specific connection event. If the provided event’s type matches the event type of the handler function, it executes the necessary logic to handle it.</p>
+<p>Subsequently, flags in the communication context are updated to represent the current status of connection establishment.</p>
+<p>The events handled by these functions are, in order: RDMA_CM_EVENT_CONNECTION_REQUEST RDMA_CM_EVENT_CONNECT_ESTABLISHED</p>
+<p>Also, the following are handled by naaice_swnaa_handle_error: RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR, RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE, RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL, RDMA_CM_EVENT_DISCONNECTED.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection with events to handle. struct rdma_cm_event *ev: Pointer to event to be checked and possibly handled.</p>
+<p>returns: 0 if sucessful (i.e. either the event was the matching type and was handled successfully, or the event was not the matching type), -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv442naaice_swnaa_handle_connection_establishedP28naaice_communication_contextP13rdma_cm_event">
+<span id="_CPPv342naaice_swnaa_handle_connection_establishedP28naaice_communication_contextP13rdma_cm_event"></span><span id="_CPPv242naaice_swnaa_handle_connection_establishedP28naaice_communication_contextP13rdma_cm_event"></span><span id="naaice_swnaa_handle_connection_established__naaice_communication_contextP.rdma_cm_eventP"></span><span class="target" id="naaice__swnaa_8h_1a035fce0f94485bed8bd89298b0a275c9"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_handle_connection_established</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">rdma_cm_event</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv442naaice_swnaa_handle_connection_establishedP28naaice_communication_contextP13rdma_cm_event" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425naaice_swnaa_handle_errorP28naaice_communication_contextP13rdma_cm_event">
+<span id="_CPPv325naaice_swnaa_handle_errorP28naaice_communication_contextP13rdma_cm_event"></span><span id="_CPPv225naaice_swnaa_handle_errorP28naaice_communication_contextP13rdma_cm_event"></span><span id="naaice_swnaa_handle_error__naaice_communication_contextP.rdma_cm_eventP"></span><span class="target" id="naaice__swnaa_8h_1ad193f2b7634c79cb88f88d45f403a9c5"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_handle_error</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">rdma_cm_event</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425naaice_swnaa_handle_errorP28naaice_communication_contextP13rdma_cm_event" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv445naaice_swnaa_poll_and_handle_connection_eventP28naaice_communication_context">
+<span id="_CPPv345naaice_swnaa_poll_and_handle_connection_eventP28naaice_communication_context"></span><span id="_CPPv245naaice_swnaa_poll_and_handle_connection_eventP28naaice_communication_context"></span><span id="naaice_swnaa_poll_and_handle_connection_event__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1accd16824d60b2f865b90e13720b271fa"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_poll_and_handle_connection_event</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv445naaice_swnaa_poll_and_handle_connection_eventP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_poll_and_handle_connection_event: Polls for a connection event on the RDMA event channel stored in the communication context and handles the event if one is received. Simply uses the poll and handle functions above.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if sucessful (regardless of whether an event is received), -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422naaice_swnaa_init_mrspP28naaice_communication_context">
+<span id="_CPPv322naaice_swnaa_init_mrspP28naaice_communication_context"></span><span id="_CPPv222naaice_swnaa_init_mrspP28naaice_communication_context"></span><span id="naaice_swnaa_init_mrsp__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a12c843653bf1a3e09d3dfea183ae2c87"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_init_mrsp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422naaice_swnaa_init_mrspP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_init_mrsp: Starts the MRSP on the NAA side. That is, posts a recieve for MRSP packets expected from the host.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection and memory regions.</p>
+<p>returns: 0 if sucessful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427naaice_swnaa_post_recv_mrspP28naaice_communication_context">
+<span id="_CPPv327naaice_swnaa_post_recv_mrspP28naaice_communication_context"></span><span id="_CPPv227naaice_swnaa_post_recv_mrspP28naaice_communication_context"></span><span id="naaice_swnaa_post_recv_mrsp__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a0c8a63de324d43fac3d053f4a49ff17b"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_post_recv_mrsp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427naaice_swnaa_post_recv_mrspP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_post_recv_mrsp Posts a recieve for an MRSP message. A recieve request is added to the queue which specifies the memory region to be written to (in this case, the MRSP region).</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if successful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435naaice_swnaa_handle_work_completionP6ibv_wcP28naaice_communication_context">
+<span id="_CPPv335naaice_swnaa_handle_work_completionP6ibv_wcP28naaice_communication_context"></span><span id="_CPPv235naaice_swnaa_handle_work_completionP6ibv_wcP28naaice_communication_context"></span><span id="naaice_swnaa_handle_work_completion__ibv_wcP.naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1abac978fd0af33cd063e701ce16f681f6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_handle_work_completion</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">ibv_wc</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">wc</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435naaice_swnaa_handle_work_completionP6ibv_wcP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_handle_work_completion: Handles a single work completion from the completion queue. These represent memory region writes from host to NAA or NAA to host.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if sucessful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431naaice_swnaa_handle_mr_announceP28naaice_communication_context">
+<span id="_CPPv331naaice_swnaa_handle_mr_announceP28naaice_communication_context"></span><span id="_CPPv231naaice_swnaa_handle_mr_announceP28naaice_communication_context"></span><span id="naaice_swnaa_handle_mr_announce__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a788ed844b1653b50572d9e42dc7a0a68"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_handle_mr_announce</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431naaice_swnaa_handle_mr_announceP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_handle_mr_announce, naaice_swnaa_handle_mr_announce_and_request:</p>
+<p>Handlers for MRSP packets. Processes the contents of a received MRSP packet of the corresponding type, populating relevant values in the communication context.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if sucessful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv443naaice_swnaa_handle_mr_announce_and_requestP28naaice_communication_context">
+<span id="_CPPv343naaice_swnaa_handle_mr_announce_and_requestP28naaice_communication_context"></span><span id="_CPPv243naaice_swnaa_handle_mr_announce_and_requestP28naaice_communication_context"></span><span id="naaice_swnaa_handle_mr_announce_and_request__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a48579f2e7e439235f9247f07465a97bd"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_handle_mr_announce_and_request</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv443naaice_swnaa_handle_mr_announce_and_requestP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425naaice_swnaa_send_messageP28naaice_communication_context10message_id7uint8_t">
+<span id="_CPPv325naaice_swnaa_send_messageP28naaice_communication_context10message_id7uint8_t"></span><span id="_CPPv225naaice_swnaa_send_messageP28naaice_communication_context10message_id7uint8_t"></span><span id="naaice_swnaa_send_message__naaice_communication_contextP.message_id.uint8_t"></span><span class="target" id="naaice__swnaa_8h_1a37454381c7d8b6a8789a59cc1b3be774"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_send_message</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="n"><span class="pre">message_id</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">message_type</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">errorcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425naaice_swnaa_send_messageP28naaice_communication_context10message_id7uint8_t" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_send_message: Sends an MRSP packet to the remote peer. Done with a ibv_post_send using opcode IBV_WR_SEND.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection. enum message_id message_type: Specifies the packet type. Should be one of MSG_MR_ERR, MSG_MR_AAR, or MSG_MR_A. uint8_t errorcode: Error code send in the packet, if message_type was MSG_MR_ERR. Unused for other message types.</p>
+<p>returns: 0 if sucessful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427naaice_swnaa_post_recv_dataP28naaice_communication_context">
+<span id="_CPPv327naaice_swnaa_post_recv_dataP28naaice_communication_context"></span><span id="_CPPv227naaice_swnaa_post_recv_dataP28naaice_communication_context"></span><span id="naaice_swnaa_post_recv_data__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a42d9e03575369193d4b439dc14cd9996"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_post_recv_data</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427naaice_swnaa_post_recv_dataP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_post_recv_data Posts a recieve for a memory region write. It is only necessary to post a recieve for the final memory region to be written, that is, the write with an immediate value. RDMA writes without an immediate simply occur without consuming a recieve request in the queue.</p>
+<p>The memory region specified in the recieve request is the MRSP region; this is just a dummy value, as the region written to is specified by the sender.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if successful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423naaice_swnaa_write_dataP28naaice_communication_context7uint8_t">
+<span id="_CPPv323naaice_swnaa_write_dataP28naaice_communication_context7uint8_t"></span><span id="_CPPv223naaice_swnaa_write_dataP28naaice_communication_context7uint8_t"></span><span id="naaice_swnaa_write_data__naaice_communication_contextP.uint8_t"></span><span class="target" id="naaice__swnaa_8h_1ad097a9b0b5c21da11b75ca5e41d5eabe"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_write_data</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">errorcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423naaice_swnaa_write_dataP28naaice_communication_context7uint8_t" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_write_data: Writes the return memory region, specified by comm_ctx-&gt;mr_return_idx, to the remote peer. Done with a ibv_post_send using opcode IBV_WR_RDMA_WRITE_WITH_IMM. The immediate value indicates if an error has occured during calculation (nonzero = error).</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection. uint8_t fncode: Function Code for NAA routine. Positive, 0 on error.</p>
+<p>returns: 0 if sucessful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv435naaice_swnaa_disconnect_and_cleanupP28naaice_communication_context">
+<span id="_CPPv335naaice_swnaa_disconnect_and_cleanupP28naaice_communication_context"></span><span id="_CPPv235naaice_swnaa_disconnect_and_cleanupP28naaice_communication_context"></span><span id="naaice_swnaa_disconnect_and_cleanup__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a8de430c646b492b2ed48e02b5c605a98"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_disconnect_and_cleanup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv435naaice_swnaa_disconnect_and_cleanupP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_disconnect_and_cleanup: Terminates the connection and frees all communication context memory.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if sucessful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420naaice_swnaa_do_mrspP28naaice_communication_context">
+<span id="_CPPv320naaice_swnaa_do_mrspP28naaice_communication_context"></span><span id="_CPPv220naaice_swnaa_do_mrspP28naaice_communication_context"></span><span id="naaice_swnaa_do_mrsp__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1ae641aa93b2c8bb44a7346cbc6df59560"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_do_mrsp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420naaice_swnaa_do_mrspP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_do_mrsp Does all logic for the MRSP in a blocking fashion.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if successful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv434naaice_swnaa_receive_data_transferP28naaice_communication_context">
+<span id="_CPPv334naaice_swnaa_receive_data_transferP28naaice_communication_context"></span><span id="_CPPv234naaice_swnaa_receive_data_transferP28naaice_communication_context"></span><span id="naaice_swnaa_receive_data_transfer__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a29754b79027796b544949dddc0966588"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_receive_data_transfer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv434naaice_swnaa_receive_data_transferP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_receive_data_transfer Handles recieving data from remote peer, blocking until this is finished. Information about the data is updated in the communication context.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if successful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429naaice_swnaa_do_data_transferP28naaice_communication_context7uint8_t">
+<span id="_CPPv329naaice_swnaa_do_data_transferP28naaice_communication_context7uint8_t"></span><span id="_CPPv229naaice_swnaa_do_data_transferP28naaice_communication_context7uint8_t"></span><span id="naaice_swnaa_do_data_transfer__naaice_communication_contextP.uint8_t"></span><span class="target" id="naaice__swnaa_8h_1afcd7cfac00b5a22c00bfa9232951e762"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_do_data_transfer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">errorcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429naaice_swnaa_do_data_transferP28naaice_communication_context7uint8_t" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_do_data_transfer Does all logic for the data transfer, including recieving data from the NAA, wating for the NAA calculation, and writing the return data back, in a blocking fashion.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if successful, -1 if not. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv432naaice_swnaa_poll_cq_nonblockingP28naaice_communication_context">
+<span id="_CPPv332naaice_swnaa_poll_cq_nonblockingP28naaice_communication_context"></span><span id="_CPPv232naaice_swnaa_poll_cq_nonblockingP28naaice_communication_context"></span><span id="naaice_swnaa_poll_cq_nonblocking__naaice_communication_contextP"></span><span class="target" id="naaice__swnaa_8h_1a699965b5aacdf718be4c95ac910a16cc"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_swnaa_poll_cq_nonblocking</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv432naaice_swnaa_poll_cq_nonblockingP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>naaice_swnaa_poll_cq_nonblocking: Polls the completion queue for any work completions, and handles them if any are received using naaice_handle_work_completion.</p>
+<p>Subsequently, comm_ctx-&gt;state is updated to reflect the current state of the NAA connection and routine.</p>
+<p>params: naaice_communication_context *comm_ctx: Pointer to struct describing the connection.</p>
+<p>returns: 0 if sucessful (regardless of whether any work completions are received), -1 if not. </p>
+</dd></dl>
+
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="middleware.html" class="btn btn-neutral float-left" title="Middleware API Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Florian Mikolajczak, Dylan Everingham, Hannes Signer, Niklas Schelten.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

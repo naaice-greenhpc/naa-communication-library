@@ -1,0 +1,63 @@
+\doxysection{naa\+\_\+param\+\_\+t Struct Reference}
+\hypertarget{structnaa__param__t}{}\label{structnaa__param__t}\index{naa\_param\_t@{naa\_param\_t}}
+
+
+Represents a single parameter (input or output) for an NAA routine.  
+
+
+
+
+{\ttfamily \#include $<$naaice\+\_\+ap2.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaa__param__t_ad5cb0da75bd8c82ce3b6aaadea4ec9f3}{addr}}
+\begin{DoxyCompactList}\small\item\em Pointer to the data region. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{structnaa__param__t_a9538d353b558b49e63b4f2a84dbc604a}{size}}
+\begin{DoxyCompactList}\small\item\em Size of the data region, in bytes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structnaa__param__t_a005d6f65b65447b682d5eb56d8e8434d}{single\+\_\+send}}
+\begin{DoxyCompactList}\small\item\em Indicates that the parameter should be sent only once. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a single parameter (input or output) for an NAA routine. 
+
+Holds information about the data region corresponding to a parameter, including its address, size, and whether it should be sent only once during the connection (e.\+g., for configuration data). 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaa__param__t_ad5cb0da75bd8c82ce3b6aaadea4ec9f3}\index{naa\_param\_t@{naa\_param\_t}!addr@{addr}}
+\index{addr@{addr}!naa\_param\_t@{naa\_param\_t}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structnaa__param__t_ad5cb0da75bd8c82ce3b6aaadea4ec9f3} 
+void\texorpdfstring{$\ast$}{*} naa\+\_\+param\+\_\+t\+::addr}
+
+
+
+Pointer to the data region. 
+
+\Hypertarget{structnaa__param__t_a005d6f65b65447b682d5eb56d8e8434d}\index{naa\_param\_t@{naa\_param\_t}!single\_send@{single\_send}}
+\index{single\_send@{single\_send}!naa\_param\_t@{naa\_param\_t}}
+\doxysubsubsection{\texorpdfstring{single\_send}{single\_send}}
+{\footnotesize\ttfamily \label{structnaa__param__t_a005d6f65b65447b682d5eb56d8e8434d} 
+bool naa\+\_\+param\+\_\+t\+::single\+\_\+send}
+
+
+
+Indicates that the parameter should be sent only once. 
+
+\Hypertarget{structnaa__param__t_a9538d353b558b49e63b4f2a84dbc604a}\index{naa\_param\_t@{naa\_param\_t}!size@{size}}
+\index{size@{size}!naa\_param\_t@{naa\_param\_t}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily \label{structnaa__param__t_a9538d353b558b49e63b4f2a84dbc604a} 
+size\+\_\+t naa\+\_\+param\+\_\+t\+::size}
+
+
+
+Size of the data region, in bytes. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice__ap2_8h}{naaice\+\_\+ap2.\+h}}\end{DoxyCompactItemize}

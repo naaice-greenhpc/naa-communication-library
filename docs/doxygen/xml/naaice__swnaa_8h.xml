@@ -1,0 +1,624 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="naaice__swnaa_8h" kind="file" language="C++">
+    <compoundname>naaice_swnaa.h</compoundname>
+    <includes refid="naaice_8h" local="yes">naaice.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>naaice.h</label>
+        <link refid="naaice_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h</label>
+        <link refid="naaice__swnaa_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>endian.h</label>
+      </node>
+      <node id="4">
+        <label>errno.h</label>
+      </node>
+      <node id="5">
+        <label>fcntl.h</label>
+      </node>
+      <node id="6">
+        <label>inttypes.h</label>
+      </node>
+      <node id="14">
+        <label>limits.h</label>
+      </node>
+      <node id="15">
+        <label>netdb.h</label>
+      </node>
+      <node id="16">
+        <label>rdma/rdma_cma.h</label>
+      </node>
+      <node id="17">
+        <label>rdma/rdma_verbs.h</label>
+      </node>
+      <node id="7">
+        <label>stdbool.h</label>
+      </node>
+      <node id="8">
+        <label>stdint.h</label>
+      </node>
+      <node id="9">
+        <label>stdio.h</label>
+      </node>
+      <node id="10">
+        <label>stdlib.h</label>
+      </node>
+      <node id="11">
+        <label>string.h</label>
+      </node>
+      <node id="12">
+        <label>sys/poll.h</label>
+      </node>
+      <node id="18">
+        <label>sys/socket.h</label>
+      </node>
+      <node id="13">
+        <label>unistd.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="naaice__swnaa_8h_1a2e304ccf78229d70b893def6eea01844" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_init_communication_context</definition>
+        <argsstring>(struct naaice_communication_context **comm_ctx, uint16_t port)</argsstring>
+        <name>naaice_swnaa_init_communication_context</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> **</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>port</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><computeroutput>7MN.</computeroutput>7MF&apos; db db <lsquo/>7MMF<rsquo/> .g8&quot;&quot;&quot;bgd `7MM&quot;&quot;&quot;YMM <linebreak/>
+ MMN. M ;MM: ;MM: MM .dP&apos; <computeroutput>M MM</computeroutput>7 <linebreak/>
+ M YMb M ,V^MM. ,V^MM. MM dM&apos; <computeroutput>MM d \ilinebr&lt;br&gt; M</computeroutput>MN. M ,M <computeroutput>MM ,M</computeroutput>MM MM MM MMmmMM <linebreak/>
+ M <lsquo/>MM.M AbmmmqMA AbmmmqMA MM MM. MM Y , M YMM A<rsquo/> VML A&apos; VML MM <lsquo/>Mb. ,<rsquo/> MM ,M .JML. YM .AMA. .AMMA..AMA. .AMMA..JMML. <lsquo/>&quot;bmmmd&amp;rsquo;  .JMMmmmmMMM 
+
+ Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
+
+naaice_swnaa.h
+
+Interface for NAAICE AP1 software dummy NAA (SWNAA).
+
+These functions are used to set up a software mockup of an NAA, which
+behaves like a FPGA-based NAA should. Such an SWNAA can be used for testing
+the NAAICE middleware layers in the absence of an FPGA.
+
+Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
+Dylan Everingham, everingham@zib.de
+
+26-01-2024
+naaice_init_communication_context:
+ Initializes communication context struct.
+
+ The dummy software NAA reuses the communication context struct from the
+ host-side AP1 implementation, but doesn&apos;t use all the fields in the
+ exact same way. Most importantly, the size and number of parameters
+ is not known (and related fields are not populated) until after the
+ MRSP is complete.
+
+params:
+ naaice_communication_context *comm_ctx: (return param)
+   Pointer to communication context struct to be initialized.
+   Should not point to an existing struct; the struct is allocated
+   and returned by this function.
+ const char *port:
+   String specifying connection port, ex. &quot;12345". about:blank#blocked returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="64" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="64" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1af8a7cefb12eee651c6c055220bf0fc67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_setup_connection</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_setup_connection</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_setup_connection: Loops polling for and handling connection events until connection setup is complete. Unlike the base naaice version, does not require handling the address or route resolution events, but does handle the connection requests complete event which is not handled on the host side.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if sucessful, -1 if not (due to timeout). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="81" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="81" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a090aa5dad1a291e1331e970071aa65d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_handle_connection_requests</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_swnaa_handle_connection_requests</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>swnaa connection event handlers: These functions each handle a specific connection event. If the provided event&apos;s type matches the event type of the handler function, it executes the necessary logic to handle it.</para>
+<para>Subsequently, flags in the communication context are updated to represent the current status of connection establishment.</para>
+<para>The events handled by these functions are, in order: RDMA_CM_EVENT_CONNECTION_REQUEST RDMA_CM_EVENT_CONNECT_ESTABLISHED</para>
+<para>Also, the following are handled by naaice_swnaa_handle_error: RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR, RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE, RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL, RDMA_CM_EVENT_DISCONNECTED.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection with events to handle. struct rdma_cm_event *ev: Pointer to event to be checked and possibly handled.</para>
+<para>returns: 0 if sucessful (i.e. either the event was the matching type and was handled successfully, or the event was not the matching type), -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="112" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="112" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a035fce0f94485bed8bd89298b0a275c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_handle_connection_established</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_swnaa_handle_connection_established</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="114" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="114" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1ad193f2b7634c79cb88f88d45f403a9c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_handle_error</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_swnaa_handle_error</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="116" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="116" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1accd16824d60b2f865b90e13720b271fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_poll_and_handle_connection_event</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_poll_and_handle_connection_event</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_poll_and_handle_connection_event: Polls for a connection event on the RDMA event channel stored in the communication context and handles the event if one is received. Simply uses the poll and handle functions above.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if sucessful (regardless of whether an event is received), -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="132" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="132" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a12c843653bf1a3e09d3dfea183ae2c87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_init_mrsp</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_init_mrsp</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_init_mrsp: Starts the MRSP on the NAA side. That is, posts a recieve for MRSP packets expected from the host.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection and memory regions.</para>
+<para>returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="147" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="147" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a0c8a63de324d43fac3d053f4a49ff17b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_post_recv_mrsp</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_post_recv_mrsp</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_post_recv_mrsp Posts a recieve for an MRSP message. A recieve request is added to the queue which specifies the memory region to be written to (in this case, the MRSP region).</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if successful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="162" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="162" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1abac978fd0af33cd063e701ce16f681f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_handle_work_completion</definition>
+        <argsstring>(struct ibv_wc *wc, struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_handle_work_completion</name>
+        <param>
+          <type>struct ibv_wc *</type>
+          <declname>wc</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_handle_work_completion: Handles a single work completion from the completion queue. These represent memory region writes from host to NAA or NAA to host.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="176" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="176" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a788ed844b1653b50572d9e42dc7a0a68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_handle_mr_announce</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_handle_mr_announce</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_handle_mr_announce, naaice_swnaa_handle_mr_announce_and_request:</para>
+<para>Handlers for MRSP packets. Processes the contents of a received MRSP packet of the corresponding type, populating relevant values in the communication context.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="194" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="194" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a48579f2e7e439235f9247f07465a97bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_handle_mr_announce_and_request</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_handle_mr_announce_and_request</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="196" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="196" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a37454381c7d8b6a8789a59cc1b3be774" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_send_message</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, enum message_id message_type, uint8_t errorcode)</argsstring>
+        <name>naaice_swnaa_send_message</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kindref="member">message_id</ref></type>
+          <declname>message_type</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>errorcode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_send_message: Sends an MRSP packet to the remote peer. Done with a ibv_post_send using opcode IBV_WR_SEND.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection. enum <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kindref="member">message_id</ref> message_type: Specifies the packet type. Should be one of MSG_MR_ERR, MSG_MR_AAR, or MSG_MR_A. uint8_t errorcode: Error code send in the packet, if message_type was MSG_MR_ERR. Unused for other message types.</para>
+<para>returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="217" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="217" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a42d9e03575369193d4b439dc14cd9996" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_post_recv_data</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_post_recv_data</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_post_recv_data Posts a recieve for a memory region write. It is only necessary to post a recieve for the final memory region to be written, that is, the write with an immediate value. RDMA writes without an immediate simply occur without consuming a recieve request in the queue.</para>
+<para>The memory region specified in the recieve request is the MRSP region; this is just a dummy value, as the region written to is specified by the sender.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if successful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="238" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="238" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1ad097a9b0b5c21da11b75ca5e41d5eabe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_write_data</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, uint8_t errorcode)</argsstring>
+        <name>naaice_swnaa_write_data</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>errorcode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_write_data: Writes the return memory region, specified by comm_ctx-&gt;mr_return_idx, to the remote peer. Done with a ibv_post_send using opcode IBV_WR_RDMA_WRITE_WITH_IMM. The immediate value indicates if an error has occured during calculation (nonzero = error).</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection. uint8_t fncode: Function Code for NAA routine. Positive, 0 on error.</para>
+<para>returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="256" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="256" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a8de430c646b492b2ed48e02b5c605a98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_disconnect_and_cleanup</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_disconnect_and_cleanup</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_disconnect_and_cleanup: Terminates the connection and frees all communication context memory.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if sucessful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="270" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="270" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1ae641aa93b2c8bb44a7346cbc6df59560" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_do_mrsp</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_do_mrsp</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_do_mrsp Does all logic for the MRSP in a blocking fashion.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if successful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="284" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="284" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a29754b79027796b544949dddc0966588" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_receive_data_transfer</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_receive_data_transfer</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_receive_data_transfer Handles recieving data from remote peer, blocking until this is finished. Information about the data is updated in the communication context.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if successful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="298" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="298" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1afcd7cfac00b5a22c00bfa9232951e762" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_do_data_transfer</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, uint8_t errorcode)</argsstring>
+        <name>naaice_swnaa_do_data_transfer</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>errorcode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_do_data_transfer Does all logic for the data transfer, including recieving data from the NAA, wating for the NAA calculation, and writing the return data back, in a blocking fashion.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if successful, -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="314" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="314" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__swnaa_8h_1a699965b5aacdf718be4c95ac910a16cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_swnaa_poll_cq_nonblocking</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_swnaa_poll_cq_nonblocking</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>naaice_swnaa_poll_cq_nonblocking: Polls the completion queue for any work completions, and handles them if any are received using naaice_handle_work_completion.</para>
+<para>Subsequently, comm_ctx-&gt;state is updated to reflect the current state of the NAA connection and routine.</para>
+<para>params: <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *comm_ctx: Pointer to struct describing the connection.</para>
+<para>returns: 0 if sucessful (regardless of whether any work completions are received), -1 if not. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" line="333" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h" declline="333" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/**************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NAAICE_SWNAA_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NAAICE_SWNAA_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Dependencies<sp/>**************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="naaice_8h" kindref="compound">naaice.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Public<sp/>Functions<sp/>**********************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="naaice__swnaa_8h_1a2e304ccf78229d70b893def6eea01844" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a2e304ccf78229d70b893def6eea01844" kindref="member">naaice_swnaa_init_communication_context</ref>(</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>**comm_ctx,<sp/>uint16_t<sp/>port);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="naaice__swnaa_8h_1af8a7cefb12eee651c6c055220bf0fc67" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1af8a7cefb12eee651c6c055220bf0fc67" kindref="member">naaice_swnaa_setup_connection</ref>(</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="112" refid="naaice__swnaa_8h_1a090aa5dad1a291e1331e970071aa65d7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a090aa5dad1a291e1331e970071aa65d7" kindref="member">naaice_swnaa_handle_connection_requests</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="114" refid="naaice__swnaa_8h_1a035fce0f94485bed8bd89298b0a275c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a035fce0f94485bed8bd89298b0a275c9" kindref="member">naaice_swnaa_handle_connection_established</ref>(</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="116" refid="naaice__swnaa_8h_1ad193f2b7634c79cb88f88d45f403a9c5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1ad193f2b7634c79cb88f88d45f403a9c5" kindref="member">naaice_swnaa_handle_error</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="naaice__swnaa_8h_1accd16824d60b2f865b90e13720b271fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="naaice__swnaa_8h_1accd16824d60b2f865b90e13720b271fa" kindref="member">naaice_swnaa_poll_and_handle_connection_event</ref>(</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="naaice__swnaa_8h_1a12c843653bf1a3e09d3dfea183ae2c87" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a12c843653bf1a3e09d3dfea183ae2c87" kindref="member">naaice_swnaa_init_mrsp</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="naaice__swnaa_8h_1a0c8a63de324d43fac3d053f4a49ff17b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a0c8a63de324d43fac3d053f4a49ff17b" kindref="member">naaice_swnaa_post_recv_mrsp</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="naaice__swnaa_8h_1abac978fd0af33cd063e701ce16f681f6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1abac978fd0af33cd063e701ce16f681f6" kindref="member">naaice_swnaa_handle_work_completion</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>ibv_wc<sp/>*wc,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="naaice__swnaa_8h_1a788ed844b1653b50572d9e42dc7a0a68" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a788ed844b1653b50572d9e42dc7a0a68" kindref="member">naaice_swnaa_handle_mr_announce</ref>(</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="196" refid="naaice__swnaa_8h_1a48579f2e7e439235f9247f07465a97bd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a48579f2e7e439235f9247f07465a97bd" kindref="member">naaice_swnaa_handle_mr_announce_and_request</ref>(</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="naaice__swnaa_8h_1a37454381c7d8b6a8789a59cc1b3be774" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a37454381c7d8b6a8789a59cc1b3be774" kindref="member">naaice_swnaa_send_message</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kindref="member">message_id</ref><sp/>message_type,<sp/>uint8_t<sp/>errorcode);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238" refid="naaice__swnaa_8h_1a42d9e03575369193d4b439dc14cd9996" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a42d9e03575369193d4b439dc14cd9996" kindref="member">naaice_swnaa_post_recv_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="naaice__swnaa_8h_1ad097a9b0b5c21da11b75ca5e41d5eabe" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1ad097a9b0b5c21da11b75ca5e41d5eabe" kindref="member">naaice_swnaa_write_data</ref>(</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,<sp/>uint8_t<sp/>errorcode);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270" refid="naaice__swnaa_8h_1a8de430c646b492b2ed48e02b5c605a98" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a8de430c646b492b2ed48e02b5c605a98" kindref="member">naaice_swnaa_disconnect_and_cleanup</ref>(</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284" refid="naaice__swnaa_8h_1ae641aa93b2c8bb44a7346cbc6df59560" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1ae641aa93b2c8bb44a7346cbc6df59560" kindref="member">naaice_swnaa_do_mrsp</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298" refid="naaice__swnaa_8h_1a29754b79027796b544949dddc0966588" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a29754b79027796b544949dddc0966588" kindref="member">naaice_swnaa_receive_data_transfer</ref>(</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="314" refid="naaice__swnaa_8h_1afcd7cfac00b5a22c00bfa9232951e762" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1afcd7cfac00b5a22c00bfa9232951e762" kindref="member">naaice_swnaa_do_data_transfer</ref>(</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,<sp/>uint8_t<sp/>errorcode);</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333" refid="naaice__swnaa_8h_1a699965b5aacdf718be4c95ac910a16cc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__swnaa_8h_1a699965b5aacdf718be4c95ac910a16cc" kindref="member">naaice_swnaa_poll_cq_nonblocking</ref>(</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h"/>
+  </compounddef>
+</doxygen>

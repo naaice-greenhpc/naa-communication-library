@@ -1,0 +1,124 @@
+\doxysection{/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/naaice\+\_\+ap2.h File Reference}
+\hypertarget{naaice__ap2_8h}{}\label{naaice__ap2_8h}\index{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_ap2.h@{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_ap2.h}}
+{\ttfamily \#include "{}naaice.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+Include dependency graph for naaice\+\_\+ap2.\+h\+:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structnaa__param__t}{naa\+\_\+param\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Represents a single parameter (input or output) for an NAA routine. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}}
+\begin{DoxyCompactList}\small\item\em Represents a handle to a NAA session. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaa__status}{naa\+\_\+status}}
+\begin{DoxyCompactList}\small\item\em Status information for a NAA session. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef uint32\+\_\+t \mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\+\_\+function\+\_\+code\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Numerical code for the function/accelerator to be used by the application. \end{DoxyCompactList}\item 
+typedef struct naa\+\_\+param\+\_\+t \mbox{\hyperlink{group__Functions_ga4b3a6cd9631f1817cc6f360c92d8149e}{naa\+\_\+param\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Represents a single parameter (input or output) for an NAA routine. \end{DoxyCompactList}\item 
+typedef struct naa\+\_\+handle \mbox{\hyperlink{group__StructsEnums_ga8f57849ab74ea615ad8bd74df264ede2}{naa\+\_\+handle}}
+\begin{DoxyCompactList}\small\item\em Represents a handle to a NAA session. \end{DoxyCompactList}\item 
+typedef struct naa\+\_\+status \mbox{\hyperlink{group__StructsEnums_gab5cd016885936f9664f72c77b4d96474}{naa\+\_\+status}}
+\begin{DoxyCompactList}\small\item\em Status information for a NAA session. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga45430261054a7041b457175c442cc626}{naa\+\_\+error}} \{ \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381}{NAA\+\_\+\+SUCCESS}} = 0x00
+, \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2}{SOCKET\+\_\+\+UNAVAIL}} = 0x01
+, \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58}{KERNEL\+\_\+\+TIMEOUT}} = 0x02
+ \}
+\begin{DoxyCompactList}\small\item\em Error codes returned by NAA routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{group__Functions_gaee9f8a2c0afbe3868e00685c06c94ce4}{naa\+\_\+create}} (const \mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\+\_\+function\+\_\+code\+\_\+t}} function\+\_\+code, \mbox{\hyperlink{structnaa__param__t}{naa\+\_\+param\+\_\+t}} \texorpdfstring{$\ast$}{*}input\+\_\+params, unsigned int input\+\_\+amount, \mbox{\hyperlink{structnaa__param__t}{naa\+\_\+param\+\_\+t}} \texorpdfstring{$\ast$}{*}output\+\_\+params, unsigned int output\+\_\+amount, \mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}handle)
+\begin{DoxyCompactList}\small\item\em Configure memory regions and establish a connection to a remote NAA. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__Functions_ga978eb1295ce4e7b283b6d6b74286b2d2}{naa\+\_\+invoke}} (\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}handle)
+\begin{DoxyCompactList}\small\item\em Sends input data to the peer and triggers the corresponding NAA routine. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{naaice__ap2_8h_a6200e7134fc6961daa5d45e938dd6511}{naa\+\_\+test}} (\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}handle, bool \texorpdfstring{$\ast$}{*}flag, \mbox{\hyperlink{structnaa__status}{naa\+\_\+status}} \texorpdfstring{$\ast$}{*}status)
+\begin{DoxyCompactList}\small\item\em Waits in non-\/blocking mode for a receive. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{naaice__ap2_8h_a6bba1a1b9e1467702339f2a6fbdbfdf9}{naa\+\_\+wait}} (\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}handle, \mbox{\hyperlink{structnaa__status}{naa\+\_\+status}} \texorpdfstring{$\ast$}{*}status)
+\begin{DoxyCompactList}\small\item\em Waits in blocking mode for a receive. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{naaice__ap2_8h_a65c8b2bbcb09f4fd873983d1ed9fb293}{naa\+\_\+finalize}} (\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}handle)
+\begin{DoxyCompactList}\small\item\em Terminates connection and cleans up the corresponding data structures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}\index{naaice\_ap2.h@{naaice\_ap2.h}!naa\_function\_code\_t@{naa\_function\_code\_t}}
+\index{naa\_function\_code\_t@{naa\_function\_code\_t}!naaice\_ap2.h@{naaice\_ap2.h}}
+\doxysubsubsection{\texorpdfstring{naa\_function\_code\_t}{naa\_function\_code\_t}}
+{\footnotesize\ttfamily \label{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3} 
+typedef uint32\+\_\+t \mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\+\_\+function\+\_\+code\+\_\+t}}}
+
+
+
+Numerical code for the function/accelerator to be used by the application. 
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{naaice__ap2_8h_a65c8b2bbcb09f4fd873983d1ed9fb293}\index{naaice\_ap2.h@{naaice\_ap2.h}!naa\_finalize@{naa\_finalize}}
+\index{naa\_finalize@{naa\_finalize}!naaice\_ap2.h@{naaice\_ap2.h}}
+\doxysubsubsection{\texorpdfstring{naa\_finalize()}{naa\_finalize()}}
+{\footnotesize\ttfamily \label{naaice__ap2_8h_a65c8b2bbcb09f4fd873983d1ed9fb293} 
+int naa\+\_\+finalize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}}]{handle}{}\end{DoxyParamCaption})}
+
+
+
+Terminates connection and cleans up the corresponding data structures. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & communication handle created by naa\+\_\+create \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int if sucessful, -\/1 if not. 
+\end{DoxyReturn}
+\Hypertarget{naaice__ap2_8h_a6200e7134fc6961daa5d45e938dd6511}\index{naaice\_ap2.h@{naaice\_ap2.h}!naa\_test@{naa\_test}}
+\index{naa\_test@{naa\_test}!naaice\_ap2.h@{naaice\_ap2.h}}
+\doxysubsubsection{\texorpdfstring{naa\_test()}{naa\_test()}}
+{\footnotesize\ttfamily \label{naaice__ap2_8h_a6200e7134fc6961daa5d45e938dd6511} 
+int naa\+\_\+test (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}}]{handle}{, }\item[{bool \texorpdfstring{$\ast$}{*}}]{flag}{, }\item[{\mbox{\hyperlink{structnaa__status}{naa\+\_\+status}} \texorpdfstring{$\ast$}{*}}]{status}{}\end{DoxyParamCaption})}
+
+
+
+Waits in non-\/blocking mode for a receive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & \\
+\hline
+{\em flag} & \\
+\hline
+{\em status} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\Hypertarget{naaice__ap2_8h_a6bba1a1b9e1467702339f2a6fbdbfdf9}\index{naaice\_ap2.h@{naaice\_ap2.h}!naa\_wait@{naa\_wait}}
+\index{naa\_wait@{naa\_wait}!naaice\_ap2.h@{naaice\_ap2.h}}
+\doxysubsubsection{\texorpdfstring{naa\_wait()}{naa\_wait()}}
+{\footnotesize\ttfamily \label{naaice__ap2_8h_a6bba1a1b9e1467702339f2a6fbdbfdf9} 
+int naa\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}} \texorpdfstring{$\ast$}{*}}]{handle}{, }\item[{\mbox{\hyperlink{structnaa__status}{naa\+\_\+status}} \texorpdfstring{$\ast$}{*}}]{status}{}\end{DoxyParamCaption})}
+
+
+
+Waits in blocking mode for a receive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & communication handle created by naa\+\_\+create \\
+\hline
+{\em status} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}

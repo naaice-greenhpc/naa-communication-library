@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAAICE Low-Level API Documentation &mdash; naa-communication-library 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/naaice.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Middleware API Documentation" href="middleware.html" />
+    <link rel="prev" title="Welcome to naa-communication-library’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/naaice.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">NAAICE Low-Level API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#defines">Defines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#c.TIMEOUT_RESOLVE_ROUTE"><code class="docutils literal notranslate"><span class="pre">TIMEOUT_RESOLVE_ROUTE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c.POLLING_TIMEOUT"><code class="docutils literal notranslate"><span class="pre">POLLING_TIMEOUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c.DEFAULT_TIMEOUT"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TIMEOUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c.DEFAULT_RETRY_COUNT"><code class="docutils literal notranslate"><span class="pre">DEFAULT_RETRY_COUNT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#structs-enums">Structs &amp; Enums</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv426naaice_communication_state"><code class="docutils literal notranslate"><span class="pre">naaice_communication_state</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state11NAAICE_INITE"><code class="docutils literal notranslate"><span class="pre">NAAICE_INIT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state12NAAICE_READYE"><code class="docutils literal notranslate"><span class="pre">NAAICE_READY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state16NAAICE_CONNECTEDE"><code class="docutils literal notranslate"><span class="pre">NAAICE_CONNECTED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state19NAAICE_DISCONNECTEDE"><code class="docutils literal notranslate"><span class="pre">NAAICE_DISCONNECTED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state19NAAICE_MRSP_SENDINGE"><code class="docutils literal notranslate"><span class="pre">NAAICE_MRSP_SENDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state21NAAICE_MRSP_RECEIVINGE"><code class="docutils literal notranslate"><span class="pre">NAAICE_MRSP_RECEIVING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state16NAAICE_MRSP_DONEE"><code class="docutils literal notranslate"><span class="pre">NAAICE_MRSP_DONE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state19NAAICE_DATA_SENDINGE"><code class="docutils literal notranslate"><span class="pre">NAAICE_DATA_SENDING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state18NAAICE_CALCULATINGE"><code class="docutils literal notranslate"><span class="pre">NAAICE_CALCULATING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state21NAAICE_DATA_RECEIVINGE"><code class="docutils literal notranslate"><span class="pre">NAAICE_DATA_RECEIVING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state15NAAICE_FINISHEDE"><code class="docutils literal notranslate"><span class="pre">NAAICE_FINISHED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N26naaice_communication_state12NAAICE_ERRORE"><code class="docutils literal notranslate"><span class="pre">NAAICE_ERROR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv49naa_error"><code class="docutils literal notranslate"><span class="pre">naa_error</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N9naa_error11NAA_SUCCESSE"><code class="docutils literal notranslate"><span class="pre">NAA_SUCCESS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N9naa_error14SOCKET_UNAVAILE"><code class="docutils literal notranslate"><span class="pre">SOCKET_UNAVAIL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N9naa_error14KERNEL_TIMEOUTE"><code class="docutils literal notranslate"><span class="pre">KERNEL_TIMEOUT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv410naa_handle"><code class="docutils literal notranslate"><span class="pre">naa_handle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv410naa_status"><code class="docutils literal notranslate"><span class="pre">naa_status</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv433naaice_init_communication_contextPP28naaice_communication_context8uint64_tP6size_tPPcjjP6size_t7uint8_tPKcPKc8uint16_t"><code class="docutils literal notranslate"><span class="pre">naaice_init_communication_context()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv428naaice_poll_connection_eventP28naaice_communication_contextP13rdma_cm_eventP13rdma_cm_event"><code class="docutils literal notranslate"><span class="pre">naaice_poll_connection_event()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv439naaice_poll_and_handle_connection_eventP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_poll_and_handle_connection_event()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv423naaice_setup_connectionP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_setup_connection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv419naaice_register_mrsP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_register_mrs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv424naaice_set_parameter_mrsP28naaice_communication_contextjP8uint64_tP8uint64_tP6size_t"><code class="docutils literal notranslate"><span class="pre">naaice_set_parameter_mrs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv419naaice_set_input_mrP28naaice_communication_contextj"><code class="docutils literal notranslate"><span class="pre">naaice_set_input_mr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv420naaice_set_output_mrP28naaice_communication_contextj"><code class="docutils literal notranslate"><span class="pre">naaice_set_output_mr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv424naaice_set_singlesend_mrP28naaice_communication_contextj"><code class="docutils literal notranslate"><span class="pre">naaice_set_singlesend_mr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv423naaice_set_internal_mrsP28naaice_communication_contextjP8uint64_tP6size_t"><code class="docutils literal notranslate"><span class="pre">naaice_set_internal_mrs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv420naaice_set_immediateP28naaice_communication_contextP7uint8_t"><code class="docutils literal notranslate"><span class="pre">naaice_set_immediate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv416naaice_init_mrspP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_init_mrsp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv425naaice_init_data_transferP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_init_data_transfer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv429naaice_handle_work_completionP6ibv_wcP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_handle_work_completion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv426naaice_poll_cq_nonblockingP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_poll_cq_nonblocking()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv423naaice_poll_cq_blockingP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_poll_cq_blocking()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv429naaice_disconnect_and_cleanupP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_disconnect_and_cleanup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv419naaice_send_messageP28naaice_communication_context10message_id7uint8_t"><code class="docutils literal notranslate"><span class="pre">naaice_send_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv417naaice_write_dataP28naaice_communication_context7uint8_t"><code class="docutils literal notranslate"><span class="pre">naaice_write_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv421naaice_post_recv_mrspP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_post_recv_mrsp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv421naaice_post_recv_dataP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_post_recv_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv426naaice_init_rdma_resourcesP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_init_rdma_resources()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv414naaice_do_mrspP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_do_mrsp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv423naaice_do_data_transferP28naaice_communication_context"><code class="docutils literal notranslate"><span class="pre">naaice_do_data_transfer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv424naaice_set_bytes_to_sendP28naaice_communication_contextii"><code class="docutils literal notranslate"><span class="pre">naaice_set_bytes_to_send()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="middleware.html">Middleware API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="swnaa.html">Software-NAA API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">naa-communication-library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">NAAICE Low-Level API Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/low_level.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="naaice-low-level-api-documentation">
+<h1>NAAICE Low-Level API Documentation<a class="headerlink" href="#naaice-low-level-api-documentation" title="Link to this heading"></a></h1>
+<section id="defines">
+<h2>Defines<a class="headerlink" href="#defines" title="Link to this heading"></a></h2>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.TIMEOUT_RESOLVE_ROUTE">
+<span class="target" id="group__defines_1gaeb2c8b9b4d058b7930d52db59b5f9051"></span><span class="sig-name descname"><span class="n"><span class="pre">TIMEOUT_RESOLVE_ROUTE</span></span></span><a class="headerlink" href="#c.TIMEOUT_RESOLVE_ROUTE" title="Link to this definition"></a><br /></dt>
+<dd><p>Timeout for resolving RDMA routes, in milliseconds. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.POLLING_TIMEOUT">
+<span class="target" id="group__defines_1gac5aea11b8390f14300a4050cfd3f1fcb"></span><span class="sig-name descname"><span class="n"><span class="pre">POLLING_TIMEOUT</span></span></span><a class="headerlink" href="#c.POLLING_TIMEOUT" title="Link to this definition"></a><br /></dt>
+<dd><p>Timeout for poll functions, in milliseconds. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.DEFAULT_TIMEOUT">
+<span class="target" id="group__defines_1gaad2dd72565852b91c809cd4685833b17"></span><span class="sig-name descname"><span class="n"><span class="pre">DEFAULT_TIMEOUT</span></span></span><a class="headerlink" href="#c.DEFAULT_TIMEOUT" title="Link to this definition"></a><br /></dt>
+<dd><p>Default timeout for blocking calls to the NAA, in seconds. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.DEFAULT_RETRY_COUNT">
+<span class="target" id="group__defines_1ga7bde5b78c001e2bbcf25de2822064697"></span><span class="sig-name descname"><span class="n"><span class="pre">DEFAULT_RETRY_COUNT</span></span></span><a class="headerlink" href="#c.DEFAULT_RETRY_COUNT" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</section>
+<section id="structs-enums">
+<h2>Structs &amp; Enums<a class="headerlink" href="#structs-enums" title="Link to this heading"></a></h2>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv426naaice_communication_state">
+<span id="_CPPv326naaice_communication_state"></span><span id="_CPPv226naaice_communication_state"></span><span class="target" id="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_communication_state</span></span></span><a class="headerlink" href="#_CPPv426naaice_communication_state" title="Link to this definition"></a><br /></dt>
+<dd><p>Connection state machine for NAA communication. </p>
+<p>Defines the possible states of a communication session between the host and NAA. States represent the progression from connection establishment, through MRSP and data transfer, to completion.</p>
+<p>
+Host states:<ul class="simple">
+<li><p>NAAICE_INIT: Starting state.</p></li>
+<li><p>NAAICE_READY: Address resolved.</p></li>
+<li><p>NAAICE_CONNECTED: Connection established.</p></li>
+<li><p>NAAICE_MRSP_SENDING: Posting write for MRSP packet.</p></li>
+<li><p>NAAICE_MRSP_RECEIVING: Waiting for / processing MRSP response from NAA.</p></li>
+<li><p>NAAICE_MRSP_DONE: Finished MRSP.</p></li>
+<li><p>NAAICE_DATA_SENDING: Posting write for data transfer to NAA.</p></li>
+<li><p>NAAICE_DATA_RECEIVING: Waiting for / processing data transfer back from NAA.</p></li>
+<li><p>NAAICE_FINISHED: Done!</p></li>
+</ul>
+</p>
+<p>NAA states:<ul class="simple">
+<li><p>NAAICE_INIT: Starting state.</p></li>
+<li><p>NAAICE_CONNECTED: Connection established.</p></li>
+<li><p>NAAICE_MRSP_RECEIVING: Waiting for / processing MRSP packet from host.</p></li>
+<li><p>NAAICE_MRSP_SENDING: Posting write for MRSP packet.</p></li>
+<li><p>NAAICE_MRSP_DONE: Finished MRSP.</p></li>
+<li><p>NAAICE_DATA_RECEIVING: Waiting for / processing data transfer from host.</p></li>
+<li><p>NAAICE_CALCULATING: Running RPC.</p></li>
+<li><p>NAAICE_DATA_SENDING: Posting write for data transfer back to host.</p></li>
+<li><p>NAAICE_FINISHED: Done! </p></li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The state flow differs slightly between the host and the NAA.</p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state11NAAICE_INITE">
+<span id="_CPPv3N26naaice_communication_state11NAAICE_INITE"></span><span id="_CPPv2N26naaice_communication_state11NAAICE_INITE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_INIT</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state11NAAICE_INITE" title="Link to this definition"></a><br /></dt>
+<dd><p>Starting state. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state12NAAICE_READYE">
+<span id="_CPPv3N26naaice_communication_state12NAAICE_READYE"></span><span id="_CPPv2N26naaice_communication_state12NAAICE_READYE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_READY</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state12NAAICE_READYE" title="Link to this definition"></a><br /></dt>
+<dd><p>Address resolved (host only) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state16NAAICE_CONNECTEDE">
+<span id="_CPPv3N26naaice_communication_state16NAAICE_CONNECTEDE"></span><span id="_CPPv2N26naaice_communication_state16NAAICE_CONNECTEDE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_CONNECTED</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state16NAAICE_CONNECTEDE" title="Link to this definition"></a><br /></dt>
+<dd><p>Connection established. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state19NAAICE_DISCONNECTEDE">
+<span id="_CPPv3N26naaice_communication_state19NAAICE_DISCONNECTEDE"></span><span id="_CPPv2N26naaice_communication_state19NAAICE_DISCONNECTEDE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_DISCONNECTED</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state19NAAICE_DISCONNECTEDE" title="Link to this definition"></a><br /></dt>
+<dd><p>Connection disconnected. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state19NAAICE_MRSP_SENDINGE">
+<span id="_CPPv3N26naaice_communication_state19NAAICE_MRSP_SENDINGE"></span><span id="_CPPv2N26naaice_communication_state19NAAICE_MRSP_SENDINGE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_MRSP_SENDING</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state19NAAICE_MRSP_SENDINGE" title="Link to this definition"></a><br /></dt>
+<dd><p>Posting write for MRSP packet. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state21NAAICE_MRSP_RECEIVINGE">
+<span id="_CPPv3N26naaice_communication_state21NAAICE_MRSP_RECEIVINGE"></span><span id="_CPPv2N26naaice_communication_state21NAAICE_MRSP_RECEIVINGE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_MRSP_RECEIVING</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state21NAAICE_MRSP_RECEIVINGE" title="Link to this definition"></a><br /></dt>
+<dd><p>Waiting for / processing MRSP packet. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state16NAAICE_MRSP_DONEE">
+<span id="_CPPv3N26naaice_communication_state16NAAICE_MRSP_DONEE"></span><span id="_CPPv2N26naaice_communication_state16NAAICE_MRSP_DONEE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_MRSP_DONE</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state16NAAICE_MRSP_DONEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Finished MRSP. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state19NAAICE_DATA_SENDINGE">
+<span id="_CPPv3N26naaice_communication_state19NAAICE_DATA_SENDINGE"></span><span id="_CPPv2N26naaice_communication_state19NAAICE_DATA_SENDINGE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_DATA_SENDING</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state19NAAICE_DATA_SENDINGE" title="Link to this definition"></a><br /></dt>
+<dd><p>Posting write for data transfer. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state18NAAICE_CALCULATINGE">
+<span id="_CPPv3N26naaice_communication_state18NAAICE_CALCULATINGE"></span><span id="_CPPv2N26naaice_communication_state18NAAICE_CALCULATINGE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_CALCULATING</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state18NAAICE_CALCULATINGE" title="Link to this definition"></a><br /></dt>
+<dd><p>Running RPC on NAA. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state21NAAICE_DATA_RECEIVINGE">
+<span id="_CPPv3N26naaice_communication_state21NAAICE_DATA_RECEIVINGE"></span><span id="_CPPv2N26naaice_communication_state21NAAICE_DATA_RECEIVINGE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_DATA_RECEIVING</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state21NAAICE_DATA_RECEIVINGE" title="Link to this definition"></a><br /></dt>
+<dd><p>Waiting for / processing data transfer. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state15NAAICE_FINISHEDE">
+<span id="_CPPv3N26naaice_communication_state15NAAICE_FINISHEDE"></span><span id="_CPPv2N26naaice_communication_state15NAAICE_FINISHEDE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_FINISHED</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state15NAAICE_FINISHEDE" title="Link to this definition"></a><br /></dt>
+<dd><p>Completed all communication. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N26naaice_communication_state12NAAICE_ERRORE">
+<span id="_CPPv3N26naaice_communication_state12NAAICE_ERRORE"></span><span id="_CPPv2N26naaice_communication_state12NAAICE_ERRORE"></span><span class="target" id="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAAICE_ERROR</span></span></span><a class="headerlink" href="#_CPPv4N26naaice_communication_state12NAAICE_ERRORE" title="Link to this definition"></a><br /></dt>
+<dd><p>Error state. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv49naa_error">
+<span id="_CPPv39naa_error"></span><span id="_CPPv29naa_error"></span><span class="target" id="group__StructsEnums_1ga45430261054a7041b457175c442cc626"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_error</span></span></span><a class="headerlink" href="#_CPPv49naa_error" title="Link to this definition"></a><br /></dt>
+<dd><p>Error codes returned by NAA routines. </p>
+<p>Defines possible error values for RPCs or communication failures between host and NAA. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9naa_error11NAA_SUCCESSE">
+<span id="_CPPv3N9naa_error11NAA_SUCCESSE"></span><span id="_CPPv2N9naa_error11NAA_SUCCESSE"></span><span class="target" id="group__StructsEnums_1gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NAA_SUCCESS</span></span></span><a class="headerlink" href="#_CPPv4N9naa_error11NAA_SUCCESSE" title="Link to this definition"></a><br /></dt>
+<dd><p>Successful RPC. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9naa_error14SOCKET_UNAVAILE">
+<span id="_CPPv3N9naa_error14SOCKET_UNAVAILE"></span><span id="_CPPv2N9naa_error14SOCKET_UNAVAILE"></span><span class="target" id="group__StructsEnums_1gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOCKET_UNAVAIL</span></span></span><a class="headerlink" href="#_CPPv4N9naa_error14SOCKET_UNAVAILE" title="Link to this definition"></a><br /></dt>
+<dd><p>Socket unavailable. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9naa_error14KERNEL_TIMEOUTE">
+<span id="_CPPv3N9naa_error14KERNEL_TIMEOUTE"></span><span id="_CPPv2N9naa_error14KERNEL_TIMEOUTE"></span><span class="target" id="group__StructsEnums_1gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">KERNEL_TIMEOUT</span></span></span><a class="headerlink" href="#_CPPv4N9naa_error14KERNEL_TIMEOUTE" title="Link to this definition"></a><br /></dt>
+<dd><p>Kernel timed out (timeout definition TBD). </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv410naa_handle">
+<span id="_CPPv310naa_handle"></span><span id="_CPPv210naa_handle"></span><span id="naa_handle"></span><span class="target" id="group__StructsEnums_1ga8f57849ab74ea615ad8bd74df264ede2"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410naa_handle" title="naa_handle"><span class="n"><span class="pre">naa_handle</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_handle</span></span></span><a class="headerlink" href="#_CPPv410naa_handle" title="Link to this definition"></a><br /></dt>
+<dd><p>Represents a handle to a NAA session. </p>
+<p>Holds information about an active NAA session, including the function code specifying the routine to execute and the associated low-level communication context. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv410naa_status">
+<span id="_CPPv310naa_status"></span><span id="_CPPv210naa_status"></span><span id="naa_status"></span><span class="target" id="group__StructsEnums_1gab5cd016885936f9664f72c77b4d96474"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410naa_status" title="naa_status"><span class="n"><span class="pre">naa_status</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_status</span></span></span><a class="headerlink" href="#_CPPv410naa_status" title="Link to this definition"></a><br /></dt>
+<dd><p>Status information for a NAA session. </p>
+<p>Holds the current state of the communication, any error codes returned by the NAA, and the number of bytes received so far. </p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp">
+<span class="target" id="structnaa__handle"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_handle</span></span></span><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;naaice_ap2.h&gt;</em></div>
+<p>Represents a handle to a NAA session. </p>
+<p>Holds information about an active NAA session, including the function code specifying the routine to execute and the associated low-level communication context. </p>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp">
+<span class="target" id="structnaa__status"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_status</span></span></span><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;naaice_ap2.h&gt;</em></div>
+<p>Status information for a NAA session. </p>
+<p>Holds the current state of the communication, any error codes returned by the NAA, and the number of bytes received so far. </p>
+</dd></dl>
+
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv433naaice_init_communication_contextPP28naaice_communication_context8uint64_tP6size_tPPcjjP6size_t7uint8_tPKcPKc8uint16_t">
+<span id="_CPPv333naaice_init_communication_contextPP28naaice_communication_context8uint64_tP6size_tPPcjjP6size_t7uint8_tPKcPKc8uint16_t"></span><span id="_CPPv233naaice_init_communication_contextPP28naaice_communication_context8uint64_tP6size_tPPcjjP6size_t7uint8_tPKcPKc8uint16_t"></span><span id="naaice_init_communication_context__naaice_communication_contextPP.uint64_t.sP.cPP.unsigned-i.unsigned-i.sP.uint8_t.cCP.cCP.uint16_t"></span><span class="target" id="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_init_communication_context</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr_offset</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">param_sizes</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">params</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">params_amount</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">internal_mr_amount</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">internal_mr_sizes</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fncode</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">local_address</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">remote_address</span></span>, <span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">port</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv433naaice_init_communication_contextPP28naaice_communication_context8uint64_tP6size_tPPcjjP6size_t7uint8_tPKcPKc8uint16_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Initializes communication context struct. </p>
+<p>After a call to this function, the provided communication context struct is ready to be passed to all other API functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – <strong>[out]</strong> Double pointer to communication context struct to be initialized. Must not point to an existing struct; the struct is allocated and returned by this function.</p></li>
+<li><p><strong>param_sizes</strong> – Array of sizes (in bytes) of the provided routine parameters.</p></li>
+<li><p><strong>params</strong> – Array of pointers to parameter data. Must be preallocated by the host application.</p></li>
+<li><p><strong>params_amount</strong> – Number of parameters. Used to index <code class="docutils literal notranslate"><span class="pre">param_sizes</span></code> and <code class="docutils literal notranslate"><span class="pre">params</span></code>.</p></li>
+<li><p><strong>internal_mr_amount</strong> – Number of internal memory regions. Used to index <code class="docutils literal notranslate"><span class="pre">internal_mr_sizes</span></code>.</p></li>
+<li><p><strong>internal_mr_sizes</strong> – Array of sizes (in bytes) of the internal memory regions.</p></li>
+<li><p><strong>fncode</strong> – Function code specifying which NAA routine is called.</p></li>
+<li><p><strong>local_address</strong> – Local address string (e.g. “10.3.10.136”). Optional; if NULL, it is not used. Do not provide a local address when running in loopback mode.</p></li>
+<li><p><strong>remote_address</strong> – Remote address string (e.g. “10.3.10.135”).</p></li>
+<li><p><strong>port</strong> – Connection port. A value of 0 enables dynamic port allocation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv428naaice_poll_connection_eventP28naaice_communication_contextP13rdma_cm_eventP13rdma_cm_event">
+<span id="_CPPv328naaice_poll_connection_eventP28naaice_communication_contextP13rdma_cm_eventP13rdma_cm_event"></span><span id="_CPPv228naaice_poll_connection_eventP28naaice_communication_contextP13rdma_cm_eventP13rdma_cm_event"></span><span id="naaice_poll_connection_event__naaice_communication_contextP.rdma_cm_eventP.rdma_cm_eventP"></span><span class="target" id="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_poll_connection_event</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">rdma_cm_event</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ev</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">rdma_cm_event</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ev_cp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428naaice_poll_connection_eventP28naaice_communication_contextP13rdma_cm_eventP13rdma_cm_event" title="Link to this definition"></a><br /></dt>
+<dd><p>Polls for a connection event on the RDMA event channel. </p>
+<p>Polls the RDMA event channel stored in the communication context. If a connection event is received, it is stored in the provided event pointer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection to be polled.</p></li>
+<li><p><strong>ev</strong> – <strong>[out]</strong> Pointer to the received RDMA connection event.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success (regardless of whether an event was received), -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv439naaice_poll_and_handle_connection_eventP28naaice_communication_context">
+<span id="_CPPv339naaice_poll_and_handle_connection_eventP28naaice_communication_context"></span><span id="_CPPv239naaice_poll_and_handle_connection_eventP28naaice_communication_context"></span><span id="naaice_poll_and_handle_connection_event__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_poll_and_handle_connection_event</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv439naaice_poll_and_handle_connection_eventP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Poll and handle a connection event on the RDMA event channel. </p>
+<p>Polls the RDMA event channel stored in the communication context and, if an event is received, dispatches it to the appropriate connection event handler. This function is a convenience wrapper that combines polling and handling using the previously defined poll and handler functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success (regardless of whether an event was received), -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423naaice_setup_connectionP28naaice_communication_context">
+<span id="_CPPv323naaice_setup_connectionP28naaice_communication_context"></span><span id="_CPPv223naaice_setup_connectionP28naaice_communication_context"></span><span id="naaice_setup_connection__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_setup_connection</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423naaice_setup_connectionP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Set up the RDMA connection. </p>
+<p>Repeatedly polls for and handles RDMA connection events until the connection setup is complete. This function is a blocking helper that internally calls <a class="reference internal" href="#group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9"><span class="std std-ref">naaice_poll_and_handle_connection_event</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure (e.g. due to timeout). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419naaice_register_mrsP28naaice_communication_context">
+<span id="_CPPv319naaice_register_mrsP28naaice_communication_context"></span><span id="_CPPv219naaice_register_mrsP28naaice_communication_context"></span><span id="naaice_register_mrs__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_register_mrs</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419naaice_register_mrsP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Register local memory regions. </p>
+<p>Registers local memory regions as IBV memory regions using ::ibv_reg_mr. This includes memory regions corresponding to input and output parameters, the single metadata memory region, and the memory region used for MRSP.</p>
+<p>If an error occurs during registration, the remote peer is notified via <a class="reference internal" href="#group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b"><span class="std std-ref">naaice_send_message</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection and associated memory regions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424naaice_set_parameter_mrsP28naaice_communication_contextjP8uint64_tP8uint64_tP6size_t">
+<span id="_CPPv324naaice_set_parameter_mrsP28naaice_communication_contextjP8uint64_tP8uint64_tP6size_t"></span><span id="_CPPv224naaice_set_parameter_mrsP28naaice_communication_contextjP8uint64_tP8uint64_tP6size_t"></span><span id="naaice_set_parameter_mrs__naaice_communication_contextP.unsigned-i.uint64_tP.uint64_tP.sP"></span><span class="target" id="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_parameter_mrs</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n_parameter_mrs</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">local_addrs</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">remote_addrs</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sizes</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424naaice_set_parameter_mrsP28naaice_communication_contextjP8uint64_tP8uint64_tP6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate and initialize parameter memory region descriptors. </p>
+<p>Allocates and initializes internal structures for parameter (i.e. non-internal) memory regions. This function is called from <a class="reference internal" href="#group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e"><span class="std std-ref">naaice_init_communication_context</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection and memory regions.</p></li>
+<li><p><strong>n_parameter_mrs</strong> – Number of parameter memory regions for which descriptors will be allocated.</p></li>
+<li><p><strong>local_addrs</strong> – Array of local (user-space) addresses of the memory regions. This should correspond to the <code class="docutils literal notranslate"><span class="pre">params</span></code> array passed to <a class="reference internal" href="#group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e"><span class="std std-ref">naaice_init_communication_context</span></a>.</p></li>
+<li><p><strong>remote_addrs</strong> – Array of remote addresses in NAA memory where the memory regions are requested to be stored. These addresses are obtained from the memory management service.</p></li>
+<li><p><strong>sizes</strong> – Array of sizes (in bytes) of the memory regions. This should correspond to the <code class="docutils literal notranslate"><span class="pre">param_sizes</span></code> array passed to <a class="reference internal" href="#group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e"><span class="std std-ref">naaice_init_communication_context</span></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419naaice_set_input_mrP28naaice_communication_contextj">
+<span id="_CPPv319naaice_set_input_mrP28naaice_communication_contextj"></span><span id="_CPPv219naaice_set_input_mrP28naaice_communication_contextj"></span><span id="naaice_set_input_mr__naaice_communication_contextP.unsigned-i"></span><span class="target" id="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_input_mr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">input_mr_idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419naaice_set_input_mrP28naaice_communication_contextj" title="Link to this definition"></a><br /></dt>
+<dd><p>Mark a memory region as input and/or output. </p>
+<p>Adds information to the communication context indicating whether a memory region contains an input parameter, an output parameter, or both. Input memory regions are written to the NAA during data transfer, while output memory regions are written back from the NAA.</p>
+<p>This function must be called before <a class="reference internal" href="#group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28"><span class="std std-ref">naaice_init_mrsp</span></a>.</p>
+<p>
+Mark a memory region as an input parameter. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>idx</strong> – Index of the memory region to be marked as input or output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420naaice_set_output_mrP28naaice_communication_contextj">
+<span id="_CPPv320naaice_set_output_mrP28naaice_communication_contextj"></span><span id="_CPPv220naaice_set_output_mrP28naaice_communication_contextj"></span><span id="naaice_set_output_mr__naaice_communication_contextP.unsigned-i"></span><span class="target" id="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_output_mr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">output_mr_idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420naaice_set_output_mrP28naaice_communication_contextj" title="Link to this definition"></a><br /></dt>
+<dd><p>Mark a memory region as an output parameter. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424naaice_set_singlesend_mrP28naaice_communication_contextj">
+<span id="_CPPv324naaice_set_singlesend_mrP28naaice_communication_contextj"></span><span id="_CPPv224naaice_set_singlesend_mrP28naaice_communication_contextj"></span><span id="naaice_set_singlesend_mr__naaice_communication_contextP.unsigned-i"></span><span class="target" id="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_singlesend_mr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">singlesend_mr_idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424naaice_set_singlesend_mrP28naaice_communication_contextj" title="Link to this definition"></a><br /></dt>
+<dd><p>Mark a memory region as a single-send region. </p>
+<p>Adds information to the communication context indicating that a memory region is a single-send region. Single-send regions are written exactly once during the first RPC on a connection and are not written again during subsequent RPCs.</p>
+<p>If the memory region is not already marked as an input region, it is automatically marked as one.</p>
+<p>This function must be called before <a class="reference internal" href="#group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28"><span class="std std-ref">naaice_init_mrsp</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>idx</strong> – Index of the memory region to be marked as a single-send region.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423naaice_set_internal_mrsP28naaice_communication_contextjP8uint64_tP6size_t">
+<span id="_CPPv323naaice_set_internal_mrsP28naaice_communication_contextjP8uint64_tP6size_t"></span><span id="_CPPv223naaice_set_internal_mrsP28naaice_communication_contextjP8uint64_tP6size_t"></span><span id="naaice_set_internal_mrs__naaice_communication_contextP.unsigned-i.uint64_tP.sP"></span><span class="target" id="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_internal_mrs</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n_internal_mrs</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">addrs</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sizes</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423naaice_set_internal_mrsP28naaice_communication_contextjP8uint64_tP6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Add internal memory regions to the communication context. </p>
+<p>Adds information about internal memory regions to the communication context. Internal memory regions exist only on the NAA side and are used for computation; their contents are not communicated during data transfer.</p>
+<p>This function must be called before <a class="reference internal" href="#group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28"><span class="std std-ref">naaice_init_mrsp</span></a>. The internal memory regions will be included in the memory region announcement message, indicating that they should be allocated by the NAA.</p>
+<p>Should only be called once per communication context. Each call overwrites any previous internal memory region information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>n_internal_mrs</strong> – Number of internal memory regions.</p></li>
+<li><p><strong>addrs</strong> – Array of addresses of the internal memory regions in NAA memory space. These addresses will be requested of the NAA during MRSP.</p></li>
+<li><p><strong>sizes</strong> – Array of sizes (in bytes) of the internal memory regions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420naaice_set_immediateP28naaice_communication_contextP7uint8_t">
+<span id="_CPPv320naaice_set_immediateP28naaice_communication_contextP7uint8_t"></span><span id="_CPPv220naaice_set_immediateP28naaice_communication_contextP7uint8_t"></span><span id="naaice_set_immediate__naaice_communication_contextP.uint8_tP"></span><span class="target" id="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_immediate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">imm_bytes</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420naaice_set_immediateP28naaice_communication_contextP7uint8_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the immediate value for data transfer. </p>
+<p>Sets the immediate value to be written during data transfer. The immediate consists of up to 3 user-specified bytes placed in the upper 3 bytes; the lowest byte is reserved for the function code.</p>
+<p>This function must be called before <a class="reference internal" href="#group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1"><span class="std std-ref">naaice_init_data_transfer</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>imm_bytes</strong> – Array of immediate value bytes. Maximum of 3 bytes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416naaice_init_mrspP28naaice_communication_context">
+<span id="_CPPv316naaice_init_mrspP28naaice_communication_context"></span><span id="_CPPv216naaice_init_mrspP28naaice_communication_context"></span><span id="naaice_init_mrsp__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_init_mrsp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416naaice_init_mrspP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize the Memory Region Setup Protocol (MRSP). </p>
+<p>Starts the MRSP by sending advertise/request packets and posting a receive for the response. This prepares the connection for memory region registration and data transfer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection and associated memory regions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425naaice_init_data_transferP28naaice_communication_context">
+<span id="_CPPv325naaice_init_data_transferP28naaice_communication_context"></span><span id="_CPPv225naaice_init_data_transferP28naaice_communication_context"></span><span id="naaice_init_data_transfer__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_init_data_transfer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425naaice_init_data_transferP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Start the data transfer to the NAA. </p>
+<p>Initiates the data transfer by posting write operations for the memory regions to the NAA. Prepares the connection for remote computation using the previously registered memory regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection and associated memory regions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429naaice_handle_work_completionP6ibv_wcP28naaice_communication_context">
+<span id="_CPPv329naaice_handle_work_completionP6ibv_wcP28naaice_communication_context"></span><span id="_CPPv229naaice_handle_work_completionP6ibv_wcP28naaice_communication_context"></span><span id="naaice_handle_work_completion__ibv_wcP.naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_handle_work_completion</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">ibv_wc</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">wc</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429naaice_handle_work_completionP6ibv_wcP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Handle a single work completion from the completion queue. </p>
+<p>Processes a single work completion event from the completion queue, which typically represents a memory region write either from the host to the NAA or from the NAA to the host.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426naaice_poll_cq_nonblockingP28naaice_communication_context">
+<span id="_CPPv326naaice_poll_cq_nonblockingP28naaice_communication_context"></span><span id="_CPPv226naaice_poll_cq_nonblockingP28naaice_communication_context"></span><span id="naaice_poll_cq_nonblocking__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_poll_cq_nonblocking</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426naaice_poll_cq_nonblockingP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Poll the completion queue non-blocking. </p>
+<p>Polls the completion queue for any work completions and processes them using <a class="reference internal" href="#group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6"><span class="std std-ref">naaice_handle_work_completion</span></a> if any are received. After handling, updates ::comm_ctx-&gt;state to reflect the current state of the NAA connection and routine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success (regardless of whether any work completions were received), -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423naaice_poll_cq_blockingP28naaice_communication_context">
+<span id="_CPPv323naaice_poll_cq_blockingP28naaice_communication_context"></span><span id="_CPPv223naaice_poll_cq_blockingP28naaice_communication_context"></span><span id="naaice_poll_cq_blocking__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_poll_cq_blocking</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423naaice_poll_cq_blockingP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Poll the completion queue blocking. </p>
+<p>Polls the completion queue for a work completion and blocks until at least one completion is available. Once a completion is received, it is processed using <a class="reference internal" href="#group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6"><span class="std std-ref">naaice_handle_work_completion</span></a>. After handling, ::comm_ctx-&gt;state is updated to reflect the current state of the NAA connection and routine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success (regardless of whether any work completions were received), -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv429naaice_disconnect_and_cleanupP28naaice_communication_context">
+<span id="_CPPv329naaice_disconnect_and_cleanupP28naaice_communication_context"></span><span id="_CPPv229naaice_disconnect_and_cleanupP28naaice_communication_context"></span><span id="naaice_disconnect_and_cleanup__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_disconnect_and_cleanup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv429naaice_disconnect_and_cleanupP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Disconnect and clean up the communication context. </p>
+<p>Terminates the RDMA connection and frees all memory associated with the communication context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419naaice_send_messageP28naaice_communication_context10message_id7uint8_t">
+<span id="_CPPv319naaice_send_messageP28naaice_communication_context10message_id7uint8_t"></span><span id="_CPPv219naaice_send_messageP28naaice_communication_context10message_id7uint8_t"></span><span id="naaice_send_message__naaice_communication_contextP.message_id.uint8_t"></span><span class="target" id="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_send_message</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="n"><span class="pre">message_id</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">message_type</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">errorcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419naaice_send_messageP28naaice_communication_context10message_id7uint8_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Send an MRSP message to the remote peer. </p>
+<p>Sends an MRSP packet to the remote peer using ::ibv_post_send with opcode ::IBV_WR_SEND.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>message_type</strong> – Type of message to send. Should be one of MSG_MR_ERR, MSG_MR_AAR, or MSG_MR_A.</p></li>
+<li><p><strong>errorcode</strong> – Error code to include in the packet if <code class="docutils literal notranslate"><span class="pre">message_type</span></code> is MSG_MR_ERR. Ignored for other message types.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417naaice_write_dataP28naaice_communication_context7uint8_t">
+<span id="_CPPv317naaice_write_dataP28naaice_communication_context7uint8_t"></span><span id="_CPPv217naaice_write_dataP28naaice_communication_context7uint8_t"></span><span id="naaice_write_data__naaice_communication_contextP.uint8_t"></span><span class="target" id="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_write_data</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fncode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417naaice_write_dataP28naaice_communication_context7uint8_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Write memory regions to the NAA. </p>
+<p>Writes memory regions, including metadata and input parameters, to the NAA. Uses ::ibv_post_send with opcode ::IBV_WR_RDMA_WRITE for regular regions or ::IBV_WR_RDMA_WRITE_WITH_IMM for the final memory region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>fncode</strong> – Function code for the NAA routine. Must be positive; 0 indicates an error.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421naaice_post_recv_mrspP28naaice_communication_context">
+<span id="_CPPv321naaice_post_recv_mrspP28naaice_communication_context"></span><span id="_CPPv221naaice_post_recv_mrspP28naaice_communication_context"></span><span id="naaice_post_recv_mrsp__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_post_recv_mrsp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421naaice_post_recv_mrspP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Post a receive request for an MRSP message. </p>
+<p>Posts a receive request to the completion queue for an MRSP message. The request specifies the memory region to be written to (the MRSP region in this case).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421naaice_post_recv_dataP28naaice_communication_context">
+<span id="_CPPv321naaice_post_recv_dataP28naaice_communication_context"></span><span id="_CPPv221naaice_post_recv_dataP28naaice_communication_context"></span><span id="naaice_post_recv_data__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_post_recv_data</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421naaice_post_recv_dataP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Post a receive request for a memory region write. </p>
+<p>Posts a receive request for a memory region write. Only the final memory region write (the one with an immediate value) requires a receive request; regular RDMA writes without an immediate do not consume a receive request.</p>
+<p>The memory region specified in the receive request is the MRSP region. This is a placeholder, as the actual region written to is determined by the sender.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426naaice_init_rdma_resourcesP28naaice_communication_context">
+<span id="_CPPv326naaice_init_rdma_resourcesP28naaice_communication_context"></span><span id="_CPPv226naaice_init_rdma_resourcesP28naaice_communication_context"></span><span id="naaice_init_rdma_resources__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_init_rdma_resources</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426naaice_init_rdma_resourcesP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize RDMA resources. </p>
+<p>Allocates and initializes the necessary RDMA resources, including a protection domain, completion channel, completion queue, and queue pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414naaice_do_mrspP28naaice_communication_context">
+<span id="_CPPv314naaice_do_mrspP28naaice_communication_context"></span><span id="_CPPv214naaice_do_mrspP28naaice_communication_context"></span><span id="naaice_do_mrsp__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_do_mrsp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414naaice_do_mrspP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Execute the MRSP protocol in a blocking manner. </p>
+<p>Performs all steps of the Memory Region Setup Protocol (MRSP) in a blocking fashion, ensuring that memory regions are properly advertised, requested, and acknowledged before returning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423naaice_do_data_transferP28naaice_communication_context">
+<span id="_CPPv323naaice_do_data_transferP28naaice_communication_context"></span><span id="_CPPv223naaice_do_data_transferP28naaice_communication_context"></span><span id="naaice_do_data_transfer__naaice_communication_contextP"></span><span class="target" id="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_do_data_transfer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423naaice_do_data_transferP28naaice_communication_context" title="Link to this definition"></a><br /></dt>
+<dd><p>Perform the complete data transfer in a blocking manner. </p>
+<p>Executes all steps of the data transfer, including writing data to the NAA, waiting for the NAA to complete computation, and receiving the resulting data back. This function operates in a blocking fashion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424naaice_set_bytes_to_sendP28naaice_communication_contextii">
+<span id="_CPPv324naaice_set_bytes_to_sendP28naaice_communication_contextii"></span><span id="_CPPv224naaice_set_bytes_to_sendP28naaice_communication_contextii"></span><span id="naaice_set_bytes_to_send__naaice_communication_contextP.i.i"></span><span class="target" id="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naaice_set_bytes_to_send</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">comm_ctx</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mr_idx</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">number_bytes</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424naaice_set_bytes_to_sendP28naaice_communication_contextii" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the number of bytes to send from a memory region. </p>
+<p>Specifies how many bytes should be sent from the given memory region during data transfer. Passing 0 resets the size to the original size of the memory region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comm_ctx</strong> – Pointer to the communication context describing the connection.</p></li>
+<li><p><strong>mr_idx</strong> – Index of the memory region to be modified.</p></li>
+<li><p><strong>number_bytes</strong> – Number of bytes to send from the specified memory region. 0 resets to the original size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, -1 on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to naa-communication-library’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="middleware.html" class="btn btn-neutral float-right" title="Middleware API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Florian Mikolajczak, Dylan Everingham, Hannes Signer, Niklas Schelten.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

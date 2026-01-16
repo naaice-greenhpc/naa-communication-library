@@ -1,0 +1,77 @@
+\doxysection{naaice\+\_\+swnaa.\+h}
+\hypertarget{naaice__swnaa_8h_source}{}\label{naaice__swnaa_8h_source}\index{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_swnaa.h@{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice\_swnaa.h}}
+\mbox{\hyperlink{naaice__swnaa_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/**************************************************************************/}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#ifndef\ NAAICE\_SWNAA\_H}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ NAAICE\_SWNAA\_H}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Dependencies\ **************************************************************/}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{naaice_8h}{naaice.h}}"{}}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*\ Public\ Functions\ **********************************************************/}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a2e304ccf78229d70b893def6eea01844}{naaice\_swnaa\_init\_communication\_context}}(}
+\DoxyCodeLine{00065\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ **comm\_ctx,\ uint16\_t\ port);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_af8a7cefb12eee651c6c055220bf0fc67}{naaice\_swnaa\_setup\_connection}}(}
+\DoxyCodeLine{00082\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a090aa5dad1a291e1331e970071aa65d7}{naaice\_swnaa\_handle\_connection\_requests}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}\ rdma\_cm\_event\ *ev);}
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a035fce0f94485bed8bd89298b0a275c9}{naaice\_swnaa\_handle\_connection\_established}}(}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx,\ \textcolor{keyword}{struct}\ rdma\_cm\_event\ *ev);}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_ad193f2b7634c79cb88f88d45f403a9c5}{naaice\_swnaa\_handle\_error}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx,\ \textcolor{keyword}{struct}\ rdma\_cm\_event\ *ev);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{naaice__swnaa_8h_accd16824d60b2f865b90e13720b271fa}{naaice\_swnaa\_poll\_and\_handle\_connection\_event}}(}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a12c843653bf1a3e09d3dfea183ae2c87}{naaice\_swnaa\_init\_mrsp}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a0c8a63de324d43fac3d053f4a49ff17b}{naaice\_swnaa\_post\_recv\_mrsp}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_abac978fd0af33cd063e701ce16f681f6}{naaice\_swnaa\_handle\_work\_completion}}(\textcolor{keyword}{struct}\ ibv\_wc\ *wc,}
+\DoxyCodeLine{00177\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a788ed844b1653b50572d9e42dc7a0a68}{naaice\_swnaa\_handle\_mr\_announce}}(}
+\DoxyCodeLine{00195\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00196\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a48579f2e7e439235f9247f07465a97bd}{naaice\_swnaa\_handle\_mr\_announce\_and\_request}}(}
+\DoxyCodeLine{00197\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00217\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a37454381c7d8b6a8789a59cc1b3be774}{naaice\_swnaa\_send\_message}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx,}
+\DoxyCodeLine{00218\ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\_id}}\ message\_type,\ uint8\_t\ errorcode);}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00238\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a42d9e03575369193d4b439dc14cd9996}{naaice\_swnaa\_post\_recv\_data}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00256\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_ad097a9b0b5c21da11b75ca5e41d5eabe}{naaice\_swnaa\_write\_data}}(}
+\DoxyCodeLine{00257\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx,\ uint8\_t\ errorcode);}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00270\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a8de430c646b492b2ed48e02b5c605a98}{naaice\_swnaa\_disconnect\_and\_cleanup}}(}
+\DoxyCodeLine{00271\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00284\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_ae641aa93b2c8bb44a7346cbc6df59560}{naaice\_swnaa\_do\_mrsp}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00298\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a29754b79027796b544949dddc0966588}{naaice\_swnaa\_receive\_data\_transfer}}(}
+\DoxyCodeLine{00299\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00314\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_afcd7cfac00b5a22c00bfa9232951e762}{naaice\_swnaa\_do\_data\_transfer}}(}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx,\ uint8\_t\ errorcode);}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00333\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{naaice__swnaa_8h_a699965b5aacdf718be4c95ac910a16cc}{naaice\_swnaa\_poll\_cq\_nonblocking}}(}
+\DoxyCodeLine{00334\ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structnaaice__communication__context}{naaice\_communication\_context}}\ *comm\_ctx);}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00337\ \}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

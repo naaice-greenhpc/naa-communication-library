@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="group__connection__event__handlers" kind="group">
+    <compoundname>connection_event_handlers</compoundname>
+    <title>Connection event handlers</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__connection__event__handlers_1ga4b5436e11c02694060160979030d95a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_handle_addr_resolved</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_handle_addr_resolved</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+<para>Handle RDMA_CM_EVENT_ADDR_RESOLVED. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="661" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="661" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__connection__event__handlers_1gafc4354e4bf95ecb75d18db774576193e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_handle_route_resolved</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_handle_route_resolved</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+<para>Handle RDMA_CM_EVENT_ROUTE_RESOLVED. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="667" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="667" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__connection__event__handlers_1ga24acca87a515ab9019a66db096783210" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_handle_connection_established</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_handle_connection_established</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+<para>Handle RDMA_CM_EVENT_CONNECT_ESTABLISHED. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="673" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="673" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_handle_error</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_handle_error</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+<para>Handle RDMA connection error events. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Handles RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR, RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE, RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL and RDMA_CM_EVENT_DISCONNECTED. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="684" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="684" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__connection__event__handlers_1gac4798696d7a0940b2e00a69829050721" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_handle_other</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev)</argsstring>
+        <name>naaice_handle_other</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <briefdescription>
+<para>Handle all other, unsupported or unexpected RDMA CM events. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="690" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="690" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Handlers for RDMA connection management events. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>These functions each handle a specific RDMA connection event. If the provided event&apos;s type matches the event type of the handler function, the corresponding logic is executed.</para>
+<para>After handling an event, flags in the communication context are updated to reflect the current state of connection establishment.</para>
+<para>The events handled by these functions, in order, are:<itemizedlist>
+<listitem><para>RDMA_CM_EVENT_ADDR_RESOLVED</para>
+</listitem><listitem><para>RDMA_CM_EVENT_ROUTE_RESOLVED</para>
+</listitem><listitem><para>RDMA_CM_EVENT_CONNECT_ESTABLISHED</para>
+</listitem></itemizedlist>
+</para>
+<para>The following events are handled by <ref refid="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" kindref="member">naaice_handle_error</ref>:<itemizedlist>
+<listitem><para>RDMA_CM_EVENT_ADDR_ERROR</para>
+</listitem><listitem><para>RDMA_CM_EVENT_ROUTE_ERROR</para>
+</listitem><listitem><para>RDMA_CM_EVENT_CONNECT_ERROR</para>
+</listitem><listitem><para>RDMA_CM_EVENT_UNREACHABLE</para>
+</listitem><listitem><para>RDMA_CM_EVENT_REJECTED</para>
+</listitem><listitem><para>RDMA_CM_EVENT_DEVICE_REMOVAL</para>
+</listitem><listitem><para>RDMA_CM_EVENT_DISCONNECTED</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection whose events are handled.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the RDMA connection management event to be checked and possibly handled.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success (either the event was handled successfully or it did not match the handler’s event type), -1 on failure. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

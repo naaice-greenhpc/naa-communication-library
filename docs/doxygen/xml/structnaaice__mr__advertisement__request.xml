@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structnaaice__mr__advertisement__request" kind="struct" language="C++" prot="public">
+    <compoundname>naaice_mr_advertisement_request</compoundname>
+    <includes refid="naaice_8h" local="no">naaice.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnaaice__mr__advertisement__request_1adbe7dabc92a73fea9b22a88f8880eff6" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t naaice_mr_advertisement_request::mr_info</definition>
+        <argsstring></argsstring>
+        <name>mr_info</name>
+        <qualifiedname>naaice_mr_advertisement_request::mr_info</qualifiedname>
+        <briefdescription>
+<para>Packed memory region info (flags + requested NAA address). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="213" column="14" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__advertisement__request_1a3cdf72073c4de54ef2ab9c3f7706f936" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t naaice_mr_advertisement_request::mr_info_bytearray[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>mr_info_bytearray</name>
+        <qualifiedname>naaice_mr_advertisement_request::mr_info_bytearray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Byte array representation of memory region info. The first (0th) byte holds MR flags, the remaining 7 bytes hold the requested NAA MR address. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="218" column="13" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__advertisement__request_1a79e1f70670f7feb787bdabd428f3cdf8" prot="public" static="no" mutable="no">
+        <type>union <ref refid="structnaaice__mr__advertisement__request" kindref="compound">naaice_mr_advertisement_request</ref></type>
+        <definition>union naaice_mr_advertisement_request naaice_mr_advertisement_request</definition>
+        <argsstring></argsstring>
+        <name></name>
+        <qualifiedname>naaice_mr_advertisement_request</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="219" column="3"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__advertisement__request_1a7059e5245124980dce1c9fb3ddab1f33" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t naaice_mr_advertisement_request::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <qualifiedname>naaice_mr_advertisement_request::addr</qualifiedname>
+        <briefdescription>
+<para>Requested NAA memory region address. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="222" column="12" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__advertisement__request_1a178bf5b834aaa0bd8f629a23bc18b1fd" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t naaice_mr_advertisement_request::rkey</definition>
+        <argsstring></argsstring>
+        <name>rkey</name>
+        <qualifiedname>naaice_mr_advertisement_request::rkey</qualifiedname>
+        <briefdescription>
+<para>Remote key (rkey) for RDMA access. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="225" column="12" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__advertisement__request_1af9c10047d0f94a82a88ea93b361fd254" prot="public" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t naaice_mr_advertisement_request::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>naaice_mr_advertisement_request::size</qualifiedname>
+        <briefdescription>
+<para>Size of the memory region, in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="228" column="12" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Memory region advertisement and request message structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds information about a memory region that is both advertised and requested. This includes memory region flags, the requested NAA address, the RDMA remote key, and the size of the region.</para>
+<para><simplesect kind="note"><para>TODO: Could refactor to include a <ref refid="structnaaice__mr__advertisement" kindref="compound">naaice_mr_advertisement</ref> struct as a member. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="210" column="1" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="210" bodyend="229"/>
+    <listofallmembers>
+      <member refid="structnaaice__mr__advertisement__request_1a7059e5245124980dce1c9fb3ddab1f33" prot="public" virt="non-virtual"><scope>naaice_mr_advertisement_request</scope><name>addr</name></member>
+      <member refid="structnaaice__mr__advertisement__request_1adbe7dabc92a73fea9b22a88f8880eff6" prot="public" virt="non-virtual"><scope>naaice_mr_advertisement_request</scope><name>mr_info</name></member>
+      <member refid="structnaaice__mr__advertisement__request_1a3cdf72073c4de54ef2ab9c3f7706f936" prot="public" virt="non-virtual"><scope>naaice_mr_advertisement_request</scope><name>mr_info_bytearray</name></member>
+      <member refid="structnaaice__mr__advertisement__request_1a178bf5b834aaa0bd8f629a23bc18b1fd" prot="public" virt="non-virtual"><scope>naaice_mr_advertisement_request</scope><name>rkey</name></member>
+      <member refid="structnaaice__mr__advertisement__request_1af9c10047d0f94a82a88ea93b361fd254" prot="public" virt="non-virtual"><scope>naaice_mr_advertisement_request</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

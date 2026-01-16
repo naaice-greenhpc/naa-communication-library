@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['max_5fmrs_0',['MAX_MRS',['../naaice_8h.html#a049854a6a057ed70a44c47de7e91be10',1,'naaice.h']]],
+  ['message_5fid_1',['message_id',['../naaice_8h.html#a5f2be45182f0cc39afb7cc3a8d55a1f1',1,'naaice.h']]],
+  ['mr_5finfo_2',['mr_info',['../structnaaice__mr__advertisement__request.html#adbe7dabc92a73fea9b22a88f8880eff6',1,'naaice_mr_advertisement_request']]],
+  ['mr_5finfo_5fbytearray_3',['mr_info_bytearray',['../structnaaice__mr__advertisement__request.html#a3cdf72073c4de54ef2ab9c3f7706f936',1,'naaice_mr_advertisement_request']]],
+  ['mr_5finternal_4',['mr_internal',['../structnaaice__communication__context.html#af8c8396299727fe54ccab35b68585668',1,'naaice_communication_context']]],
+  ['mr_5flocal_5fdata_5',['mr_local_data',['../structnaaice__communication__context.html#ae96707fd4075be44a68b071f4f279900',1,'naaice_communication_context']]],
+  ['mr_5flocal_5fmessage_6',['mr_local_message',['../structnaaice__communication__context.html#ac2b159dc28f192032a3d7eb2adb927a4',1,'naaice_communication_context']]],
+  ['mr_5fpeer_5fdata_7',['mr_peer_data',['../structnaaice__communication__context.html#aae140cb69ac48e9717f38a35a061f30e',1,'naaice_communication_context']]],
+  ['mr_5freturn_5fidx_8',['mr_return_idx',['../structnaaice__communication__context.html#afc0d1f44fd8b275ef6d276fb7fad0e43',1,'naaice_communication_context']]],
+  ['mr_5fsize_5fmrsp_9',['MR_SIZE_MRSP',['../naaice_8h.html#a22820c4f9335d5ae28f7d87295611862',1,'naaice.h']]],
+  ['mrflag_5finput_10',['MRFLAG_INPUT',['../naaice_8h.html#a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa',1,'naaice.h']]],
+  ['mrflag_5finternal_11',['MRFLAG_INTERNAL',['../naaice_8h.html#a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7',1,'naaice.h']]],
+  ['mrflag_5foutput_12',['MRFLAG_OUTPUT',['../naaice_8h.html#a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450',1,'naaice.h']]],
+  ['mrflag_5fsinglesend_13',['MRFLAG_SINGLESEND',['../naaice_8h.html#a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d',1,'naaice.h']]],
+  ['msg_5fmr_5fa_14',['MSG_MR_A',['../naaice_8h.html#a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774',1,'naaice.h']]],
+  ['msg_5fmr_5faar_15',['MSG_MR_AAR',['../naaice_8h.html#a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63',1,'naaice.h']]],
+  ['msg_5fmr_5ferr_16',['MSG_MR_ERR',['../naaice_8h.html#a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660',1,'naaice.h']]],
+  ['msg_5fmr_5fr_17',['MSG_MR_R',['../naaice_8h.html#a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273',1,'naaice.h']]]
+];

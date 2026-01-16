@@ -1,0 +1,97 @@
+\doxysection{naaice\+\_\+mr\+\_\+advertisement\+\_\+request Struct Reference}
+\hypertarget{structnaaice__mr__advertisement__request}{}\label{structnaaice__mr__advertisement__request}\index{naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}}
+
+
+Memory region advertisement and request message structure.  
+
+
+
+
+{\ttfamily \#include $<$naaice.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>uint64\_t \mbox{\hyperlink{structnaaice__mr__advertisement__request_adbe7dabc92a73fea9b22a88f8880eff6}{mr\_info}}\\
+\>\>{\em Packed memory region info (flags + requested NAA address). }\\
+\>uint8\_t \mbox{\hyperlink{structnaaice__mr__advertisement__request_a3cdf72073c4de54ef2ab9c3f7706f936}{mr\_info\_bytearray}} \mbox{[}8\mbox{]}\\
+\}; \\
+
+\end{tabbing}\item 
+uint64\+\_\+t \mbox{\hyperlink{structnaaice__mr__advertisement__request_a7059e5245124980dce1c9fb3ddab1f33}{addr}}
+\begin{DoxyCompactList}\small\item\em Requested NAA memory region address. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structnaaice__mr__advertisement__request_a178bf5b834aaa0bd8f629a23bc18b1fd}{rkey}}
+\begin{DoxyCompactList}\small\item\em Remote key (rkey) for RDMA access. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structnaaice__mr__advertisement__request_af9c10047d0f94a82a88ea93b361fd254}{size}}
+\begin{DoxyCompactList}\small\item\em Size of the memory region, in bytes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Memory region advertisement and request message structure. 
+
+Holds information about a memory region that is both advertised and requested. This includes memory region flags, the requested NAA address, the RDMA remote key, and the size of the region.
+
+\begin{DoxyNote}{Note}
+TODO\+: Could refactor to include a \doxylink{structnaaice__mr__advertisement}{naaice\+\_\+mr\+\_\+advertisement} struct as a member. 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaaice__mr__advertisement__request_a79e1f70670f7feb787bdabd428f3cdf8}\doxysubsubsection{\texorpdfstring{[union]}{[union]}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement__request_a79e1f70670f7feb787bdabd428f3cdf8} 
+union  \{ ... \}  \mbox{\hyperlink{structnaaice__mr__advertisement__request}{naaice\+\_\+mr\+\_\+advertisement\+\_\+request}}}
+
+\Hypertarget{structnaaice__mr__advertisement__request_a7059e5245124980dce1c9fb3ddab1f33}\index{naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}!addr@{addr}}
+\index{addr@{addr}!naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement__request_a7059e5245124980dce1c9fb3ddab1f33} 
+uint64\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+\_\+request\+::addr}
+
+
+
+Requested NAA memory region address. 
+
+\Hypertarget{structnaaice__mr__advertisement__request_adbe7dabc92a73fea9b22a88f8880eff6}\index{naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}!mr\_info@{mr\_info}}
+\index{mr\_info@{mr\_info}!naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}}
+\doxysubsubsection{\texorpdfstring{mr\_info}{mr\_info}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement__request_adbe7dabc92a73fea9b22a88f8880eff6} 
+uint64\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+\_\+request\+::mr\+\_\+info}
+
+
+
+Packed memory region info (flags + requested NAA address). 
+
+\Hypertarget{structnaaice__mr__advertisement__request_a3cdf72073c4de54ef2ab9c3f7706f936}\index{naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}!mr\_info\_bytearray@{mr\_info\_bytearray}}
+\index{mr\_info\_bytearray@{mr\_info\_bytearray}!naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}}
+\doxysubsubsection{\texorpdfstring{mr\_info\_bytearray}{mr\_info\_bytearray}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement__request_a3cdf72073c4de54ef2ab9c3f7706f936} 
+uint8\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+\_\+request\+::mr\+\_\+info\+\_\+bytearray\mbox{[}8\mbox{]}}
+
+Byte array representation of memory region info. The first (0th) byte holds MR flags, the remaining 7 bytes hold the requested NAA MR address. \Hypertarget{structnaaice__mr__advertisement__request_a178bf5b834aaa0bd8f629a23bc18b1fd}\index{naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}!rkey@{rkey}}
+\index{rkey@{rkey}!naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}}
+\doxysubsubsection{\texorpdfstring{rkey}{rkey}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement__request_a178bf5b834aaa0bd8f629a23bc18b1fd} 
+uint32\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+\_\+request\+::rkey}
+
+
+
+Remote key (rkey) for RDMA access. 
+
+\Hypertarget{structnaaice__mr__advertisement__request_af9c10047d0f94a82a88ea93b361fd254}\index{naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}!size@{size}}
+\index{size@{size}!naaice\_mr\_advertisement\_request@{naaice\_mr\_advertisement\_request}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement__request_af9c10047d0f94a82a88ea93b361fd254} 
+uint32\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+\_\+request\+::size}
+
+
+
+Size of the memory region, in bytes. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice_8h}{naaice.\+h}}\end{DoxyCompactItemize}

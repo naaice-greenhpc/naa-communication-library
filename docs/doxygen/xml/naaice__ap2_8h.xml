@@ -1,0 +1,366 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="naaice__ap2_8h" kind="file" language="C++">
+    <compoundname>naaice_ap2.h</compoundname>
+    <includes refid="naaice_8h" local="yes">naaice.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stddef.h</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>naaice.h</label>
+        <link refid="naaice_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h</label>
+        <link refid="naaice__ap2_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>endian.h</label>
+      </node>
+      <node id="4">
+        <label>errno.h</label>
+      </node>
+      <node id="5">
+        <label>fcntl.h</label>
+      </node>
+      <node id="6">
+        <label>inttypes.h</label>
+      </node>
+      <node id="14">
+        <label>limits.h</label>
+      </node>
+      <node id="15">
+        <label>netdb.h</label>
+      </node>
+      <node id="16">
+        <label>rdma/rdma_cma.h</label>
+      </node>
+      <node id="17">
+        <label>rdma/rdma_verbs.h</label>
+      </node>
+      <node id="7">
+        <label>stdbool.h</label>
+      </node>
+      <node id="19">
+        <label>stddef.h</label>
+      </node>
+      <node id="8">
+        <label>stdint.h</label>
+      </node>
+      <node id="9">
+        <label>stdio.h</label>
+      </node>
+      <node id="10">
+        <label>stdlib.h</label>
+      </node>
+      <node id="11">
+        <label>string.h</label>
+      </node>
+      <node id="12">
+        <label>sys/poll.h</label>
+      </node>
+      <node id="18">
+        <label>sys/socket.h</label>
+      </node>
+      <node id="13">
+        <label>unistd.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structnaa__param__t" prot="public">naa_param_t</innerclass>
+    <innerclass refid="structnaa__handle" prot="public">naa_handle</innerclass>
+    <innerclass refid="structnaa__status" prot="public">naa_status</innerclass>
+    <sectiondef kind="enum">
+      <member refid="group__StructsEnums_1ga45430261054a7041b457175c442cc626" kind="enum"><name>naa_error</name></member>
+    </sectiondef>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" prot="public" static="no">
+        <type>uint32_t</type>
+        <definition>typedef uint32_t naa_function_code_t</definition>
+        <argsstring></argsstring>
+        <name>naa_function_code_t</name>
+        <briefdescription>
+<para>Numerical code for the function/accelerator to be used by the application. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="70" column="18" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <member refid="group__Functions_1ga4b3a6cd9631f1817cc6f360c92d8149e" kind="typedef"><name>naa_param_t</name></member>
+      <member refid="group__StructsEnums_1ga8f57849ab74ea615ad8bd74df264ede2" kind="typedef"><name>naa_handle</name></member>
+      <member refid="group__StructsEnums_1gab5cd016885936f9664f72c77b4d96474" kind="typedef"><name>naa_status</name></member>
+    </sectiondef>
+    <sectiondef kind="func">
+      <member refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" kind="function"><name>naa_create</name></member>
+      <member refid="group__Functions_1ga978eb1295ce4e7b283b6d6b74286b2d2" kind="function"><name>naa_invoke</name></member>
+      <memberdef kind="function" id="naaice__ap2_8h_1a6200e7134fc6961daa5d45e938dd6511" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naa_test</definition>
+        <argsstring>(naa_handle *handle, bool *flag, naa_status *status)</argsstring>
+        <name>naa_test</name>
+        <param>
+          <type><ref refid="structnaa__handle" kindref="compound">naa_handle</ref> *</type>
+          <declname>handle</declname>
+        </param>
+        <param>
+          <type>bool *</type>
+          <declname>flag</declname>
+        </param>
+        <param>
+          <type><ref refid="structnaa__status" kindref="compound">naa_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Waits in non-blocking mode for a receive. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>flag</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="193" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" declline="193" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__ap2_8h_1a6bba1a1b9e1467702339f2a6fbdbfdf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naa_wait</definition>
+        <argsstring>(naa_handle *handle, naa_status *status)</argsstring>
+        <name>naa_wait</name>
+        <param>
+          <type><ref refid="structnaa__handle" kindref="compound">naa_handle</ref> *</type>
+          <declname>handle</declname>
+        </param>
+        <param>
+          <type><ref refid="structnaa__status" kindref="compound">naa_status</ref> *</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Waits in blocking mode for a receive. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>communication handle created by naa_create </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="202" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" declline="202" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="naaice__ap2_8h_1a65c8b2bbcb09f4fd873983d1ed9fb293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naa_finalize</definition>
+        <argsstring>(naa_handle *handle)</argsstring>
+        <name>naa_finalize</name>
+        <param>
+          <type><ref refid="structnaa__handle" kindref="compound">naa_handle</ref> *</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Terminates connection and cleans up the corresponding data structures. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>communication handle created by naa_create </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int if sucessful, -1 if not. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="210" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" declline="210" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/****************************************************************************</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>`7MN.<sp/><sp/><sp/>`7MF&apos;<sp/><sp/><sp/><sp/><sp/>db<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>db<sp/><sp/><sp/><sp/><sp/><sp/>`7MMF&apos;<sp/><sp/>.g8&quot;&quot;&quot;bgd<sp/>`7MM&quot;&quot;&quot;YMM</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>MMN.<sp/><sp/><sp/><sp/>M<sp/><sp/><sp/><sp/><sp/><sp/>;MM:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>;MM:<sp/><sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>.dP&apos;<sp/><sp/><sp/><sp/><sp/>`M<sp/><sp/><sp/>MM<sp/><sp/><sp/><sp/>`7</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/>YMb<sp/><sp/><sp/>M<sp/><sp/><sp/><sp/><sp/>,V^MM.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,V^MM.<sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>dM&apos;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>`<sp/><sp/><sp/>MM<sp/><sp/><sp/>d</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/><sp/>`MN.<sp/>M<sp/><sp/><sp/><sp/>,M<sp/><sp/>`MM<sp/><sp/><sp/><sp/><sp/><sp/><sp/>,M<sp/><sp/>`MM<sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>MM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MMmmMM</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/><sp/><sp/>`MM.M<sp/><sp/><sp/><sp/>AbmmmqMA<sp/><sp/><sp/><sp/><sp/><sp/>AbmmmqMA<sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>MM.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/><sp/>Y<sp/><sp/>,</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/><sp/><sp/><sp/><sp/>YMM<sp/><sp/><sp/>A&apos;<sp/><sp/><sp/><sp/><sp/>VML<sp/><sp/><sp/><sp/>A&apos;<sp/><sp/><sp/><sp/><sp/>VML<sp/><sp/><sp/><sp/>MM<sp/><sp/>`Mb.<sp/><sp/><sp/><sp/><sp/>,&apos;<sp/><sp/><sp/>MM<sp/><sp/><sp/><sp/><sp/>,M</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>.JML.<sp/><sp/><sp/><sp/>YM<sp/>.AMA.<sp/><sp/><sp/>.AMMA..AMA.<sp/><sp/><sp/>.AMMA..JMML.<sp/><sp/>`&quot;bmmmd&apos;<sp/><sp/>.JMMmmmmMMM</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>Network-Attached<sp/>Accelerators<sp/>for<sp/>Energy-Efficient<sp/>Heterogeneous<sp/>Computing</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/>naaice_ap2.h</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Interface<sp/>for<sp/>NAAICE<sp/>AP2<sp/>&quot;MPI-Like&quot;<sp/>middleware<sp/>layer.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>Florian<sp/>Mikolajczak,<sp/>florian.mikolajczak@uni-potsdam.de</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/>Dylan<sp/>Everingham,<sp/>everingham@zib.de</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/>Hannes<sp/>Signer,<sp/>signer@uni-potsdam.de</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/>18-12-2025</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*****************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NAAICE_AP2_C_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NAAICE_AP2_C_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Dependencies<sp/>**************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="naaice_8h" kindref="compound">naaice.h</ref>&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>Included<sp/>here<sp/>to<sp/>get<sp/>enum<sp/>naaice_communication_state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stddef.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Enums<sp/>**********************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="group__StructsEnums_1ga45430261054a7041b457175c442cc626" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__StructsEnums_1ga45430261054a7041b457175c442cc626" kindref="member">naa_error</ref><sp/>{</highlight></codeline>
+<codeline lineno="51" refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381" kindref="member">NAA_SUCCESS</ref><sp/>=<sp/>0x00,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2" kindref="member">SOCKET_UNAVAIL</ref><sp/>=<sp/>0x01,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58" kindref="member">KERNEL_TIMEOUT</ref><sp/>=<sp/>0x02,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>0x03-0x0f:<sp/>Reserved<sp/>for<sp/>future<sp/>use.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>0x10-0x7f:<sp/>Application-specific<sp/>errors.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Structs/Typedefs<sp/>**********************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>uint32_t<sp/><ref refid="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" kindref="member">naa_function_code_t</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="structnaa__param__t" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref><sp/>{</highlight></codeline>
+<codeline lineno="82" refid="structnaa__param__t_1ad5cb0da75bd8c82ce3b6aaadea4ec9f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="structnaa__param__t_1ad5cb0da75bd8c82ce3b6aaadea4ec9f3" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="structnaa__param__t_1a9538d353b558b49e63b4f2a84dbc604a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnaa__param__t_1a9538d353b558b49e63b4f2a84dbc604a" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structnaa__param__t_1a005d6f65b65447b682d5eb56d8e8434d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnaa__param__t_1a005d6f65b65447b682d5eb56d8e8434d" kindref="member">single_send</ref>;</highlight></codeline>
+<codeline lineno="89" refid="group__Functions_1ga4b3a6cd9631f1817cc6f360c92d8149e" refkind="member"><highlight class="normal">}<sp/><ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="structnaa__handle" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaa__handle" kindref="compound">naa_handle</ref><sp/>{</highlight></codeline>
+<codeline lineno="101" refid="structnaa__handle_1a5c4b8a9ab94644b0c475284e69567d6b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" kindref="member">naa_function_code_t</ref><sp/><ref refid="structnaa__handle_1a5c4b8a9ab94644b0c475284e69567d6b" kindref="member">function_code</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="structnaa__handle_1a71ad357cc6f416a6e43706df32519825" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*<ref refid="structnaa__handle_1a71ad357cc6f416a6e43706df32519825" kindref="member">comm_ctx</ref>;</highlight></codeline>
+<codeline lineno="105" refid="group__StructsEnums_1ga8f57849ab74ea615ad8bd74df264ede2" refkind="member"><highlight class="normal">}<sp/><ref refid="structnaa__handle" kindref="compound">naa_handle</ref>;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="structnaa__status" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaa__status" kindref="compound">naa_status</ref><sp/>{</highlight></codeline>
+<codeline lineno="116" refid="structnaa__status_1a26c0f7905228c45ff6e22a11f2d934c1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" kindref="member">naaice_communication_state</ref><sp/><ref refid="structnaa__status_1a26c0f7905228c45ff6e22a11f2d934c1" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="structnaa__status_1a579b67bada0f6373937d56cb8c7661ce" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="structnaa__status_1a579b67bada0f6373937d56cb8c7661ce" kindref="member">naa_error</ref><sp/><ref refid="structnaa__status_1a579b67bada0f6373937d56cb8c7661ce" kindref="member">naa_error</ref>;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="structnaa__status_1a5d98d226361e5fcca0d7af4b2f4cba34" refkind="member"><highlight class="normal"><sp/><sp/>uint64_t<sp/><ref refid="structnaa__status_1a5d98d226361e5fcca0d7af4b2f4cba34" kindref="member">bytes_received</ref>;</highlight></codeline>
+<codeline lineno="123" refid="group__StructsEnums_1gab5cd016885936f9664f72c77b4d96474" refkind="member"><highlight class="normal">}<sp/><ref refid="structnaa__status" kindref="compound">naa_status</ref>;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Public<sp/>Functions<sp/>**********************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" kindref="member">naa_create</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" kindref="member">naa_function_code_t</ref><sp/>function_code,</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref><sp/>*input_params,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>input_amount,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref><sp/>*output_params,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>output_amount,</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structnaa__handle" kindref="compound">naa_handle</ref><sp/>*handle);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="group__Functions_1ga978eb1295ce4e7b283b6d6b74286b2d2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__Functions_1ga978eb1295ce4e7b283b6d6b74286b2d2" kindref="member">naa_invoke</ref>(<ref refid="structnaa__handle" kindref="compound">naa_handle</ref><sp/>*handle);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="naaice__ap2_8h_1a6200e7134fc6961daa5d45e938dd6511" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__ap2_8h_1a6200e7134fc6961daa5d45e938dd6511" kindref="member">naa_test</ref>(<ref refid="structnaa__handle" kindref="compound">naa_handle</ref><sp/>*handle,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>*flag,<sp/><ref refid="structnaa__status" kindref="compound">naa_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="naaice__ap2_8h_1a6bba1a1b9e1467702339f2a6fbdbfdf9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__ap2_8h_1a6bba1a1b9e1467702339f2a6fbdbfdf9" kindref="member">naa_wait</ref>(<ref refid="structnaa__handle" kindref="compound">naa_handle</ref><sp/>*handle,<sp/><ref refid="structnaa__status" kindref="compound">naa_status</ref><sp/>*status);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="naaice__ap2_8h_1a65c8b2bbcb09f4fd873983d1ed9fb293" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="naaice__ap2_8h_1a65c8b2bbcb09f4fd873983d1ed9fb293" kindref="member">naa_finalize</ref>(<ref refid="structnaa__handle" kindref="compound">naa_handle</ref><sp/>*handle);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,83 @@
+\doxysection{naaice\+\_\+mr\+\_\+local Struct Reference}
+\hypertarget{structnaaice__mr__local}{}\label{structnaaice__mr__local}\index{naaice\_mr\_local@{naaice\_mr\_local}}
+
+
+Information about a local memory region.  
+
+
+
+
+{\ttfamily \#include $<$naaice.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+struct ibv\+\_\+mr \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__mr__local_a14c18396342aa35fed97dacf49db4e7b}{ibv}}
+\begin{DoxyCompactList}\small\item\em Pointer to the registered IBV memory region. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__mr__local_a11412feb3969b49f22c16d443a8cf58b}{addr}}
+\begin{DoxyCompactList}\small\item\em Local address of the memory region in user space. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{structnaaice__mr__local_a2b4eb21c3ba2c450dbb252c8ba7af03f}{size}}
+\begin{DoxyCompactList}\small\item\em Size of the memory region, in bytes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structnaaice__mr__local_acf6e2a4f91701e03cabe975a88a2959e}{to\+\_\+write}}
+\begin{DoxyCompactList}\small\item\em Indicates that this memory region should be written to the remote NAA. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structnaaice__mr__local_a4242b44ae7688fdcd95de6ca216d7a6b}{single\+\_\+send}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Information about a local memory region. 
+
+Holds metadata for a memory region located on the host, including the registered IBV memory region, local address, size, and transfer behavior flags. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaaice__mr__local_a11412feb3969b49f22c16d443a8cf58b}\index{naaice\_mr\_local@{naaice\_mr\_local}!addr@{addr}}
+\index{addr@{addr}!naaice\_mr\_local@{naaice\_mr\_local}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__local_a11412feb3969b49f22c16d443a8cf58b} 
+char\texorpdfstring{$\ast$}{*} naaice\+\_\+mr\+\_\+local\+::addr}
+
+
+
+Local address of the memory region in user space. 
+
+\Hypertarget{structnaaice__mr__local_a14c18396342aa35fed97dacf49db4e7b}\index{naaice\_mr\_local@{naaice\_mr\_local}!ibv@{ibv}}
+\index{ibv@{ibv}!naaice\_mr\_local@{naaice\_mr\_local}}
+\doxysubsubsection{\texorpdfstring{ibv}{ibv}}
+{\footnotesize\ttfamily \label{structnaaice__mr__local_a14c18396342aa35fed97dacf49db4e7b} 
+struct ibv\+\_\+mr\texorpdfstring{$\ast$}{*} naaice\+\_\+mr\+\_\+local\+::ibv}
+
+
+
+Pointer to the registered IBV memory region. 
+
+\Hypertarget{structnaaice__mr__local_a4242b44ae7688fdcd95de6ca216d7a6b}\index{naaice\_mr\_local@{naaice\_mr\_local}!single\_send@{single\_send}}
+\index{single\_send@{single\_send}!naaice\_mr\_local@{naaice\_mr\_local}}
+\doxysubsubsection{\texorpdfstring{single\_send}{single\_send}}
+{\footnotesize\ttfamily \label{structnaaice__mr__local_a4242b44ae7688fdcd95de6ca216d7a6b} 
+bool naaice\+\_\+mr\+\_\+local\+::single\+\_\+send}
+
+Indicates that this memory region is a single-\/send region (written only once). \Hypertarget{structnaaice__mr__local_a2b4eb21c3ba2c450dbb252c8ba7af03f}\index{naaice\_mr\_local@{naaice\_mr\_local}!size@{size}}
+\index{size@{size}!naaice\_mr\_local@{naaice\_mr\_local}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily \label{structnaaice__mr__local_a2b4eb21c3ba2c450dbb252c8ba7af03f} 
+size\+\_\+t naaice\+\_\+mr\+\_\+local\+::size}
+
+
+
+Size of the memory region, in bytes. 
+
+\Hypertarget{structnaaice__mr__local_acf6e2a4f91701e03cabe975a88a2959e}\index{naaice\_mr\_local@{naaice\_mr\_local}!to\_write@{to\_write}}
+\index{to\_write@{to\_write}!naaice\_mr\_local@{naaice\_mr\_local}}
+\doxysubsubsection{\texorpdfstring{to\_write}{to\_write}}
+{\footnotesize\ttfamily \label{structnaaice__mr__local_acf6e2a4f91701e03cabe975a88a2959e} 
+bool naaice\+\_\+mr\+\_\+local\+::to\+\_\+write}
+
+
+
+Indicates that this memory region should be written to the remote NAA. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice_8h}{naaice.\+h}}\end{DoxyCompactItemize}

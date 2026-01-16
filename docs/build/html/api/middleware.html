@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Middleware API Documentation &mdash; naa-communication-library 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/naaice.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Software-NAA API Documentation" href="swnaa.html" />
+    <link rel="prev" title="NAAICE Low-Level API Documentation" href="low_level.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/naaice.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="low_level.html">NAAICE Low-Level API Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Middleware API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv419naa_function_code_t"><code class="docutils literal notranslate"><span class="pre">naa_function_code_t</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv48naa_testP10naa_handlePbP10naa_status"><code class="docutils literal notranslate"><span class="pre">naa_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv48naa_waitP10naa_handleP10naa_status"><code class="docutils literal notranslate"><span class="pre">naa_wait()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv412naa_finalizeP10naa_handle"><code class="docutils literal notranslate"><span class="pre">naa_finalize()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv411naa_param_t"><code class="docutils literal notranslate"><span class="pre">naa_param_t</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11naa_param_t4addrE"><code class="docutils literal notranslate"><span class="pre">addr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11naa_param_t4sizeE"><code class="docutils literal notranslate"><span class="pre">size</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11naa_param_t11single_sendE"><code class="docutils literal notranslate"><span class="pre">single_send</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv410naa_handle"><code class="docutils literal notranslate"><span class="pre">naa_handle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N10naa_handle13function_codeE"><code class="docutils literal notranslate"><span class="pre">function_code</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N10naa_handle8comm_ctxE"><code class="docutils literal notranslate"><span class="pre">comm_ctx</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv410naa_status"><code class="docutils literal notranslate"><span class="pre">naa_status</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N10naa_status5stateE"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N10naa_status9naa_errorE"><code class="docutils literal notranslate"><span class="pre">naa_error</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N10naa_status14bytes_receivedE"><code class="docutils literal notranslate"><span class="pre">bytes_received</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="swnaa.html">Software-NAA API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">naa-communication-library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Middleware API Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/middleware.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="middleware-api-documentation">
+<h1>Middleware API Documentation<a class="headerlink" href="#middleware-api-documentation" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv419naa_function_code_t">
+<span id="_CPPv319naa_function_code_t"></span><span id="_CPPv219naa_function_code_t"></span><span id="naa_function_code_t"></span><span class="target" id="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_function_code_t</span></span></span><a class="headerlink" href="#_CPPv419naa_function_code_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Numerical code for the function/accelerator to be used by the application. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48naa_testP10naa_handlePbP10naa_status">
+<span id="_CPPv38naa_testP10naa_handlePbP10naa_status"></span><span id="_CPPv28naa_testP10naa_handlePbP10naa_status"></span><span id="naa_test__naa_handleP.bP.naa_statusP"></span><span class="target" id="naaice__ap2_8h_1a6200e7134fc6961daa5d45e938dd6511"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_test</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="low_level.html#_CPPv410naa_handle" title="naa_handle"><span class="n"><span class="pre">naa_handle</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">handle</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">flag</span></span>, <a class="reference internal" href="low_level.html#_CPPv410naa_status" title="naa_status"><span class="n"><span class="pre">naa_status</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">status</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48naa_testP10naa_handlePbP10naa_status" title="Link to this definition"></a><br /></dt>
+<dd><p>Waits in non-blocking mode for a receive. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> – </p></li>
+<li><p><strong>flag</strong> – </p></li>
+<li><p><strong>status</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>int </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48naa_waitP10naa_handleP10naa_status">
+<span id="_CPPv38naa_waitP10naa_handleP10naa_status"></span><span id="_CPPv28naa_waitP10naa_handleP10naa_status"></span><span id="naa_wait__naa_handleP.naa_statusP"></span><span class="target" id="naaice__ap2_8h_1a6bba1a1b9e1467702339f2a6fbdbfdf9"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_wait</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="low_level.html#_CPPv410naa_handle" title="naa_handle"><span class="n"><span class="pre">naa_handle</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">handle</span></span>, <a class="reference internal" href="low_level.html#_CPPv410naa_status" title="naa_status"><span class="n"><span class="pre">naa_status</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">status</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48naa_waitP10naa_handleP10naa_status" title="Link to this definition"></a><br /></dt>
+<dd><p>Waits in blocking mode for a receive. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle</strong> – communication handle created by naa_create </p></li>
+<li><p><strong>status</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>int </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv412naa_finalizeP10naa_handle">
+<span id="_CPPv312naa_finalizeP10naa_handle"></span><span id="_CPPv212naa_finalizeP10naa_handle"></span><span id="naa_finalize__naa_handleP"></span><span class="target" id="naaice__ap2_8h_1a65c8b2bbcb09f4fd873983d1ed9fb293"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_finalize</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="low_level.html#_CPPv410naa_handle" title="naa_handle"><span class="n"><span class="pre">naa_handle</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">handle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412naa_finalizeP10naa_handle" title="Link to this definition"></a><br /></dt>
+<dd><p>Terminates connection and cleans up the corresponding data structures. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> – communication handle created by naa_create </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>int if sucessful, -1 if not. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411naa_param_t">
+<span id="_CPPv311naa_param_t"></span><span id="_CPPv211naa_param_t"></span><span id="naa_param_t"></span><span class="target" id="structnaa__param__t"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_param_t</span></span></span><a class="headerlink" href="#_CPPv411naa_param_t" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;naaice_ap2.h&gt;</em></div>
+<p>Represents a single parameter (input or output) for an NAA routine. </p>
+<p>Holds information about the data region corresponding to a parameter, including its address, size, and whether it should be sent only once during the connection (e.g., for configuration data). </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11naa_param_t4addrE">
+<span id="_CPPv3N11naa_param_t4addrE"></span><span id="_CPPv2N11naa_param_t4addrE"></span><span id="naa_param_t::addr__voidP"></span><span class="target" id="structnaa__param__t_1ad5cb0da75bd8c82ce3b6aaadea4ec9f3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">addr</span></span></span><a class="headerlink" href="#_CPPv4N11naa_param_t4addrE" title="Link to this definition"></a><br /></dt>
+<dd><p>Pointer to the data region. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11naa_param_t4sizeE">
+<span id="_CPPv3N11naa_param_t4sizeE"></span><span id="_CPPv2N11naa_param_t4sizeE"></span><span id="naa_param_t::size__s"></span><span class="target" id="structnaa__param__t_1a9538d353b558b49e63b4f2a84dbc604a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><a class="headerlink" href="#_CPPv4N11naa_param_t4sizeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Size of the data region, in bytes. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11naa_param_t11single_sendE">
+<span id="_CPPv3N11naa_param_t11single_sendE"></span><span id="_CPPv2N11naa_param_t11single_sendE"></span><span id="naa_param_t::single_send__b"></span><span class="target" id="structnaa__param__t_1a005d6f65b65447b682d5eb56d8e8434d"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">single_send</span></span></span><a class="headerlink" href="#_CPPv4N11naa_param_t11single_sendE" title="Link to this definition"></a><br /></dt>
+<dd><p>Indicates that the parameter should be sent only once. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv410naa_handle">
+<span id="_CPPv310naa_handle"></span><span id="_CPPv210naa_handle"></span><span id="naa_handle"></span><span class="target" id="structnaa__handle"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_handle</span></span></span><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;naaice_ap2.h&gt;</em></div>
+<p>Represents a handle to a NAA session. </p>
+<p>Holds information about an active NAA session, including the function code specifying the routine to execute and the associated low-level communication context. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10naa_handle13function_codeE">
+<span id="_CPPv3N10naa_handle13function_codeE"></span><span id="_CPPv2N10naa_handle13function_codeE"></span><span id="naa_handle::function_code__naa_function_code_t"></span><span class="target" id="structnaa__handle_1a5c4b8a9ab94644b0c475284e69567d6b"></span><a class="reference internal" href="#_CPPv419naa_function_code_t" title="naa_function_code_t"><span class="n"><span class="pre">naa_function_code_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">function_code</span></span></span><a class="headerlink" href="#_CPPv4N10naa_handle13function_codeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Function code specifying the routine to be executed on the NAA. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10naa_handle8comm_ctxE">
+<span id="_CPPv3N10naa_handle8comm_ctxE"></span><span id="_CPPv2N10naa_handle8comm_ctxE"></span><span id="naa_handle::comm_ctx__naaice_communication_contextP"></span><span class="target" id="structnaa__handle_1a71ad357cc6f416a6e43706df32519825"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">naaice_communication_context</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">comm_ctx</span></span></span><a class="headerlink" href="#_CPPv4N10naa_handle8comm_ctxE" title="Link to this definition"></a><br /></dt>
+<dd><p>Pointer to the communication context used for low-level API operations. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv410naa_status">
+<span id="_CPPv310naa_status"></span><span id="_CPPv210naa_status"></span><span id="naa_status"></span><span class="target" id="structnaa__status"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_status</span></span></span><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;naaice_ap2.h&gt;</em></div>
+<p>Status information for a NAA session. </p>
+<p>Holds the current state of the communication, any error codes returned by the NAA, and the number of bytes received so far. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10naa_status5stateE">
+<span id="_CPPv3N10naa_status5stateE"></span><span id="_CPPv2N10naa_status5stateE"></span><span id="naa_status::state__naaice_communication_state"></span><span class="target" id="structnaa__status_1a26c0f7905228c45ff6e22a11f2d934c1"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="low_level.html#_CPPv426naaice_communication_state" title="naaice_communication_state"><span class="n"><span class="pre">naaice_communication_state</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><a class="headerlink" href="#_CPPv4N10naa_status5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current state of the communication session. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10naa_status9naa_errorE">
+<span id="_CPPv3N10naa_status9naa_errorE"></span><span id="_CPPv2N10naa_status9naa_errorE"></span><span id="naa_status::naa_error__naa_error"></span><span class="target" id="structnaa__status_1a579b67bada0f6373937d56cb8c7661ce"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N10naa_status9naa_errorE" title="naa_status::naa_error"><span class="n"><span class="pre">naa_error</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">naa_error</span></span></span><a class="headerlink" href="#_CPPv4N10naa_status9naa_errorE" title="Link to this definition"></a><br /></dt>
+<dd><p>Last error code returned by the NAA. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10naa_status14bytes_receivedE">
+<span id="_CPPv3N10naa_status14bytes_receivedE"></span><span id="_CPPv2N10naa_status14bytes_receivedE"></span><span id="naa_status::bytes_received__uint64_t"></span><span class="target" id="structnaa__status_1a5d98d226361e5fcca0d7af4b2f4cba34"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bytes_received</span></span></span><a class="headerlink" href="#_CPPv4N10naa_status14bytes_receivedE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of bytes received during this session. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="low_level.html" class="btn btn-neutral float-left" title="NAAICE Low-Level API Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="swnaa.html" class="btn btn-neutral float-right" title="Software-NAA API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Florian Mikolajczak, Dylan Everingham, Hannes Signer, Niklas Schelten.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

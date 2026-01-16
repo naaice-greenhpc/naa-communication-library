@@ -1,0 +1,1100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="group__PublicFunctions" kind="group">
+    <compoundname>PublicFunctions</compoundname>
+    <title>Functions</title>
+    <innergroup refid="group__connection__event__handlers">Connection event handlers</innergroup>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_init_communication_context</definition>
+        <argsstring>(struct naaice_communication_context **comm_ctx, uint64_t addr_offset, size_t *param_sizes, char **params, unsigned int params_amount, unsigned int internal_mr_amount, size_t *internal_mr_sizes, uint8_t fncode, const char *local_address, const char *remote_address, uint16_t port)</argsstring>
+        <name>naaice_init_communication_context</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> **</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>uint64_t</type>
+          <declname>addr_offset</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>param_sizes</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>params</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>params_amount</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>internal_mr_amount</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>internal_mr_sizes</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>fncode</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>local_address</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>remote_address</declname>
+        </param>
+        <param>
+          <type>uint16_t</type>
+          <declname>port</declname>
+        </param>
+        <briefdescription>
+<para>Initializes communication context struct. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After a call to this function, the provided communication context struct is ready to be passed to all other API functions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="out">comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Double pointer to communication context struct to be initialized. Must not point to an existing struct; the struct is allocated and returned by this function.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>param_sizes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of sizes (in bytes) of the provided routine parameters.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of pointers to parameter data. Must be preallocated by the host application.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params_amount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of parameters. Used to index <computeroutput>param_sizes</computeroutput> and <computeroutput>params</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>internal_mr_amount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of internal memory regions. Used to index <computeroutput>internal_mr_sizes</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>internal_mr_sizes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of sizes (in bytes) of the internal memory regions.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fncode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function code specifying which NAA routine is called.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>local_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local address string (e.g. &quot;10.3.10.136&quot;). Optional; if NULL, it is not used. Do not provide a local address when running in loopback mode.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>remote_address</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Remote address string (e.g. &quot;10.3.10.135&quot;).</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>port</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Connection port. A value of 0 enables dynamic port allocation.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="590" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="590" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_poll_connection_event</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev, struct rdma_cm_event *ev_cp)</argsstring>
+        <name>naaice_poll_connection_event</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev</declname>
+        </param>
+        <param>
+          <type>struct rdma_cm_event *</type>
+          <declname>ev_cp</declname>
+        </param>
+        <briefdescription>
+<para>Polls for a connection event on the RDMA event channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Polls the RDMA event channel stored in the communication context. If a connection event is received, it is stored in the provided event pointer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection to be polled.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">ev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the received RDMA connection event.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success (regardless of whether an event was received), -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="615" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="615" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_poll_and_handle_connection_event</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_poll_and_handle_connection_event</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Poll and handle a connection event on the RDMA event channel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Polls the RDMA event channel stored in the communication context and, if an event is received, dispatches it to the appropriate connection event handler. This function is a convenience wrapper that combines polling and handling using the previously defined poll and handler functions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success (regardless of whether an event was received), -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="712" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="712" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_setup_connection</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_setup_connection</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Set up the RDMA connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Repeatedly polls for and handles RDMA connection events until the connection setup is complete. This function is a blocking helper that internally calls <ref refid="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" kindref="member">naaice_poll_and_handle_connection_event</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure (e.g. due to timeout). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="729" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="729" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_register_mrs</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_register_mrs</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Register local memory regions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Registers local memory regions as IBV memory regions using ::ibv_reg_mr. This includes memory regions corresponding to input and output parameters, the single metadata memory region, and the memory region used for MRSP.</para>
+<para>If an error occurs during registration, the remote peer is notified via <ref refid="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" kindref="member">naaice_send_message</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection and associated memory regions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="749" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="749" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_parameter_mrs</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, unsigned int n_parameter_mrs, uint64_t *local_addrs, uint64_t *remote_addrs, size_t *sizes)</argsstring>
+        <name>naaice_set_parameter_mrs</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>n_parameter_mrs</declname>
+        </param>
+        <param>
+          <type>uint64_t *</type>
+          <declname>local_addrs</declname>
+        </param>
+        <param>
+          <type>uint64_t *</type>
+          <declname>remote_addrs</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>sizes</declname>
+        </param>
+        <briefdescription>
+<para>Allocate and initialize parameter memory region descriptors. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Allocates and initializes internal structures for parameter (i.e. non-internal) memory regions. This function is called from <ref refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kindref="member">naaice_init_communication_context</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection and memory regions.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n_parameter_mrs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of parameter memory regions for which descriptors will be allocated.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>local_addrs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of local (user-space) addresses of the memory regions. This should correspond to the <computeroutput>params</computeroutput> array passed to <ref refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kindref="member">naaice_init_communication_context</ref>.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>remote_addrs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of remote addresses in NAA memory where the memory regions are requested to be stored. These addresses are obtained from the memory management service.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sizes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of sizes (in bytes) of the memory regions. This should correspond to the <computeroutput>param_sizes</computeroutput> array passed to <ref refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kindref="member">naaice_init_communication_context</ref>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="784" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="784" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_input_mr</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, unsigned int input_mr_idx)</argsstring>
+        <name>naaice_set_input_mr</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>input_mr_idx</declname>
+        </param>
+        <briefdescription>
+<para>Mark a memory region as input and/or output. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds information to the communication context indicating whether a memory region contains an input parameter, an output parameter, or both. Input memory regions are written to the NAA during data transfer, while output memory regions are written back from the NAA.</para>
+<para>This function must be called before <ref refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kindref="member">naaice_init_mrsp</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the memory region to be marked as input or output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure.</para>
+</simplesect>
+Mark a memory region as an input parameter. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="812" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="812" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_output_mr</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, unsigned int output_mr_idx)</argsstring>
+        <name>naaice_set_output_mr</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>output_mr_idx</declname>
+        </param>
+        <briefdescription>
+<para>Mark a memory region as an output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="818" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="818" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_singlesend_mr</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, unsigned int singlesend_mr_idx)</argsstring>
+        <name>naaice_set_singlesend_mr</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>singlesend_mr_idx</declname>
+        </param>
+        <briefdescription>
+<para>Mark a memory region as a single-send region. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds information to the communication context indicating that a memory region is a single-send region. Single-send regions are written exactly once during the first RPC on a connection and are not written again during subsequent RPCs.</para>
+<para>If the memory region is not already marked as an input region, it is automatically marked as one.</para>
+<para>This function must be called before <ref refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kindref="member">naaice_init_mrsp</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the memory region to be marked as a single-send region.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="844" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="844" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_internal_mrs</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, unsigned int n_internal_mrs, uint64_t *addrs, size_t *sizes)</argsstring>
+        <name>naaice_set_internal_mrs</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>n_internal_mrs</declname>
+        </param>
+        <param>
+          <type>uint64_t *</type>
+          <declname>addrs</declname>
+        </param>
+        <param>
+          <type>size_t *</type>
+          <declname>sizes</declname>
+        </param>
+        <briefdescription>
+<para>Add internal memory regions to the communication context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds information about internal memory regions to the communication context. Internal memory regions exist only on the NAA side and are used for computation; their contents are not communicated during data transfer.</para>
+<para>This function must be called before <ref refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kindref="member">naaice_init_mrsp</ref>. The internal memory regions will be included in the memory region announcement message, indicating that they should be allocated by the NAA.</para>
+<para>Should only be called once per communication context. Each call overwrites any previous internal memory region information.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n_internal_mrs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of internal memory regions.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addrs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of addresses of the internal memory regions in NAA memory space. These addresses will be requested of the NAA during MRSP.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sizes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of sizes (in bytes) of the internal memory regions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="878" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="878" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_immediate</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, uint8_t *imm_bytes)</argsstring>
+        <name>naaice_set_immediate</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>uint8_t *</type>
+          <declname>imm_bytes</declname>
+        </param>
+        <briefdescription>
+<para>Set the immediate value for data transfer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the immediate value to be written during data transfer. The immediate consists of up to 3 user-specified bytes placed in the upper 3 bytes; the lowest byte is reserved for the function code.</para>
+<para>This function must be called before <ref refid="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" kindref="member">naaice_init_data_transfer</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>imm_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of immediate value bytes. Maximum of 3 bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="901" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="901" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_init_mrsp</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_init_mrsp</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Memory Region Setup Protocol (MRSP). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Starts the MRSP by sending advertise/request packets and posting a receive for the response. This prepares the connection for memory region registration and data transfer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection and associated memory regions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="919" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="919" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_init_data_transfer</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_init_data_transfer</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Start the data transfer to the NAA. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initiates the data transfer by posting write operations for the memory regions to the NAA. Prepares the connection for remote computation using the previously registered memory regions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection and associated memory regions.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="936" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="936" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_handle_work_completion</definition>
+        <argsstring>(struct ibv_wc *wc, struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_handle_work_completion</name>
+        <param>
+          <type>struct ibv_wc *</type>
+          <declname>wc</declname>
+        </param>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Handle a single work completion from the completion queue. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Processes a single work completion event from the completion queue, which typically represents a memory region write either from the host to the NAA or from the NAA to the host.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="951" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="951" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_poll_cq_nonblocking</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_poll_cq_nonblocking</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Poll the completion queue non-blocking. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Polls the completion queue for any work completions and processes them using <ref refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" kindref="member">naaice_handle_work_completion</ref> if any are received. After handling, updates ::comm_ctx-&gt;state to reflect the current state of the NAA connection and routine.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success (regardless of whether any work completions were received), -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="969" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="969" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_poll_cq_blocking</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_poll_cq_blocking</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Poll the completion queue blocking. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Polls the completion queue for a work completion and blocks until at least one completion is available. Once a completion is received, it is processed using <ref refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" kindref="member">naaice_handle_work_completion</ref>. After handling, ::comm_ctx-&gt;state is updated to reflect the current state of the NAA connection and routine.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success (regardless of whether any work completions were received), -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="988" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="988" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_disconnect_and_cleanup</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_disconnect_and_cleanup</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Disconnect and clean up the communication context. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Terminates the RDMA connection and frees all memory associated with the communication context.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1002" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1002" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_send_message</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, enum message_id message_type, uint8_t errorcode)</argsstring>
+        <name>naaice_send_message</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>enum <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kindref="member">message_id</ref></type>
+          <declname>message_type</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>errorcode</declname>
+        </param>
+        <briefdescription>
+<para>Send an MRSP message to the remote peer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sends an MRSP packet to the remote peer using ::ibv_post_send with opcode ::IBV_WR_SEND.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>message_type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of message to send. Should be one of <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660" kindref="member">MSG_MR_ERR</ref>, <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63" kindref="member">MSG_MR_AAR</ref>, or <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774" kindref="member">MSG_MR_A</ref>.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>errorcode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error code to include in the packet if <computeroutput>message_type</computeroutput> is <ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660" kindref="member">MSG_MR_ERR</ref>. Ignored for other message types.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1025" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1025" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_write_data</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, uint8_t fncode)</argsstring>
+        <name>naaice_write_data</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>uint8_t</type>
+          <declname>fncode</declname>
+        </param>
+        <briefdescription>
+<para>Write memory regions to the NAA. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Writes memory regions, including metadata and input parameters, to the NAA. Uses ::ibv_post_send with opcode ::IBV_WR_RDMA_WRITE for regular regions or ::IBV_WR_RDMA_WRITE_WITH_IMM for the final memory region.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fncode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function code for the NAA routine. Must be positive; 0 indicates an error.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1044" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1044" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_post_recv_mrsp</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_post_recv_mrsp</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Post a receive request for an MRSP message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Posts a receive request to the completion queue for an MRSP message. The request specifies the memory region to be written to (the MRSP region in this case).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1060" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1060" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_post_recv_data</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_post_recv_data</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Post a receive request for a memory region write. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Posts a receive request for a memory region write. Only the final memory region write (the one with an immediate value) requires a receive request; regular RDMA writes without an immediate do not consume a receive request.</para>
+<para>The memory region specified in the receive request is the MRSP region. This is a placeholder, as the actual region written to is determined by the sender.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1080" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1080" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_init_rdma_resources</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_init_rdma_resources</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Initialize RDMA resources. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Allocates and initializes the necessary RDMA resources, including a protection domain, completion channel, completion queue, and queue pair.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1094" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1094" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_do_mrsp</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_do_mrsp</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Execute the MRSP protocol in a blocking manner. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Performs all steps of the Memory Region Setup Protocol (MRSP) in a blocking fashion, ensuring that memory regions are properly advertised, requested, and acknowledged before returning.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1109" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1109" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_do_data_transfer</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx)</argsstring>
+        <name>naaice_do_data_transfer</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <briefdescription>
+<para>Perform the complete data transfer in a blocking manner. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Executes all steps of the data transfer, including writing data to the NAA, waiting for the NAA to complete computation, and receiving the resulting data back. This function operates in a blocking fashion.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1124" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1124" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naaice_set_bytes_to_send</definition>
+        <argsstring>(struct naaice_communication_context *comm_ctx, int mr_idx, int number_bytes)</argsstring>
+        <name>naaice_set_bytes_to_send</name>
+        <param>
+          <type>struct <ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref> *</type>
+          <declname>comm_ctx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>mr_idx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>number_bytes</declname>
+        </param>
+        <briefdescription>
+<para>Set the number of bytes to send from a memory region. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies how many bytes should be sent from the given memory region during data transfer. Passing 0 resets the size to the original size of the memory region.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>comm_ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the communication context describing the connection.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mr_idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the memory region to be modified.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>number_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to send from the specified memory region. 0 resets to the original size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>0 on success, -1 on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="1146" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" declline="1146" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

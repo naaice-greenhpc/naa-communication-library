@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="group__defines" kind="group">
+    <compoundname>defines</compoundname>
+    <title>Default defines</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__defines_1gaeb2c8b9b4d058b7930d52db59b5f9051" prot="public" static="no">
+        <name>TIMEOUT_RESOLVE_ROUTE</name>
+        <initializer>500</initializer>
+        <briefdescription>
+<para>Timeout for resolving RDMA routes, in milliseconds. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="120" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__defines_1gac5aea11b8390f14300a4050cfd3f1fcb" prot="public" static="no">
+        <name>POLLING_TIMEOUT</name>
+        <initializer>500</initializer>
+        <briefdescription>
+<para>Timeout for poll functions, in milliseconds. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="124" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__defines_1gaad2dd72565852b91c809cd4685833b17" prot="public" static="no">
+        <name>DEFAULT_TIMEOUT</name>
+        <initializer>3600</initializer>
+        <briefdescription>
+<para>Default timeout for blocking calls to the NAA, in seconds. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="129" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__defines_1ga7bde5b78c001e2bbcf25de2822064697" prot="public" static="no">
+        <name>DEFAULT_RETRY_COUNT</name>
+        <initializer>7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="132" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,772 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="naaice_8h" kind="file" language="C++">
+    <compoundname>naaice.h</compoundname>
+    <includes local="no">endian.h</includes>
+    <includes local="no">errno.h</includes>
+    <includes local="no">fcntl.h</includes>
+    <includes local="no">inttypes.h</includes>
+    <includes local="no">stdbool.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">stdio.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">string.h</includes>
+    <includes local="no">sys/poll.h</includes>
+    <includes local="no">unistd.h</includes>
+    <includes local="no">limits.h</includes>
+    <includes local="no">netdb.h</includes>
+    <includes local="no">rdma/rdma_cma.h</includes>
+    <includes local="no">rdma/rdma_verbs.h</includes>
+    <includes local="no">sys/socket.h</includes>
+    <includedby refid="naaice__ap2_8h" local="yes">/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h</includedby>
+    <includedby refid="naaice__swnaa_8h" local="yes">/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h</label>
+        <link refid="naaice_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>endian.h</label>
+      </node>
+      <node id="3">
+        <label>errno.h</label>
+      </node>
+      <node id="4">
+        <label>fcntl.h</label>
+      </node>
+      <node id="5">
+        <label>inttypes.h</label>
+      </node>
+      <node id="13">
+        <label>limits.h</label>
+      </node>
+      <node id="14">
+        <label>netdb.h</label>
+      </node>
+      <node id="15">
+        <label>rdma/rdma_cma.h</label>
+      </node>
+      <node id="16">
+        <label>rdma/rdma_verbs.h</label>
+      </node>
+      <node id="6">
+        <label>stdbool.h</label>
+      </node>
+      <node id="7">
+        <label>stdint.h</label>
+      </node>
+      <node id="8">
+        <label>stdio.h</label>
+      </node>
+      <node id="9">
+        <label>stdlib.h</label>
+      </node>
+      <node id="10">
+        <label>string.h</label>
+      </node>
+      <node id="11">
+        <label>sys/poll.h</label>
+      </node>
+      <node id="17">
+        <label>sys/socket.h</label>
+      </node>
+      <node id="12">
+        <label>unistd.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h</label>
+        <link refid="naaice_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h</label>
+        <link refid="naaice__ap2_8h"/>
+      </node>
+      <node id="3">
+        <label>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_swnaa.h</label>
+        <link refid="naaice__swnaa_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnaaice__mr__advertisement" prot="public">naaice_mr_advertisement</innerclass>
+    <innerclass refid="structnaaice__mr__advertisement__request" prot="public">naaice_mr_advertisement_request</innerclass>
+    <innerclass refid="structnaaice__mr__request" prot="public">naaice_mr_request</innerclass>
+    <innerclass refid="structnaaice__mr__error" prot="public">naaice_mr_error</innerclass>
+    <innerclass refid="structnaaice__mr__hdr" prot="public">naaice_mr_hdr</innerclass>
+    <innerclass refid="structnaaice__mr__dynamic__hdr" prot="public">naaice_mr_dynamic_hdr</innerclass>
+    <innerclass refid="structnaaice__mr__peer" prot="public">naaice_mr_peer</innerclass>
+    <innerclass refid="structnaaice__mr__local" prot="public">naaice_mr_local</innerclass>
+    <innerclass refid="structnaaice__mr__internal" prot="public">naaice_mr_internal</innerclass>
+    <innerclass refid="structnaaice__rpc__metadata" prot="public">naaice_rpc_metadata</innerclass>
+    <innerclass refid="structnaaice__communication__context" prot="public">naaice_communication_context</innerclass>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="naaice_8h_1aa350dcd01a7f3234d44b73b37fb9c906" prot="public" static="no">
+        <name>RX_DEPTH</name>
+        <initializer>1025</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>TODO:</para>
+<para>(functionality)</para>
+<para><itemizedlist>
+<listitem><para>Consider the use of posix_memalign in naaice_init_communication_context. This is a reallocation of the input parameters. Should we instead require that the user ensure memory alignment, or find a way to ensure it without reallocation? Aligned memory isn&apos;t strictly necessary, it just has some performance implications</para>
+</listitem><listitem><para>Handle errors better, utilizing errno and ERROR state in state machine.</para>
+</listitem><listitem><para>Unify some of the packet structs used in naaice_send_message, so that a single type can be used rather than concatenating headers, for example.</para>
+</listitem><listitem><para>Make type usage more uniform, i.e. single types for MR addr pointers and sizes. AP1 Usage For standard operation, functions should be called in the following order:</para>
+</listitem></itemizedlist>
+<orderedlist>
+<listitem><para>naaice_init_communication_context</para>
+</listitem><listitem><para>(in any order) naaice_setup_connection naaice_register_mrs naaice_set_internal_mrs (optional) naaice_set_input_mr naaice_set_output_mr naaice_set_singlesend_mr (optional)</para>
+</listitem><listitem><para>naaice_set_bytes_to_send (optional)</para>
+</listitem><listitem><para>naaice_do_mrsp</para>
+</listitem><listitem><para>naaice_do_data_transfer</para>
+</listitem><listitem><para>naaice_disconnect_and_cleanup</para>
+</listitem></orderedlist>
+</para>
+<para>naaice_do_mrsp blocks until MRSP is complete. For a non-blocking version, use instead:</para>
+<para>naaice_init_mrsp while (communication_context-&gt;state &lt; MRSP_DONE) { naaice_poll_cq_nonblocking }</para>
+<para>naaice_do_data_transfer blocks until MRSP is complete. For a non-blocking version, use instead:</para>
+<para>naaice_init_data_transfer while (communication_context-&gt;state &lt; FINISHED) { naaice_poll_cq_nonblocking } </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="111" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="naaice_8h_1a4a7fe653db1b12381e8189b96d3d8bd1" prot="public" static="no">
+        <name>ntohll</name>
+        <initializer>be64toh</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="112" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="naaice_8h_1abc94cd8dc29ed8b19db4cc23ed830618" prot="public" static="no">
+        <name>htonll</name>
+        <initializer>htobe64</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="113" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <member refid="group__defines_1gaeb2c8b9b4d058b7930d52db59b5f9051" kind="define"><name>TIMEOUT_RESOLVE_ROUTE</name></member>
+      <member refid="group__defines_1gac5aea11b8390f14300a4050cfd3f1fcb" kind="define"><name>POLLING_TIMEOUT</name></member>
+      <member refid="group__defines_1gaad2dd72565852b91c809cd4685833b17" kind="define"><name>DEFAULT_TIMEOUT</name></member>
+      <member refid="group__defines_1ga7bde5b78c001e2bbcf25de2822064697" kind="define"><name>DEFAULT_RETRY_COUNT</name></member>
+      <memberdef kind="define" id="naaice_8h_1a049854a6a057ed70a44c47de7e91be10" prot="public" static="no">
+        <name>MAX_MRS</name>
+        <initializer>32</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="140" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="naaice_8h_1af773304c3ca92ded89dc28f3014e1631" prot="public" static="no">
+        <name>IMMEDIATE_OFFSET</name>
+        <initializer>8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="143" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="naaice_8h_1a22820c4f9335d5ae28f7d87295611862" prot="public" static="no">
+        <name>MR_SIZE_MRSP</name>
+        <initializer>sizeof(struct <ref refid="structnaaice__mr__advertisement__request" kindref="compound">naaice_mr_advertisement_request</ref>) * <ref refid="naaice_8h_1a049854a6a057ed70a44c47de7e91be10" kindref="member">MAX_MRS</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="155" column="9" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" prot="public" static="no" strong="no">
+        <type></type>
+        <name>message_id</name>
+        <enumvalue id="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660" prot="public">
+          <name>MSG_MR_ERR</name>
+          <initializer>= 0x00</initializer>
+          <briefdescription>
+<para>Error message. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63" prot="public">
+          <name>MSG_MR_AAR</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+<para>Memory region advertisement and request, sent by host. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774" prot="public">
+          <name>MSG_MR_A</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+<para>Memory region advertisement without request, usually sent by NAA. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273" prot="public">
+          <name>MSG_MR_R</name>
+          <initializer>= 0x03</initializer>
+          <briefdescription>
+<para>Reserved/unused message ID. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Message IDs used for packets sent between host and NAA. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines the types of messages exchanged during the Memory Region Setup Protocol (MRSP) and other control communication. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="168" column="1" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="168" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="enum" id="naaice_8h_1a21fb508cec847f2df016cd6620aeff23" prot="public" static="no" strong="no">
+        <type></type>
+        <name>naaice_mrflags_value</name>
+        <enumvalue id="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7" prot="public">
+          <name>MRFLAG_INTERNAL</name>
+          <initializer>= 0x01</initializer>
+          <briefdescription>
+<para>Memory region is for internal use on the NAA only; not transferred. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="naaice_8h_1a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d" prot="public">
+          <name>MRFLAG_SINGLESEND</name>
+          <initializer>= 0x02</initializer>
+          <briefdescription>
+<para>Memory region is sent only once on the first RPC; subsequent RPCs skip it. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa" prot="public">
+          <name>MRFLAG_INPUT</name>
+          <initializer>= 0x04</initializer>
+          <briefdescription>
+<para>Memory region represents an RPC input parameter. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450" prot="public">
+          <name>MRFLAG_OUTPUT</name>
+          <initializer>= 0x08</initializer>
+          <briefdescription>
+<para>Memory region represents an RPC output parameter. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Flags for memory regions in <ref refid="structnaaice__mr__advertisement__request" kindref="compound">naaice_mr_advertisement_request</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Specifies additional information about an advertised or requested memory region needed by the NAA. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="237" column="1" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="237" bodyend="250"/>
+      </memberdef>
+      <member refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" kind="enum"><name>naaice_communication_state</name></member>
+    </sectiondef>
+    <sectiondef kind="func">
+      <member refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kind="function"><name>naaice_init_communication_context</name></member>
+      <member refid="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892" kind="function"><name>naaice_poll_connection_event</name></member>
+      <member refid="group__connection__event__handlers_1ga4b5436e11c02694060160979030d95a1" kind="function"><name>naaice_handle_addr_resolved</name></member>
+      <member refid="group__connection__event__handlers_1gafc4354e4bf95ecb75d18db774576193e" kind="function"><name>naaice_handle_route_resolved</name></member>
+      <member refid="group__connection__event__handlers_1ga24acca87a515ab9019a66db096783210" kind="function"><name>naaice_handle_connection_established</name></member>
+      <member refid="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" kind="function"><name>naaice_handle_error</name></member>
+      <member refid="group__connection__event__handlers_1gac4798696d7a0940b2e00a69829050721" kind="function"><name>naaice_handle_other</name></member>
+      <member refid="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" kind="function"><name>naaice_poll_and_handle_connection_event</name></member>
+      <member refid="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05" kind="function"><name>naaice_setup_connection</name></member>
+      <member refid="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca" kind="function"><name>naaice_register_mrs</name></member>
+      <member refid="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3" kind="function"><name>naaice_set_parameter_mrs</name></member>
+      <member refid="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2" kind="function"><name>naaice_set_input_mr</name></member>
+      <member refid="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570" kind="function"><name>naaice_set_output_mr</name></member>
+      <member refid="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da" kind="function"><name>naaice_set_singlesend_mr</name></member>
+      <member refid="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065" kind="function"><name>naaice_set_internal_mrs</name></member>
+      <member refid="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283" kind="function"><name>naaice_set_immediate</name></member>
+      <member refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kind="function"><name>naaice_init_mrsp</name></member>
+      <member refid="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" kind="function"><name>naaice_init_data_transfer</name></member>
+      <member refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" kind="function"><name>naaice_handle_work_completion</name></member>
+      <member refid="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863" kind="function"><name>naaice_poll_cq_nonblocking</name></member>
+      <member refid="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035" kind="function"><name>naaice_poll_cq_blocking</name></member>
+      <member refid="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c" kind="function"><name>naaice_disconnect_and_cleanup</name></member>
+      <member refid="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" kind="function"><name>naaice_send_message</name></member>
+      <member refid="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57" kind="function"><name>naaice_write_data</name></member>
+      <member refid="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc" kind="function"><name>naaice_post_recv_mrsp</name></member>
+      <member refid="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9" kind="function"><name>naaice_post_recv_data</name></member>
+      <member refid="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7" kind="function"><name>naaice_init_rdma_resources</name></member>
+      <member refid="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435" kind="function"><name>naaice_do_mrsp</name></member>
+      <member refid="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a" kind="function"><name>naaice_do_data_transfer</name></member>
+      <member refid="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895" kind="function"><name>naaice_set_bytes_to_send</name></member>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/**************************************************************************</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>`7MN.<sp/><sp/><sp/>`7MF&apos;<sp/><sp/><sp/><sp/><sp/>db<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>db<sp/><sp/><sp/><sp/><sp/><sp/>`7MMF&apos;<sp/><sp/>.g8&quot;&quot;&quot;bgd<sp/>`7MM&quot;&quot;&quot;YMM</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>MMN.<sp/><sp/><sp/><sp/>M<sp/><sp/><sp/><sp/><sp/><sp/>;MM:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>;MM:<sp/><sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>.dP&apos;<sp/><sp/><sp/><sp/><sp/>`M<sp/><sp/><sp/>MM<sp/><sp/><sp/><sp/>`7</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/>YMb<sp/><sp/><sp/>M<sp/><sp/><sp/><sp/><sp/>,V^MM.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,V^MM.<sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>dM&apos;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>`<sp/><sp/><sp/>MM<sp/><sp/><sp/>d</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/><sp/>`MN.<sp/>M<sp/><sp/><sp/><sp/>,M<sp/><sp/>`MM<sp/><sp/><sp/><sp/><sp/><sp/><sp/>,M<sp/><sp/>`MM<sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>MM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MMmmMM</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/><sp/><sp/>`MM.M<sp/><sp/><sp/><sp/>AbmmmqMA<sp/><sp/><sp/><sp/><sp/><sp/>AbmmmqMA<sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/>MM.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MM<sp/><sp/><sp/>Y<sp/><sp/>,</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>M<sp/><sp/><sp/><sp/><sp/>YMM<sp/><sp/><sp/>A&apos;<sp/><sp/><sp/><sp/><sp/>VML<sp/><sp/><sp/><sp/>A&apos;<sp/><sp/><sp/><sp/><sp/>VML<sp/><sp/><sp/><sp/>MM<sp/><sp/>`Mb.<sp/><sp/><sp/><sp/><sp/>,&apos;<sp/><sp/><sp/>MM<sp/><sp/><sp/><sp/><sp/>,M</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>.JML.<sp/><sp/><sp/><sp/>YM<sp/>.AMA.<sp/><sp/><sp/>.AMMA..AMA.<sp/><sp/><sp/>.AMMA..JMML.<sp/><sp/>`&quot;bmmmd&apos;<sp/><sp/>.JMMmmmmMMM</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>Network-Attached<sp/>Accelerators<sp/>for<sp/>Energy-Efficient<sp/>Heterogeneous<sp/>Computing</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/>naaice.h</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>Interface<sp/>for<sp/>NAAICE<sp/>AP1<sp/>communication<sp/>layer.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>Acronyms<sp/>used<sp/>in<sp/>the<sp/>NAAICE<sp/>documentation:</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>MR:<sp/>Memory<sp/>Region</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>MRSP:<sp/>Memory<sp/>Region<sp/>Setup<sp/>Protocol</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/><sp/>RPC:<sp/>Remote<sp/>Procedure<sp/>Call</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/><sp/>RDMA:<sp/>Remote<sp/>Direct<sp/>Memory<sp/>Access</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/><sp/>IBV:<sp/>InfiniBand<sp/>Verbs</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/>*<sp/>Florian<sp/>Mikolajczak,<sp/>florian.mikolajczak@uni-potsdam.de</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*<sp/>Dylan<sp/>Everingham,<sp/>everingham@zib.de</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="27"><highlight class="comment"><sp/>*<sp/>26-01-2024</highlight></codeline>
+<codeline lineno="28"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="29"><highlight class="comment"><sp/>*****************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NAAICE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NAAICE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Dependencies<sp/>**************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;endian.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;errno.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fcntl.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;inttypes.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdbool.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdint.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/poll.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unistd.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;netdb.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rdma/rdma_cma.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rdma/rdma_verbs.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/socket.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Constants<sp/>*****************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="naaice_8h_1aa350dcd01a7f3234d44b73b37fb9c906" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>RX_DEPTH<sp/>1025</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="naaice_8h_1a4a7fe653db1b12381e8189b96d3d8bd1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ntohll<sp/>be64toh</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="naaice_8h_1abc94cd8dc29ed8b19db4cc23ed830618" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>htonll<sp/>htobe64</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="group__defines_1gaeb2c8b9b4d058b7930d52db59b5f9051" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TIMEOUT_RESOLVE_ROUTE<sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="group__defines_1gac5aea11b8390f14300a4050cfd3f1fcb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>POLLING_TIMEOUT<sp/>500</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129" refid="group__defines_1gaad2dd72565852b91c809cd4685833b17" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_TIMEOUT<sp/>3600</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="group__defines_1ga7bde5b78c001e2bbcf25de2822064697" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DEFAULT_RETRY_COUNT<sp/>7</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Maximum<sp/>allowed<sp/>number<sp/>of<sp/>memory<sp/>regions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Total<sp/>of<sp/>parameters<sp/>and<sp/>internal<sp/>NAA<sp/>memory<sp/>regions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="naaice_8h_1a049854a6a057ed70a44c47de7e91be10" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MAX_MRS<sp/>32</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Immediate<sp/>return<sp/>code<sp/>offset</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="naaice_8h_1af773304c3ca92ded89dc28f3014e1631" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>IMMEDIATE_OFFSET<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="comment">//<sp/>size<sp/>of<sp/>MR<sp/>for<sp/>MR<sp/>exchange</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="comment">//<sp/>type<sp/>+<sp/>padding:<sp/>32<sp/>+<sp/>Maximum<sp/>number<sp/>of<sp/>regions:UINT_MAX+1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>*<sp/>(Addr:64<sp/>+<sp/><sp/>size:32<sp/>+<sp/>key:32)<sp/>+<sp/>requested<sp/>size:64<sp/>/<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO:<sp/>rewrite<sp/>in<sp/>terms<sp/>of<sp/>struct<sp/>sizes.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">//<sp/>#define<sp/>MR_SIZE_MR_EXHANGE<sp/>(32<sp/>+<sp/>(UINT8_MAX<sp/>+<sp/>1)<sp/>*<sp/>2<sp/>*<sp/>64<sp/>+<sp/>64)<sp/>/<sp/>8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Size<sp/>of<sp/>memory<sp/>region<sp/>used<sp/>for<sp/>MRSP.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Simply<sp/>the<sp/>size<sp/>of<sp/>a<sp/>memory<sp/>region<sp/>advertisement<sp/>and<sp/>request<sp/>message</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/>multiplied<sp/>by<sp/>the<sp/>maximum<sp/>allowed<sp/>number<sp/>of<sp/>memory<sp/>regions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO:<sp/>add<sp/>header<sp/>size.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="naaice_8h_1a22820c4f9335d5ae28f7d87295611862" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MR_SIZE_MRSP<sp/>sizeof(struct<sp/>naaice_mr_advertisement_request)<sp/>*<sp/>MAX_MRS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="comment">//<sp/>FPGA<sp/>addresses<sp/>are<sp/>sent<sp/>in<sp/>a<sp/>7-byte<sp/>region,<sp/>so<sp/>this<sp/>is<sp/>the<sp/>maximum<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>can<sp/>take<sp/>(2^56-1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Structs<sp/>and<sp/>Enums<sp/>*********************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kindref="member">message_id</ref><sp/>{</highlight></codeline>
+<codeline lineno="170" refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660" kindref="member">MSG_MR_ERR</ref><sp/>=<sp/>0x00,</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63" kindref="member">MSG_MR_AAR</ref><sp/>=<sp/>0x01,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774" kindref="member">MSG_MR_A</ref><sp/>=<sp/>0x02,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179" refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273" kindref="member">MSG_MR_R</ref><sp/>=<sp/>0x03,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="structnaaice__mr__advertisement" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__advertisement" kindref="compound">naaice_mr_advertisement</ref><sp/>{</highlight></codeline>
+<codeline lineno="191" refid="structnaaice__mr__advertisement_1a28f0add1fb5f2ecd7c7b3f8d266a8451" refkind="member"><highlight class="normal"><sp/><sp/>uint64_t<sp/><ref refid="structnaaice__mr__advertisement_1a28f0add1fb5f2ecd7c7b3f8d266a8451" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="structnaaice__mr__advertisement_1afea5d1fe1203d278e854c69ba56f265d" refkind="member"><highlight class="normal"><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__mr__advertisement_1afea5d1fe1203d278e854c69ba56f265d" kindref="member">rkey</ref>;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="structnaaice__mr__advertisement_1ac306e5ce33a640c111ebaab2d1d3a9ff" refkind="member"><highlight class="normal"><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__mr__advertisement_1ac306e5ce33a640c111ebaab2d1d3a9ff" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="structnaaice__mr__advertisement__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__advertisement__request" kindref="compound">naaice_mr_advertisement_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="213" refid="structnaaice__mr__advertisement__request_1adbe7dabc92a73fea9b22a88f8880eff6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structnaaice__mr__advertisement__request_1adbe7dabc92a73fea9b22a88f8880eff6" kindref="member">mr_info</ref>;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218" refid="structnaaice__mr__advertisement__request_1a3cdf72073c4de54ef2ab9c3f7706f936" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__advertisement__request_1a3cdf72073c4de54ef2ab9c3f7706f936" kindref="member">mr_info_bytearray</ref>[8];</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="structnaaice__mr__advertisement__request_1a7059e5245124980dce1c9fb3ddab1f33" refkind="member"><highlight class="normal"><sp/><sp/>uint64_t<sp/><ref refid="structnaaice__mr__advertisement__request_1a7059e5245124980dce1c9fb3ddab1f33" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225" refid="structnaaice__mr__advertisement__request_1a178bf5b834aaa0bd8f629a23bc18b1fd" refkind="member"><highlight class="normal"><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__mr__advertisement__request_1a178bf5b834aaa0bd8f629a23bc18b1fd" kindref="member">rkey</ref>;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228" refid="structnaaice__mr__advertisement__request_1af9c10047d0f94a82a88ea93b361fd254" refkind="member"><highlight class="normal"><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__mr__advertisement__request_1af9c10047d0f94a82a88ea93b361fd254" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237" refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23" kindref="member">naaice_mrflags_value</ref><sp/>{</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240" refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7" kindref="member">MRFLAG_INTERNAL</ref><sp/>=<sp/>0x01,</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243" refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d" kindref="member">MRFLAG_SINGLESEND</ref><sp/>=<sp/>0x02,</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246" refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa" kindref="member">MRFLAG_INPUT</ref><sp/>=<sp/>0x04,</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249" refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450" kindref="member">MRFLAG_OUTPUT</ref><sp/>=<sp/>0x08,</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258" refid="structnaaice__mr__request" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__request" kindref="compound">naaice_mr_request</ref><sp/>{</highlight></codeline>
+<codeline lineno="260" refid="structnaaice__mr__request_1a4d0ecd335e3fb66e89098a722f23c76e" refkind="member"><highlight class="normal"><sp/><sp/>uint64_t<sp/><ref refid="structnaaice__mr__request_1a4d0ecd335e3fb66e89098a722f23c76e" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="261"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269" refid="structnaaice__mr__error" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__error" kindref="compound">naaice_mr_error</ref><sp/>{</highlight></codeline>
+<codeline lineno="271" refid="structnaaice__mr__error_1ae6ff3c35c75fa99599f367674dc30d41" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__error_1ae6ff3c35c75fa99599f367674dc30d41" kindref="member">code</ref>;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="structnaaice__mr__error_1a76278446c75c1817ae173cb082e63385" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__error_1a76278446c75c1817ae173cb082e63385" kindref="member">padding</ref>[2];</highlight></codeline>
+<codeline lineno="275"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Structs<sp/>used<sp/>as<sp/>headers<sp/>for<sp/>the<sp/>above<sp/>messages.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO:<sp/>can<sp/>these<sp/>simply<sp/>be<sp/>included<sp/>in<sp/>the<sp/>message<sp/>structs?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="279" refid="structnaaice__mr__hdr" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__hdr" kindref="compound">naaice_mr_hdr</ref><sp/>{</highlight></codeline>
+<codeline lineno="280" refid="structnaaice__mr__hdr_1a18aa84bcaed22a21d16c2666b40b33e0" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__hdr_1a18aa84bcaed22a21d16c2666b40b33e0" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="281"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283" refid="structnaaice__mr__dynamic__hdr" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__dynamic__hdr" kindref="compound">naaice_mr_dynamic_hdr</ref><sp/>{</highlight></codeline>
+<codeline lineno="284" refid="structnaaice__mr__dynamic__hdr_1ae0b303d2c0d5ce1ace857479553eede5" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__dynamic__hdr_1ae0b303d2c0d5ce1ace857479553eede5" kindref="member">count</ref>;</highlight></codeline>
+<codeline lineno="285" refid="structnaaice__mr__dynamic__hdr_1a91107b9fc120a5af92abb54cfa8cbfd4" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__dynamic__hdr_1a91107b9fc120a5af92abb54cfa8cbfd4" kindref="member">padding</ref>[2];</highlight></codeline>
+<codeline lineno="286"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294" refid="structnaaice__mr__peer" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__peer" kindref="compound">naaice_mr_peer</ref><sp/>{</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="297" refid="structnaaice__mr__peer_1acf2bcb7c541ef65fdb07d685076de99e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structnaaice__mr__peer_1acf2bcb7c541ef65fdb07d685076de99e" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300" refid="structnaaice__mr__peer_1ac64f401c529bff7d785d396facbf3063" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__peer_1ac64f401c529bff7d785d396facbf3063" kindref="member">fpgaaddr</ref>[8];</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304" refid="structnaaice__mr__peer_1a2ece31e54c627c7a68ae6dd39e992a11" refkind="member"><highlight class="normal"><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__mr__peer_1a2ece31e54c627c7a68ae6dd39e992a11" kindref="member">rkey</ref>;</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307" refid="structnaaice__mr__peer_1a72be5998e29279524950390f02c56c26" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__peer_1a72be5998e29279524950390f02c56c26" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310" refid="structnaaice__mr__peer_1a982ecdc40d066910ccee25174b24b2f1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__peer_1a982ecdc40d066910ccee25174b24b2f1" kindref="member">to_write</ref>;</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight></codeline>
+<codeline lineno="314" refid="structnaaice__mr__peer_1a5aaf720eee8b675f46631b2dab8a3cff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__peer_1a5aaf720eee8b675f46631b2dab8a3cff" kindref="member">single_send</ref>;</highlight></codeline>
+<codeline lineno="315"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324" refid="structnaaice__mr__local" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__local" kindref="compound">naaice_mr_local</ref><sp/>{</highlight></codeline>
+<codeline lineno="326" refid="structnaaice__mr__local_1a14c18396342aa35fed97dacf49db4e7b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ibv_mr<sp/>*<ref refid="structnaaice__mr__local_1a14c18396342aa35fed97dacf49db4e7b" kindref="member">ibv</ref>;</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="329" refid="structnaaice__mr__local_1a11412feb3969b49f22c16d443a8cf58b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="structnaaice__mr__local_1a11412feb3969b49f22c16d443a8cf58b" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332" refid="structnaaice__mr__local_1a2b4eb21c3ba2c450dbb252c8ba7af03f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__local_1a2b4eb21c3ba2c450dbb252c8ba7af03f" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335" refid="structnaaice__mr__local_1acf6e2a4f91701e03cabe975a88a2959e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__local_1acf6e2a4f91701e03cabe975a88a2959e" kindref="member">to_write</ref>;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="339" refid="structnaaice__mr__local_1a4242b44ae7688fdcd95de6ca216d7a6b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__local_1a4242b44ae7688fdcd95de6ca216d7a6b" kindref="member">single_send</ref>;</highlight></codeline>
+<codeline lineno="340"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349" refid="structnaaice__mr__internal" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__internal" kindref="compound">naaice_mr_internal</ref><sp/>{</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="352" refid="structnaaice__mr__internal_1a4dbe8b3b64ead3633cc4f45ba0fe3f31" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint64_t<sp/><ref refid="structnaaice__mr__internal_1a4dbe8b3b64ead3633cc4f45ba0fe3f31" kindref="member">addr</ref>;</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="355" refid="structnaaice__mr__internal_1a9fe46515d1ae382b09a42c33671927ab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__mr__internal_1a9fe46515d1ae382b09a42c33671927ab" kindref="member">fpgaaddr</ref>[8];</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359" refid="structnaaice__mr__internal_1a665ced3040564d394a9914258fb4d732" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structnaaice__mr__internal_1a665ced3040564d394a9914258fb4d732" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="360"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"></highlight></codeline>
+<codeline lineno="368" refid="structnaaice__rpc__metadata" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__rpc__metadata" kindref="compound">naaice_rpc_metadata</ref><sp/>{</highlight></codeline>
+<codeline lineno="370" refid="structnaaice__rpc__metadata_1a9a2a1184f2b0919113737da71f197099" refkind="member"><highlight class="normal"><sp/><sp/>uintptr_t<sp/><ref refid="structnaaice__rpc__metadata_1a9a2a1184f2b0919113737da71f197099" kindref="member">return_addr</ref>;</highlight></codeline>
+<codeline lineno="371"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406" refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" kindref="member">naaice_communication_state</ref><sp/>{</highlight></codeline>
+<codeline lineno="407" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87" kindref="member">NAAICE_INIT</ref><sp/>=<sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="408" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080" kindref="member">NAAICE_READY</ref><sp/>=<sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="409" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4" kindref="member">NAAICE_CONNECTED</ref><sp/>=<sp/>2,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="410" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f" kindref="member">NAAICE_DISCONNECTED</ref><sp/>=<sp/>3,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="411" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c" kindref="member">NAAICE_MRSP_SENDING</ref><sp/>=<sp/>10,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="412" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227" kindref="member">NAAICE_MRSP_RECEIVING</ref><sp/>=<sp/>11,<sp/></highlight></codeline>
+<codeline lineno="413" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec" kindref="member">NAAICE_MRSP_DONE</ref><sp/>=<sp/>12,<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="414" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c" kindref="member">NAAICE_DATA_SENDING</ref><sp/>=<sp/>20,<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="415" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f" kindref="member">NAAICE_CALCULATING</ref><sp/>=<sp/>21,<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="416" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627" kindref="member">NAAICE_DATA_RECEIVING</ref><sp/>=<sp/>22,<sp/></highlight></codeline>
+<codeline lineno="417" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14" kindref="member">NAAICE_FINISHED</ref><sp/>=<sp/>30,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="418" refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd" kindref="member">NAAICE_ERROR</ref><sp/>=<sp/>40,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="419"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight></codeline>
+<codeline lineno="428" refid="structnaaice__communication__context" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>{</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Basic<sp/>connection<sp/>properties<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="430"><highlight class="normal"></highlight></codeline>
+<codeline lineno="432" refid="structnaaice__communication__context_1aa5adddc3e57b3c0ec92f5a28a06f2c99" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">rdma_cm_id<sp/>*<ref refid="structnaaice__communication__context_1aa5adddc3e57b3c0ec92f5a28a06f2c99" kindref="member">id</ref>;</highlight></codeline>
+<codeline lineno="433"><highlight class="normal"></highlight></codeline>
+<codeline lineno="435" refid="structnaaice__communication__context_1a750493d1c756467c2d9eb97eb35cbe06" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">rdma_event_channel<sp/>*<ref refid="structnaaice__communication__context_1a750493d1c756467c2d9eb97eb35cbe06" kindref="member">ev_channel</ref>;</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"></highlight></codeline>
+<codeline lineno="438" refid="structnaaice__communication__context_1a2b5db6c6ba0ccad0aebb9809814aa6f4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ibv_context<sp/>*<ref refid="structnaaice__communication__context_1a2b5db6c6ba0ccad0aebb9809814aa6f4" kindref="member">ibv_ctx</ref>;</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"></highlight></codeline>
+<codeline lineno="441" refid="structnaaice__communication__context_1a57a8f4c0c806cf0770c8e0e5a4420fb2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ibv_pd<sp/>*<ref refid="structnaaice__communication__context_1a57a8f4c0c806cf0770c8e0e5a4420fb2" kindref="member">pd</ref>;</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"></highlight></codeline>
+<codeline lineno="444" refid="structnaaice__communication__context_1a92c5d4473461f9f34f229cbcb23fb442" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ibv_comp_channel<sp/>*<ref refid="structnaaice__communication__context_1a92c5d4473461f9f34f229cbcb23fb442" kindref="member">comp_channel</ref>;</highlight></codeline>
+<codeline lineno="445"><highlight class="normal"></highlight></codeline>
+<codeline lineno="447" refid="structnaaice__communication__context_1a777a77e3ecf5fc32156c56aa0c671992" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ibv_cq<sp/>*<ref refid="structnaaice__communication__context_1a777a77e3ecf5fc32156c56aa0c671992" kindref="member">cq</ref>;</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"></highlight></codeline>
+<codeline lineno="450" refid="structnaaice__communication__context_1af3d03a0fc5a8e98046d7147516415d25" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">ibv_qp<sp/>*<ref refid="structnaaice__communication__context_1af3d03a0fc5a8e98046d7147516415d25" kindref="member">qp</ref>;</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"></highlight></codeline>
+<codeline lineno="453" refid="structnaaice__communication__context_1a5e0af877410b4f1a5f33604f8ead73f6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context_1a5e0af877410b4f1a5f33604f8ead73f6" kindref="member">timeout</ref>;</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"></highlight></codeline>
+<codeline lineno="456" refid="structnaaice__communication__context_1a0b6f041373ff651f70928dca1768ceb6" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1a0b6f041373ff651f70928dca1768ceb6" kindref="member">retry_count</ref>;</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"></highlight></codeline>
+<codeline lineno="458"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Current<sp/>connection<sp/>state<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="459"><highlight class="normal"></highlight></codeline>
+<codeline lineno="461" refid="structnaaice__communication__context_1af54d81eb0f53839114e399e9cc003b4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" kindref="member">naaice_communication_state</ref><sp/><ref refid="structnaaice__communication__context_1af54d81eb0f53839114e399e9cc003b4f" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"></highlight></codeline>
+<codeline lineno="463"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Local<sp/>memory<sp/>regions<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="464"><highlight class="normal"></highlight></codeline>
+<codeline lineno="466" refid="structnaaice__communication__context_1ae96707fd4075be44a68b071f4f279900" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__local" kindref="compound">naaice_mr_local</ref><sp/>*<ref refid="structnaaice__communication__context_1ae96707fd4075be44a68b071f4f279900" kindref="member">mr_local_data</ref>;</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"></highlight></codeline>
+<codeline lineno="469" refid="structnaaice__communication__context_1ab5d4eba84bf71a67cb4d6304ffa9130c" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1ab5d4eba84bf71a67cb4d6304ffa9130c" kindref="member">no_local_mrs</ref>;</highlight></codeline>
+<codeline lineno="470"><highlight class="normal"></highlight></codeline>
+<codeline lineno="473" refid="structnaaice__communication__context_1afc0d1f44fd8b275ef6d276fb7fad0e43" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1afc0d1f44fd8b275ef6d276fb7fad0e43" kindref="member">mr_return_idx</ref>;</highlight></codeline>
+<codeline lineno="474"><highlight class="normal"></highlight></codeline>
+<codeline lineno="475"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Peer<sp/>memory<sp/>regions<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="476"><highlight class="normal"></highlight></codeline>
+<codeline lineno="478" refid="structnaaice__communication__context_1aae140cb69ac48e9717f38a35a061f30e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__peer" kindref="compound">naaice_mr_peer</ref><sp/>*<ref refid="structnaaice__communication__context_1aae140cb69ac48e9717f38a35a061f30e" kindref="member">mr_peer_data</ref>;</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"></highlight></codeline>
+<codeline lineno="481" refid="structnaaice__communication__context_1af6f3763a2f4ca85b33d45a5469b3d078" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1af6f3763a2f4ca85b33d45a5469b3d078" kindref="member">no_peer_mrs</ref>;</highlight></codeline>
+<codeline lineno="482"><highlight class="normal"></highlight></codeline>
+<codeline lineno="483"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>MRSP-related<sp/>memory<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="484"><highlight class="normal"></highlight></codeline>
+<codeline lineno="486" refid="structnaaice__communication__context_1ac2b159dc28f192032a3d7eb2adb927a4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__local" kindref="compound">naaice_mr_local</ref><sp/>*<ref refid="structnaaice__communication__context_1ac2b159dc28f192032a3d7eb2adb927a4" kindref="member">mr_local_message</ref>;</highlight></codeline>
+<codeline lineno="487"><highlight class="normal"></highlight></codeline>
+<codeline lineno="488"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Internal<sp/>memory<sp/>regions<sp/>on<sp/>NAA<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="489"><highlight class="normal"></highlight></codeline>
+<codeline lineno="491" refid="structnaaice__communication__context_1af8c8396299727fe54ccab35b68585668" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnaaice__mr__internal" kindref="compound">naaice_mr_internal</ref><sp/>*<ref refid="structnaaice__communication__context_1af8c8396299727fe54ccab35b68585668" kindref="member">mr_internal</ref>;</highlight></codeline>
+<codeline lineno="492"><highlight class="normal"></highlight></codeline>
+<codeline lineno="494" refid="structnaaice__communication__context_1a694188281d4785054a49b117ad5c03db" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1a694188281d4785054a49b117ad5c03db" kindref="member">no_internal_mrs</ref>;</highlight></codeline>
+<codeline lineno="495"><highlight class="normal"></highlight></codeline>
+<codeline lineno="496"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Function<sp/>and<sp/>return<sp/>codes<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="497"><highlight class="normal"></highlight></codeline>
+<codeline lineno="499" refid="structnaaice__communication__context_1a5c62d91ca4564b4ce7953f1cc51c383b" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1a5c62d91ca4564b4ce7953f1cc51c383b" kindref="member">fncode</ref>;</highlight></codeline>
+<codeline lineno="500"><highlight class="normal"></highlight></codeline>
+<codeline lineno="502" refid="structnaaice__communication__context_1aa539396f7fd926b012a490284f99fa22" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1aa539396f7fd926b012a490284f99fa22" kindref="member">naa_returncode</ref>;</highlight></codeline>
+<codeline lineno="503"><highlight class="normal"></highlight></codeline>
+<codeline lineno="504"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Transfer<sp/>tracking<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="505"><highlight class="normal"></highlight></codeline>
+<codeline lineno="507" refid="structnaaice__communication__context_1a3863ada75e1d23f5694f9df8eafadce4" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1a3863ada75e1d23f5694f9df8eafadce4" kindref="member">rdma_writes_done</ref>;</highlight></codeline>
+<codeline lineno="508"><highlight class="normal"></highlight></codeline>
+<codeline lineno="510" refid="structnaaice__communication__context_1ac7ed64db9b870f5b631f1cfe4dec27b8" refkind="member"><highlight class="normal"><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__communication__context_1ac7ed64db9b870f5b631f1cfe4dec27b8" kindref="member">bytes_received</ref>;</highlight></codeline>
+<codeline lineno="511"><highlight class="normal"></highlight></codeline>
+<codeline lineno="513" refid="structnaaice__communication__context_1a91641d8db0a6392aaf6aca1e06eb1086" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1a91641d8db0a6392aaf6aca1e06eb1086" kindref="member">no_input_mrs</ref>;</highlight></codeline>
+<codeline lineno="514"><highlight class="normal"></highlight></codeline>
+<codeline lineno="516" refid="structnaaice__communication__context_1ad2f11f484f7982fbe7e12c31d94ebcb0" refkind="member"><highlight class="normal"><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1ad2f11f484f7982fbe7e12c31d94ebcb0" kindref="member">no_output_mrs</ref>;</highlight></codeline>
+<codeline lineno="517"><highlight class="normal"></highlight></codeline>
+<codeline lineno="519" refid="structnaaice__communication__context_1ac5ebfd7992cd27f0236d34b463179e22" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context_1ac5ebfd7992cd27f0236d34b463179e22" kindref="member">no_rpc_calls</ref>;</highlight></codeline>
+<codeline lineno="520"><highlight class="normal"></highlight></codeline>
+<codeline lineno="521"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>---<sp/>Immediate<sp/>value<sp/>for<sp/>RDMA<sp/>transfers<sp/>---<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="522"><highlight class="normal"></highlight></codeline>
+<codeline lineno="529"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">union<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="530" refid="structnaaice__communication__context_1ad4fabf04117ce1beb272d7b9fa0687f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint32_t<sp/><ref refid="structnaaice__communication__context_1ad4fabf04117ce1beb272d7b9fa0687f7" kindref="member">immediate</ref>;</highlight></codeline>
+<codeline lineno="531" refid="structnaaice__communication__context_1a8cb2bf53c251cad5dceefee1c4888c59" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/><ref refid="structnaaice__communication__context_1a8cb2bf53c251cad5dceefee1c4888c59" kindref="member">immediate_bytearr</ref>[4];</highlight></codeline>
+<codeline lineno="532"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="533"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="534"><highlight class="normal"></highlight></codeline>
+<codeline lineno="535"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Public<sp/>Functions<sp/>**********************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="536"><highlight class="normal"></highlight></codeline>
+<codeline lineno="540"><highlight class="normal"></highlight></codeline>
+<codeline lineno="544"><highlight class="normal"></highlight></codeline>
+<codeline lineno="590" refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kindref="member">naaice_init_communication_context</ref>(</highlight></codeline>
+<codeline lineno="591"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>**comm_ctx,<sp/>uint64_t<sp/>addr_offset,</highlight></codeline>
+<codeline lineno="592"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*param_sizes,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**params,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>params_amount,</highlight></codeline>
+<codeline lineno="593"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>internal_mr_amount,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*internal_mr_sizes,<sp/>uint8_t<sp/>fncode,</highlight></codeline>
+<codeline lineno="594"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*local_address,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*remote_address,<sp/>uint16_t<sp/>port);</highlight></codeline>
+<codeline lineno="595"><highlight class="normal"></highlight></codeline>
+<codeline lineno="614"><highlight class="normal"></highlight></codeline>
+<codeline lineno="615" refid="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892" kindref="member">naaice_poll_connection_event</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="616"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev,</highlight></codeline>
+<codeline lineno="617"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev_cp);</highlight></codeline>
+<codeline lineno="618"><highlight class="normal"></highlight></codeline>
+<codeline lineno="657"><highlight class="normal"></highlight></codeline>
+<codeline lineno="661" refid="group__connection__event__handlers_1ga4b5436e11c02694060160979030d95a1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__connection__event__handlers_1ga4b5436e11c02694060160979030d95a1" kindref="member">naaice_handle_addr_resolved</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="662"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="663"><highlight class="normal"></highlight></codeline>
+<codeline lineno="667" refid="group__connection__event__handlers_1gafc4354e4bf95ecb75d18db774576193e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__connection__event__handlers_1gafc4354e4bf95ecb75d18db774576193e" kindref="member">naaice_handle_route_resolved</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="668"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="669"><highlight class="normal"></highlight></codeline>
+<codeline lineno="673" refid="group__connection__event__handlers_1ga24acca87a515ab9019a66db096783210" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__connection__event__handlers_1ga24acca87a515ab9019a66db096783210" kindref="member">naaice_handle_connection_established</ref>(</highlight></codeline>
+<codeline lineno="674"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="675"><highlight class="normal"></highlight></codeline>
+<codeline lineno="684" refid="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" kindref="member">naaice_handle_error</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="685"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="686"><highlight class="normal"></highlight></codeline>
+<codeline lineno="690" refid="group__connection__event__handlers_1gac4798696d7a0940b2e00a69829050721" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__connection__event__handlers_1gac4798696d7a0940b2e00a69829050721" kindref="member">naaice_handle_other</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="691"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>rdma_cm_event<sp/>*ev);</highlight></codeline>
+<codeline lineno="692"><highlight class="normal"></highlight></codeline>
+<codeline lineno="694"><highlight class="normal"></highlight></codeline>
+<codeline lineno="711"><highlight class="normal"></highlight></codeline>
+<codeline lineno="712" refid="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" kindref="member">naaice_poll_and_handle_connection_event</ref>(</highlight></codeline>
+<codeline lineno="713"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="714"><highlight class="normal"></highlight></codeline>
+<codeline lineno="729" refid="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05" kindref="member">naaice_setup_connection</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="730"><highlight class="normal"></highlight></codeline>
+<codeline lineno="749" refid="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca" kindref="member">naaice_register_mrs</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="750"><highlight class="normal"></highlight></codeline>
+<codeline lineno="784" refid="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3" kindref="member">naaice_set_parameter_mrs</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="785"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_parameter_mrs,</highlight></codeline>
+<codeline lineno="786"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t<sp/>*local_addrs,<sp/>uint64_t<sp/>*remote_addrs,</highlight></codeline>
+<codeline lineno="787"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*sizes);</highlight></codeline>
+<codeline lineno="788"><highlight class="normal"></highlight></codeline>
+<codeline lineno="808"><highlight class="normal"></highlight></codeline>
+<codeline lineno="812" refid="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2" kindref="member">naaice_set_input_mr</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="813"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>input_mr_idx);</highlight></codeline>
+<codeline lineno="814"><highlight class="normal"></highlight></codeline>
+<codeline lineno="818" refid="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570" kindref="member">naaice_set_output_mr</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="819"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>output_mr_idx);</highlight></codeline>
+<codeline lineno="820"><highlight class="normal"></highlight></codeline>
+<codeline lineno="843"><highlight class="normal"></highlight></codeline>
+<codeline lineno="844" refid="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da" kindref="member">naaice_set_singlesend_mr</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="845"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>singlesend_mr_idx);</highlight></codeline>
+<codeline lineno="846"><highlight class="normal"></highlight></codeline>
+<codeline lineno="878" refid="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065" kindref="member">naaice_set_internal_mrs</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="879"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_internal_mrs,<sp/>uint64_t<sp/>*addrs,</highlight></codeline>
+<codeline lineno="880"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>*sizes);</highlight></codeline>
+<codeline lineno="881"><highlight class="normal"></highlight></codeline>
+<codeline lineno="900"><highlight class="normal"></highlight></codeline>
+<codeline lineno="901" refid="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283" kindref="member">naaice_set_immediate</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="902"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>*imm_bytes);</highlight></codeline>
+<codeline lineno="903"><highlight class="normal"></highlight></codeline>
+<codeline lineno="918"><highlight class="normal"></highlight></codeline>
+<codeline lineno="919" refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kindref="member">naaice_init_mrsp</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="920"><highlight class="normal"></highlight></codeline>
+<codeline lineno="935"><highlight class="normal"></highlight></codeline>
+<codeline lineno="936" refid="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" kindref="member">naaice_init_data_transfer</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="937"><highlight class="normal"></highlight></codeline>
+<codeline lineno="951" refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" kindref="member">naaice_handle_work_completion</ref>(</highlight></codeline>
+<codeline lineno="952"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/>ibv_wc<sp/>*wc,<sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="953"><highlight class="normal"></highlight></codeline>
+<codeline lineno="969" refid="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863" kindref="member">naaice_poll_cq_nonblocking</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="970"><highlight class="normal"></highlight></codeline>
+<codeline lineno="987"><highlight class="normal"></highlight></codeline>
+<codeline lineno="988" refid="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035" kindref="member">naaice_poll_cq_blocking</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="989"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1002" refid="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c" kindref="member">naaice_disconnect_and_cleanup</ref>(</highlight></codeline>
+<codeline lineno="1003"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="1004"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1025" refid="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" kindref="member">naaice_send_message</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="1026"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kindref="member">message_id</ref><sp/>message_type,<sp/>uint8_t<sp/>errorcode);</highlight></codeline>
+<codeline lineno="1027"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1044" refid="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57" kindref="member">naaice_write_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="1045"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint8_t<sp/>fncode);</highlight></codeline>
+<codeline lineno="1046"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1060" refid="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc" kindref="member">naaice_post_recv_mrsp</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="1061"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1080" refid="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9" kindref="member">naaice_post_recv_data</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="1081"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1094" refid="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7" kindref="member">naaice_init_rdma_resources</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="1095"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1109" refid="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435" kindref="member">naaice_do_mrsp</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="1110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1124" refid="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a" kindref="member">naaice_do_data_transfer</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx);</highlight></codeline>
+<codeline lineno="1125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1146" refid="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895" kindref="member">naaice_set_bytes_to_send</ref>(</highlight><highlight class="keyword">struct</highlight><highlight class="normal"><sp/><ref refid="structnaaice__communication__context" kindref="compound">naaice_communication_context</ref><sp/>*comm_ctx,</highlight></codeline>
+<codeline lineno="1147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mr_idx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>number_bytes);</highlight></codeline>
+<codeline lineno="1148"><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>end<sp/>of<sp/>doxygen<sp/>group<sp/>PublicFunctions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1151"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1152"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="1153"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1155"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h"/>
+  </compounddef>
+</doxygen>

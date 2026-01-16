@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structnaa__param__t" kind="struct" language="C++" prot="public">
+    <compoundname>naa_param_t</compoundname>
+    <includes refid="naaice__ap2_8h" local="no">naaice_ap2.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnaa__param__t_1ad5cb0da75bd8c82ce3b6aaadea4ec9f3" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* naa_param_t::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <qualifiedname>naa_param_t::addr</qualifiedname>
+        <briefdescription>
+<para>Pointer to the data region. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="82" column="8" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaa__param__t_1a9538d353b558b49e63b4f2a84dbc604a" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t naa_param_t::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>naa_param_t::size</qualifiedname>
+        <briefdescription>
+<para>Size of the data region, in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="85" column="10" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaa__param__t_1a005d6f65b65447b682d5eb56d8e8434d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool naa_param_t::single_send</definition>
+        <argsstring></argsstring>
+        <name>single_send</name>
+        <qualifiedname>naa_param_t::single_send</qualifiedname>
+        <briefdescription>
+<para>Indicates that the parameter should be sent only once. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="88" column="8" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Represents a single parameter (input or output) for an NAA routine. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds information about the data region corresponding to a parameter, including its address, size, and whether it should be sent only once during the connection (e.g., for configuration data). </para>
+    </detaileddescription>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="80" column="1" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" bodystart="80" bodyend="89"/>
+    <listofallmembers>
+      <member refid="structnaa__param__t_1ad5cb0da75bd8c82ce3b6aaadea4ec9f3" prot="public" virt="non-virtual"><scope>naa_param_t</scope><name>addr</name></member>
+      <member refid="structnaa__param__t_1a005d6f65b65447b682d5eb56d8e8434d" prot="public" virt="non-virtual"><scope>naa_param_t</scope><name>single_send</name></member>
+      <member refid="structnaa__param__t_1a9538d353b558b49e63b4f2a84dbc604a" prot="public" virt="non-virtual"><scope>naa_param_t</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

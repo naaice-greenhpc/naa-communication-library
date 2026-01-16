@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structnaaice__mr__hdr" kind="struct" language="C++" prot="public">
+    <compoundname>naaice_mr_hdr</compoundname>
+    <includes refid="naaice_8h" local="no">naaice.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnaaice__mr__hdr_1a18aa84bcaed22a21d16c2666b40b33e0" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t naaice_mr_hdr::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>naaice_mr_hdr::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="280" column="11" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="280" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="279" column="1" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="279" bodyend="281"/>
+    <listofallmembers>
+      <member refid="structnaaice__mr__hdr_1a18aa84bcaed22a21d16c2666b40b33e0" prot="public" virt="non-virtual"><scope>naaice_mr_hdr</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

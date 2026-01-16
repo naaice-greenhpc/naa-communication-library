@@ -1,0 +1,625 @@
+\doxysection{Functions}
+\hypertarget{group__PublicFunctions}{}\label{group__PublicFunctions}\index{Functions@{Functions}}
+Collaboration diagram for Functions\+:
+% FIG 0
+\doxysubsubsection*{Topics}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{group__connection__event__handlers}{Connection event handlers}}
+\begin{DoxyCompactList}\small\item\em Handlers for RDMA connection management events. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}{naaice\+\_\+init\+\_\+communication\+\_\+context}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint64\+\_\+t addr\+\_\+offset, size\+\_\+t \texorpdfstring{$\ast$}{*}param\+\_\+sizes, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}params, unsigned int params\+\_\+amount, unsigned int internal\+\_\+mr\+\_\+amount, size\+\_\+t \texorpdfstring{$\ast$}{*}internal\+\_\+mr\+\_\+sizes, uint8\+\_\+t fncode, const char \texorpdfstring{$\ast$}{*}local\+\_\+address, const char \texorpdfstring{$\ast$}{*}remote\+\_\+address, uint16\+\_\+t port)
+\begin{DoxyCompactList}\small\item\em Initializes communication context struct. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaf2fe88c227bab4e0722365efc2dba892}{naaice\+\_\+poll\+\_\+connection\+\_\+event}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev\+\_\+cp)
+\begin{DoxyCompactList}\small\item\em Polls for a connection event on the RDMA event channel. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga241fe974872b43327aa2bb3f8fcf56c9}{naaice\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Poll and handle a connection event on the RDMA event channel. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga41cae89395d0303a73aa675c9be5ed05}{naaice\+\_\+setup\+\_\+connection}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Set up the RDMA connection. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gae242db34a7bfaea52853646886269fca}{naaice\+\_\+register\+\_\+mrs}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Register local memory regions. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gac477d9f2f20410154089940519d29ff3}{naaice\+\_\+set\+\_\+parameter\+\_\+mrs}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int n\+\_\+parameter\+\_\+mrs, uint64\+\_\+t \texorpdfstring{$\ast$}{*}local\+\_\+addrs, uint64\+\_\+t \texorpdfstring{$\ast$}{*}remote\+\_\+addrs, size\+\_\+t \texorpdfstring{$\ast$}{*}sizes)
+\begin{DoxyCompactList}\small\item\em Allocate and initialize parameter memory region descriptors. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga78223d8aa683630e139217773b9bf9b2}{naaice\+\_\+set\+\_\+input\+\_\+mr}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int input\+\_\+mr\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Mark a memory region as input and/or output. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaf80665027802da485541cebd9cbe5570}{naaice\+\_\+set\+\_\+output\+\_\+mr}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int output\+\_\+mr\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Mark a memory region as an output parameter. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga3e0bb6d9854ad7e39a49fd5907d394da}{naaice\+\_\+set\+\_\+singlesend\+\_\+mr}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int singlesend\+\_\+mr\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Mark a memory region as a single-\/send region. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga6f329c9fac52b8c65c5b9d8441ca2065}{naaice\+\_\+set\+\_\+internal\+\_\+mrs}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int n\+\_\+internal\+\_\+mrs, uint64\+\_\+t \texorpdfstring{$\ast$}{*}addrs, size\+\_\+t \texorpdfstring{$\ast$}{*}sizes)
+\begin{DoxyCompactList}\small\item\em Add internal memory regions to the communication context. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gab1eaa0617fe2d1cd8f6a0248b9869283}{naaice\+\_\+set\+\_\+immediate}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint8\+\_\+t \texorpdfstring{$\ast$}{*}imm\+\_\+bytes)
+\begin{DoxyCompactList}\small\item\em Set the immediate value for data transfer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28}{naaice\+\_\+init\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Initialize the Memory Region Setup Protocol (MRSP). \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gacd927690e6d6b807be794b34878630d1}{naaice\+\_\+init\+\_\+data\+\_\+transfer}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Start the data transfer to the NAA. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga7a05d334df39718b31030442d172e1e6}{naaice\+\_\+handle\+\_\+work\+\_\+completion}} (struct ibv\+\_\+wc \texorpdfstring{$\ast$}{*}wc, struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Handle a single work completion from the completion queue. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaf4a8fd1c6bbd8589868fa454c8f8c863}{naaice\+\_\+poll\+\_\+cq\+\_\+nonblocking}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Poll the completion queue non-\/blocking. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaa6fdf267f0d16b71b1cde8f337332035}{naaice\+\_\+poll\+\_\+cq\+\_\+blocking}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Poll the completion queue blocking. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga74338ed21867befe5820a7cde3d7a71c}{naaice\+\_\+disconnect\+\_\+and\+\_\+cleanup}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Disconnect and clean up the communication context. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga8f0b77ff3c5376a9aa5b583c9cbf752b}{naaice\+\_\+send\+\_\+message}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}} message\+\_\+type, uint8\+\_\+t errorcode)
+\begin{DoxyCompactList}\small\item\em Send an MRSP message to the remote peer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gadd7def5aad3326ca5c416ad0158c0c57}{naaice\+\_\+write\+\_\+data}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint8\+\_\+t fncode)
+\begin{DoxyCompactList}\small\item\em Write memory regions to the NAA. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga83494efe81ac7802b6119438509e08fc}{naaice\+\_\+post\+\_\+recv\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Post a receive request for an MRSP message. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gad9227128ecee083b491749888b8ff8b9}{naaice\+\_\+post\+\_\+recv\+\_\+data}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Post a receive request for a memory region write. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaff209c1f0b59a45983c53f5698a25ed7}{naaice\+\_\+init\+\_\+rdma\+\_\+resources}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Initialize RDMA resources. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga8b2194c5a28e85fe089be51e060a8435}{naaice\+\_\+do\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Execute the MRSP protocol in a blocking manner. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga43e50e171eff94f88abab88963d3cd7a}{naaice\+\_\+do\+\_\+data\+\_\+transfer}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Perform the complete data transfer in a blocking manner. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga23fbc699ddcd9e7b8f292e225c7c9895}{naaice\+\_\+set\+\_\+bytes\+\_\+to\+\_\+send}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, int mr\+\_\+idx, int number\+\_\+bytes)
+\begin{DoxyCompactList}\small\item\em Set the number of bytes to send from a memory region. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__PublicFunctions_ga74338ed21867befe5820a7cde3d7a71c}\index{Functions@{Functions}!naaice\_disconnect\_and\_cleanup@{naaice\_disconnect\_and\_cleanup}}
+\index{naaice\_disconnect\_and\_cleanup@{naaice\_disconnect\_and\_cleanup}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_disconnect\_and\_cleanup()}{naaice\_disconnect\_and\_cleanup()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga74338ed21867befe5820a7cde3d7a71c} 
+int naaice\+\_\+disconnect\+\_\+and\+\_\+cleanup (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Disconnect and clean up the communication context. 
+
+Terminates the RDMA connection and frees all memory associated with the communication context.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga43e50e171eff94f88abab88963d3cd7a}\index{Functions@{Functions}!naaice\_do\_data\_transfer@{naaice\_do\_data\_transfer}}
+\index{naaice\_do\_data\_transfer@{naaice\_do\_data\_transfer}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_do\_data\_transfer()}{naaice\_do\_data\_transfer()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga43e50e171eff94f88abab88963d3cd7a} 
+int naaice\+\_\+do\+\_\+data\+\_\+transfer (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Perform the complete data transfer in a blocking manner. 
+
+Executes all steps of the data transfer, including writing data to the NAA, waiting for the NAA to complete computation, and receiving the resulting data back. This function operates in a blocking fashion.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga8b2194c5a28e85fe089be51e060a8435}\index{Functions@{Functions}!naaice\_do\_mrsp@{naaice\_do\_mrsp}}
+\index{naaice\_do\_mrsp@{naaice\_do\_mrsp}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_do\_mrsp()}{naaice\_do\_mrsp()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga8b2194c5a28e85fe089be51e060a8435} 
+int naaice\+\_\+do\+\_\+mrsp (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Execute the MRSP protocol in a blocking manner. 
+
+Performs all steps of the Memory Region Setup Protocol (MRSP) in a blocking fashion, ensuring that memory regions are properly advertised, requested, and acknowledged before returning.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga7a05d334df39718b31030442d172e1e6}\index{Functions@{Functions}!naaice\_handle\_work\_completion@{naaice\_handle\_work\_completion}}
+\index{naaice\_handle\_work\_completion@{naaice\_handle\_work\_completion}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_handle\_work\_completion()}{naaice\_handle\_work\_completion()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga7a05d334df39718b31030442d172e1e6} 
+int naaice\+\_\+handle\+\_\+work\+\_\+completion (\begin{DoxyParamCaption}\item[{struct ibv\+\_\+wc \texorpdfstring{$\ast$}{*}}]{wc}{, }\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Handle a single work completion from the completion queue. 
+
+Processes a single work completion event from the completion queue, which typically represents a memory region write either from the host to the NAA or from the NAA to the host.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}\index{Functions@{Functions}!naaice\_init\_communication\_context@{naaice\_init\_communication\_context}}
+\index{naaice\_init\_communication\_context@{naaice\_init\_communication\_context}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_init\_communication\_context()}{naaice\_init\_communication\_context()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e} 
+int naaice\+\_\+init\+\_\+communication\+\_\+context (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{uint64\+\_\+t}]{addr\+\_\+offset}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{param\+\_\+sizes}{, }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{params}{, }\item[{unsigned int}]{params\+\_\+amount}{, }\item[{unsigned int}]{internal\+\_\+mr\+\_\+amount}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{internal\+\_\+mr\+\_\+sizes}{, }\item[{uint8\+\_\+t}]{fncode}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{local\+\_\+address}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{remote\+\_\+address}{, }\item[{uint16\+\_\+t}]{port}{}\end{DoxyParamCaption})}
+
+
+
+Initializes communication context struct. 
+
+After a call to this function, the provided communication context struct is ready to be passed to all other API functions.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em comm\+\_\+ctx} & Double pointer to communication context struct to be initialized. Must not point to an existing struct; the struct is allocated and returned by this function.\\
+\hline
+ & {\em param\+\_\+sizes} & Array of sizes (in bytes) of the provided routine parameters.\\
+\hline
+ & {\em params} & Array of pointers to parameter data. Must be preallocated by the host application.\\
+\hline
+ & {\em params\+\_\+amount} & Number of parameters. Used to index {\ttfamily param\+\_\+sizes} and {\ttfamily params}.\\
+\hline
+ & {\em internal\+\_\+mr\+\_\+amount} & Number of internal memory regions. Used to index {\ttfamily internal\+\_\+mr\+\_\+sizes}.\\
+\hline
+ & {\em internal\+\_\+mr\+\_\+sizes} & Array of sizes (in bytes) of the internal memory regions.\\
+\hline
+ & {\em fncode} & Function code specifying which NAA routine is called.\\
+\hline
+ & {\em local\+\_\+address} & Local address string (e.\+g. "{}10.\+3.\+10.\+136"{}). Optional; if NULL, it is not used. Do not provide a local address when running in loopback mode.\\
+\hline
+ & {\em remote\+\_\+address} & Remote address string (e.\+g. "{}10.\+3.\+10.\+135"{}).\\
+\hline
+ & {\em port} & Connection port. A value of 0 enables dynamic port allocation.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gacd927690e6d6b807be794b34878630d1}\index{Functions@{Functions}!naaice\_init\_data\_transfer@{naaice\_init\_data\_transfer}}
+\index{naaice\_init\_data\_transfer@{naaice\_init\_data\_transfer}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_init\_data\_transfer()}{naaice\_init\_data\_transfer()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gacd927690e6d6b807be794b34878630d1} 
+int naaice\+\_\+init\+\_\+data\+\_\+transfer (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Start the data transfer to the NAA. 
+
+Initiates the data transfer by posting write operations for the memory regions to the NAA. Prepares the connection for remote computation using the previously registered memory regions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection and associated memory regions.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28}\index{Functions@{Functions}!naaice\_init\_mrsp@{naaice\_init\_mrsp}}
+\index{naaice\_init\_mrsp@{naaice\_init\_mrsp}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_init\_mrsp()}{naaice\_init\_mrsp()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28} 
+int naaice\+\_\+init\+\_\+mrsp (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Initialize the Memory Region Setup Protocol (MRSP). 
+
+Starts the MRSP by sending advertise/request packets and posting a receive for the response. This prepares the connection for memory region registration and data transfer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection and associated memory regions.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gaff209c1f0b59a45983c53f5698a25ed7}\index{Functions@{Functions}!naaice\_init\_rdma\_resources@{naaice\_init\_rdma\_resources}}
+\index{naaice\_init\_rdma\_resources@{naaice\_init\_rdma\_resources}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_init\_rdma\_resources()}{naaice\_init\_rdma\_resources()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gaff209c1f0b59a45983c53f5698a25ed7} 
+int naaice\+\_\+init\+\_\+rdma\+\_\+resources (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Initialize RDMA resources. 
+
+Allocates and initializes the necessary RDMA resources, including a protection domain, completion channel, completion queue, and queue pair.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga241fe974872b43327aa2bb3f8fcf56c9}\index{Functions@{Functions}!naaice\_poll\_and\_handle\_connection\_event@{naaice\_poll\_and\_handle\_connection\_event}}
+\index{naaice\_poll\_and\_handle\_connection\_event@{naaice\_poll\_and\_handle\_connection\_event}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_poll\_and\_handle\_connection\_event()}{naaice\_poll\_and\_handle\_connection\_event()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga241fe974872b43327aa2bb3f8fcf56c9} 
+int naaice\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Poll and handle a connection event on the RDMA event channel. 
+
+Polls the RDMA event channel stored in the communication context and, if an event is received, dispatches it to the appropriate connection event handler. This function is a convenience wrapper that combines polling and handling using the previously defined poll and handler functions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success (regardless of whether an event was received), -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gaf2fe88c227bab4e0722365efc2dba892}\index{Functions@{Functions}!naaice\_poll\_connection\_event@{naaice\_poll\_connection\_event}}
+\index{naaice\_poll\_connection\_event@{naaice\_poll\_connection\_event}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_poll\_connection\_event()}{naaice\_poll\_connection\_event()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gaf2fe88c227bab4e0722365efc2dba892} 
+int naaice\+\_\+poll\+\_\+connection\+\_\+event (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev\+\_\+cp}{}\end{DoxyParamCaption})}
+
+
+
+Polls for a connection event on the RDMA event channel. 
+
+Polls the RDMA event channel stored in the communication context. If a connection event is received, it is stored in the provided event pointer.
+
+
+\begin{DoxyParams}[1]{Parameters}
+ & {\em comm\+\_\+ctx} & Pointer to the communication context describing the connection to be polled.\\
+\hline
+\mbox{\texttt{ out}}  & {\em ev} & Pointer to the received RDMA connection event.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success (regardless of whether an event was received), -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gaa6fdf267f0d16b71b1cde8f337332035}\index{Functions@{Functions}!naaice\_poll\_cq\_blocking@{naaice\_poll\_cq\_blocking}}
+\index{naaice\_poll\_cq\_blocking@{naaice\_poll\_cq\_blocking}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_poll\_cq\_blocking()}{naaice\_poll\_cq\_blocking()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gaa6fdf267f0d16b71b1cde8f337332035} 
+int naaice\+\_\+poll\+\_\+cq\+\_\+blocking (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Poll the completion queue blocking. 
+
+Polls the completion queue for a work completion and blocks until at least one completion is available. Once a completion is received, it is processed using \doxylink{group__PublicFunctions_ga7a05d334df39718b31030442d172e1e6}{naaice\+\_\+handle\+\_\+work\+\_\+completion}. After handling, \+::comm\+\_\+ctx-\/\texorpdfstring{$>$}{>}state is updated to reflect the current state of the NAA connection and routine.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success (regardless of whether any work completions were received), -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gaf4a8fd1c6bbd8589868fa454c8f8c863}\index{Functions@{Functions}!naaice\_poll\_cq\_nonblocking@{naaice\_poll\_cq\_nonblocking}}
+\index{naaice\_poll\_cq\_nonblocking@{naaice\_poll\_cq\_nonblocking}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_poll\_cq\_nonblocking()}{naaice\_poll\_cq\_nonblocking()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gaf4a8fd1c6bbd8589868fa454c8f8c863} 
+int naaice\+\_\+poll\+\_\+cq\+\_\+nonblocking (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Poll the completion queue non-\/blocking. 
+
+Polls the completion queue for any work completions and processes them using \doxylink{group__PublicFunctions_ga7a05d334df39718b31030442d172e1e6}{naaice\+\_\+handle\+\_\+work\+\_\+completion} if any are received. After handling, updates \+::comm\+\_\+ctx-\/\texorpdfstring{$>$}{>}state to reflect the current state of the NAA connection and routine.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success (regardless of whether any work completions were received), -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gad9227128ecee083b491749888b8ff8b9}\index{Functions@{Functions}!naaice\_post\_recv\_data@{naaice\_post\_recv\_data}}
+\index{naaice\_post\_recv\_data@{naaice\_post\_recv\_data}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_post\_recv\_data()}{naaice\_post\_recv\_data()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gad9227128ecee083b491749888b8ff8b9} 
+int naaice\+\_\+post\+\_\+recv\+\_\+data (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Post a receive request for a memory region write. 
+
+Posts a receive request for a memory region write. Only the final memory region write (the one with an immediate value) requires a receive request; regular RDMA writes without an immediate do not consume a receive request.
+
+The memory region specified in the receive request is the MRSP region. This is a placeholder, as the actual region written to is determined by the sender.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga83494efe81ac7802b6119438509e08fc}\index{Functions@{Functions}!naaice\_post\_recv\_mrsp@{naaice\_post\_recv\_mrsp}}
+\index{naaice\_post\_recv\_mrsp@{naaice\_post\_recv\_mrsp}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_post\_recv\_mrsp()}{naaice\_post\_recv\_mrsp()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga83494efe81ac7802b6119438509e08fc} 
+int naaice\+\_\+post\+\_\+recv\+\_\+mrsp (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Post a receive request for an MRSP message. 
+
+Posts a receive request to the completion queue for an MRSP message. The request specifies the memory region to be written to (the MRSP region in this case).
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gae242db34a7bfaea52853646886269fca}\index{Functions@{Functions}!naaice\_register\_mrs@{naaice\_register\_mrs}}
+\index{naaice\_register\_mrs@{naaice\_register\_mrs}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_register\_mrs()}{naaice\_register\_mrs()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gae242db34a7bfaea52853646886269fca} 
+int naaice\+\_\+register\+\_\+mrs (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Register local memory regions. 
+
+Registers local memory regions as IBV memory regions using \+::ibv\+\_\+reg\+\_\+mr. This includes memory regions corresponding to input and output parameters, the single metadata memory region, and the memory region used for MRSP.
+
+If an error occurs during registration, the remote peer is notified via \doxylink{group__PublicFunctions_ga8f0b77ff3c5376a9aa5b583c9cbf752b}{naaice\+\_\+send\+\_\+message}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection and associated memory regions.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga8f0b77ff3c5376a9aa5b583c9cbf752b}\index{Functions@{Functions}!naaice\_send\_message@{naaice\_send\_message}}
+\index{naaice\_send\_message@{naaice\_send\_message}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_send\_message()}{naaice\_send\_message()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga8f0b77ff3c5376a9aa5b583c9cbf752b} 
+int naaice\+\_\+send\+\_\+message (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}}}]{message\+\_\+type}{, }\item[{uint8\+\_\+t}]{errorcode}{}\end{DoxyParamCaption})}
+
+
+
+Send an MRSP message to the remote peer. 
+
+Sends an MRSP packet to the remote peer using \+::ibv\+\_\+post\+\_\+send with opcode \+::\+IBV\+\_\+\+WR\+\_\+\+SEND.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em message\+\_\+type} & Type of message to send. Should be one of \doxylink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660}{MSG\+\_\+\+MR\+\_\+\+ERR}, \doxylink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63}{MSG\+\_\+\+MR\+\_\+\+AAR}, or \doxylink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774}{MSG\+\_\+\+MR\+\_\+A}.\\
+\hline
+{\em errorcode} & Error code to include in the packet if {\ttfamily message\+\_\+type} is \doxylink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660}{MSG\+\_\+\+MR\+\_\+\+ERR}. Ignored for other message types.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga23fbc699ddcd9e7b8f292e225c7c9895}\index{Functions@{Functions}!naaice\_set\_bytes\_to\_send@{naaice\_set\_bytes\_to\_send}}
+\index{naaice\_set\_bytes\_to\_send@{naaice\_set\_bytes\_to\_send}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_bytes\_to\_send()}{naaice\_set\_bytes\_to\_send()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga23fbc699ddcd9e7b8f292e225c7c9895} 
+int naaice\+\_\+set\+\_\+bytes\+\_\+to\+\_\+send (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{int}]{mr\+\_\+idx}{, }\item[{int}]{number\+\_\+bytes}{}\end{DoxyParamCaption})}
+
+
+
+Set the number of bytes to send from a memory region. 
+
+Specifies how many bytes should be sent from the given memory region during data transfer. Passing 0 resets the size to the original size of the memory region.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em mr\+\_\+idx} & Index of the memory region to be modified.\\
+\hline
+{\em number\+\_\+bytes} & Number of bytes to send from the specified memory region. 0 resets to the original size.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gab1eaa0617fe2d1cd8f6a0248b9869283}\index{Functions@{Functions}!naaice\_set\_immediate@{naaice\_set\_immediate}}
+\index{naaice\_set\_immediate@{naaice\_set\_immediate}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_immediate()}{naaice\_set\_immediate()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gab1eaa0617fe2d1cd8f6a0248b9869283} 
+int naaice\+\_\+set\+\_\+immediate (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{imm\+\_\+bytes}{}\end{DoxyParamCaption})}
+
+
+
+Set the immediate value for data transfer. 
+
+Sets the immediate value to be written during data transfer. The immediate consists of up to 3 user-\/specified bytes placed in the upper 3 bytes; the lowest byte is reserved for the function code.
+
+This function must be called before \doxylink{group__PublicFunctions_gacd927690e6d6b807be794b34878630d1}{naaice\+\_\+init\+\_\+data\+\_\+transfer}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em imm\+\_\+bytes} & Array of immediate value bytes. Maximum of 3 bytes.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga78223d8aa683630e139217773b9bf9b2}\index{Functions@{Functions}!naaice\_set\_input\_mr@{naaice\_set\_input\_mr}}
+\index{naaice\_set\_input\_mr@{naaice\_set\_input\_mr}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_input\_mr()}{naaice\_set\_input\_mr()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga78223d8aa683630e139217773b9bf9b2} 
+int naaice\+\_\+set\+\_\+input\+\_\+mr (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{unsigned int}]{input\+\_\+mr\+\_\+idx}{}\end{DoxyParamCaption})}
+
+
+
+Mark a memory region as input and/or output. 
+
+Adds information to the communication context indicating whether a memory region contains an input parameter, an output parameter, or both. Input memory regions are written to the NAA during data transfer, while output memory regions are written back from the NAA.
+
+This function must be called before \doxylink{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28}{naaice\+\_\+init\+\_\+mrsp}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em idx} & Index of the memory region to be marked as input or output.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure.
+\end{DoxyReturn}
+Mark a memory region as an input parameter. \Hypertarget{group__PublicFunctions_ga6f329c9fac52b8c65c5b9d8441ca2065}\index{Functions@{Functions}!naaice\_set\_internal\_mrs@{naaice\_set\_internal\_mrs}}
+\index{naaice\_set\_internal\_mrs@{naaice\_set\_internal\_mrs}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_internal\_mrs()}{naaice\_set\_internal\_mrs()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga6f329c9fac52b8c65c5b9d8441ca2065} 
+int naaice\+\_\+set\+\_\+internal\+\_\+mrs (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{unsigned int}]{n\+\_\+internal\+\_\+mrs}{, }\item[{uint64\+\_\+t \texorpdfstring{$\ast$}{*}}]{addrs}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{sizes}{}\end{DoxyParamCaption})}
+
+
+
+Add internal memory regions to the communication context. 
+
+Adds information about internal memory regions to the communication context. Internal memory regions exist only on the NAA side and are used for computation; their contents are not communicated during data transfer.
+
+This function must be called before \doxylink{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28}{naaice\+\_\+init\+\_\+mrsp}. The internal memory regions will be included in the memory region announcement message, indicating that they should be allocated by the NAA.
+
+Should only be called once per communication context. Each call overwrites any previous internal memory region information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em n\+\_\+internal\+\_\+mrs} & Number of internal memory regions.\\
+\hline
+{\em addrs} & Array of addresses of the internal memory regions in NAA memory space. These addresses will be requested of the NAA during MRSP.\\
+\hline
+{\em sizes} & Array of sizes (in bytes) of the internal memory regions.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gaf80665027802da485541cebd9cbe5570}\index{Functions@{Functions}!naaice\_set\_output\_mr@{naaice\_set\_output\_mr}}
+\index{naaice\_set\_output\_mr@{naaice\_set\_output\_mr}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_output\_mr()}{naaice\_set\_output\_mr()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gaf80665027802da485541cebd9cbe5570} 
+int naaice\+\_\+set\+\_\+output\+\_\+mr (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{unsigned int}]{output\+\_\+mr\+\_\+idx}{}\end{DoxyParamCaption})}
+
+
+
+Mark a memory region as an output parameter. 
+
+\Hypertarget{group__PublicFunctions_gac477d9f2f20410154089940519d29ff3}\index{Functions@{Functions}!naaice\_set\_parameter\_mrs@{naaice\_set\_parameter\_mrs}}
+\index{naaice\_set\_parameter\_mrs@{naaice\_set\_parameter\_mrs}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_parameter\_mrs()}{naaice\_set\_parameter\_mrs()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gac477d9f2f20410154089940519d29ff3} 
+int naaice\+\_\+set\+\_\+parameter\+\_\+mrs (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{unsigned int}]{n\+\_\+parameter\+\_\+mrs}{, }\item[{uint64\+\_\+t \texorpdfstring{$\ast$}{*}}]{local\+\_\+addrs}{, }\item[{uint64\+\_\+t \texorpdfstring{$\ast$}{*}}]{remote\+\_\+addrs}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{sizes}{}\end{DoxyParamCaption})}
+
+
+
+Allocate and initialize parameter memory region descriptors. 
+
+Allocates and initializes internal structures for parameter (i.\+e. non-\/internal) memory regions. This function is called from \doxylink{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}{naaice\+\_\+init\+\_\+communication\+\_\+context}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection and memory regions.\\
+\hline
+{\em n\+\_\+parameter\+\_\+mrs} & Number of parameter memory regions for which descriptors will be allocated.\\
+\hline
+{\em local\+\_\+addrs} & Array of local (user-\/space) addresses of the memory regions. This should correspond to the {\ttfamily params} array passed to \doxylink{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}{naaice\+\_\+init\+\_\+communication\+\_\+context}.\\
+\hline
+{\em remote\+\_\+addrs} & Array of remote addresses in NAA memory where the memory regions are requested to be stored. These addresses are obtained from the memory management service.\\
+\hline
+{\em sizes} & Array of sizes (in bytes) of the memory regions. This should correspond to the {\ttfamily param\+\_\+sizes} array passed to \doxylink{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}{naaice\+\_\+init\+\_\+communication\+\_\+context}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga3e0bb6d9854ad7e39a49fd5907d394da}\index{Functions@{Functions}!naaice\_set\_singlesend\_mr@{naaice\_set\_singlesend\_mr}}
+\index{naaice\_set\_singlesend\_mr@{naaice\_set\_singlesend\_mr}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_set\_singlesend\_mr()}{naaice\_set\_singlesend\_mr()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga3e0bb6d9854ad7e39a49fd5907d394da} 
+int naaice\+\_\+set\+\_\+singlesend\+\_\+mr (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{unsigned int}]{singlesend\+\_\+mr\+\_\+idx}{}\end{DoxyParamCaption})}
+
+
+
+Mark a memory region as a single-\/send region. 
+
+Adds information to the communication context indicating that a memory region is a single-\/send region. Single-\/send regions are written exactly once during the first RPC on a connection and are not written again during subsequent RPCs.
+
+If the memory region is not already marked as an input region, it is automatically marked as one.
+
+This function must be called before \doxylink{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28}{naaice\+\_\+init\+\_\+mrsp}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em idx} & Index of the memory region to be marked as a single-\/send region.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_ga41cae89395d0303a73aa675c9be5ed05}\index{Functions@{Functions}!naaice\_setup\_connection@{naaice\_setup\_connection}}
+\index{naaice\_setup\_connection@{naaice\_setup\_connection}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_setup\_connection()}{naaice\_setup\_connection()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_ga41cae89395d0303a73aa675c9be5ed05} 
+int naaice\+\_\+setup\+\_\+connection (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Set up the RDMA connection. 
+
+Repeatedly polls for and handles RDMA connection events until the connection setup is complete. This function is a blocking helper that internally calls \doxylink{group__PublicFunctions_ga241fe974872b43327aa2bb3f8fcf56c9}{naaice\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure (e.\+g. due to timeout). 
+\end{DoxyReturn}
+\Hypertarget{group__PublicFunctions_gadd7def5aad3326ca5c416ad0158c0c57}\index{Functions@{Functions}!naaice\_write\_data@{naaice\_write\_data}}
+\index{naaice\_write\_data@{naaice\_write\_data}!Functions@{Functions}}
+\doxysubsubsection{\texorpdfstring{naaice\_write\_data()}{naaice\_write\_data()}}
+{\footnotesize\ttfamily \label{group__PublicFunctions_gadd7def5aad3326ca5c416ad0158c0c57} 
+int naaice\+\_\+write\+\_\+data (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{uint8\+\_\+t}]{fncode}{}\end{DoxyParamCaption})}
+
+
+
+Write memory regions to the NAA. 
+
+Writes memory regions, including metadata and input parameters, to the NAA. Uses \+::ibv\+\_\+post\+\_\+send with opcode \+::\+IBV\+\_\+\+WR\+\_\+\+RDMA\+\_\+\+WRITE for regular regions or \+::\+IBV\+\_\+\+WR\+\_\+\+RDMA\+\_\+\+WRITE\+\_\+\+WITH\+\_\+\+IMM for the final memory region.
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection.\\
+\hline
+{\em fncode} & Function code for the NAA routine. Must be positive; 0 indicates an error.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 on failure. 
+\end{DoxyReturn}
+\input{group__connection__event__handlers}

@@ -1,0 +1,63 @@
+\doxysection{naa\+\_\+status Struct Reference}
+\hypertarget{structnaa__status}{}\label{structnaa__status}\index{naa\_status@{naa\_status}}
+
+
+Status information for a NAA session.  
+
+
+
+
+{\ttfamily \#include $<$naaice\+\_\+ap2.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}} \mbox{\hyperlink{structnaa__status_a26c0f7905228c45ff6e22a11f2d934c1}{state}}
+\begin{DoxyCompactList}\small\item\em Current state of the communication session. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga45430261054a7041b457175c442cc626}{naa\+\_\+error}} \mbox{\hyperlink{structnaa__status_a579b67bada0f6373937d56cb8c7661ce}{naa\+\_\+error}}
+\begin{DoxyCompactList}\small\item\em Last error code returned by the NAA. \end{DoxyCompactList}\item 
+uint64\+\_\+t \mbox{\hyperlink{structnaa__status_a5d98d226361e5fcca0d7af4b2f4cba34}{bytes\+\_\+received}}
+\begin{DoxyCompactList}\small\item\em Number of bytes received during this session. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Status information for a NAA session. 
+
+Holds the current state of the communication, any error codes returned by the NAA, and the number of bytes received so far. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaa__status_a5d98d226361e5fcca0d7af4b2f4cba34}\index{naa\_status@{naa\_status}!bytes\_received@{bytes\_received}}
+\index{bytes\_received@{bytes\_received}!naa\_status@{naa\_status}}
+\doxysubsubsection{\texorpdfstring{bytes\_received}{bytes\_received}}
+{\footnotesize\ttfamily \label{structnaa__status_a5d98d226361e5fcca0d7af4b2f4cba34} 
+uint64\+\_\+t naa\+\_\+status\+::bytes\+\_\+received}
+
+
+
+Number of bytes received during this session. 
+
+\Hypertarget{structnaa__status_a579b67bada0f6373937d56cb8c7661ce}\index{naa\_status@{naa\_status}!naa\_error@{naa\_error}}
+\index{naa\_error@{naa\_error}!naa\_status@{naa\_status}}
+\doxysubsubsection{\texorpdfstring{naa\_error}{naa\_error}}
+{\footnotesize\ttfamily \label{structnaa__status_a579b67bada0f6373937d56cb8c7661ce} 
+enum \mbox{\hyperlink{group__StructsEnums_ga45430261054a7041b457175c442cc626}{naa\+\_\+error}} naa\+\_\+status\+::naa\+\_\+error}
+
+
+
+Last error code returned by the NAA. 
+
+\Hypertarget{structnaa__status_a26c0f7905228c45ff6e22a11f2d934c1}\index{naa\_status@{naa\_status}!state@{state}}
+\index{state@{state}!naa\_status@{naa\_status}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{structnaa__status_a26c0f7905228c45ff6e22a11f2d934c1} 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}} naa\+\_\+status\+::state}
+
+
+
+Current state of the communication session. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice__ap2_8h}{naaice\+\_\+ap2.\+h}}\end{DoxyCompactItemize}

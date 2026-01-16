@@ -1,0 +1,63 @@
+\doxysection{naaice\+\_\+mr\+\_\+advertisement Struct Reference}
+\hypertarget{structnaaice__mr__advertisement}{}\label{structnaaice__mr__advertisement}\index{naaice\_mr\_advertisement@{naaice\_mr\_advertisement}}
+
+
+Memory region advertisement message structure.  
+
+
+
+
+{\ttfamily \#include $<$naaice.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint64\+\_\+t \mbox{\hyperlink{structnaaice__mr__advertisement_a28f0add1fb5f2ecd7c7b3f8d266a8451}{addr}}
+\begin{DoxyCompactList}\small\item\em Address of the memory region. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structnaaice__mr__advertisement_afea5d1fe1203d278e854c69ba56f265d}{rkey}}
+\begin{DoxyCompactList}\small\item\em Remote key (rkey) for RDMA access. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structnaaice__mr__advertisement_ac306e5ce33a640c111ebaab2d1d3a9ff}{size}}
+\begin{DoxyCompactList}\small\item\em Size of the memory region, in bytes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Memory region advertisement message structure. 
+
+Holds information about a memory region that is advertised to a remote peer, including its address, remote key, and size. Used in the Memory Region Setup Protocol (MRSP). 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaaice__mr__advertisement_a28f0add1fb5f2ecd7c7b3f8d266a8451}\index{naaice\_mr\_advertisement@{naaice\_mr\_advertisement}!addr@{addr}}
+\index{addr@{addr}!naaice\_mr\_advertisement@{naaice\_mr\_advertisement}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement_a28f0add1fb5f2ecd7c7b3f8d266a8451} 
+uint64\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+::addr}
+
+
+
+Address of the memory region. 
+
+\Hypertarget{structnaaice__mr__advertisement_afea5d1fe1203d278e854c69ba56f265d}\index{naaice\_mr\_advertisement@{naaice\_mr\_advertisement}!rkey@{rkey}}
+\index{rkey@{rkey}!naaice\_mr\_advertisement@{naaice\_mr\_advertisement}}
+\doxysubsubsection{\texorpdfstring{rkey}{rkey}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement_afea5d1fe1203d278e854c69ba56f265d} 
+uint32\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+::rkey}
+
+
+
+Remote key (rkey) for RDMA access. 
+
+\Hypertarget{structnaaice__mr__advertisement_ac306e5ce33a640c111ebaab2d1d3a9ff}\index{naaice\_mr\_advertisement@{naaice\_mr\_advertisement}!size@{size}}
+\index{size@{size}!naaice\_mr\_advertisement@{naaice\_mr\_advertisement}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily \label{structnaaice__mr__advertisement_ac306e5ce33a640c111ebaab2d1d3a9ff} 
+uint32\+\_\+t naaice\+\_\+mr\+\_\+advertisement\+::size}
+
+
+
+Size of the memory region, in bytes. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice_8h}{naaice.\+h}}\end{DoxyCompactItemize}

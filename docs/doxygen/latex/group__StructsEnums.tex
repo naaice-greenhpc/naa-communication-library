@@ -1,0 +1,183 @@
+\doxysection{Structs \& Enums}
+\hypertarget{group__StructsEnums}{}\label{group__StructsEnums}\index{Structs \& Enums@{Structs \& Enums}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structnaa__handle}{naa\+\_\+handle}}
+\begin{DoxyCompactList}\small\item\em Represents a handle to a NAA session. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaa__status}{naa\+\_\+status}}
+\begin{DoxyCompactList}\small\item\em Status information for a NAA session. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct naa\+\_\+handle \mbox{\hyperlink{group__StructsEnums_ga8f57849ab74ea615ad8bd74df264ede2}{naa\+\_\+handle}}
+\begin{DoxyCompactList}\small\item\em Represents a handle to a NAA session. \end{DoxyCompactList}\item 
+typedef struct naa\+\_\+status \mbox{\hyperlink{group__StructsEnums_gab5cd016885936f9664f72c77b4d96474}{naa\+\_\+status}}
+\begin{DoxyCompactList}\small\item\em Status information for a NAA session. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}} \{ \newline
+\mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87}{NAAICE\+\_\+\+INIT}} = 0
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080}{NAAICE\+\_\+\+READY}} = 1
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4}{NAAICE\+\_\+\+CONNECTED}} = 2
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f}{NAAICE\+\_\+\+DISCONNECTED}} = 3
+, \newline
+\mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c}{NAAICE\+\_\+\+MRSP\+\_\+\+SENDING}} = 10
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227}{NAAICE\+\_\+\+MRSP\+\_\+\+RECEIVING}} = 11
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec}{NAAICE\+\_\+\+MRSP\+\_\+\+DONE}} = 12
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c}{NAAICE\+\_\+\+DATA\+\_\+\+SENDING}} = 20
+, \newline
+\mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f}{NAAICE\+\_\+\+CALCULATING}} = 21
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627}{NAAICE\+\_\+\+DATA\+\_\+\+RECEIVING}} = 22
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14}{NAAICE\+\_\+\+FINISHED}} = 30
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd}{NAAICE\+\_\+\+ERROR}} = 40
+ \}
+\begin{DoxyCompactList}\small\item\em Connection state machine for NAA communication. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga45430261054a7041b457175c442cc626}{naa\+\_\+error}} \{ \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381}{NAA\+\_\+\+SUCCESS}} = 0x00
+, \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2}{SOCKET\+\_\+\+UNAVAIL}} = 0x01
+, \mbox{\hyperlink{group__StructsEnums_gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58}{KERNEL\+\_\+\+TIMEOUT}} = 0x02
+ \}
+\begin{DoxyCompactList}\small\item\em Error codes returned by NAA routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{group__StructsEnums_ga8f57849ab74ea615ad8bd74df264ede2}\index{Structs \& Enums@{Structs \& Enums}!naa\_handle@{naa\_handle}}
+\index{naa\_handle@{naa\_handle}!Structs \& Enums@{Structs \& Enums}}
+\doxysubsubsection{\texorpdfstring{naa\_handle}{naa\_handle}}
+{\footnotesize\ttfamily \label{group__StructsEnums_ga8f57849ab74ea615ad8bd74df264ede2} 
+typedef struct naa\+\_\+handle naa\+\_\+handle}
+
+
+
+Represents a handle to a NAA session. 
+
+Holds information about an active NAA session, including the function code specifying the routine to execute and the associated low-\/level communication context. \Hypertarget{group__StructsEnums_gab5cd016885936f9664f72c77b4d96474}\index{Structs \& Enums@{Structs \& Enums}!naa\_status@{naa\_status}}
+\index{naa\_status@{naa\_status}!Structs \& Enums@{Structs \& Enums}}
+\doxysubsubsection{\texorpdfstring{naa\_status}{naa\_status}}
+{\footnotesize\ttfamily \label{group__StructsEnums_gab5cd016885936f9664f72c77b4d96474} 
+typedef struct naa\+\_\+status naa\+\_\+status}
+
+
+
+Status information for a NAA session. 
+
+Holds the current state of the communication, any error codes returned by the NAA, and the number of bytes received so far. 
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{group__StructsEnums_ga45430261054a7041b457175c442cc626}\index{Structs \& Enums@{Structs \& Enums}!naa\_error@{naa\_error}}
+\index{naa\_error@{naa\_error}!Structs \& Enums@{Structs \& Enums}}
+\doxysubsubsection{\texorpdfstring{naa\_error}{naa\_error}}
+{\footnotesize\ttfamily \label{group__StructsEnums_ga45430261054a7041b457175c442cc626} 
+enum \mbox{\hyperlink{group__StructsEnums_ga45430261054a7041b457175c442cc626}{naa\+\_\+error}}}
+
+
+
+Error codes returned by NAA routines. 
+
+Defines possible error values for RPCs or communication failures between host and NAA. \begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAA\_SUCCESS@{NAA\_SUCCESS}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAA\_SUCCESS@{NAA\_SUCCESS}}}\Hypertarget{group__StructsEnums_gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381}\label{group__StructsEnums_gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381} 
+NAA\+\_\+\+SUCCESS&Successful RPC. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SOCKET\_UNAVAIL@{SOCKET\_UNAVAIL}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!SOCKET\_UNAVAIL@{SOCKET\_UNAVAIL}}}\Hypertarget{group__StructsEnums_gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2}\label{group__StructsEnums_gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2} 
+SOCKET\+\_\+\+UNAVAIL&Socket unavailable. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KERNEL\_TIMEOUT@{KERNEL\_TIMEOUT}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!KERNEL\_TIMEOUT@{KERNEL\_TIMEOUT}}}\Hypertarget{group__StructsEnums_gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58}\label{group__StructsEnums_gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58} 
+KERNEL\+\_\+\+TIMEOUT&Kernel timed out (timeout definition TBD). \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}\index{Structs \& Enums@{Structs \& Enums}!naaice\_communication\_state@{naaice\_communication\_state}}
+\index{naaice\_communication\_state@{naaice\_communication\_state}!Structs \& Enums@{Structs \& Enums}}
+\doxysubsubsection{\texorpdfstring{naaice\_communication\_state}{naaice\_communication\_state}}
+{\footnotesize\ttfamily \label{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499} 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}}}
+
+
+
+Connection state machine for NAA communication. 
+
+Defines the possible states of a communication session between the host and NAA. States represent the progression from connection establishment, through MRSP and data transfer, to completion.
+
+\begin{DoxyNote}{Note}
+The state flow differs slightly between the host and the NAA.
+\end{DoxyNote}
+Host states\+:
+\begin{DoxyItemize}
+\item NAAICE\+\_\+\+INIT\+: Starting state.
+\item NAAICE\+\_\+\+READY\+: Address resolved.
+\item NAAICE\+\_\+\+CONNECTED\+: Connection established.
+\item NAAICE\+\_\+\+MRSP\+\_\+\+SENDING\+: Posting write for MRSP packet.
+\item NAAICE\+\_\+\+MRSP\+\_\+\+RECEIVING\+: Waiting for / processing MRSP response from NAA.
+\item NAAICE\+\_\+\+MRSP\+\_\+\+DONE\+: Finished MRSP.
+\item NAAICE\+\_\+\+DATA\+\_\+\+SENDING\+: Posting write for data transfer to NAA.
+\item NAAICE\+\_\+\+DATA\+\_\+\+RECEIVING\+: Waiting for / processing data transfer back from NAA.
+\item NAAICE\+\_\+\+FINISHED\+: Done!
+\end{DoxyItemize}
+
+NAA states\+:
+\begin{DoxyItemize}
+\item NAAICE\+\_\+\+INIT\+: Starting state.
+\item NAAICE\+\_\+\+CONNECTED\+: Connection established.
+\item NAAICE\+\_\+\+MRSP\+\_\+\+RECEIVING\+: Waiting for / processing MRSP packet from host.
+\item NAAICE\+\_\+\+MRSP\+\_\+\+SENDING\+: Posting write for MRSP packet.
+\item NAAICE\+\_\+\+MRSP\+\_\+\+DONE\+: Finished MRSP.
+\item NAAICE\+\_\+\+DATA\+\_\+\+RECEIVING\+: Waiting for / processing data transfer from host.
+\item NAAICE\+\_\+\+CALCULATING\+: Running RPC.
+\item NAAICE\+\_\+\+DATA\+\_\+\+SENDING\+: Posting write for data transfer back to host.
+\item NAAICE\+\_\+\+FINISHED\+: Done! 
+\end{DoxyItemize}\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_INIT@{NAAICE\_INIT}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_INIT@{NAAICE\_INIT}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87} 
+NAAICE\+\_\+\+INIT&Starting state. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_READY@{NAAICE\_READY}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_READY@{NAAICE\_READY}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080} 
+NAAICE\+\_\+\+READY&Address resolved (host only) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_CONNECTED@{NAAICE\_CONNECTED}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_CONNECTED@{NAAICE\_CONNECTED}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4} 
+NAAICE\+\_\+\+CONNECTED&Connection established. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_DISCONNECTED@{NAAICE\_DISCONNECTED}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_DISCONNECTED@{NAAICE\_DISCONNECTED}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f} 
+NAAICE\+\_\+\+DISCONNECTED&Connection disconnected. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_MRSP\_SENDING@{NAAICE\_MRSP\_SENDING}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_MRSP\_SENDING@{NAAICE\_MRSP\_SENDING}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c} 
+NAAICE\+\_\+\+MRSP\+\_\+\+SENDING&Posting write for MRSP packet. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_MRSP\_RECEIVING@{NAAICE\_MRSP\_RECEIVING}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_MRSP\_RECEIVING@{NAAICE\_MRSP\_RECEIVING}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227} 
+NAAICE\+\_\+\+MRSP\+\_\+\+RECEIVING&Waiting for / processing MRSP packet. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_MRSP\_DONE@{NAAICE\_MRSP\_DONE}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_MRSP\_DONE@{NAAICE\_MRSP\_DONE}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec} 
+NAAICE\+\_\+\+MRSP\+\_\+\+DONE&Finished MRSP. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_DATA\_SENDING@{NAAICE\_DATA\_SENDING}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_DATA\_SENDING@{NAAICE\_DATA\_SENDING}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c} 
+NAAICE\+\_\+\+DATA\+\_\+\+SENDING&Posting write for data transfer. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_CALCULATING@{NAAICE\_CALCULATING}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_CALCULATING@{NAAICE\_CALCULATING}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f} 
+NAAICE\+\_\+\+CALCULATING&Running RPC on NAA. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_DATA\_RECEIVING@{NAAICE\_DATA\_RECEIVING}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_DATA\_RECEIVING@{NAAICE\_DATA\_RECEIVING}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627} 
+NAAICE\+\_\+\+DATA\+\_\+\+RECEIVING&Waiting for / processing data transfer. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_FINISHED@{NAAICE\_FINISHED}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_FINISHED@{NAAICE\_FINISHED}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14} 
+NAAICE\+\_\+\+FINISHED&Completed all communication. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NAAICE\_ERROR@{NAAICE\_ERROR}!Structs \& Enums@{Structs \& Enums}}\index{Structs \& Enums@{Structs \& Enums}!NAAICE\_ERROR@{NAAICE\_ERROR}}}\Hypertarget{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd}\label{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd} 
+NAAICE\+\_\+\+ERROR&Error state. \\
+\hline
+
+\end{DoxyEnumFields}

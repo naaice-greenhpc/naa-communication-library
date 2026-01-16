@@ -1,0 +1,112 @@
+\doxysubsection{Connection event handlers}
+\hypertarget{group__connection__event__handlers}{}\label{group__connection__event__handlers}\index{Connection event handlers@{Connection event handlers}}
+
+
+Handlers for RDMA connection management events.  
+
+
+Collaboration diagram for Connection event handlers\+:
+% FIG 0
+\doxysubsubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{group__connection__event__handlers_ga4b5436e11c02694060160979030d95a1}{naaice\+\_\+handle\+\_\+addr\+\_\+resolved}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+RESOLVED. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_gafc4354e4bf95ecb75d18db774576193e}{naaice\+\_\+handle\+\_\+route\+\_\+resolved}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+RESOLVED. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_ga24acca87a515ab9019a66db096783210}{naaice\+\_\+handle\+\_\+connection\+\_\+established}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ESTABLISHED. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_ga82967cd400958762446f2f78ea6707e0}{naaice\+\_\+handle\+\_\+error}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA connection error events. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_gac4798696d7a0940b2e00a69829050721}{naaice\+\_\+handle\+\_\+other}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle all other, unsupported or unexpected RDMA CM events. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Handlers for RDMA connection management events. 
+
+These functions each handle a specific RDMA connection event. If the provided event\textquotesingle{}s type matches the event type of the handler function, the corresponding logic is executed.
+
+After handling an event, flags in the communication context are updated to reflect the current state of connection establishment.
+
+The events handled by these functions, in order, are\+:
+\begin{DoxyItemize}
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+RESOLVED
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+RESOLVED
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ESTABLISHED
+\end{DoxyItemize}
+
+The following events are handled by \doxylink{group__connection__event__handlers_ga82967cd400958762446f2f78ea6707e0}{naaice\+\_\+handle\+\_\+error}\+:
+\begin{DoxyItemize}
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+ERROR
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+ERROR
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ERROR
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+UNREACHABLE
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+REJECTED
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+DEVICE\+\_\+\+REMOVAL
+\item RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+DISCONNECTED
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em comm\+\_\+ctx} & Pointer to the communication context describing the connection whose events are handled.\\
+\hline
+{\em ev} & Pointer to the RDMA connection management event to be checked and possibly handled.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success (either the event was handled successfully or it did not match the handler’s event type), -\/1 on failure. 
+\end{DoxyReturn}
+
+
+\doxysubsubsection{Function Documentation}
+\Hypertarget{group__connection__event__handlers_ga4b5436e11c02694060160979030d95a1}\index{Connection event handlers@{Connection event handlers}!naaice\_handle\_addr\_resolved@{naaice\_handle\_addr\_resolved}}
+\index{naaice\_handle\_addr\_resolved@{naaice\_handle\_addr\_resolved}!Connection event handlers@{Connection event handlers}}
+\doxysubsubsubsection{\texorpdfstring{naaice\_handle\_addr\_resolved()}{naaice\_handle\_addr\_resolved()}}
+{\footnotesize\ttfamily \label{group__connection__event__handlers_ga4b5436e11c02694060160979030d95a1} 
+int naaice\+\_\+handle\+\_\+addr\+\_\+resolved (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+
+
+Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+RESOLVED. 
+
+\Hypertarget{group__connection__event__handlers_ga24acca87a515ab9019a66db096783210}\index{Connection event handlers@{Connection event handlers}!naaice\_handle\_connection\_established@{naaice\_handle\_connection\_established}}
+\index{naaice\_handle\_connection\_established@{naaice\_handle\_connection\_established}!Connection event handlers@{Connection event handlers}}
+\doxysubsubsubsection{\texorpdfstring{naaice\_handle\_connection\_established()}{naaice\_handle\_connection\_established()}}
+{\footnotesize\ttfamily \label{group__connection__event__handlers_ga24acca87a515ab9019a66db096783210} 
+int naaice\+\_\+handle\+\_\+connection\+\_\+established (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+
+
+Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ESTABLISHED. 
+
+\Hypertarget{group__connection__event__handlers_ga82967cd400958762446f2f78ea6707e0}\index{Connection event handlers@{Connection event handlers}!naaice\_handle\_error@{naaice\_handle\_error}}
+\index{naaice\_handle\_error@{naaice\_handle\_error}!Connection event handlers@{Connection event handlers}}
+\doxysubsubsubsection{\texorpdfstring{naaice\_handle\_error()}{naaice\_handle\_error()}}
+{\footnotesize\ttfamily \label{group__connection__event__handlers_ga82967cd400958762446f2f78ea6707e0} 
+int naaice\+\_\+handle\+\_\+error (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+
+
+Handle RDMA connection error events. 
+
+Handles RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+ERROR, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+ERROR, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ERROR, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+UNREACHABLE, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+REJECTED, RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+DEVICE\+\_\+\+REMOVAL and RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+DISCONNECTED. \Hypertarget{group__connection__event__handlers_gac4798696d7a0940b2e00a69829050721}\index{Connection event handlers@{Connection event handlers}!naaice\_handle\_other@{naaice\_handle\_other}}
+\index{naaice\_handle\_other@{naaice\_handle\_other}!Connection event handlers@{Connection event handlers}}
+\doxysubsubsubsection{\texorpdfstring{naaice\_handle\_other()}{naaice\_handle\_other()}}
+{\footnotesize\ttfamily \label{group__connection__event__handlers_gac4798696d7a0940b2e00a69829050721} 
+int naaice\+\_\+handle\+\_\+other (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+
+
+Handle all other, unsupported or unexpected RDMA CM events. 
+
+\Hypertarget{group__connection__event__handlers_gafc4354e4bf95ecb75d18db774576193e}\index{Connection event handlers@{Connection event handlers}!naaice\_handle\_route\_resolved@{naaice\_handle\_route\_resolved}}
+\index{naaice\_handle\_route\_resolved@{naaice\_handle\_route\_resolved}!Connection event handlers@{Connection event handlers}}
+\doxysubsubsubsection{\texorpdfstring{naaice\_handle\_route\_resolved()}{naaice\_handle\_route\_resolved()}}
+{\footnotesize\ttfamily \label{group__connection__event__handlers_gafc4354e4bf95ecb75d18db774576193e} 
+int naaice\+\_\+handle\+\_\+route\+\_\+resolved (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}}]{comm\+\_\+ctx}{, }\item[{struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}}]{ev}{}\end{DoxyParamCaption})}
+
+
+
+Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+RESOLVED. 
+

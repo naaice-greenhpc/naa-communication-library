@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="structnaaice__mr__internal" kind="struct" language="C++" prot="public">
+    <compoundname>naaice_mr_internal</compoundname>
+    <includes refid="naaice_8h" local="no">naaice.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnaaice__mr__internal_1a4dbe8b3b64ead3633cc4f45ba0fe3f31" prot="public" static="no" mutable="no">
+        <type>uint64_t</type>
+        <definition>uint64_t naaice_mr_internal::addr</definition>
+        <argsstring></argsstring>
+        <name>addr</name>
+        <qualifiedname>naaice_mr_internal::addr</qualifiedname>
+        <briefdescription>
+<para>Address of the internal memory region in NAA memory space. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="352" column="14" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__internal_1a9fe46515d1ae382b09a42c33671927ab" prot="public" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t naaice_mr_internal::fpgaaddr[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>fpgaaddr</name>
+        <qualifiedname>naaice_mr_internal::fpgaaddr</qualifiedname>
+        <briefdescription>
+<para>Byte array representation of the internal address (e.g., FPGA address). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="355" column="13" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__internal_1a551d947ee776f02f5a32156e33eab9a4" prot="public" static="no" mutable="no">
+        <type>union <ref refid="structnaaice__mr__internal" kindref="compound">naaice_mr_internal</ref></type>
+        <definition>union naaice_mr_internal naaice_mr_internal</definition>
+        <argsstring></argsstring>
+        <name></name>
+        <qualifiedname>naaice_mr_internal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="356" column="3"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnaaice__mr__internal_1a665ced3040564d394a9914258fb4d732" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t naaice_mr_internal::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>naaice_mr_internal::size</qualifiedname>
+        <briefdescription>
+<para>Size of the internal memory region, in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="359" column="10" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="359" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Information about an internal memory region on the NAA. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Represents a memory region used internally for computation on the NAA. These regions exist only on the NAA side and are not transferred during data transfer. </para>
+    </detaileddescription>
+    <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" line="349" column="1" bodyfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice.h" bodystart="349" bodyend="360"/>
+    <listofallmembers>
+      <member refid="structnaaice__mr__internal_1a4dbe8b3b64ead3633cc4f45ba0fe3f31" prot="public" virt="non-virtual"><scope>naaice_mr_internal</scope><name>addr</name></member>
+      <member refid="structnaaice__mr__internal_1a9fe46515d1ae382b09a42c33671927ab" prot="public" virt="non-virtual"><scope>naaice_mr_internal</scope><name>fpgaaddr</name></member>
+      <member refid="structnaaice__mr__internal_1a665ced3040564d394a9914258fb4d732" prot="public" virt="non-virtual"><scope>naaice_mr_internal</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,289 @@
+\doxysection{/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/naaice.h File Reference}
+\hypertarget{naaice_8h}{}\label{naaice_8h}\index{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice.h@{/Users/hannessigner/Documents/Work/naa-\/communication-\/prototype/lib/naaice.h}}
+{\ttfamily \#include $<$endian.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include $<$inttypes.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/poll.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$netdb.\+h$>$}\newline
+{\ttfamily \#include $<$rdma/rdma\+\_\+cma.\+h$>$}\newline
+{\ttfamily \#include $<$rdma/rdma\+\_\+verbs.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+Include dependency graph for naaice.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structnaaice__mr__advertisement}{naaice\+\_\+mr\+\_\+advertisement}}
+\begin{DoxyCompactList}\small\item\em Memory region advertisement message structure. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__advertisement__request}{naaice\+\_\+mr\+\_\+advertisement\+\_\+request}}
+\begin{DoxyCompactList}\small\item\em Memory region advertisement and request message structure. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__request}{naaice\+\_\+mr\+\_\+request}}
+\begin{DoxyCompactList}\small\item\em Memory region request message structure. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__error}{naaice\+\_\+mr\+\_\+error}}
+\begin{DoxyCompactList}\small\item\em Memory region error message structure. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__hdr}{naaice\+\_\+mr\+\_\+hdr}}
+\item 
+struct \mbox{\hyperlink{structnaaice__mr__dynamic__hdr}{naaice\+\_\+mr\+\_\+dynamic\+\_\+hdr}}
+\item 
+struct \mbox{\hyperlink{structnaaice__mr__peer}{naaice\+\_\+mr\+\_\+peer}}
+\begin{DoxyCompactList}\small\item\em Information about a remote (peer) memory region. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__local}{naaice\+\_\+mr\+\_\+local}}
+\begin{DoxyCompactList}\small\item\em Information about a local memory region. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__internal}{naaice\+\_\+mr\+\_\+internal}}
+\begin{DoxyCompactList}\small\item\em Information about an internal memory region on the NAA. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__rpc__metadata}{naaice\+\_\+rpc\+\_\+metadata}}
+\begin{DoxyCompactList}\small\item\em Metadata stored in a dedicated memory region for RPC. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}}
+\begin{DoxyCompactList}\small\item\em Communication context for NAA connections. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{naaice_8h_aa350dcd01a7f3234d44b73b37fb9c906}{RX\+\_\+\+DEPTH}}~1025
+\item 
+\#define \mbox{\hyperlink{naaice_8h_a4a7fe653db1b12381e8189b96d3d8bd1}{ntohll}}~be64toh
+\item 
+\#define \mbox{\hyperlink{naaice_8h_abc94cd8dc29ed8b19db4cc23ed830618}{htonll}}~htobe64
+\item 
+\#define \mbox{\hyperlink{group__defines_gaeb2c8b9b4d058b7930d52db59b5f9051}{TIMEOUT\+\_\+\+RESOLVE\+\_\+\+ROUTE}}~500
+\begin{DoxyCompactList}\small\item\em Timeout for resolving RDMA routes, in milliseconds. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{group__defines_gac5aea11b8390f14300a4050cfd3f1fcb}{POLLING\+\_\+\+TIMEOUT}}~500
+\begin{DoxyCompactList}\small\item\em Timeout for poll functions, in milliseconds. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{group__defines_gaad2dd72565852b91c809cd4685833b17}{DEFAULT\+\_\+\+TIMEOUT}}~3600
+\begin{DoxyCompactList}\small\item\em Default timeout for blocking calls to the NAA, in seconds. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{group__defines_ga7bde5b78c001e2bbcf25de2822064697}{DEFAULT\+\_\+\+RETRY\+\_\+\+COUNT}}~7
+\item 
+\#define \mbox{\hyperlink{naaice_8h_a049854a6a057ed70a44c47de7e91be10}{MAX\+\_\+\+MRS}}~32
+\item 
+\#define \mbox{\hyperlink{naaice_8h_af773304c3ca92ded89dc28f3014e1631}{IMMEDIATE\+\_\+\+OFFSET}}~8
+\item 
+\#define \mbox{\hyperlink{naaice_8h_a22820c4f9335d5ae28f7d87295611862}{MR\+\_\+\+SIZE\+\_\+\+MRSP}}~sizeof(struct \mbox{\hyperlink{structnaaice__mr__advertisement__request}{naaice\+\_\+mr\+\_\+advertisement\+\_\+request}}) \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{naaice_8h_a049854a6a057ed70a44c47de7e91be10}{MAX\+\_\+\+MRS}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}} \{ \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660}{MSG\+\_\+\+MR\+\_\+\+ERR}} = 0x00
+, \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63}{MSG\+\_\+\+MR\+\_\+\+AAR}} = 0x01
+, \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774}{MSG\+\_\+\+MR\+\_\+A}} = 0x02
+, \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273}{MSG\+\_\+\+MR\+\_\+R}} = 0x03
+ \}
+\begin{DoxyCompactList}\small\item\em Message IDs used for packets sent between host and NAA. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{naaice_8h_a21fb508cec847f2df016cd6620aeff23}{naaice\+\_\+mrflags\+\_\+value}} \{ \mbox{\hyperlink{naaice_8h_a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7}{MRFLAG\+\_\+\+INTERNAL}} = 0x01
+, \mbox{\hyperlink{naaice_8h_a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d}{MRFLAG\+\_\+\+SINGLESEND}} = 0x02
+, \mbox{\hyperlink{naaice_8h_a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa}{MRFLAG\+\_\+\+INPUT}} = 0x04
+, \mbox{\hyperlink{naaice_8h_a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450}{MRFLAG\+\_\+\+OUTPUT}} = 0x08
+ \}
+\begin{DoxyCompactList}\small\item\em Flags for memory regions in \doxylink{structnaaice__mr__advertisement__request}{naaice\+\_\+mr\+\_\+advertisement\+\_\+request}. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}} \{ \newline
+\mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87}{NAAICE\+\_\+\+INIT}} = 0
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080}{NAAICE\+\_\+\+READY}} = 1
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4}{NAAICE\+\_\+\+CONNECTED}} = 2
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f}{NAAICE\+\_\+\+DISCONNECTED}} = 3
+, \newline
+\mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c}{NAAICE\+\_\+\+MRSP\+\_\+\+SENDING}} = 10
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227}{NAAICE\+\_\+\+MRSP\+\_\+\+RECEIVING}} = 11
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec}{NAAICE\+\_\+\+MRSP\+\_\+\+DONE}} = 12
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c}{NAAICE\+\_\+\+DATA\+\_\+\+SENDING}} = 20
+, \newline
+\mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f}{NAAICE\+\_\+\+CALCULATING}} = 21
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627}{NAAICE\+\_\+\+DATA\+\_\+\+RECEIVING}} = 22
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14}{NAAICE\+\_\+\+FINISHED}} = 30
+, \mbox{\hyperlink{group__StructsEnums_gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd}{NAAICE\+\_\+\+ERROR}} = 40
+ \}
+\begin{DoxyCompactList}\small\item\em Connection state machine for NAA communication. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}{naaice\+\_\+init\+\_\+communication\+\_\+context}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint64\+\_\+t addr\+\_\+offset, size\+\_\+t \texorpdfstring{$\ast$}{*}param\+\_\+sizes, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}params, unsigned int params\+\_\+amount, unsigned int internal\+\_\+mr\+\_\+amount, size\+\_\+t \texorpdfstring{$\ast$}{*}internal\+\_\+mr\+\_\+sizes, uint8\+\_\+t fncode, const char \texorpdfstring{$\ast$}{*}local\+\_\+address, const char \texorpdfstring{$\ast$}{*}remote\+\_\+address, uint16\+\_\+t port)
+\begin{DoxyCompactList}\small\item\em Initializes communication context struct. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaf2fe88c227bab4e0722365efc2dba892}{naaice\+\_\+poll\+\_\+connection\+\_\+event}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev\+\_\+cp)
+\begin{DoxyCompactList}\small\item\em Polls for a connection event on the RDMA event channel. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_ga4b5436e11c02694060160979030d95a1}{naaice\+\_\+handle\+\_\+addr\+\_\+resolved}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ADDR\+\_\+\+RESOLVED. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_gafc4354e4bf95ecb75d18db774576193e}{naaice\+\_\+handle\+\_\+route\+\_\+resolved}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+ROUTE\+\_\+\+RESOLVED. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_ga24acca87a515ab9019a66db096783210}{naaice\+\_\+handle\+\_\+connection\+\_\+established}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA\+\_\+\+CM\+\_\+\+EVENT\+\_\+\+CONNECT\+\_\+\+ESTABLISHED. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_ga82967cd400958762446f2f78ea6707e0}{naaice\+\_\+handle\+\_\+error}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle RDMA connection error events. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__connection__event__handlers_gac4798696d7a0940b2e00a69829050721}{naaice\+\_\+handle\+\_\+other}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, struct rdma\+\_\+cm\+\_\+event \texorpdfstring{$\ast$}{*}ev)
+\begin{DoxyCompactList}\small\item\em Handle all other, unsupported or unexpected RDMA CM events. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga241fe974872b43327aa2bb3f8fcf56c9}{naaice\+\_\+poll\+\_\+and\+\_\+handle\+\_\+connection\+\_\+event}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Poll and handle a connection event on the RDMA event channel. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga41cae89395d0303a73aa675c9be5ed05}{naaice\+\_\+setup\+\_\+connection}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Set up the RDMA connection. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gae242db34a7bfaea52853646886269fca}{naaice\+\_\+register\+\_\+mrs}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Register local memory regions. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gac477d9f2f20410154089940519d29ff3}{naaice\+\_\+set\+\_\+parameter\+\_\+mrs}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int n\+\_\+parameter\+\_\+mrs, uint64\+\_\+t \texorpdfstring{$\ast$}{*}local\+\_\+addrs, uint64\+\_\+t \texorpdfstring{$\ast$}{*}remote\+\_\+addrs, size\+\_\+t \texorpdfstring{$\ast$}{*}sizes)
+\begin{DoxyCompactList}\small\item\em Allocate and initialize parameter memory region descriptors. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga78223d8aa683630e139217773b9bf9b2}{naaice\+\_\+set\+\_\+input\+\_\+mr}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int input\+\_\+mr\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Mark a memory region as input and/or output. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaf80665027802da485541cebd9cbe5570}{naaice\+\_\+set\+\_\+output\+\_\+mr}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int output\+\_\+mr\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Mark a memory region as an output parameter. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga3e0bb6d9854ad7e39a49fd5907d394da}{naaice\+\_\+set\+\_\+singlesend\+\_\+mr}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int singlesend\+\_\+mr\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Mark a memory region as a single-\/send region. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga6f329c9fac52b8c65c5b9d8441ca2065}{naaice\+\_\+set\+\_\+internal\+\_\+mrs}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, unsigned int n\+\_\+internal\+\_\+mrs, uint64\+\_\+t \texorpdfstring{$\ast$}{*}addrs, size\+\_\+t \texorpdfstring{$\ast$}{*}sizes)
+\begin{DoxyCompactList}\small\item\em Add internal memory regions to the communication context. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gab1eaa0617fe2d1cd8f6a0248b9869283}{naaice\+\_\+set\+\_\+immediate}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint8\+\_\+t \texorpdfstring{$\ast$}{*}imm\+\_\+bytes)
+\begin{DoxyCompactList}\small\item\em Set the immediate value for data transfer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga3babb3d708aec505bfc0df1223acba28}{naaice\+\_\+init\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Initialize the Memory Region Setup Protocol (MRSP). \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gacd927690e6d6b807be794b34878630d1}{naaice\+\_\+init\+\_\+data\+\_\+transfer}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Start the data transfer to the NAA. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga7a05d334df39718b31030442d172e1e6}{naaice\+\_\+handle\+\_\+work\+\_\+completion}} (struct ibv\+\_\+wc \texorpdfstring{$\ast$}{*}wc, struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Handle a single work completion from the completion queue. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaf4a8fd1c6bbd8589868fa454c8f8c863}{naaice\+\_\+poll\+\_\+cq\+\_\+nonblocking}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Poll the completion queue non-\/blocking. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaa6fdf267f0d16b71b1cde8f337332035}{naaice\+\_\+poll\+\_\+cq\+\_\+blocking}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Poll the completion queue blocking. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga74338ed21867befe5820a7cde3d7a71c}{naaice\+\_\+disconnect\+\_\+and\+\_\+cleanup}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Disconnect and clean up the communication context. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga8f0b77ff3c5376a9aa5b583c9cbf752b}{naaice\+\_\+send\+\_\+message}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}} message\+\_\+type, uint8\+\_\+t errorcode)
+\begin{DoxyCompactList}\small\item\em Send an MRSP message to the remote peer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gadd7def5aad3326ca5c416ad0158c0c57}{naaice\+\_\+write\+\_\+data}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, uint8\+\_\+t fncode)
+\begin{DoxyCompactList}\small\item\em Write memory regions to the NAA. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga83494efe81ac7802b6119438509e08fc}{naaice\+\_\+post\+\_\+recv\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Post a receive request for an MRSP message. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gad9227128ecee083b491749888b8ff8b9}{naaice\+\_\+post\+\_\+recv\+\_\+data}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Post a receive request for a memory region write. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_gaff209c1f0b59a45983c53f5698a25ed7}{naaice\+\_\+init\+\_\+rdma\+\_\+resources}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Initialize RDMA resources. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga8b2194c5a28e85fe089be51e060a8435}{naaice\+\_\+do\+\_\+mrsp}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Execute the MRSP protocol in a blocking manner. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga43e50e171eff94f88abab88963d3cd7a}{naaice\+\_\+do\+\_\+data\+\_\+transfer}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Perform the complete data transfer in a blocking manner. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{group__PublicFunctions_ga23fbc699ddcd9e7b8f292e225c7c9895}{naaice\+\_\+set\+\_\+bytes\+\_\+to\+\_\+send}} (struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*}comm\+\_\+ctx, int mr\+\_\+idx, int number\+\_\+bytes)
+\begin{DoxyCompactList}\small\item\em Set the number of bytes to send from a memory region. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{naaice_8h_abc94cd8dc29ed8b19db4cc23ed830618}\index{naaice.h@{naaice.h}!htonll@{htonll}}
+\index{htonll@{htonll}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{htonll}{htonll}}
+{\footnotesize\ttfamily \label{naaice_8h_abc94cd8dc29ed8b19db4cc23ed830618} 
+\#define htonll~htobe64}
+
+\Hypertarget{naaice_8h_af773304c3ca92ded89dc28f3014e1631}\index{naaice.h@{naaice.h}!IMMEDIATE\_OFFSET@{IMMEDIATE\_OFFSET}}
+\index{IMMEDIATE\_OFFSET@{IMMEDIATE\_OFFSET}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{IMMEDIATE\_OFFSET}{IMMEDIATE\_OFFSET}}
+{\footnotesize\ttfamily \label{naaice_8h_af773304c3ca92ded89dc28f3014e1631} 
+\#define IMMEDIATE\+\_\+\+OFFSET~8}
+
+\Hypertarget{naaice_8h_a049854a6a057ed70a44c47de7e91be10}\index{naaice.h@{naaice.h}!MAX\_MRS@{MAX\_MRS}}
+\index{MAX\_MRS@{MAX\_MRS}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{MAX\_MRS}{MAX\_MRS}}
+{\footnotesize\ttfamily \label{naaice_8h_a049854a6a057ed70a44c47de7e91be10} 
+\#define MAX\+\_\+\+MRS~32}
+
+\Hypertarget{naaice_8h_a22820c4f9335d5ae28f7d87295611862}\index{naaice.h@{naaice.h}!MR\_SIZE\_MRSP@{MR\_SIZE\_MRSP}}
+\index{MR\_SIZE\_MRSP@{MR\_SIZE\_MRSP}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{MR\_SIZE\_MRSP}{MR\_SIZE\_MRSP}}
+{\footnotesize\ttfamily \label{naaice_8h_a22820c4f9335d5ae28f7d87295611862} 
+\#define MR\+\_\+\+SIZE\+\_\+\+MRSP~sizeof(struct \mbox{\hyperlink{structnaaice__mr__advertisement__request}{naaice\+\_\+mr\+\_\+advertisement\+\_\+request}}) \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{naaice_8h_a049854a6a057ed70a44c47de7e91be10}{MAX\+\_\+\+MRS}}}
+
+\Hypertarget{naaice_8h_a4a7fe653db1b12381e8189b96d3d8bd1}\index{naaice.h@{naaice.h}!ntohll@{ntohll}}
+\index{ntohll@{ntohll}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{ntohll}{ntohll}}
+{\footnotesize\ttfamily \label{naaice_8h_a4a7fe653db1b12381e8189b96d3d8bd1} 
+\#define ntohll~be64toh}
+
+\Hypertarget{naaice_8h_aa350dcd01a7f3234d44b73b37fb9c906}\index{naaice.h@{naaice.h}!RX\_DEPTH@{RX\_DEPTH}}
+\index{RX\_DEPTH@{RX\_DEPTH}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{RX\_DEPTH}{RX\_DEPTH}}
+{\footnotesize\ttfamily \label{naaice_8h_aa350dcd01a7f3234d44b73b37fb9c906} 
+\#define RX\+\_\+\+DEPTH~1025}
+
+TODO\+:
+
+(functionality)
+
+
+\begin{DoxyItemize}
+\item Consider the use of posix\+\_\+memalign in naaice\+\_\+init\+\_\+communication\+\_\+context. This is a reallocation of the input parameters. Should we instead require that the user ensure memory alignment, or find a way to ensure it without reallocation? Aligned memory isn\textquotesingle{}t strictly necessary, it just has some performance implications
+\item Handle errors better, utilizing errno and ERROR state in state machine.
+\item Unify some of the packet structs used in naaice\+\_\+send\+\_\+message, so that a single type can be used rather than concatenating headers, for example.
+\item Make type usage more uniform, i.\+e. single types for MR addr pointers and sizes. AP1 Usage For standard operation, functions should be called in the following order\+:
+\end{DoxyItemize}
+\begin{DoxyEnumerate}
+\item naaice\+\_\+init\+\_\+communication\+\_\+context
+\item (in any order) naaice\+\_\+setup\+\_\+connection naaice\+\_\+register\+\_\+mrs naaice\+\_\+set\+\_\+internal\+\_\+mrs (optional) naaice\+\_\+set\+\_\+input\+\_\+mr naaice\+\_\+set\+\_\+output\+\_\+mr naaice\+\_\+set\+\_\+singlesend\+\_\+mr (optional)
+\item naaice\+\_\+set\+\_\+bytes\+\_\+to\+\_\+send (optional)
+\item naaice\+\_\+do\+\_\+mrsp
+\item naaice\+\_\+do\+\_\+data\+\_\+transfer
+\item naaice\+\_\+disconnect\+\_\+and\+\_\+cleanup
+\end{DoxyEnumerate}
+
+naaice\+\_\+do\+\_\+mrsp blocks until MRSP is complete. For a non-\/blocking version, use instead\+:
+
+naaice\+\_\+init\+\_\+mrsp while (communication\+\_\+context-\/\texorpdfstring{$>$}{>}state \texorpdfstring{$<$}{<} MRSP\+\_\+\+DONE) \{ naaice\+\_\+poll\+\_\+cq\+\_\+nonblocking \}
+
+naaice\+\_\+do\+\_\+data\+\_\+transfer blocks until MRSP is complete. For a non-\/blocking version, use instead\+:
+
+naaice\+\_\+init\+\_\+data\+\_\+transfer while (communication\+\_\+context-\/\texorpdfstring{$>$}{>}state \texorpdfstring{$<$}{<} FINISHED) \{ naaice\+\_\+poll\+\_\+cq\+\_\+nonblocking \} 
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}\index{naaice.h@{naaice.h}!message\_id@{message\_id}}
+\index{message\_id@{message\_id}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{message\_id}{message\_id}}
+{\footnotesize\ttfamily \label{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1} 
+enum \mbox{\hyperlink{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1}{message\+\_\+id}}}
+
+
+
+Message IDs used for packets sent between host and NAA. 
+
+Defines the types of messages exchanged during the Memory Region Setup Protocol (MRSP) and other control communication. \begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_MR\_ERR@{MSG\_MR\_ERR}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MSG\_MR\_ERR@{MSG\_MR\_ERR}}}\Hypertarget{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660}\label{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660} 
+MSG\+\_\+\+MR\+\_\+\+ERR&Error message. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_MR\_AAR@{MSG\_MR\_AAR}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MSG\_MR\_AAR@{MSG\_MR\_AAR}}}\Hypertarget{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63}\label{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63} 
+MSG\+\_\+\+MR\+\_\+\+AAR&Memory region advertisement and request, sent by host. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_MR\_A@{MSG\_MR\_A}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MSG\_MR\_A@{MSG\_MR\_A}}}\Hypertarget{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774}\label{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774} 
+MSG\+\_\+\+MR\+\_\+A&Memory region advertisement without request, usually sent by NAA. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSG\_MR\_R@{MSG\_MR\_R}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MSG\_MR\_R@{MSG\_MR\_R}}}\Hypertarget{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273}\label{naaice_8h_a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273} 
+MSG\+\_\+\+MR\+\_\+R&Reserved/unused message ID. \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{naaice_8h_a21fb508cec847f2df016cd6620aeff23}\index{naaice.h@{naaice.h}!naaice\_mrflags\_value@{naaice\_mrflags\_value}}
+\index{naaice\_mrflags\_value@{naaice\_mrflags\_value}!naaice.h@{naaice.h}}
+\doxysubsubsection{\texorpdfstring{naaice\_mrflags\_value}{naaice\_mrflags\_value}}
+{\footnotesize\ttfamily \label{naaice_8h_a21fb508cec847f2df016cd6620aeff23} 
+enum \mbox{\hyperlink{naaice_8h_a21fb508cec847f2df016cd6620aeff23}{naaice\+\_\+mrflags\+\_\+value}}}
+
+
+
+Flags for memory regions in \doxylink{structnaaice__mr__advertisement__request}{naaice\+\_\+mr\+\_\+advertisement\+\_\+request}. 
+
+Specifies additional information about an advertised or requested memory region needed by the NAA. \begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MRFLAG\_INTERNAL@{MRFLAG\_INTERNAL}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MRFLAG\_INTERNAL@{MRFLAG\_INTERNAL}}}\Hypertarget{naaice_8h_a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7}\label{naaice_8h_a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7} 
+MRFLAG\+\_\+\+INTERNAL&Memory region is for internal use on the NAA only; not transferred. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MRFLAG\_SINGLESEND@{MRFLAG\_SINGLESEND}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MRFLAG\_SINGLESEND@{MRFLAG\_SINGLESEND}}}\Hypertarget{naaice_8h_a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d}\label{naaice_8h_a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d} 
+MRFLAG\+\_\+\+SINGLESEND&Memory region is sent only once on the first RPC; subsequent RPCs skip it. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MRFLAG\_INPUT@{MRFLAG\_INPUT}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MRFLAG\_INPUT@{MRFLAG\_INPUT}}}\Hypertarget{naaice_8h_a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa}\label{naaice_8h_a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa} 
+MRFLAG\+\_\+\+INPUT&Memory region represents an RPC input parameter. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MRFLAG\_OUTPUT@{MRFLAG\_OUTPUT}!naaice.h@{naaice.h}}\index{naaice.h@{naaice.h}!MRFLAG\_OUTPUT@{MRFLAG\_OUTPUT}}}\Hypertarget{naaice_8h_a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450}\label{naaice_8h_a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450} 
+MRFLAG\+\_\+\+OUTPUT&Memory region represents an RPC output parameter. \\
+\hline
+
+\end{DoxyEnumFields}

@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="group__Functions" kind="group">
+    <compoundname>Functions</compoundname>
+    <title>Functions</title>
+    <innerclass refid="structnaa__param__t" prot="public">naa_param_t</innerclass>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__Functions_1ga4b3a6cd9631f1817cc6f360c92d8149e" prot="public" static="no">
+        <type>struct naa_param_t</type>
+        <definition>typedef struct naa_param_t naa_param_t</definition>
+        <argsstring></argsstring>
+        <name>naa_param_t</name>
+        <briefdescription>
+<para>Represents a single parameter (input or output) for an NAA routine. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Holds information about the data region corresponding to a parameter, including its address, size, and whether it should be sent only once during the connection (e.g., for configuration data). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="89" column="13"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naa_create</definition>
+        <argsstring>(const naa_function_code_t function_code, naa_param_t *input_params, unsigned int input_amount, naa_param_t *output_params, unsigned int output_amount, naa_handle *handle)</argsstring>
+        <name>naa_create</name>
+        <param>
+          <type>const <ref refid="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" kindref="member">naa_function_code_t</ref></type>
+          <declname>function_code</declname>
+        </param>
+        <param>
+          <type><ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref> *</type>
+          <declname>input_params</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>input_amount</declname>
+        </param>
+        <param>
+          <type><ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref> *</type>
+          <declname>output_params</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>output_amount</declname>
+        </param>
+        <param>
+          <type><ref refid="structnaa__handle" kindref="compound">naa_handle</ref> *</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Configure memory regions and establish a connection to a remote NAA. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Finding IP address and socket ID for an NAA matching required function code. Prepare connection, register and exchange memory region information between HPC node and NAA.</para>
+<para>P address and socket ID are already known to HPC node. Info is retrieved from resource management system (Slurm) at creation/deployment of slurm job. User knows function code for method/calculation to outsource to NAA. Connection to NAA is done by connection establishment protocol from the Infiniband standard. During connection preparation, the HPC nodes allocates buffers for memory re- gions and resolves route to NAA. After connection establishment, memory region information is exchanged between HPC node and NAA. The protocol for this was designed in NAAICE AP1.</para>
+<para>his method will register the addresses of the parameters with ibverbs as mem- ory regions, hiding the memory region semantic from the user. All memory re- gions, for both input and output parameters are announced to the NAA during <ref refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" kindref="member">naa_create()</ref>. Therefore, memory regions can not be changed from input to output between iterations. Currently, no example has been found where this is necessary. The handle object was previously returned by the library and includes information on how to connect to the right NAA. The resource management system will provide information on the IP of the NAA and socket ID of the NAA.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>function_code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function code specifying the routine to execute on the NAA. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of <ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref> structs representing input regions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input_amount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of input memory regions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output_params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of <ref refid="structnaa__param__t" kindref="compound">naa_param_t</ref> structs representing output regions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output_amount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of output memory regions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="structnaa__handle" kindref="compound">naa_handle</ref> struct to be initialized for this session. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int 0 if successful, -1 if an error occurred. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="166" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" declline="166" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="group__Functions_1ga978eb1295ce4e7b283b6d6b74286b2d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int naa_invoke</definition>
+        <argsstring>(naa_handle *handle)</argsstring>
+        <name>naa_invoke</name>
+        <param>
+          <type><ref refid="structnaa__handle" kindref="compound">naa_handle</ref> *</type>
+          <declname>handle</declname>
+        </param>
+        <briefdescription>
+<para>Sends input data to the peer and triggers the corresponding NAA routine. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initiates the data transfer for the current session using the provided communication handle. Handles posting RDMA writes and waiting for the remote computation to complete.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>handle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a <ref refid="structnaa__handle" kindref="compound">naa_handle</ref> created by <ref refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" kindref="member">naa_create</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>int 0 if successful, -1 if an error occurred. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" line="183" column="5" declfile="/Users/hannessigner/Documents/Work/naa-communication-prototype/lib/naaice_ap2.h" declline="183" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

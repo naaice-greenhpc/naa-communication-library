@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.13.2" xml:lang="en-US">
+  <compound refid="structnaa__handle" kind="struct"><name>naa_handle</name>
+    <member refid="structnaa__handle_1a5c4b8a9ab94644b0c475284e69567d6b" kind="variable"><name>function_code</name></member>
+    <member refid="structnaa__handle_1a71ad357cc6f416a6e43706df32519825" kind="variable"><name>comm_ctx</name></member>
+  </compound>
+  <compound refid="structnaa__param__t" kind="struct"><name>naa_param_t</name>
+    <member refid="structnaa__param__t_1ad5cb0da75bd8c82ce3b6aaadea4ec9f3" kind="variable"><name>addr</name></member>
+    <member refid="structnaa__param__t_1a9538d353b558b49e63b4f2a84dbc604a" kind="variable"><name>size</name></member>
+    <member refid="structnaa__param__t_1a005d6f65b65447b682d5eb56d8e8434d" kind="variable"><name>single_send</name></member>
+  </compound>
+  <compound refid="structnaa__status" kind="struct"><name>naa_status</name>
+    <member refid="structnaa__status_1a26c0f7905228c45ff6e22a11f2d934c1" kind="variable"><name>state</name></member>
+    <member refid="structnaa__status_1a579b67bada0f6373937d56cb8c7661ce" kind="variable"><name>naa_error</name></member>
+    <member refid="structnaa__status_1a5d98d226361e5fcca0d7af4b2f4cba34" kind="variable"><name>bytes_received</name></member>
+  </compound>
+  <compound refid="structnaaice__communication__context" kind="struct"><name>naaice_communication_context</name>
+    <member refid="structnaaice__communication__context_1aa5adddc3e57b3c0ec92f5a28a06f2c99" kind="variable"><name>id</name></member>
+    <member refid="structnaaice__communication__context_1a750493d1c756467c2d9eb97eb35cbe06" kind="variable"><name>ev_channel</name></member>
+    <member refid="structnaaice__communication__context_1a2b5db6c6ba0ccad0aebb9809814aa6f4" kind="variable"><name>ibv_ctx</name></member>
+    <member refid="structnaaice__communication__context_1a57a8f4c0c806cf0770c8e0e5a4420fb2" kind="variable"><name>pd</name></member>
+    <member refid="structnaaice__communication__context_1a92c5d4473461f9f34f229cbcb23fb442" kind="variable"><name>comp_channel</name></member>
+    <member refid="structnaaice__communication__context_1a777a77e3ecf5fc32156c56aa0c671992" kind="variable"><name>cq</name></member>
+    <member refid="structnaaice__communication__context_1af3d03a0fc5a8e98046d7147516415d25" kind="variable"><name>qp</name></member>
+    <member refid="structnaaice__communication__context_1a5e0af877410b4f1a5f33604f8ead73f6" kind="variable"><name>timeout</name></member>
+    <member refid="structnaaice__communication__context_1a0b6f041373ff651f70928dca1768ceb6" kind="variable"><name>retry_count</name></member>
+    <member refid="structnaaice__communication__context_1af54d81eb0f53839114e399e9cc003b4f" kind="variable"><name>state</name></member>
+    <member refid="structnaaice__communication__context_1ae96707fd4075be44a68b071f4f279900" kind="variable"><name>mr_local_data</name></member>
+    <member refid="structnaaice__communication__context_1ab5d4eba84bf71a67cb4d6304ffa9130c" kind="variable"><name>no_local_mrs</name></member>
+    <member refid="structnaaice__communication__context_1afc0d1f44fd8b275ef6d276fb7fad0e43" kind="variable"><name>mr_return_idx</name></member>
+    <member refid="structnaaice__communication__context_1aae140cb69ac48e9717f38a35a061f30e" kind="variable"><name>mr_peer_data</name></member>
+    <member refid="structnaaice__communication__context_1af6f3763a2f4ca85b33d45a5469b3d078" kind="variable"><name>no_peer_mrs</name></member>
+    <member refid="structnaaice__communication__context_1ac2b159dc28f192032a3d7eb2adb927a4" kind="variable"><name>mr_local_message</name></member>
+    <member refid="structnaaice__communication__context_1af8c8396299727fe54ccab35b68585668" kind="variable"><name>mr_internal</name></member>
+    <member refid="structnaaice__communication__context_1a694188281d4785054a49b117ad5c03db" kind="variable"><name>no_internal_mrs</name></member>
+    <member refid="structnaaice__communication__context_1a5c62d91ca4564b4ce7953f1cc51c383b" kind="variable"><name>fncode</name></member>
+    <member refid="structnaaice__communication__context_1aa539396f7fd926b012a490284f99fa22" kind="variable"><name>naa_returncode</name></member>
+    <member refid="structnaaice__communication__context_1a3863ada75e1d23f5694f9df8eafadce4" kind="variable"><name>rdma_writes_done</name></member>
+    <member refid="structnaaice__communication__context_1ac7ed64db9b870f5b631f1cfe4dec27b8" kind="variable"><name>bytes_received</name></member>
+    <member refid="structnaaice__communication__context_1a91641d8db0a6392aaf6aca1e06eb1086" kind="variable"><name>no_input_mrs</name></member>
+    <member refid="structnaaice__communication__context_1ad2f11f484f7982fbe7e12c31d94ebcb0" kind="variable"><name>no_output_mrs</name></member>
+    <member refid="structnaaice__communication__context_1ac5ebfd7992cd27f0236d34b463179e22" kind="variable"><name>no_rpc_calls</name></member>
+    <member refid="structnaaice__communication__context_1ad4fabf04117ce1beb272d7b9fa0687f7" kind="variable"><name>immediate</name></member>
+    <member refid="structnaaice__communication__context_1a8cb2bf53c251cad5dceefee1c4888c59" kind="variable"><name>immediate_bytearr</name></member>
+    <member refid="structnaaice__communication__context_1af45187078063e9c3fa29adc788454cba" kind="variable"><name></name></member>
+  </compound>
+  <compound refid="structnaaice__mr__advertisement" kind="struct"><name>naaice_mr_advertisement</name>
+    <member refid="structnaaice__mr__advertisement_1a28f0add1fb5f2ecd7c7b3f8d266a8451" kind="variable"><name>addr</name></member>
+    <member refid="structnaaice__mr__advertisement_1afea5d1fe1203d278e854c69ba56f265d" kind="variable"><name>rkey</name></member>
+    <member refid="structnaaice__mr__advertisement_1ac306e5ce33a640c111ebaab2d1d3a9ff" kind="variable"><name>size</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__advertisement__request" kind="struct"><name>naaice_mr_advertisement_request</name>
+    <member refid="structnaaice__mr__advertisement__request_1adbe7dabc92a73fea9b22a88f8880eff6" kind="variable"><name>mr_info</name></member>
+    <member refid="structnaaice__mr__advertisement__request_1a3cdf72073c4de54ef2ab9c3f7706f936" kind="variable"><name>mr_info_bytearray</name></member>
+    <member refid="structnaaice__mr__advertisement__request_1a79e1f70670f7feb787bdabd428f3cdf8" kind="variable"><name></name></member>
+    <member refid="structnaaice__mr__advertisement__request_1a7059e5245124980dce1c9fb3ddab1f33" kind="variable"><name>addr</name></member>
+    <member refid="structnaaice__mr__advertisement__request_1a178bf5b834aaa0bd8f629a23bc18b1fd" kind="variable"><name>rkey</name></member>
+    <member refid="structnaaice__mr__advertisement__request_1af9c10047d0f94a82a88ea93b361fd254" kind="variable"><name>size</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__dynamic__hdr" kind="struct"><name>naaice_mr_dynamic_hdr</name>
+    <member refid="structnaaice__mr__dynamic__hdr_1ae0b303d2c0d5ce1ace857479553eede5" kind="variable"><name>count</name></member>
+    <member refid="structnaaice__mr__dynamic__hdr_1a91107b9fc120a5af92abb54cfa8cbfd4" kind="variable"><name>padding</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__error" kind="struct"><name>naaice_mr_error</name>
+    <member refid="structnaaice__mr__error_1ae6ff3c35c75fa99599f367674dc30d41" kind="variable"><name>code</name></member>
+    <member refid="structnaaice__mr__error_1a76278446c75c1817ae173cb082e63385" kind="variable"><name>padding</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__hdr" kind="struct"><name>naaice_mr_hdr</name>
+    <member refid="structnaaice__mr__hdr_1a18aa84bcaed22a21d16c2666b40b33e0" kind="variable"><name>type</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__internal" kind="struct"><name>naaice_mr_internal</name>
+    <member refid="structnaaice__mr__internal_1a4dbe8b3b64ead3633cc4f45ba0fe3f31" kind="variable"><name>addr</name></member>
+    <member refid="structnaaice__mr__internal_1a9fe46515d1ae382b09a42c33671927ab" kind="variable"><name>fpgaaddr</name></member>
+    <member refid="structnaaice__mr__internal_1a551d947ee776f02f5a32156e33eab9a4" kind="variable"><name></name></member>
+    <member refid="structnaaice__mr__internal_1a665ced3040564d394a9914258fb4d732" kind="variable"><name>size</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__local" kind="struct"><name>naaice_mr_local</name>
+    <member refid="structnaaice__mr__local_1a14c18396342aa35fed97dacf49db4e7b" kind="variable"><name>ibv</name></member>
+    <member refid="structnaaice__mr__local_1a11412feb3969b49f22c16d443a8cf58b" kind="variable"><name>addr</name></member>
+    <member refid="structnaaice__mr__local_1a2b4eb21c3ba2c450dbb252c8ba7af03f" kind="variable"><name>size</name></member>
+    <member refid="structnaaice__mr__local_1acf6e2a4f91701e03cabe975a88a2959e" kind="variable"><name>to_write</name></member>
+    <member refid="structnaaice__mr__local_1a4242b44ae7688fdcd95de6ca216d7a6b" kind="variable"><name>single_send</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__peer" kind="struct"><name>naaice_mr_peer</name>
+    <member refid="structnaaice__mr__peer_1acf2bcb7c541ef65fdb07d685076de99e" kind="variable"><name>addr</name></member>
+    <member refid="structnaaice__mr__peer_1ac64f401c529bff7d785d396facbf3063" kind="variable"><name>fpgaaddr</name></member>
+    <member refid="structnaaice__mr__peer_1ab037824a7fdd38a7f4e5b68a8541b024" kind="variable"><name></name></member>
+    <member refid="structnaaice__mr__peer_1a2ece31e54c627c7a68ae6dd39e992a11" kind="variable"><name>rkey</name></member>
+    <member refid="structnaaice__mr__peer_1a72be5998e29279524950390f02c56c26" kind="variable"><name>size</name></member>
+    <member refid="structnaaice__mr__peer_1a982ecdc40d066910ccee25174b24b2f1" kind="variable"><name>to_write</name></member>
+    <member refid="structnaaice__mr__peer_1a5aaf720eee8b675f46631b2dab8a3cff" kind="variable"><name>single_send</name></member>
+  </compound>
+  <compound refid="structnaaice__mr__request" kind="struct"><name>naaice_mr_request</name>
+    <member refid="structnaaice__mr__request_1a4d0ecd335e3fb66e89098a722f23c76e" kind="variable"><name>size</name></member>
+  </compound>
+  <compound refid="structnaaice__rpc__metadata" kind="struct"><name>naaice_rpc_metadata</name>
+    <member refid="structnaaice__rpc__metadata_1a9a2a1184f2b0919113737da71f197099" kind="variable"><name>return_addr</name></member>
+  </compound>
+  <compound refid="naaice_8h" kind="file"><name>naaice.h</name>
+    <member refid="naaice_8h_1aa350dcd01a7f3234d44b73b37fb9c906" kind="define"><name>RX_DEPTH</name></member>
+    <member refid="naaice_8h_1a4a7fe653db1b12381e8189b96d3d8bd1" kind="define"><name>ntohll</name></member>
+    <member refid="naaice_8h_1abc94cd8dc29ed8b19db4cc23ed830618" kind="define"><name>htonll</name></member>
+    <member refid="group__defines_1gaeb2c8b9b4d058b7930d52db59b5f9051" kind="define"><name>TIMEOUT_RESOLVE_ROUTE</name></member>
+    <member refid="group__defines_1gac5aea11b8390f14300a4050cfd3f1fcb" kind="define"><name>POLLING_TIMEOUT</name></member>
+    <member refid="group__defines_1gaad2dd72565852b91c809cd4685833b17" kind="define"><name>DEFAULT_TIMEOUT</name></member>
+    <member refid="group__defines_1ga7bde5b78c001e2bbcf25de2822064697" kind="define"><name>DEFAULT_RETRY_COUNT</name></member>
+    <member refid="naaice_8h_1a049854a6a057ed70a44c47de7e91be10" kind="define"><name>MAX_MRS</name></member>
+    <member refid="naaice_8h_1af773304c3ca92ded89dc28f3014e1631" kind="define"><name>IMMEDIATE_OFFSET</name></member>
+    <member refid="naaice_8h_1a22820c4f9335d5ae28f7d87295611862" kind="define"><name>MR_SIZE_MRSP</name></member>
+    <member refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1" kind="enum"><name>message_id</name></member>
+    <member refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a8fd265e7fd63cf70cfc8e61d515c7660" kind="enumvalue"><name>MSG_MR_ERR</name></member>
+    <member refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a2452686f8cba3b6595541692c6090f63" kind="enumvalue"><name>MSG_MR_AAR</name></member>
+    <member refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a509feadbdb916483a76b424927cf5774" kind="enumvalue"><name>MSG_MR_A</name></member>
+    <member refid="naaice_8h_1a5f2be45182f0cc39afb7cc3a8d55a1f1a3a97e2ca003744ca41dde8d9e36ba273" kind="enumvalue"><name>MSG_MR_R</name></member>
+    <member refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23" kind="enum"><name>naaice_mrflags_value</name></member>
+    <member refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5e908e514ded090eea43eac86edf15e7" kind="enumvalue"><name>MRFLAG_INTERNAL</name></member>
+    <member refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23ae1ab55e3a2b3476e3aff68bddc892d0d" kind="enumvalue"><name>MRFLAG_SINGLESEND</name></member>
+    <member refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a7a7acefda94a542c3fb6dceec98ffaaa" kind="enumvalue"><name>MRFLAG_INPUT</name></member>
+    <member refid="naaice_8h_1a21fb508cec847f2df016cd6620aeff23a5fc89f04dd09b11b48c3196c85427450" kind="enumvalue"><name>MRFLAG_OUTPUT</name></member>
+    <member refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" kind="enum"><name>naaice_communication_state</name></member>
+    <member refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kind="function"><name>naaice_init_communication_context</name></member>
+    <member refid="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892" kind="function"><name>naaice_poll_connection_event</name></member>
+    <member refid="group__connection__event__handlers_1ga4b5436e11c02694060160979030d95a1" kind="function"><name>naaice_handle_addr_resolved</name></member>
+    <member refid="group__connection__event__handlers_1gafc4354e4bf95ecb75d18db774576193e" kind="function"><name>naaice_handle_route_resolved</name></member>
+    <member refid="group__connection__event__handlers_1ga24acca87a515ab9019a66db096783210" kind="function"><name>naaice_handle_connection_established</name></member>
+    <member refid="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" kind="function"><name>naaice_handle_error</name></member>
+    <member refid="group__connection__event__handlers_1gac4798696d7a0940b2e00a69829050721" kind="function"><name>naaice_handle_other</name></member>
+    <member refid="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" kind="function"><name>naaice_poll_and_handle_connection_event</name></member>
+    <member refid="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05" kind="function"><name>naaice_setup_connection</name></member>
+    <member refid="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca" kind="function"><name>naaice_register_mrs</name></member>
+    <member refid="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3" kind="function"><name>naaice_set_parameter_mrs</name></member>
+    <member refid="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2" kind="function"><name>naaice_set_input_mr</name></member>
+    <member refid="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570" kind="function"><name>naaice_set_output_mr</name></member>
+    <member refid="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da" kind="function"><name>naaice_set_singlesend_mr</name></member>
+    <member refid="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065" kind="function"><name>naaice_set_internal_mrs</name></member>
+    <member refid="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283" kind="function"><name>naaice_set_immediate</name></member>
+    <member refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kind="function"><name>naaice_init_mrsp</name></member>
+    <member refid="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" kind="function"><name>naaice_init_data_transfer</name></member>
+    <member refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" kind="function"><name>naaice_handle_work_completion</name></member>
+    <member refid="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863" kind="function"><name>naaice_poll_cq_nonblocking</name></member>
+    <member refid="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035" kind="function"><name>naaice_poll_cq_blocking</name></member>
+    <member refid="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c" kind="function"><name>naaice_disconnect_and_cleanup</name></member>
+    <member refid="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" kind="function"><name>naaice_send_message</name></member>
+    <member refid="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57" kind="function"><name>naaice_write_data</name></member>
+    <member refid="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc" kind="function"><name>naaice_post_recv_mrsp</name></member>
+    <member refid="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9" kind="function"><name>naaice_post_recv_data</name></member>
+    <member refid="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7" kind="function"><name>naaice_init_rdma_resources</name></member>
+    <member refid="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435" kind="function"><name>naaice_do_mrsp</name></member>
+    <member refid="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a" kind="function"><name>naaice_do_data_transfer</name></member>
+    <member refid="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895" kind="function"><name>naaice_set_bytes_to_send</name></member>
+  </compound>
+  <compound refid="naaice__ap2_8h" kind="file"><name>naaice_ap2.h</name>
+    <member refid="group__StructsEnums_1ga45430261054a7041b457175c442cc626" kind="enum"><name>naa_error</name></member>
+    <member refid="naaice__ap2_8h_1a984c734ca0922a5323679532ee75a0a3" kind="typedef"><name>naa_function_code_t</name></member>
+    <member refid="group__Functions_1ga4b3a6cd9631f1817cc6f360c92d8149e" kind="typedef"><name>naa_param_t</name></member>
+    <member refid="group__StructsEnums_1ga8f57849ab74ea615ad8bd74df264ede2" kind="typedef"><name>naa_handle</name></member>
+    <member refid="group__StructsEnums_1gab5cd016885936f9664f72c77b4d96474" kind="typedef"><name>naa_status</name></member>
+    <member refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" kind="function"><name>naa_create</name></member>
+    <member refid="group__Functions_1ga978eb1295ce4e7b283b6d6b74286b2d2" kind="function"><name>naa_invoke</name></member>
+    <member refid="naaice__ap2_8h_1a6200e7134fc6961daa5d45e938dd6511" kind="function"><name>naa_test</name></member>
+    <member refid="naaice__ap2_8h_1a6bba1a1b9e1467702339f2a6fbdbfdf9" kind="function"><name>naa_wait</name></member>
+    <member refid="naaice__ap2_8h_1a65c8b2bbcb09f4fd873983d1ed9fb293" kind="function"><name>naa_finalize</name></member>
+  </compound>
+  <compound refid="naaice__swnaa_8h" kind="file"><name>naaice_swnaa.h</name>
+    <member refid="naaice__swnaa_8h_1a2e304ccf78229d70b893def6eea01844" kind="function"><name>naaice_swnaa_init_communication_context</name></member>
+    <member refid="naaice__swnaa_8h_1af8a7cefb12eee651c6c055220bf0fc67" kind="function"><name>naaice_swnaa_setup_connection</name></member>
+    <member refid="naaice__swnaa_8h_1a090aa5dad1a291e1331e970071aa65d7" kind="function"><name>naaice_swnaa_handle_connection_requests</name></member>
+    <member refid="naaice__swnaa_8h_1a035fce0f94485bed8bd89298b0a275c9" kind="function"><name>naaice_swnaa_handle_connection_established</name></member>
+    <member refid="naaice__swnaa_8h_1ad193f2b7634c79cb88f88d45f403a9c5" kind="function"><name>naaice_swnaa_handle_error</name></member>
+    <member refid="naaice__swnaa_8h_1accd16824d60b2f865b90e13720b271fa" kind="function"><name>naaice_swnaa_poll_and_handle_connection_event</name></member>
+    <member refid="naaice__swnaa_8h_1a12c843653bf1a3e09d3dfea183ae2c87" kind="function"><name>naaice_swnaa_init_mrsp</name></member>
+    <member refid="naaice__swnaa_8h_1a0c8a63de324d43fac3d053f4a49ff17b" kind="function"><name>naaice_swnaa_post_recv_mrsp</name></member>
+    <member refid="naaice__swnaa_8h_1abac978fd0af33cd063e701ce16f681f6" kind="function"><name>naaice_swnaa_handle_work_completion</name></member>
+    <member refid="naaice__swnaa_8h_1a788ed844b1653b50572d9e42dc7a0a68" kind="function"><name>naaice_swnaa_handle_mr_announce</name></member>
+    <member refid="naaice__swnaa_8h_1a48579f2e7e439235f9247f07465a97bd" kind="function"><name>naaice_swnaa_handle_mr_announce_and_request</name></member>
+    <member refid="naaice__swnaa_8h_1a37454381c7d8b6a8789a59cc1b3be774" kind="function"><name>naaice_swnaa_send_message</name></member>
+    <member refid="naaice__swnaa_8h_1a42d9e03575369193d4b439dc14cd9996" kind="function"><name>naaice_swnaa_post_recv_data</name></member>
+    <member refid="naaice__swnaa_8h_1ad097a9b0b5c21da11b75ca5e41d5eabe" kind="function"><name>naaice_swnaa_write_data</name></member>
+    <member refid="naaice__swnaa_8h_1a8de430c646b492b2ed48e02b5c605a98" kind="function"><name>naaice_swnaa_disconnect_and_cleanup</name></member>
+    <member refid="naaice__swnaa_8h_1ae641aa93b2c8bb44a7346cbc6df59560" kind="function"><name>naaice_swnaa_do_mrsp</name></member>
+    <member refid="naaice__swnaa_8h_1a29754b79027796b544949dddc0966588" kind="function"><name>naaice_swnaa_receive_data_transfer</name></member>
+    <member refid="naaice__swnaa_8h_1afcd7cfac00b5a22c00bfa9232951e762" kind="function"><name>naaice_swnaa_do_data_transfer</name></member>
+    <member refid="naaice__swnaa_8h_1a699965b5aacdf718be4c95ac910a16cc" kind="function"><name>naaice_swnaa_poll_cq_nonblocking</name></member>
+  </compound>
+  <compound refid="group__defines" kind="group"><name>defines</name>
+    <member refid="group__defines_1gaeb2c8b9b4d058b7930d52db59b5f9051" kind="define"><name>TIMEOUT_RESOLVE_ROUTE</name></member>
+    <member refid="group__defines_1gac5aea11b8390f14300a4050cfd3f1fcb" kind="define"><name>POLLING_TIMEOUT</name></member>
+    <member refid="group__defines_1gaad2dd72565852b91c809cd4685833b17" kind="define"><name>DEFAULT_TIMEOUT</name></member>
+    <member refid="group__defines_1ga7bde5b78c001e2bbcf25de2822064697" kind="define"><name>DEFAULT_RETRY_COUNT</name></member>
+  </compound>
+  <compound refid="group__StructsEnums" kind="group"><name>StructsEnums</name>
+    <member refid="group__StructsEnums_1ga5e8ebba1c33bfad2aec98b1e01102499" kind="enum"><name>naaice_communication_state</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a2b39831b3d37861c0836f825c7155c87" kind="enumvalue"><name>NAAICE_INIT</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a18b3eaa5387daae9cc106f001fcd4080" kind="enumvalue"><name>NAAICE_READY</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af9cc149ba2f0beeb6770489629a9f9b4" kind="enumvalue"><name>NAAICE_CONNECTED</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499af2fac984554c84cfece8c9dd70f2ab2f" kind="enumvalue"><name>NAAICE_DISCONNECTED</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a833cc6b658aa83b4b73d3a5e85d0407c" kind="enumvalue"><name>NAAICE_MRSP_SENDING</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a089eafcd9d0d5c4b0ac755c4d0095227" kind="enumvalue"><name>NAAICE_MRSP_RECEIVING</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a8564fdbaf1eecfe48290a285c355d9ec" kind="enumvalue"><name>NAAICE_MRSP_DONE</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aae09fba7ce6e1507c7eda329cfff056c" kind="enumvalue"><name>NAAICE_DATA_SENDING</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499aa97bb9c763fe1c6611157a097309fd2f" kind="enumvalue"><name>NAAICE_CALCULATING</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499abcfd2d16d79fc8c92838f0db2cc05627" kind="enumvalue"><name>NAAICE_DATA_RECEIVING</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a56fbe9d1b74e957c24d5df85b94d6e14" kind="enumvalue"><name>NAAICE_FINISHED</name></member>
+    <member refid="group__StructsEnums_1gga5e8ebba1c33bfad2aec98b1e01102499a5fd2423c93c92920f8bf3668004a38cd" kind="enumvalue"><name>NAAICE_ERROR</name></member>
+    <member refid="group__StructsEnums_1ga45430261054a7041b457175c442cc626" kind="enum"><name>naa_error</name></member>
+    <member refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626a371946b5deb790ceacbc0a0ed829f381" kind="enumvalue"><name>NAA_SUCCESS</name></member>
+    <member refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626a9324362df7bd82c5991796019b7184c2" kind="enumvalue"><name>SOCKET_UNAVAIL</name></member>
+    <member refid="group__StructsEnums_1gga45430261054a7041b457175c442cc626acc2509a251c8b761b4799a950e30dc58" kind="enumvalue"><name>KERNEL_TIMEOUT</name></member>
+    <member refid="group__StructsEnums_1ga8f57849ab74ea615ad8bd74df264ede2" kind="typedef"><name>naa_handle</name></member>
+    <member refid="group__StructsEnums_1gab5cd016885936f9664f72c77b4d96474" kind="typedef"><name>naa_status</name></member>
+  </compound>
+  <compound refid="group__PublicFunctions" kind="group"><name>PublicFunctions</name>
+    <member refid="group__PublicFunctions_1ga6f3ba43a0744d3118a6fb194503eb63e" kind="function"><name>naaice_init_communication_context</name></member>
+    <member refid="group__PublicFunctions_1gaf2fe88c227bab4e0722365efc2dba892" kind="function"><name>naaice_poll_connection_event</name></member>
+    <member refid="group__PublicFunctions_1ga241fe974872b43327aa2bb3f8fcf56c9" kind="function"><name>naaice_poll_and_handle_connection_event</name></member>
+    <member refid="group__PublicFunctions_1ga41cae89395d0303a73aa675c9be5ed05" kind="function"><name>naaice_setup_connection</name></member>
+    <member refid="group__PublicFunctions_1gae242db34a7bfaea52853646886269fca" kind="function"><name>naaice_register_mrs</name></member>
+    <member refid="group__PublicFunctions_1gac477d9f2f20410154089940519d29ff3" kind="function"><name>naaice_set_parameter_mrs</name></member>
+    <member refid="group__PublicFunctions_1ga78223d8aa683630e139217773b9bf9b2" kind="function"><name>naaice_set_input_mr</name></member>
+    <member refid="group__PublicFunctions_1gaf80665027802da485541cebd9cbe5570" kind="function"><name>naaice_set_output_mr</name></member>
+    <member refid="group__PublicFunctions_1ga3e0bb6d9854ad7e39a49fd5907d394da" kind="function"><name>naaice_set_singlesend_mr</name></member>
+    <member refid="group__PublicFunctions_1ga6f329c9fac52b8c65c5b9d8441ca2065" kind="function"><name>naaice_set_internal_mrs</name></member>
+    <member refid="group__PublicFunctions_1gab1eaa0617fe2d1cd8f6a0248b9869283" kind="function"><name>naaice_set_immediate</name></member>
+    <member refid="group__PublicFunctions_1ga3babb3d708aec505bfc0df1223acba28" kind="function"><name>naaice_init_mrsp</name></member>
+    <member refid="group__PublicFunctions_1gacd927690e6d6b807be794b34878630d1" kind="function"><name>naaice_init_data_transfer</name></member>
+    <member refid="group__PublicFunctions_1ga7a05d334df39718b31030442d172e1e6" kind="function"><name>naaice_handle_work_completion</name></member>
+    <member refid="group__PublicFunctions_1gaf4a8fd1c6bbd8589868fa454c8f8c863" kind="function"><name>naaice_poll_cq_nonblocking</name></member>
+    <member refid="group__PublicFunctions_1gaa6fdf267f0d16b71b1cde8f337332035" kind="function"><name>naaice_poll_cq_blocking</name></member>
+    <member refid="group__PublicFunctions_1ga74338ed21867befe5820a7cde3d7a71c" kind="function"><name>naaice_disconnect_and_cleanup</name></member>
+    <member refid="group__PublicFunctions_1ga8f0b77ff3c5376a9aa5b583c9cbf752b" kind="function"><name>naaice_send_message</name></member>
+    <member refid="group__PublicFunctions_1gadd7def5aad3326ca5c416ad0158c0c57" kind="function"><name>naaice_write_data</name></member>
+    <member refid="group__PublicFunctions_1ga83494efe81ac7802b6119438509e08fc" kind="function"><name>naaice_post_recv_mrsp</name></member>
+    <member refid="group__PublicFunctions_1gad9227128ecee083b491749888b8ff8b9" kind="function"><name>naaice_post_recv_data</name></member>
+    <member refid="group__PublicFunctions_1gaff209c1f0b59a45983c53f5698a25ed7" kind="function"><name>naaice_init_rdma_resources</name></member>
+    <member refid="group__PublicFunctions_1ga8b2194c5a28e85fe089be51e060a8435" kind="function"><name>naaice_do_mrsp</name></member>
+    <member refid="group__PublicFunctions_1ga43e50e171eff94f88abab88963d3cd7a" kind="function"><name>naaice_do_data_transfer</name></member>
+    <member refid="group__PublicFunctions_1ga23fbc699ddcd9e7b8f292e225c7c9895" kind="function"><name>naaice_set_bytes_to_send</name></member>
+  </compound>
+  <compound refid="group__connection__event__handlers" kind="group"><name>connection_event_handlers</name>
+    <member refid="group__connection__event__handlers_1ga4b5436e11c02694060160979030d95a1" kind="function"><name>naaice_handle_addr_resolved</name></member>
+    <member refid="group__connection__event__handlers_1gafc4354e4bf95ecb75d18db774576193e" kind="function"><name>naaice_handle_route_resolved</name></member>
+    <member refid="group__connection__event__handlers_1ga24acca87a515ab9019a66db096783210" kind="function"><name>naaice_handle_connection_established</name></member>
+    <member refid="group__connection__event__handlers_1ga82967cd400958762446f2f78ea6707e0" kind="function"><name>naaice_handle_error</name></member>
+    <member refid="group__connection__event__handlers_1gac4798696d7a0940b2e00a69829050721" kind="function"><name>naaice_handle_other</name></member>
+  </compound>
+  <compound refid="group__Functions" kind="group"><name>Functions</name>
+    <member refid="group__Functions_1ga4b3a6cd9631f1817cc6f360c92d8149e" kind="typedef"><name>naa_param_t</name></member>
+    <member refid="group__Functions_1gaee9f8a2c0afbe3868e00685c06c94ce4" kind="function"><name>naa_create</name></member>
+    <member refid="group__Functions_1ga978eb1295ce4e7b283b6d6b74286b2d2" kind="function"><name>naa_invoke</name></member>
+  </compound>
+  <compound refid="dir_97aefd0d527b934f1d99a682da8fe6a9" kind="dir"><name>/Users/hannessigner/Documents/Work/naa-communication-prototype/lib</name>
+  </compound>
+</doxygenindex>

@@ -1,0 +1,73 @@
+\doxysection{naaice\+\_\+mr\+\_\+internal Struct Reference}
+\hypertarget{structnaaice__mr__internal}{}\label{structnaaice__mr__internal}\index{naaice\_mr\_internal@{naaice\_mr\_internal}}
+
+
+Information about an internal memory region on the NAA.  
+
+
+
+
+{\ttfamily \#include $<$naaice.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>uint64\_t \mbox{\hyperlink{structnaaice__mr__internal_a4dbe8b3b64ead3633cc4f45ba0fe3f31}{addr}}\\
+\>\>{\em Address of the internal memory region in NAA memory space. }\\
+\>uint8\_t \mbox{\hyperlink{structnaaice__mr__internal_a9fe46515d1ae382b09a42c33671927ab}{fpgaaddr}} \mbox{[}8\mbox{]}\\
+\>\>{\em Byte array representation of the internal address (e.g., FPGA address). }\\
+\}; \\
+
+\end{tabbing}\item 
+size\+\_\+t \mbox{\hyperlink{structnaaice__mr__internal_a665ced3040564d394a9914258fb4d732}{size}}
+\begin{DoxyCompactList}\small\item\em Size of the internal memory region, in bytes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Information about an internal memory region on the NAA. 
+
+Represents a memory region used internally for computation on the NAA. These regions exist only on the NAA side and are not transferred during data transfer. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaaice__mr__internal_a551d947ee776f02f5a32156e33eab9a4}\doxysubsubsection{\texorpdfstring{[union]}{[union]}}
+{\footnotesize\ttfamily \label{structnaaice__mr__internal_a551d947ee776f02f5a32156e33eab9a4} 
+union  \{ ... \}  \mbox{\hyperlink{structnaaice__mr__internal}{naaice\+\_\+mr\+\_\+internal}}}
+
+\Hypertarget{structnaaice__mr__internal_a4dbe8b3b64ead3633cc4f45ba0fe3f31}\index{naaice\_mr\_internal@{naaice\_mr\_internal}!addr@{addr}}
+\index{addr@{addr}!naaice\_mr\_internal@{naaice\_mr\_internal}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__internal_a4dbe8b3b64ead3633cc4f45ba0fe3f31} 
+uint64\+\_\+t naaice\+\_\+mr\+\_\+internal\+::addr}
+
+
+
+Address of the internal memory region in NAA memory space. 
+
+\Hypertarget{structnaaice__mr__internal_a9fe46515d1ae382b09a42c33671927ab}\index{naaice\_mr\_internal@{naaice\_mr\_internal}!fpgaaddr@{fpgaaddr}}
+\index{fpgaaddr@{fpgaaddr}!naaice\_mr\_internal@{naaice\_mr\_internal}}
+\doxysubsubsection{\texorpdfstring{fpgaaddr}{fpgaaddr}}
+{\footnotesize\ttfamily \label{structnaaice__mr__internal_a9fe46515d1ae382b09a42c33671927ab} 
+uint8\+\_\+t naaice\+\_\+mr\+\_\+internal\+::fpgaaddr\mbox{[}8\mbox{]}}
+
+
+
+Byte array representation of the internal address (e.\+g., FPGA address). 
+
+\Hypertarget{structnaaice__mr__internal_a665ced3040564d394a9914258fb4d732}\index{naaice\_mr\_internal@{naaice\_mr\_internal}!size@{size}}
+\index{size@{size}!naaice\_mr\_internal@{naaice\_mr\_internal}}
+\doxysubsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily \label{structnaaice__mr__internal_a665ced3040564d394a9914258fb4d732} 
+size\+\_\+t naaice\+\_\+mr\+\_\+internal\+::size}
+
+
+
+Size of the internal memory region, in bytes. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice_8h}{naaice.\+h}}\end{DoxyCompactItemize}

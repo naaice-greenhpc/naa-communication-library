@@ -1,0 +1,355 @@
+\doxysection{naaice\+\_\+communication\+\_\+context Struct Reference}
+\hypertarget{structnaaice__communication__context}{}\label{structnaaice__communication__context}\index{naaice\_communication\_context@{naaice\_communication\_context}}
+
+
+Communication context for NAA connections.  
+
+
+
+
+{\ttfamily \#include $<$naaice.\+h$>$}
+
+
+
+Collaboration diagram for naaice\+\_\+communication\+\_\+context\+:
+% FIG 0
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+struct rdma\+\_\+cm\+\_\+id \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_aa5adddc3e57b3c0ec92f5a28a06f2c99}{id}}
+\begin{DoxyCompactList}\small\item\em RDMA communication identifier. \end{DoxyCompactList}\item 
+struct rdma\+\_\+event\+\_\+channel \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_a750493d1c756467c2d9eb97eb35cbe06}{ev\+\_\+channel}}
+\begin{DoxyCompactList}\small\item\em RDMA event channel. \end{DoxyCompactList}\item 
+struct ibv\+\_\+context \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_a2b5db6c6ba0ccad0aebb9809814aa6f4}{ibv\+\_\+ctx}}
+\begin{DoxyCompactList}\small\item\em IBV device context. \end{DoxyCompactList}\item 
+struct ibv\+\_\+pd \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_a57a8f4c0c806cf0770c8e0e5a4420fb2}{pd}}
+\begin{DoxyCompactList}\small\item\em Protection domain for memory regions. \end{DoxyCompactList}\item 
+struct ibv\+\_\+comp\+\_\+channel \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_a92c5d4473461f9f34f229cbcb23fb442}{comp\+\_\+channel}}
+\begin{DoxyCompactList}\small\item\em Completion channel. \end{DoxyCompactList}\item 
+struct ibv\+\_\+cq \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_a777a77e3ecf5fc32156c56aa0c671992}{cq}}
+\begin{DoxyCompactList}\small\item\em Completion queue. \end{DoxyCompactList}\item 
+struct ibv\+\_\+qp \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_af3d03a0fc5a8e98046d7147516415d25}{qp}}
+\begin{DoxyCompactList}\small\item\em Queue pair. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{structnaaice__communication__context_a5e0af877410b4f1a5f33604f8ead73f6}{timeout}}
+\begin{DoxyCompactList}\small\item\em Timeout for operations, in seconds. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_a0b6f041373ff651f70928dca1768ceb6}{retry\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em Retry count for RDMA connection. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}} \mbox{\hyperlink{structnaaice__communication__context_af54d81eb0f53839114e399e9cc003b4f}{state}}
+\begin{DoxyCompactList}\small\item\em Current communication state. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__local}{naaice\+\_\+mr\+\_\+local}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_ae96707fd4075be44a68b071f4f279900}{mr\+\_\+local\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em Array of local memory regions. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_ab5d4eba84bf71a67cb4d6304ffa9130c}{no\+\_\+local\+\_\+mrs}}
+\begin{DoxyCompactList}\small\item\em Number of local memory regions. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_afc0d1f44fd8b275ef6d276fb7fad0e43}{mr\+\_\+return\+\_\+idx}}
+\item 
+struct \mbox{\hyperlink{structnaaice__mr__peer}{naaice\+\_\+mr\+\_\+peer}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_aae140cb69ac48e9717f38a35a061f30e}{mr\+\_\+peer\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em Array of peer memory regions representing symmetric parameters. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_af6f3763a2f4ca85b33d45a5469b3d078}{no\+\_\+peer\+\_\+mrs}}
+\begin{DoxyCompactList}\small\item\em Number of peer memory regions. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__local}{naaice\+\_\+mr\+\_\+local}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_ac2b159dc28f192032a3d7eb2adb927a4}{mr\+\_\+local\+\_\+message}}
+\begin{DoxyCompactList}\small\item\em Local memory region used for MRSP messages. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__mr__internal}{naaice\+\_\+mr\+\_\+internal}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaaice__communication__context_af8c8396299727fe54ccab35b68585668}{mr\+\_\+internal}}
+\begin{DoxyCompactList}\small\item\em Array of internal memory regions on NAA used for computation. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_a694188281d4785054a49b117ad5c03db}{no\+\_\+internal\+\_\+mrs}}
+\begin{DoxyCompactList}\small\item\em Number of internal memory regions. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_a5c62d91ca4564b4ce7953f1cc51c383b}{fncode}}
+\begin{DoxyCompactList}\small\item\em Function code specifying which NAA routine to call. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_aa539396f7fd926b012a490284f99fa22}{naa\+\_\+returncode}}
+\begin{DoxyCompactList}\small\item\em Return code indicating success or failure of NAA routine. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_a3863ada75e1d23f5694f9df8eafadce4}{rdma\+\_\+writes\+\_\+done}}
+\begin{DoxyCompactList}\small\item\em Number of RDMA writes performed to NAA. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_ac7ed64db9b870f5b631f1cfe4dec27b8}{bytes\+\_\+received}}
+\begin{DoxyCompactList}\small\item\em Number of bytes received from NAA. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_a91641d8db0a6392aaf6aca1e06eb1086}{no\+\_\+input\+\_\+mrs}}
+\begin{DoxyCompactList}\small\item\em Number of input memory regions (parameters). \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structnaaice__communication__context_ad2f11f484f7982fbe7e12c31d94ebcb0}{no\+\_\+output\+\_\+mrs}}
+\begin{DoxyCompactList}\small\item\em Number of output memory regions (parameters). \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{structnaaice__communication__context_ac5ebfd7992cd27f0236d34b463179e22}{no\+\_\+rpc\+\_\+calls}}
+\begin{DoxyCompactList}\small\item\em Number of RPC calls performed on this connection. \end{DoxyCompactList}\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>uint32\_t \mbox{\hyperlink{structnaaice__communication__context_ad4fabf04117ce1beb272d7b9fa0687f7}{immediate}}\\
+\>uint8\_t \mbox{\hyperlink{structnaaice__communication__context_a8cb2bf53c251cad5dceefee1c4888c59}{immediate\_bytearr}} \mbox{[}4\mbox{]}\\
+\}; \\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Communication context for NAA connections. 
+
+Holds all information about a connection, including RDMA resources, memory regions, current state, function codes, and transfer metadata. This struct is passed to almost all AP1 functions. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaaice__communication__context_af45187078063e9c3fa29adc788454cba}\doxysubsubsection{\texorpdfstring{[union]}{[union]}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_af45187078063e9c3fa29adc788454cba} 
+union  \{ ... \}  \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}}}
+
+32-\/bit immediate value sent during RDMA transfers.
+\begin{DoxyItemize}
+\item First byte holds function code (set with \doxylink{group__PublicFunctions_ga6f3ba43a0744d3118a6fb194503eb63e}{naaice\+\_\+init\+\_\+communication\+\_\+context})
+\item Remaining bytes can be set using \doxylink{group__PublicFunctions_gab1eaa0617fe2d1cd8f6a0248b9869283}{naaice\+\_\+set\+\_\+immediate} 
+\end{DoxyItemize}\Hypertarget{structnaaice__communication__context_ac7ed64db9b870f5b631f1cfe4dec27b8}\index{naaice\_communication\_context@{naaice\_communication\_context}!bytes\_received@{bytes\_received}}
+\index{bytes\_received@{bytes\_received}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{bytes\_received}{bytes\_received}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ac7ed64db9b870f5b631f1cfe4dec27b8} 
+uint32\+\_\+t naaice\+\_\+communication\+\_\+context\+::bytes\+\_\+received}
+
+
+
+Number of bytes received from NAA. 
+
+\Hypertarget{structnaaice__communication__context_a92c5d4473461f9f34f229cbcb23fb442}\index{naaice\_communication\_context@{naaice\_communication\_context}!comp\_channel@{comp\_channel}}
+\index{comp\_channel@{comp\_channel}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{comp\_channel}{comp\_channel}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a92c5d4473461f9f34f229cbcb23fb442} 
+struct ibv\+\_\+comp\+\_\+channel\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::comp\+\_\+channel}
+
+
+
+Completion channel. 
+
+\Hypertarget{structnaaice__communication__context_a777a77e3ecf5fc32156c56aa0c671992}\index{naaice\_communication\_context@{naaice\_communication\_context}!cq@{cq}}
+\index{cq@{cq}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{cq}{cq}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a777a77e3ecf5fc32156c56aa0c671992} 
+struct ibv\+\_\+cq\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::cq}
+
+
+
+Completion queue. 
+
+\Hypertarget{structnaaice__communication__context_a750493d1c756467c2d9eb97eb35cbe06}\index{naaice\_communication\_context@{naaice\_communication\_context}!ev\_channel@{ev\_channel}}
+\index{ev\_channel@{ev\_channel}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{ev\_channel}{ev\_channel}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a750493d1c756467c2d9eb97eb35cbe06} 
+struct rdma\+\_\+event\+\_\+channel\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::ev\+\_\+channel}
+
+
+
+RDMA event channel. 
+
+\Hypertarget{structnaaice__communication__context_a5c62d91ca4564b4ce7953f1cc51c383b}\index{naaice\_communication\_context@{naaice\_communication\_context}!fncode@{fncode}}
+\index{fncode@{fncode}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{fncode}{fncode}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a5c62d91ca4564b4ce7953f1cc51c383b} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::fncode}
+
+
+
+Function code specifying which NAA routine to call. 
+
+\Hypertarget{structnaaice__communication__context_a2b5db6c6ba0ccad0aebb9809814aa6f4}\index{naaice\_communication\_context@{naaice\_communication\_context}!ibv\_ctx@{ibv\_ctx}}
+\index{ibv\_ctx@{ibv\_ctx}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{ibv\_ctx}{ibv\_ctx}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a2b5db6c6ba0ccad0aebb9809814aa6f4} 
+struct ibv\+\_\+context\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::ibv\+\_\+ctx}
+
+
+
+IBV device context. 
+
+\Hypertarget{structnaaice__communication__context_aa5adddc3e57b3c0ec92f5a28a06f2c99}\index{naaice\_communication\_context@{naaice\_communication\_context}!id@{id}}
+\index{id@{id}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_aa5adddc3e57b3c0ec92f5a28a06f2c99} 
+struct rdma\+\_\+cm\+\_\+id\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::id}
+
+
+
+RDMA communication identifier. 
+
+\Hypertarget{structnaaice__communication__context_ad4fabf04117ce1beb272d7b9fa0687f7}\index{naaice\_communication\_context@{naaice\_communication\_context}!immediate@{immediate}}
+\index{immediate@{immediate}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{immediate}{immediate}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ad4fabf04117ce1beb272d7b9fa0687f7} 
+uint32\+\_\+t naaice\+\_\+communication\+\_\+context\+::immediate}
+
+\Hypertarget{structnaaice__communication__context_a8cb2bf53c251cad5dceefee1c4888c59}\index{naaice\_communication\_context@{naaice\_communication\_context}!immediate\_bytearr@{immediate\_bytearr}}
+\index{immediate\_bytearr@{immediate\_bytearr}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{immediate\_bytearr}{immediate\_bytearr}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a8cb2bf53c251cad5dceefee1c4888c59} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::immediate\+\_\+bytearr\mbox{[}4\mbox{]}}
+
+\Hypertarget{structnaaice__communication__context_af8c8396299727fe54ccab35b68585668}\index{naaice\_communication\_context@{naaice\_communication\_context}!mr\_internal@{mr\_internal}}
+\index{mr\_internal@{mr\_internal}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{mr\_internal}{mr\_internal}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_af8c8396299727fe54ccab35b68585668} 
+struct \mbox{\hyperlink{structnaaice__mr__internal}{naaice\+\_\+mr\+\_\+internal}}\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::mr\+\_\+internal}
+
+
+
+Array of internal memory regions on NAA used for computation. 
+
+\Hypertarget{structnaaice__communication__context_ae96707fd4075be44a68b071f4f279900}\index{naaice\_communication\_context@{naaice\_communication\_context}!mr\_local\_data@{mr\_local\_data}}
+\index{mr\_local\_data@{mr\_local\_data}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{mr\_local\_data}{mr\_local\_data}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ae96707fd4075be44a68b071f4f279900} 
+struct \mbox{\hyperlink{structnaaice__mr__local}{naaice\+\_\+mr\+\_\+local}}\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::mr\+\_\+local\+\_\+data}
+
+
+
+Array of local memory regions. 
+
+\Hypertarget{structnaaice__communication__context_ac2b159dc28f192032a3d7eb2adb927a4}\index{naaice\_communication\_context@{naaice\_communication\_context}!mr\_local\_message@{mr\_local\_message}}
+\index{mr\_local\_message@{mr\_local\_message}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{mr\_local\_message}{mr\_local\_message}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ac2b159dc28f192032a3d7eb2adb927a4} 
+struct \mbox{\hyperlink{structnaaice__mr__local}{naaice\+\_\+mr\+\_\+local}}\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::mr\+\_\+local\+\_\+message}
+
+
+
+Local memory region used for MRSP messages. 
+
+\Hypertarget{structnaaice__communication__context_aae140cb69ac48e9717f38a35a061f30e}\index{naaice\_communication\_context@{naaice\_communication\_context}!mr\_peer\_data@{mr\_peer\_data}}
+\index{mr\_peer\_data@{mr\_peer\_data}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{mr\_peer\_data}{mr\_peer\_data}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_aae140cb69ac48e9717f38a35a061f30e} 
+struct \mbox{\hyperlink{structnaaice__mr__peer}{naaice\+\_\+mr\+\_\+peer}}\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::mr\+\_\+peer\+\_\+data}
+
+
+
+Array of peer memory regions representing symmetric parameters. 
+
+\Hypertarget{structnaaice__communication__context_afc0d1f44fd8b275ef6d276fb7fad0e43}\index{naaice\_communication\_context@{naaice\_communication\_context}!mr\_return\_idx@{mr\_return\_idx}}
+\index{mr\_return\_idx@{mr\_return\_idx}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{mr\_return\_idx}{mr\_return\_idx}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_afc0d1f44fd8b275ef6d276fb7fad0e43} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::mr\+\_\+return\+\_\+idx}
+
+Index of the return memory region (1..no\+\_\+local\+\_\+mrs), set by \+::naaice\+\_\+set\+\_\+metadata. \Hypertarget{structnaaice__communication__context_aa539396f7fd926b012a490284f99fa22}\index{naaice\_communication\_context@{naaice\_communication\_context}!naa\_returncode@{naa\_returncode}}
+\index{naa\_returncode@{naa\_returncode}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{naa\_returncode}{naa\_returncode}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_aa539396f7fd926b012a490284f99fa22} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::naa\+\_\+returncode}
+
+
+
+Return code indicating success or failure of NAA routine. 
+
+\Hypertarget{structnaaice__communication__context_a91641d8db0a6392aaf6aca1e06eb1086}\index{naaice\_communication\_context@{naaice\_communication\_context}!no\_input\_mrs@{no\_input\_mrs}}
+\index{no\_input\_mrs@{no\_input\_mrs}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{no\_input\_mrs}{no\_input\_mrs}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a91641d8db0a6392aaf6aca1e06eb1086} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::no\+\_\+input\+\_\+mrs}
+
+
+
+Number of input memory regions (parameters). 
+
+\Hypertarget{structnaaice__communication__context_a694188281d4785054a49b117ad5c03db}\index{naaice\_communication\_context@{naaice\_communication\_context}!no\_internal\_mrs@{no\_internal\_mrs}}
+\index{no\_internal\_mrs@{no\_internal\_mrs}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{no\_internal\_mrs}{no\_internal\_mrs}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a694188281d4785054a49b117ad5c03db} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::no\+\_\+internal\+\_\+mrs}
+
+
+
+Number of internal memory regions. 
+
+\Hypertarget{structnaaice__communication__context_ab5d4eba84bf71a67cb4d6304ffa9130c}\index{naaice\_communication\_context@{naaice\_communication\_context}!no\_local\_mrs@{no\_local\_mrs}}
+\index{no\_local\_mrs@{no\_local\_mrs}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{no\_local\_mrs}{no\_local\_mrs}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ab5d4eba84bf71a67cb4d6304ffa9130c} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::no\+\_\+local\+\_\+mrs}
+
+
+
+Number of local memory regions. 
+
+\Hypertarget{structnaaice__communication__context_ad2f11f484f7982fbe7e12c31d94ebcb0}\index{naaice\_communication\_context@{naaice\_communication\_context}!no\_output\_mrs@{no\_output\_mrs}}
+\index{no\_output\_mrs@{no\_output\_mrs}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{no\_output\_mrs}{no\_output\_mrs}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ad2f11f484f7982fbe7e12c31d94ebcb0} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::no\+\_\+output\+\_\+mrs}
+
+
+
+Number of output memory regions (parameters). 
+
+\Hypertarget{structnaaice__communication__context_af6f3763a2f4ca85b33d45a5469b3d078}\index{naaice\_communication\_context@{naaice\_communication\_context}!no\_peer\_mrs@{no\_peer\_mrs}}
+\index{no\_peer\_mrs@{no\_peer\_mrs}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{no\_peer\_mrs}{no\_peer\_mrs}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_af6f3763a2f4ca85b33d45a5469b3d078} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::no\+\_\+peer\+\_\+mrs}
+
+
+
+Number of peer memory regions. 
+
+\Hypertarget{structnaaice__communication__context_ac5ebfd7992cd27f0236d34b463179e22}\index{naaice\_communication\_context@{naaice\_communication\_context}!no\_rpc\_calls@{no\_rpc\_calls}}
+\index{no\_rpc\_calls@{no\_rpc\_calls}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{no\_rpc\_calls}{no\_rpc\_calls}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_ac5ebfd7992cd27f0236d34b463179e22} 
+unsigned int naaice\+\_\+communication\+\_\+context\+::no\+\_\+rpc\+\_\+calls}
+
+
+
+Number of RPC calls performed on this connection. 
+
+\Hypertarget{structnaaice__communication__context_a57a8f4c0c806cf0770c8e0e5a4420fb2}\index{naaice\_communication\_context@{naaice\_communication\_context}!pd@{pd}}
+\index{pd@{pd}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{pd}{pd}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a57a8f4c0c806cf0770c8e0e5a4420fb2} 
+struct ibv\+\_\+pd\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::pd}
+
+
+
+Protection domain for memory regions. 
+
+\Hypertarget{structnaaice__communication__context_af3d03a0fc5a8e98046d7147516415d25}\index{naaice\_communication\_context@{naaice\_communication\_context}!qp@{qp}}
+\index{qp@{qp}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{qp}{qp}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_af3d03a0fc5a8e98046d7147516415d25} 
+struct ibv\+\_\+qp\texorpdfstring{$\ast$}{*} naaice\+\_\+communication\+\_\+context\+::qp}
+
+
+
+Queue pair. 
+
+\Hypertarget{structnaaice__communication__context_a3863ada75e1d23f5694f9df8eafadce4}\index{naaice\_communication\_context@{naaice\_communication\_context}!rdma\_writes\_done@{rdma\_writes\_done}}
+\index{rdma\_writes\_done@{rdma\_writes\_done}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{rdma\_writes\_done}{rdma\_writes\_done}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a3863ada75e1d23f5694f9df8eafadce4} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::rdma\+\_\+writes\+\_\+done}
+
+
+
+Number of RDMA writes performed to NAA. 
+
+\Hypertarget{structnaaice__communication__context_a0b6f041373ff651f70928dca1768ceb6}\index{naaice\_communication\_context@{naaice\_communication\_context}!retry\_count@{retry\_count}}
+\index{retry\_count@{retry\_count}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{retry\_count}{retry\_count}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a0b6f041373ff651f70928dca1768ceb6} 
+uint8\+\_\+t naaice\+\_\+communication\+\_\+context\+::retry\+\_\+count}
+
+
+
+Retry count for RDMA connection. 
+
+\Hypertarget{structnaaice__communication__context_af54d81eb0f53839114e399e9cc003b4f}\index{naaice\_communication\_context@{naaice\_communication\_context}!state@{state}}
+\index{state@{state}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_af54d81eb0f53839114e399e9cc003b4f} 
+enum \mbox{\hyperlink{group__StructsEnums_ga5e8ebba1c33bfad2aec98b1e01102499}{naaice\+\_\+communication\+\_\+state}} naaice\+\_\+communication\+\_\+context\+::state}
+
+
+
+Current communication state. 
+
+\Hypertarget{structnaaice__communication__context_a5e0af877410b4f1a5f33604f8ead73f6}\index{naaice\_communication\_context@{naaice\_communication\_context}!timeout@{timeout}}
+\index{timeout@{timeout}!naaice\_communication\_context@{naaice\_communication\_context}}
+\doxysubsubsection{\texorpdfstring{timeout}{timeout}}
+{\footnotesize\ttfamily \label{structnaaice__communication__context_a5e0af877410b4f1a5f33604f8ead73f6} 
+double naaice\+\_\+communication\+\_\+context\+::timeout}
+
+
+
+Timeout for operations, in seconds. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice_8h}{naaice.\+h}}\end{DoxyCompactItemize}

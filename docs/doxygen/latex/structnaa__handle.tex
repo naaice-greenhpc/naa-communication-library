@@ -1,0 +1,55 @@
+\doxysection{naa\+\_\+handle Struct Reference}
+\hypertarget{structnaa__handle}{}\label{structnaa__handle}\index{naa\_handle@{naa\_handle}}
+
+
+Represents a handle to a NAA session.  
+
+
+
+
+{\ttfamily \#include $<$naaice\+\_\+ap2.\+h$>$}
+
+
+
+Collaboration diagram for naa\+\_\+handle\+:
+% FIG 0
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\+\_\+function\+\_\+code\+\_\+t}} \mbox{\hyperlink{structnaa__handle_a5c4b8a9ab94644b0c475284e69567d6b}{function\+\_\+code}}
+\begin{DoxyCompactList}\small\item\em Function code specifying the routine to be executed on the NAA. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structnaa__handle_a71ad357cc6f416a6e43706df32519825}{comm\+\_\+ctx}}
+\begin{DoxyCompactList}\small\item\em Pointer to the communication context used for low-\/level API operations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a handle to a NAA session. 
+
+Holds information about an active NAA session, including the function code specifying the routine to execute and the associated low-\/level communication context. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structnaa__handle_a71ad357cc6f416a6e43706df32519825}\index{naa\_handle@{naa\_handle}!comm\_ctx@{comm\_ctx}}
+\index{comm\_ctx@{comm\_ctx}!naa\_handle@{naa\_handle}}
+\doxysubsubsection{\texorpdfstring{comm\_ctx}{comm\_ctx}}
+{\footnotesize\ttfamily \label{structnaa__handle_a71ad357cc6f416a6e43706df32519825} 
+struct \mbox{\hyperlink{structnaaice__communication__context}{naaice\+\_\+communication\+\_\+context}}\texorpdfstring{$\ast$}{*} naa\+\_\+handle\+::comm\+\_\+ctx}
+
+
+
+Pointer to the communication context used for low-\/level API operations. 
+
+\Hypertarget{structnaa__handle_a5c4b8a9ab94644b0c475284e69567d6b}\index{naa\_handle@{naa\_handle}!function\_code@{function\_code}}
+\index{function\_code@{function\_code}!naa\_handle@{naa\_handle}}
+\doxysubsubsection{\texorpdfstring{function\_code}{function\_code}}
+{\footnotesize\ttfamily \label{structnaa__handle_a5c4b8a9ab94644b0c475284e69567d6b} 
+\mbox{\hyperlink{naaice__ap2_8h_a984c734ca0922a5323679532ee75a0a3}{naa\+\_\+function\+\_\+code\+\_\+t}} naa\+\_\+handle\+::function\+\_\+code}
+
+
+
+Function code specifying the routine to be executed on the NAA. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/hannessigner/\+Documents/\+Work/naa-\/communication-\/prototype/lib/\mbox{\hyperlink{naaice__ap2_8h}{naaice\+\_\+ap2.\+h}}\end{DoxyCompactItemize}
