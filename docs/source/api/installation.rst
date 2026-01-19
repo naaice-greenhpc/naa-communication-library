@@ -6,7 +6,7 @@ A separate target is provided for each of the components: low-level API, middlew
 The use in a minimal project would look as follows:
 
 .. code-block:: cmake
-   :caption: Minimaler FetchContent-Einbau
+   :caption: Minimal CMake Example
 
    cmake_minimum_required(VERSION 3.21)
    project(example-project C)

@@ -31,11 +31,11 @@ Indices and tables
 
 Funding
 =======
-The development of EMA is funded by the BMFTR Germany in the context of the NAAICE_ Project (GreenHPC grant_)
+The development of EMA is funded by the BMFTR Germany in the context of the NAAICE_ Project (GreenHPC_ grant)
 
 ..  figure:: ./_static/BMFTR-sponsored.jpg
     :alt: BMFTR Logo
-    :scale: 65
+    :scale: 55
 
 
 .. _NAAICE: https://www.greenhpc.eu
