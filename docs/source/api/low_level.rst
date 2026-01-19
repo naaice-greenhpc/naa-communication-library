@@ -19,3 +19,7 @@ Functions
 ..  doxygengroup:: PublicFunctions
     :project: naa-communication-prototype
     :content-only:
+
+
+Example
+=======
