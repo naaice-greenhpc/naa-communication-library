@@ -15,10 +15,12 @@ fi
 if [ ! -e naaice_server ]; then
     echo "Error: naaice_server is missing"
     exit 1 
+fi
 
 if [ ! -e naaice_client_ap2 ]; then
     echo "Error: naaice_client_ap2 is missing"
     exit 1 
+fi
 
 cd "$ROOT_DIR/build/tests/"
 if [ ! -e naaice_client_low_level_measurement ]; then
