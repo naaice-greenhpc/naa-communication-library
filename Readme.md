@@ -188,7 +188,7 @@ BSD-3-Clause
 The development of the NAAICE Communication Libraries is funded by the BMFTR Germany in the context of the [NAAICE](https://greenhpc.eu) Project ([GreenHPC](https://gauss-allianz.de/en/project/call/Richtlinie%20zur%20F%C3%B6rderung%20von%20Verbundprojekten%20auf%20dem%20Gebiet%20des%20energieeffizienten%20High-%E2%80%8BPerformance%20Computings%20%28GreenHPC%29) grant)
 
 
-![BMFTR](docs/source/_static/BMFTR-sponsored.jpg "BMFTR")
+<img src="docs/source/_static/BMFTR-sponsored.jpg" alt="BMFTR" title="BMFTR" width="80%">
 
 
 ---
