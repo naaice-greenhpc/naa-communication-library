@@ -1,0 +1,6 @@
+add_executable(naaice_client_low_level_measurement naaice_client_low_level_measurement.c)
+add_executable(naaice_server_measurement naaice_server.c)
+#TODO: add throughput/latency tests with middleware
+
+target_link_libraries(naaice_client_low_level_measurement PRIVATE naaice::low_level)
+target_link_libraries(naaice_server_measurement PRIVATE naaice::swnaa)
