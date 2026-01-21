@@ -1,0 +1,37 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: NAAICE Communication Libraries
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Florian
+    family-names: Mikolajczak
+  - given-names: Everingham
+    family-names: Dylan
+  - given-names: Niklas
+    family-names: Schelten
+    email: niklas.schelten@hhi.fraunhofer.de
+    orcid: 'https://orcid.org/0000-0002-6597-4928'
+  - given-names: Hannes
+    family-names: Signer
+    email: signer@uni-potsdam.de
+    orcid: 'https://orcid.org/0009-0000-3058-8472'
+  - given-names: Steffen
+    family-names: Christgau
+    email: christgau@zib.de
+    orcid: 'https://orcid.org/0000-0002-8702-8422'
+repository-code: >-
+  https://git.gfz-potsdam.de/naaice/naa-communication-prototype
+keywords:
+  - RDMA
+  - RoCEv2
+  - NAAICE
+  - NAA
+  - ibverbs
+license: BSD-3-Clause
+version: '0.10'
+date-released: '2026-01-23'
