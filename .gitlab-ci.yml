@@ -122,7 +122,7 @@ evaluation:
             - reference_vs_measurements.pdf
         when: always
         access: all
-        expire_in: 1 hour
+        expire_in: 4 weeks
     tags:
         - naaice1-runner
 
