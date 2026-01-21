@@ -26,6 +26,7 @@
 
  /* Dependencies **************************************************************/
 
+#include "debug.h"
 #include "ulog.h"
 #include <naaice.h>
 #include <stdlib.h>

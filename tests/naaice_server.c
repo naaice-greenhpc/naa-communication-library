@@ -33,6 +33,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <naaice.h>
+#include <debug.h>
 #include <naaice_swnaa.h>
 
 
@@ -46,7 +47,7 @@
 // The routine should return 0 if successful, or some nonzero number if not.
 // This nonzero error code is sent to the host in the case of an error.
 uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
-  // printf("in do_procedure\n");
+  printf("in do_procedure\n");
   return 0;
 }
 
