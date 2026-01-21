@@ -55,18 +55,21 @@ pages:
   image: python:3.12-slim
   stage: deploy
   script:
-    - apt-get update && apt-get install -y doxygen make graphviz
-    - pip install sphinx breathe sphinx_rtd_theme
-    - cd docs
-    - doxygen Doxyfile
-    - make html
-    - cd ..
-    - mkdir public
-    - mv docs/build/html/* public/
+        - apt-get update && apt-get install -y doxygen make graphviz
+        - pip install sphinx breathe sphinx_rtd_theme
+        - cd docs
+        - doxygen Doxyfile
+        - make html
+        - cd ..
+        - mkdir public
+        - mv docs/build/html/* public/
 
   artifacts:
     paths:
       - public
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
 measurement_server:
     stage: measurement
@@ -83,6 +86,9 @@ measurement_server:
 
     tags:
         - naaice2-runner
+
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
 
 measurement_client:
     stage: measurement
@@ -106,6 +112,9 @@ measurement_client:
     tags:
         - naaice1-runner
 
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
+
 evaluation:
     stage: evaluation
     dependencies:
@@ -125,6 +134,9 @@ evaluation:
         expire_in: 4 weeks
     tags:
         - naaice1-runner
+
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
 
   # rules:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
