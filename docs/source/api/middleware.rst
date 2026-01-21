@@ -22,7 +22,7 @@ will reproduce or reuse functionalities and structures of the MPI standards. We
 assume that a middleware with analogies to MPI can be more easily adopted by
 the HPC community.
 
-3. **Ability for communication-computation-overlap (CCO)
+3. **Ability for communication-computation-overlap (CCO)**
 Instead of serialized communication and computation, the aim of the middleware
 is to allow both to happen concurrently. For this, non-blocking communication
 calls are necessary. Non-blocking communication functions return before the ac-

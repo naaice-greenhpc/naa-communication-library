@@ -1,6 +1,11 @@
 NAAICE Low-Level API Documentation
 ==================================
 
+This API documents structures and methods for client implementations. Server methods are documented on the Software-NAA page. The client (a host machine) requests RPCs on a remote machine, which can be either a host running our software or any API-compatible device such as an FPGA. Host client and server software implement a state machine model. In the error-free case, the client progresses through the states shown in the following figure:
+
+..  figure:: ../_static/states_client.png
+
+
 Defines
 --------------
 ..  doxygengroup:: DefinesLowLevel

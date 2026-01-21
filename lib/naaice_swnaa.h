@@ -90,7 +90,8 @@ int naaice_swnaa_setup_connection(
   struct naaice_communication_context *comm_ctx);
 
 /**
- * @brief Software NAA connection event handlers.
+ * @defgroup SWNAAEventHandlers Software NAA connection event handlers
+ * @ingroup PublicFunctionsSWNAA
  *
  * These functions each handle a specific RDMA connection event. If the type
  * of the provided event matches the event type handled by the function, the
@@ -121,14 +122,19 @@ int naaice_swnaa_setup_connection(
  * @return
  *   0 on success (either the event was handled successfully or it was not of
  *   the matching type), -1 on failure.
+ * @{
  */
 
+/** @brief Handle RDMA_CM_EVENT_CONNECTION_REQUEST events. */
 int naaice_swnaa_handle_connection_requests(struct naaice_communication_context *comm_ctx,
                                 struct rdma_cm_event *ev);
+/** @brief Handle RDMA_CM_EVENT_CONNECT_ESTABLISHED events. */
 int naaice_swnaa_handle_connection_established(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
+/** @brief Handle connection error events. */
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
 
+/** @} */
 /**
  * @brief Poll for and handle a software NAA connection event.
  *
@@ -195,7 +201,8 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx);
 
 /**
- * @brief Handle MRSP announce packets.
+ * @defgroup SWNAAMRSPHandlers MRSP packet handlers
+ * @ingroup PublicFunctionsSWNAA
  *
  * Handlers for MRSP packets of type *announce* and *announce-and-request*.
  * These functions process the contents of a received MRSP packet of the
@@ -207,11 +214,17 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
  *
  * @return
  *   0 on success, -1 on failure.
+ * @{
  */
+
+/** @brief Handle MRSP announce packets. */
 int naaice_swnaa_handle_mr_announce(
   struct naaice_communication_context *comm_ctx);
+/** @brief Handle MRSP announce-and-request packets. */
 int naaice_swnaa_handle_mr_announce_and_request(
   struct naaice_communication_context *comm_ctx);
+
+/** @} */
 
 /**
  * @brief Send an MRSP message to the remote peer.
