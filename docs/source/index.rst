@@ -32,7 +32,7 @@ Indices and tables
 
 Funding
 =======
-The development of EMA is funded by the BMFTR Germany in the context of the NAAICE_ Project (GreenHPC_ grant)
+The development of the NAAICE Communication Libraries is funded by the BMFTR Germany in the context of the NAAICE_ Project (GreenHPC_ grant)
 
 ..  figure:: ./_static/BMFTR-sponsored.jpg
     :alt: BMFTR Logo
