@@ -1,7 +1,11 @@
 Installation/Usage
 ==================
 The library uses CMake and provides corresponding targets, allowing for easy integration using CMake's FetchContent feature.
-A separate target is provided for each of the components: low-level API, middleware API, and software NAA.
+A separate target is provided for each of the components: 
+  - **NAAICE Low-Level API** (naaice::low_level)
+  - **NAAICE Middleware API** (naaice::middleware)
+  - **Software-NAA** (naaice::swnaa).
+
 
 The use in a minimal project would look as follows:
 

@@ -41,4 +41,4 @@ set(LOG_LEVEL "LOG_INFO" CACHE STRING "Set log level (e.g. LOG_INFO, LOG_DEBUG, 
 add_compile_definitions(LOG_LEVEL=${LOG_LEVEL})
 
 add_subdirectory(lib)
-add_subdirectory(src)
+add_subdirectory(examples)

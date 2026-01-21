@@ -1,4 +1,4 @@
-/**************************************************************************//**
+/**************************************************************************
  *
  *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM  
  *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7  
@@ -37,301 +37,336 @@ extern "C"
 {
 #endif
 
+/**
+ * @defgroup PublicFunctionsSWNAA Functions
+ */
+
 
 /* Public Functions **********************************************************/
 
+
+/** @addtogroup PublicFunctionsSWNAA
+ *  @{
+ */
+
 /**
- * naaice_init_communication_context:
- *  Initializes communication context struct.
- *  
- *  The dummy software NAA reuses the communication context struct from the
- *  host-side AP1 implementation, but doesn't use all the fields in the
- *  exact same way. Most importantly, the size and number of parameters
- *  is not known (and related fields are not populated) until after the
- *  MRSP is complete.
- * 
- * params:
- *  naaice_communication_context *comm_ctx: (return param)
- *    Pointer to communication context struct to be initialized.
- *    Should not point to an existing struct; the struct is allocated
- *    and returned by this function.
- *  const char *port:
- *    String specifying connection port, ex. "12345".
- * about:blank#blocked
- * returns:
- *  0 if sucessful, -1 if not.
+ * @brief Initialize a communication context structure.
+ *
+ * This function initializes a communication context structure.
+ * The dummy software NAA reuses the communication context structure from the
+ * host-side AP1 implementation, but does not use all fields in the same way.
+ * In particular, the size and number of parameters are not known (and related
+ * fields are not populated) until the MRSP has completed.
+ *
+ * @param comm_ctx
+ *   Pointer to a communication context structure to be initialized.
+ *   The pointer must not reference an existing structure; the structure is
+ *   allocated and returned by this function.
+ * @param port
+ *   String specifying the connection port (e.g. `"12345"`).
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_init_communication_context(
   struct naaice_communication_context **comm_ctx, uint16_t port);
 
 /**
- * naaice_swnaa_setup_connection:
- *  Loops polling for and handling connection events until connection setup
- *  is complete. Unlike the base naaice version, does not require handling
- *  the address or route resolution events, but does handle the connection
- *  requests complete event which is not handled on the host side.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if sucessful, -1 if not (due to timeout).
+ * @brief Set up the software NAA connection.
+ *
+ * Polls for and handles connection events until the connection setup is
+ * complete. Unlike the base naaice implementation, this function does not
+ * require handling address or route resolution events. It does, however,
+ * handle the “connection requests complete” event, which is not handled
+ * on the host side.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure (e.g. due to timeout).
  */
 int naaice_swnaa_setup_connection(
   struct naaice_communication_context *comm_ctx);
+
 /**
- * swnaa connection event handlers:
- *  These functions each handle a specific connection event. If the provided
- *  event's type matches the event type of the handler function, it executes
- *  the necessary logic to handle it.
+ * @defgroup SWNAAEventHandlers Software NAA connection event handlers
+ * @ingroup PublicFunctionsSWNAA
  *
- *  Subsequently, flags in the communication context are updated to represent
- *  the current status of connection establishment.
+ * These functions each handle a specific RDMA connection event. If the type
+ * of the provided event matches the event type handled by the function, the
+ * required logic is executed.
  *
- *  The events handled by these functions are, in order:
- *  RDMA_CM_EVENT_CONNECTION_REQUEST
- *  RDMA_CM_EVENT_CONNECT_ESTABLISHED
+ * After handling an event, flags in the communication context are updated to
+ * reflect the current state of connection establishment.
  *
- *  Also, the following are handled by naaice_swnaa_handle_error:
- *  RDMA_CM_EVENT_ADDR_ERROR, RDMA_CM_EVENT_ROUTE_ERROR,
- *  RDMA_CM_EVENT_CONNECT_ERROR, RDMA_CM_EVENT_UNREACHABLE,
- *  RDMA_CM_EVENT_REJECTED, RDMA_CM_EVENT_DEVICE_REMOVAL,
- *  RDMA_CM_EVENT_DISCONNECTED.
+ * The events handled by these functions, in order, are:
+ * - RDMA_CM_EVENT_CONNECTION_REQUEST
+ * - RDMA_CM_EVENT_CONNECT_ESTABLISHED
  *
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection with events to handle.
- *  struct rdma_cm_event *ev:
- *    Pointer to event to be checked and possibly handled.
+ * The following events are handled by naaice_swnaa_handle_error():
+ * - RDMA_CM_EVENT_ADDR_ERROR
+ * - RDMA_CM_EVENT_ROUTE_ERROR
+ * - RDMA_CM_EVENT_CONNECT_ERROR
+ * - RDMA_CM_EVENT_UNREACHABLE
+ * - RDMA_CM_EVENT_REJECTED
+ * - RDMA_CM_EVENT_DEVICE_REMOVAL
+ * - RDMA_CM_EVENT_DISCONNECTED
  *
- * returns:
- *  0 if sucessful (i.e. either the event was the matching type and was handled
- *  successfully, or the event was not the matching type), -1 if not.
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection
+ *   and maintaining connection state.
+ * @param ev
+ *   Pointer to the RDMA CM event to be checked and, if applicable, handled.
+ *
+ * @return
+ *   0 on success (either the event was handled successfully or it was not of
+ *   the matching type), -1 on failure.
+ * @{
  */
+
+/** @brief Handle RDMA_CM_EVENT_CONNECTION_REQUEST events. */
 int naaice_swnaa_handle_connection_requests(struct naaice_communication_context *comm_ctx,
                                 struct rdma_cm_event *ev);
+/** @brief Handle RDMA_CM_EVENT_CONNECT_ESTABLISHED events. */
 int naaice_swnaa_handle_connection_established(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
+/** @brief Handle connection error events. */
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
 
-    /**
-     * naaice_swnaa_poll_and_handle_connection_event:
-     *  Polls for a connection event on the RDMA event channel stored in the
-     *  communication context and handles the event if one is received.
-     *  Simply uses the poll and handle functions above.
-     *
-     * params:
-     *  naaice_communication_context *comm_ctx:
-     *    Pointer to struct describing the connection.
-     *
-     * returns:
-     *  0 if sucessful (regardless of whether an event is received), -1 if not.
-     */
-    int
-    naaice_swnaa_poll_and_handle_connection_event(
-        struct naaice_communication_context *comm_ctx);
+/** @} */
+/**
+ * @brief Poll for and handle a software NAA connection event.
+ *
+ * Polls the RDMA event channel stored in the communication context for a
+ * connection event and handles it if one is received. This function delegates
+ * the actual work to the corresponding poll and handler functions.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success (regardless of whether an event was received),
+ *   -1 on failure.
+ */
+
+int naaice_swnaa_poll_and_handle_connection_event(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_init_mrsp:
- *  Starts the MRSP on the NAA side. That is, posts a recieve for MRSP
- *  packets expected from the host.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection and memory regions.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
+ * @brief Initialize MRSP on the software NAA side.
+ *
+ * Starts the MRSP on the NAA side by posting a receive for MRSP packets
+ * expected from the host.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection
+ *   and associated memory regions.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
+
 int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_post_recv_mrsp
- *  Posts a recieve for an MRSP message.
- *  A recieve request is added to the queue which specifies the memory region
- *  to be written to (in this case, the MRSP region).
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if successful, -1 if not.
+ * @brief Post a receive request for an MRSP message.
+ *
+ * Posts a receive request for an MRSP message. The receive request is added
+ * to the queue and specifies the memory region to be written to (the MRSP
+ * memory region).
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
+
 int naaice_swnaa_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_handle_work_completion:
- *  Handles a single work completion from the completion queue.
- *  These represent memory region writes from host to NAA or NAA to host.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
+ * @brief Handle a single work completion.
+ *
+ * Handles one work completion retrieved from the completion queue. Work
+ * completions represent memory region write operations from the host to the
+ * NAA or from the NAA to the host.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
   struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_handle_mr_announce,
- * naaice_swnaa_handle_mr_announce_and_request:
- * 
- *  Handlers for MRSP packets.
- *  Processes the contents of a received MRSP packet of the corresponding type,
- *  populating relevant values in the communication context.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
+ * @defgroup SWNAAMRSPHandlers MRSP packet handlers
+ * @ingroup PublicFunctionsSWNAA
+ *
+ * Handlers for MRSP packets of type *announce* and *announce-and-request*.
+ * These functions process the contents of a received MRSP packet of the
+ * corresponding type and populate the relevant fields in the communication
+ * context.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
+ * @{
  */
+
+/** @brief Handle MRSP announce packets. */
 int naaice_swnaa_handle_mr_announce(
   struct naaice_communication_context *comm_ctx);
+/** @brief Handle MRSP announce-and-request packets. */
 int naaice_swnaa_handle_mr_announce_and_request(
   struct naaice_communication_context *comm_ctx);
 
+/** @} */
+
 /**
- * naaice_swnaa_send_message:
- *  Sends an MRSP packet to the remote peer. Done with a ibv_post_send using
- *  opcode IBV_WR_SEND.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- *  enum message_id message_type:
- *    Specifies the packet type. Should be one of MSG_MR_ERR, MSG_MR_AAR,
- *    or MSG_MR_A.
- *  uint8_t errorcode:
- *    Error code send in the packet, if message_type was MSG_MR_ERR.
- *    Unused for other message types.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
+ * @brief Send an MRSP message to the remote peer.
+ *
+ * Sends an MRSP packet to the remote peer using ibv_post_send() with
+ * opcode IBV_WR_SEND.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ * @param message_type
+ *   Type of message to send. Must be one of:
+ *   MSG_MR_ERR, MSG_MR_AAR, or MSG_MR_A.
+ * @param errorcode
+ *   Error code included in the packet if @p message_type is MSG_MR_ERR.
+ *   Unused for other message types.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
   enum message_id message_type, uint8_t errorcode);
 
 /**
- * naaice_swnaa_post_recv_data
- *  Posts a recieve for a memory region write.
- *  It is only necessary to post a recieve for the final memory region to be
- *  written, that is, the write with an immediate value. RDMA writes without
- *  an immediate simply occur without consuming a recieve request in the queue.
- *  
- *  The memory region specified in the recieve request is the MRSP region;
- *  this is just a dummy value, as the region written to is specified by the
- *  sender.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if successful, -1 if not.
+ * @brief Post a receive for a memory region write.
+ *
+ * Posts a receive request for an RDMA memory region write. Only the final
+ * memory region write (the one with an immediate value) requires a posted
+ * receive. RDMA writes without an immediate occur without consuming a receive
+ * request from the queue.
+ *
+ * The memory region specified in the receive request is the MRSP region.
+ * This is a placeholder; the actual write destination is determined by the
+ * sender.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_write_data:
- *  Writes the return memory region, specified by comm_ctx->mr_return_idx, to
- *  the remote peer. Done with a ibv_post_send using opcode 
- *  IBV_WR_RDMA_WRITE_WITH_IMM. The immediate value indicates if an error has
- *  occured during calculation (nonzero = error).
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- *  uint8_t fncode:
- *    Function Code for NAA routine. Positive, 0 on error.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
+ * @brief Write a return memory region to the remote peer.
+ *
+ * Writes the return memory region, indicated by `comm_ctx->mr_return_idx`,
+ * to the remote peer using `ibv_post_send()` with opcode
+ * `IBV_WR_RDMA_WRITE_WITH_IMM`. The immediate value signals whether an error
+ * occurred during computation (nonzero = error).
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ * @param fncode
+ *   Function code for the NAA routine. Positive value indicates success,
+ *   0 indicates an error.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_write_data(
   struct naaice_communication_context *comm_ctx, uint8_t errorcode);
 
 /**
- * naaice_swnaa_disconnect_and_cleanup:
- *  Terminates the connection and frees all communication context memory.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if sucessful, -1 if not.
+ * @brief Disconnect and clean up the software NAA connection.
+ *
+ * Terminates the RDMA connection and frees all memory associated with the
+ * communication context.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_disconnect_and_cleanup(
   struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_do_mrsp
- *  Does all logic for the MRSP in a blocking fashion.
+ * @brief Execute MRSP logic in a blocking manner.
  *
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
+ * Performs all necessary MRSP processing in a blocking fashion, ensuring
+ * that the procedure completes before returning.
  *
- * returns:
- *  0 if successful, -1 if not.
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_receive_data_transfer
- *  Handles recieving data from remote peer, blocking until this is finished.
- *  Information about the data is updated in the communication context.
+ * @brief Receive data transfer from the remote peer.
  *
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
+ * Handles receiving data from the remote peer in a blocking manner. Updates
+ * the communication context with information about the received data.
  *
- * returns:
- *  0 if successful, -1 if not.
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_receive_data_transfer(
   struct naaice_communication_context *comm_ctx);
 
 /**
- * naaice_swnaa_do_data_transfer
- *  Does all logic for the data transfer, including recieving data from the 
- *  NAA, wating for the NAA calculation, and writing the return data back, 
- *  in a blocking fashion.
+ * @brief Perform the complete data transfer procedure.
  *
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
+ * Executes all steps of the data transfer in a blocking manner, including:
+ * - Receiving data from the NAA
+ * - Waiting for the NAA computation to complete
+ * - Writing the return data back to the remote peer
  *
- * returns:
- *  0 if successful, -1 if not.
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success, -1 on failure.
  */
 int naaice_swnaa_do_data_transfer(
     struct naaice_communication_context *comm_ctx, uint8_t errorcode);
 
 /**
- * naaice_swnaa_poll_cq_nonblocking:
- *  Polls the completion queue for any work completions, and handles them if
- *  any are received using naaice_handle_work_completion.
- *  
- *  Subsequently, comm_ctx->state is updated to reflect the current state
- *  of the NAA connection and routine.
- * 
- * params:
- *  naaice_communication_context *comm_ctx:
- *    Pointer to struct describing the connection.
- * 
- * returns:
- *  0 if sucessful (regardless of whether any work completions are received),
- * -1 if not.
+ * @brief Poll the completion queue in a non-blocking manner.
+ *
+ * Polls the completion queue for any work completions and handles them
+ * using `naaice_swnaa_handle_work_completion` if received. Updates
+ * `comm_ctx->state` to reflect the current status of the NAA connection and
+ * routine.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context structure describing the connection.
+ *
+ * @return
+ *   0 on success (regardless of whether any work completions were received),
+ *  -1 on failure.
  */
 int naaice_swnaa_poll_cq_nonblocking(
   struct naaice_communication_context *comm_ctx);
+
+/** @} */ // end of doxygen group PublicFunctionsSWNAA
 
 #ifdef __cplusplus
 }

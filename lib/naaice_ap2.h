@@ -35,12 +35,12 @@
 extern "C" {
 #endif
 
-/** @defgroup StructsEnums Structs & Enums */
-/** @defgroup Functions Functions */
+/** @defgroup StructsEnumsMiddleware Structs & Enums */
+/** @defgroup PublicFunctionsMiddleware Functions */
 
 /* Enums **********************************************************************/
 /**
- * @ingroup StructsEnums
+ * @ingroup StructsEnumsMiddleware
  * @brief Error codes returned by NAA routines.
  *
  * Defines possible error values for RPCs or communication failures
@@ -70,26 +70,27 @@ enum naa_error {
 typedef uint32_t naa_function_code_t;
 
 /**
- * @ingroup Functions
+ * @ingroup StructsEnumsMiddleware
+ * @struct naa_param_t
  * @brief Represents a single parameter (input or output) for an NAA routine.
  *
  * Holds information about the data region corresponding to a parameter,
  * including its address, size, and whether it should be sent only once
  * during the connection (e.g., for configuration data).
+ *
  */
 typedef struct naa_param_t {
-  /// Pointer to the data region.
-  void *addr;
-
-  /// Size of the data region, in bytes.
-  size_t size;
-
-  /// Indicates that the parameter should be sent only once.
-  bool single_send;
+    void *addr; ///< Pointer to the data region
+    size_t size; ///< Size of the data region, in bytes
+    bool single_send; ///< Indicates that the parameter should be sent only once. If true, the parameter is sent only during the first communication with the NAA routine (typically for configuration data)
 } naa_param_t;
 
+
+
+
+
 /**
- * @ingroup StructsEnums
+ * @ingroup StructsEnumsMiddleware
  * @brief Represents a handle to a NAA session.
  *
  * Holds information about an active NAA session, including the function
@@ -105,7 +106,7 @@ typedef struct naa_handle {
 } naa_handle;
 
 /**
- * @ingroup StructsEnums
+ * @ingroup StructsEnumsMiddleware
  * @brief Status information for a NAA session.
  *
  * Holds the current state of the communication, any error codes returned
@@ -125,14 +126,12 @@ typedef struct naa_status {
 /* Public Functions **********************************************************/
 
 /**
- * @ingroup Functions
- * @brief Configure memory regions and establish a connection to a remote NAA.
- *
- * Finding IP address and socket ID for an NAA matching required function code.
- * Prepare connection, register and exchange memory region information between
- * HPC node and NAA.
- *
- * P address and socket ID are already known to HPC node. Info is retrieved from
+ * @ingroup PublicFunctionsMiddleware
+ * @brief Finding IP address and socket ID for an NAA matching required function code.
+  Prepare connection, register and exchange memory region information between
+  HPC node and NAA.
+ 
+ IP address and socket ID are already known to HPC node. Info is retrieved from
  resource management system (Slurm) at creation/deployment of slurm job. User
  knows function code for method/calculation to outsource to NAA. Connection to
  NAA is done by connection establishment protocol from the Infiniband standard.
@@ -141,7 +140,7 @@ typedef struct naa_status {
  information is exchanged between HPC node and NAA. The protocol for this was
  designed in NAAICE AP1.
 
- his method will register the addresses of the parameters with ibverbs as mem-
+ This method will register the addresses of the parameters with ibverbs as mem-
  ory regions, hiding the memory region semantic from the user. All memory re-
  gions, for both input and output parameters are announced to the NAA during
  naa_create(). Therefore, memory regions can not be changed from input to
@@ -169,13 +168,20 @@ int naa_create(const naa_function_code_t function_code,
                naa_handle *handle);
 
 /**
- * @ingroup Functions
+ * @ingroup PublicFunctionsMiddleware
  * @brief Sends input data to the peer and triggers the corresponding NAA
  * routine.
  *
  * Initiates the data transfer for the current session using the provided
  * communication handle. Handles posting RDMA writes and waiting for the
  * remote computation to complete.
+ * 
+ * 
+ * \note Data transfer is done with RDMA_WITH_IMM. If the transfer requires n > 1
+ * operations, n − 1 RDMA_WRITE operations are done. The last writing operation is
+ * RDMA_WITH_IMM, where the immediate data value is the function code.
+ * RDMA_WITH_IMM signals the end of the data transfer to the NAA and initiates 
+ * calculations on the NAA (RPC start)
  *
  * @param handle Pointer to a ::naa_handle created by ::naa_create.
  * @return int 0 if successful, -1 if an error occurred.
@@ -183,7 +189,17 @@ int naa_create(const naa_function_code_t function_code,
 int naa_invoke(naa_handle *handle);
 
 /**
+ * @ingroup PublicFunctionsMiddleware
  * @brief Waits in non-blocking mode for a receive.
+ *
+ * Much like MPI_TEST, the naa_test call is non-blocking and polls the completion
+ * queue of the queue pair associated with the data transfer.
+ *
+ * A call to naa_test returns flag=true if the operation identified by handle is complete. * In such a case, the status object is set to contain information on the completed
+ * operation. The call returns flag = false if the operation is not complete. In this case,
+ * the value of the status object is undefined.
+ *
+ *
  *
  * @param handle
  * @param flag
@@ -193,8 +209,15 @@ int naa_invoke(naa_handle *handle);
 int naa_test(naa_handle *handle, bool *flag, naa_status *status);
 
 /**
+ * @ingroup PublicFunctionsMiddleware
  * @brief Waits in blocking mode for a receive.
  *
+ * Much like MPI_WAIT, the naa_wait call is blocking and polls the completion queue
+ * of the queue pair associated with the data transfer. naa_wait returns, when data
+ * has been written back to the HPC node.
+ * The call returns with the information on the completed operation stored in the
+ * status variable.
+
  * @param handle communication handle created by naa_create
  * @param status
  * @return int
@@ -202,6 +225,7 @@ int naa_test(naa_handle *handle, bool *flag, naa_status *status);
 int naa_wait(naa_handle *handle, naa_status *status);
 
 /**
+ * @ingroup PublicFunctionsMiddleware
  * @brief Terminates connection and cleans up the corresponding data structures.
  *
  * @param handle communication handle created by naa_create

@@ -6,10 +6,11 @@
 Welcome to naa-communication-library's documentation!
 =====================================================
 
-This page provides information about the NAAICE Low-Level and Middleware API, which were developed as part of the NAAICE project.
-The APIs were designed to make it as easy as possible to offload workloads to Network Attached Accelerators (NAAs) using RoCEv2 in the HPC environment.
+This page describes the NAAICE Low-Level and Middleware APIs developed within the NAAICE project. The APIs are designed to simplify the offloading of workloads to Network Attached Accelerators (NAAs) via RoCEv2 in HPC environments. In addition, the internal architecture of a software-based NAA is documented for testing and rapid prototyping.
 
-
+.. figure:: ./_static/Datacenter_3.png
+   :alt: Datacenter_overview
+   :scale: 25 
 
 .. toctree::
    :maxdepth: 1
@@ -39,4 +40,4 @@ The development of EMA is funded by the BMFTR Germany in the context of the NAAI
 
 
 .. _NAAICE: https://www.greenhpc.eu
-.. _GreenHPC grant: https://gauss-allianz.de/en/project/call/Richtlinie%20zur%20F%C3%B6rderung%20von%20Verbundprojekten%20auf%20dem%20Gebiet%20des%20energieeffizienten%20High-%E2%80%8BPerformance%20Computings%20%28GreenHPC%29
+.. _GreenHPC: https://gauss-allianz.de/en/project/call/Richtlinie%20zur%20F%C3%B6rderung%20von%20Verbundprojekten%20auf%20dem%20Gebiet%20des%20energieeffizienten%20High-%E2%80%8BPerformance%20Computings%20%28GreenHPC%29
