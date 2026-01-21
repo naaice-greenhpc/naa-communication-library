@@ -34,7 +34,6 @@ This library provides a low-level and middleware implementation for RDMA-based c
     - [API Reference](#api-reference)
   - [Known Limitations](#known-limitations)
     - [Fixed Issues](#fixed-issues)
-  - [Project Structure](#project-structure)
   - [Authors](#authors)
   - [References](#references)
   - [License](#license)
@@ -167,19 +166,6 @@ Documentation will be generated in `docs/build/`.
 ✅ Multiple output memory region handling  
 ✅ Receive queue overflow with many output regions  
 
-## Project Structure
-
-```
-.
-├── lib/                    # Library headers
-│   ├── naaice.h           # Low-level API
-│   ├── naaice_ap2.h       # Application-level API
-│   └── naaice_swnaa.h     # Software NAA API
-├── examples/                   # Source files and examples
-├── docs/                  # Documentation
-├── tests/                 # Unit tests
-└── CMakeLists.txt         # Build configuration
-```
 
 ## Authors
 
