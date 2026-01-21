@@ -1,13 +1,13 @@
 before_script:
-    - echo "Starting CI/CD pipeline for NAA communication prototype"
-    - apt-get update && apt-get -y install git cmake librdmacm-dev libibverbs1 ibverbs-utils gcc-13 g++-13
+  - echo "Starting CI/CD pipeline for NAA communication prototype"
+  - apt-get update && apt-get -y install git cmake librdmacm-dev libibverbs1 ibverbs-utils gcc-13 g++-13
 
 stages:
-    - build
-    - run
-    - deploy
-    - measurement
-    - evaluation
+  - build
+  - run
+  - deploy
+  - measurement
+  - evaluation
 
 variables:
   GIT_STRATEGY: clone
@@ -17,151 +17,122 @@ variables:
   CC: gcc-13
   CXX: g++-13
 
+.rules_main_or_mr_main:
+  rules:
+    - if: |
+        ($CI_PIPELINE_SOURCE == "push" &&
+         $CI_COMMIT_BRANCH == "main") ||
+        ($CI_PIPELINE_SOURCE == "merge_request_event" &&
+         $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
+      when: on_success
+    - when: never
+
+
 build:
   stage: build
   tags:
-      - naaice2-runner
+    - naaice2-runner
   interruptible: true
   script:
-      - bash ./tests/ci-build.sh
+    - bash ./tests/ci-build.sh
   artifacts:
-      paths:
-          - build/
-      expire_in: 1 hour
+    paths:
+      - build/
+    expire_in: 1 hour
 
 run_server:
-    stage: run
-    dependencies:
-        - build
-    timeout: 10 minutes
-    script:
-        - echo "Start SWNAA"
-        - apt-get update
-        - ./build/examples/naaice_server
-    tags:
-        - naaice2-runner
+  stage: run
+  dependencies:
+    - build
+  timeout: 10 minutes
+  script:
+    - echo "Start SWNAA"
+    - ./build/examples/naaice_server
+  tags:
+    - naaice2-runner
 
 run_client:
-    stage: run
-    dependencies:
-        - build
-    script:
-        - bash ./tests/run_client.sh
-    tags:
-        - naaice1-runner
-
+  stage: run
+  dependencies:
+    - build
+  script:
+    - bash ./tests/run_client.sh
+  tags:
+    - naaice1-runner
 
 pages:
   image: python:3.12-slim
   stage: deploy
+  extends: .rules_main_or_mr_main
   script:
-        - apt-get update && apt-get install -y doxygen make graphviz
-        - pip install sphinx breathe sphinx_rtd_theme
-        - cd docs
-        - doxygen Doxyfile
-        - make html
-        - cd ..
-        - mkdir public
-        - mv docs/build/html/* public/
-
+    - apt-get update && apt-get install -y doxygen make graphviz
+    - pip install sphinx breathe sphinx_rtd_theme
+    - cd docs
+    - doxygen Doxyfile
+    - make html
+    - cd ..
+    - mkdir public
+    - mv docs/build/html/* public/
   artifacts:
     paths:
       - public
 
-  rules:
-        - if: |
-            ($CI_PIPELINE_SOURCE == "push" &&
-            $CI_COMMIT_BRANCH == "main") ||
-            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
-            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
-            when: on_success
-        - when: never
 
 measurement_server:
-    stage: measurement
-    dependencies:
-        - build
-    script:
-        - echo "Start SWNAA"
-        - apt-get update
-        - apt-get install -y python3 python3-pip python3-venv
-        - python3 -m venv venv
-        - . venv/bin/activate
-        - pip install numpy tenacity
-        - venv/bin/python tests/do_server.py
-
-    tags:
-        - naaice2-runner
-
-    rules:
-        - if: |
-            ($CI_PIPELINE_SOURCE == "push" &&
-            $CI_COMMIT_BRANCH == "main") ||
-            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
-            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
-            when: on_success
-        - when: never
+  stage: measurement
+  dependencies:
+    - build
+  extends: .rules_main_or_mr_main
+  script:
+    - echo "Start SWNAA"
+    - apt-get update
+    - apt-get install -y python3 python3-pip python3-venv
+    - python3 -m venv venv
+    - . venv/bin/activate
+    - pip install numpy tenacity
+    - venv/bin/python tests/do_server.py
+  tags:
+    - naaice2-runner
 
 measurement_client:
-    stage: measurement
-    dependencies:
-        - build
-    script:
-        - echo "Start SWNAA "
-        - apt-get update
-        - apt-get install -y python3 python3-pip python3-venv
-        - python3 -m venv venv
-        - . venv/bin/activate
-        - pip install numpy tenacity
-        - venv/bin/python tests/do_client.py
+  stage: measurement
+  dependencies:
+    - build
+  extends: .rules_main_or_mr_main
+  script:
+    - echo "Start SWNAA"
+    - apt-get update
+    - apt-get install -y python3 python3-pip python3-venv
+    - python3 -m venv venv
+    - . venv/bin/activate
+    - pip install numpy tenacity
+    - venv/bin/python tests/do_client.py
+  artifacts:
+    paths:
+      - output.csv
+    expire_in: 1 hour
+    when: always
+  tags:
+    - naaice1-runner
 
-    artifacts:
-        paths:
-            - output.csv
-        expire_in: 1 hour
-        when: always
-
-    tags:
-        - naaice1-runner
-
-    rules:
-        - if: |
-            ($CI_PIPELINE_SOURCE == "push" &&
-            $CI_COMMIT_BRANCH == "main") ||
-            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
-            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
-            when: on_success
-        - when: never
 
 evaluation:
-    stage: evaluation
-    dependencies:
-        - measurement_client
-    script:
-        - apt-get update
-        - apt-get install -y python3 python3-pip python3-venv
-        - python3 -m venv venv
-        - . venv/bin/activate
-        - pip install numpy tenacity pandas matplotlib
-        - venv/bin/python tests/evaluation.py
-    artifacts:
-        paths:
-            - reference_vs_measurements.pdf
-        when: always
-        access: all
-        expire_in: 4 weeks
-    tags:
-        - naaice1-runner
-
-    rules:
-        - if: |
-            ($CI_PIPELINE_SOURCE == "push" &&
-            $CI_COMMIT_BRANCH == "main") ||
-            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
-            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
-            when: on_success
-        - when: never
-
-  # rules:
-  #   - if: '$CI_COMMIT_BRANCH == "main"'
-
+  stage: evaluation
+  dependencies:
+    - measurement_client
+  extends: .rules_main_or_mr_main
+  script:
+    - apt-get update
+    - apt-get install -y python3 python3-pip python3-venv
+    - python3 -m venv venv
+    - . venv/bin/activate
+    - pip install numpy tenacity pandas matplotlib
+    - venv/bin/python tests/evaluation.py
+  artifacts:
+    paths:
+      - reference_vs_measurements.pdf
+    when: always
+    access: all
+    expire_in: 4 weeks
+  tags:
+    - naaice1-runner
