@@ -42,3 +42,4 @@ add_compile_definitions(LOG_LEVEL=${LOG_LEVEL})
 
 add_subdirectory(lib)
 add_subdirectory(examples)
+add_subdirectory(tests)
