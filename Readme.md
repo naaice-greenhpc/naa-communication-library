@@ -1,57 +1,188 @@
-# NAAICE_MWE
-This library serves as a minimal working example for the RDMA transfer to the FPGAs.
+# NAAICE Communication Libraries
 
-It provides two examples:
-- `/src/naaice_client.c`: initiates a connection to the given IP, sends data of the given length to the given remote address (arrays of integer defined in the source code), waits for data (sent data incremented by 1) and checks the data for errors.
-- `/src/naaice_server.c`: waits for a remote to connect. Allocates memory regions analogously to the client. Waits for data, increments it by 1 and sends it back. 
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-02B36C)](LICENSE)
 
-Data transfer is done by RDMA WRITE operations. The memory regions for data transfer are exchanged beforehand using a new protocol. Protocol details were discussed in NAAICE work meetings in Nov 2022/Jan 2023. Memory regions are exhanged using a single RDMA SEND operation (per direction) with a dynamic message. This message can hold a variable number of announced memory regions and a request for size of memory to allocate memory regions.
+## Overview
 
-## Build
+This library provides a low-level and middleware implementation for RDMA-based communication with Network-Attached Accelerators (NAAs). It serves as a reference implementation for the NAAICE project, enabling efficient data transfer between hosts and FPGA-based or software-emulated accelerators.
 
-Configuration is done by `cmake -S . -B <build-directory>`. In this phase, the following options can be set:
-- `-DCMAKE_BUILD_TYPE=Debug/Release`
-- `-DLOG_LEVEL=LOG_INFO/LOG_DEBUG/LOG_WARN/LOG_ERROR` (set the logging verbosity)
-- `-DUSE_EMA=ON/OFF` (for building the client example with ema measurements)
+### Key Features
 
-Compiling is done by running `cmake --build <build-directory>`.
+- RDMA-based data transfer using RDMA WRITE operations
+- Dynamic memory region exchange protocol (MRSP)
+  - Protocol details were discussed in NAAICE work meetings in Nov 2022/Jan 2023. Memory regions are exhanged using a single RDMA SEND operation (per direction) with a dynamic message. This message can hold a variable number of announced memory regions and a request for size of memory to allocate memory regions.
+- Support for multiple input/output memory regions
+- Software NAA implementation for testing without FPGA hardware
+- Application-level interface (Middleware) for simplified integration
 
-## Testing
+## Table of Contents
 
-Sample commands to run current example (requires two regions to set different input and output memory regions)
-1. Node 1 (IP `10.3.10.42`):\
-   `src/naaice_server`
-2. Node 2 (IP `10.3.10.41`):\
-    `src/naaice_client 10.3.10.41 10.3.10.42 3 "1024 1024 1024"`
-   The local IP can be ommited, but it might be required in case of testing on a single node.\
-    `src/naaice_client 10.3.10.42 3 "1024 1024 1024"`
+- [NAAICE Communication Libraries](#naaice-communication-libraries)
+  - [Overview](#overview)
+    - [Key Features](#key-features)
+  - [Table of Contents](#table-of-contents)
+  - [Build Instructions](#build-instructions)
+    - [Prerequisites](#prerequisites)
+    - [Configuration](#configuration)
+    - [Compilation](#compilation)
+    - [Installation/Usage](#installationusage)
+  - [Examples](#examples)
+    - [Low-Level API (AP1)](#low-level-api-ap1)
+    - [Application-Level API (Middleware)](#application-level-api-middleware)
+  - [Documentation](#documentation)
+    - [Building Documentation](#building-documentation)
+    - [API Reference](#api-reference)
+  - [Known Limitations](#known-limitations)
+    - [Fixed Issues](#fixed-issues)
+  - [Authors](#authors)
+  - [References](#references)
+  - [License](#license)
 
-The port for the initial connection is fixed (but can be changed). All routines not taken from ibverbs or librdmacm libraries are named starting `naaice_*`.
- Testing for sending multiple memory regions can be sped up by changing the `MAXIMUM_TRANSFER_LENGTH`, a variable used to denote the maximum size of a single RDMA operation. By lowering the value, one can force the use of more and smaller memory regions.
 
-## Application-Level Interface (Work Package 2)
+## Build Instructions
 
-On the application-level interface, no host names/ip addresses are to be specified, but should be provided via environment, either manually or via the resource management system.
-The following variables are supposed to be set:
+### Prerequisites
 
-- `NAA_SPEC` -- Specification of the available NAAs for the application. The specification is a sequence of possibly multiple entries that describe address of the available NAA and the accelerator's function:  `NAA_SPEC := <address>:<port>:<fn_code>:<fn_num_args>[, ...]`.
-  - `address` --  IP or resolveable hostname of the NAA
-  - `port` -- numeric port identifier
-  - `fn_code` -- numeric function code of the accelerator
-  - `fn_num_args` -- number of parameters for the aforementioned function code
-- `NAA_LOCAL_IP` -- might be used to specify the IP address or associated hostname of the local interface through which the communication is going to take place
+- CMake >= 3.10
+- C compiler with C11 support
+- RDMA libraries: `libibverbs`, `librdmacm`
+- (Optional) Doxygen and Sphinx for documentation
 
-Having the `naaice_server` running as shown in the example of the previous section, the client that the application-level interface should be invoked as follows:
+### Configuration
 
+```bash
+cmake -S . -B build [OPTIONS]
 ```
-NAA_SPEC=10.3.10.42:12345:1:3 src/naaice_client_ap2 4 "1024 1024 1024 1024"
+
+**Build Options:**
+
+| Option | Values | Default | Description |
+|--------|--------|---------|-------------|
+| `CMAKE_BUILD_TYPE` | `Debug`, `Release` | `Release` | Build configuration |
+| `LOG_LEVEL` | `LOG_INFO`, `LOG_DEBUG`, `LOG_WARN`, `LOG_ERROR` | `LOG_INFO` | Logging verbosity |
+| `USE_EMA` | `ON`, `OFF` | `OFF` | Enable EMA measurements |
+
+### Compilation
+
+```bash
+cmake --build build
 ```
 
-## Bugs
-- [ ] Multiple connection from different clients to same naaice_swnaa are not possible yet
+### Installation/Usage
 
-### Fixed Bugs:
-- [x] **So far, posting write work requests at once fails with a number of work requests > 15.** Reason was the number of maximum outstanding write request during qp setup. This value was 10. Increasing this limit solved the problem
-- [x] **So far, there is no error handling regarding the connection.** Error messages are not yet send, however each communication partner has internal error handling mechanisms. Error messages are now send as was discussed for AP1 in April/May 2023.
-- [x] **Using multiple output memory regions results in endless polling on both the client and the host.** Reason was wrong memsetting of `sge` (scatter gather elements) in `naaice_swnaa_write_data` function
-- [x] **The use of many output memory regions (e.g. 14) together with many RPC calls (see easyWave) led to a crash.** The reason was the posting of a receive element for each output memory region, although only one cqe element is ever generated for the last transmitted region. This caused the corresponding receive queue to overflow.
+```bash
+cmake --install build --prefix /path/to/install
+```
+
+For your own projects, the APIs can be integrated via CMake using the FetchContent mechanism. A dedicated CMake target is provided for each of the three components:
+
+- NAAICE Low-Level API (naaice::low_level)
+- NAAICE Middleware API (naaice::middleware)
+- Software-NAA (naaice::swnaa).
+
+## Examples
+
+### Low-Level API (AP1)
+
+Direct control over RDMA connections and memory regions.
+
+**Server (NAA side):**
+   - Waits for connections
+   - Allocates memory regions
+   - Processes data (increments by 1)
+   - Sends results back
+
+
+```bash
+./build/examples/naaice_server
+```
+
+**Client (Host side):**
+
+  - Initiates connection to NAA
+  - Sends integer arrays
+  - Receives processed data (incremented values)
+  - Validates results
+
+```bash
+./build/examples/naaice_client <local_ip> <server_ip> <num_regions> "<region_sizes>"
+```
+
+Example:
+```bash
+# Node 1 (10.3.10.42)
+./build/examples/naaice_server
+
+# Node 2 (10.3.10.41)
+./build/examples/naaice_client 10.3.10.41 10.3.10.42 3 "1024 1024 1024"
+```
+
+### Application-Level API (Middleware)
+
+Simplified interface using environment variables for NAA discovery.
+
+**Environment Variables:**
+
+- `NAA_SPEC`: Specification of available NAAs
+  - Format: `<address>:<port>:<fn_code>:<fn_num_args>[,...]`
+  - Example: `10.3.10.42:12345:1:3`
+  
+- `NAA_LOCAL_IP` (optional): Local interface IP/hostname
+
+**Example:**
+```bash
+NAA_SPEC=10.3.10.42:12345:1:3 ./build/src/naaice_client_ap2 4 "1024 1024 1024 1024"
+```
+
+
+## Documentation
+
+Full API documentation is available at: https://naaice.git-pages.gfz-potsdam.de/naa-communication-prototype/
+
+### Building Documentation
+
+```bash
+cd docs
+doxygen
+make html
+```
+
+Documentation will be generated in `docs/build/`.
+
+### API Reference
+
+- **Low-Level API**: See `docs/source/api/low_level.rst`
+- **Middleware API**: See `docs/source/api/middleware.rst`
+- **Software NAA**: See `docs/source/api/swnaa.rst`
+
+## Known Limitations
+
+- Multiple concurrent connections from different clients to the same `naaice_swnaa` instance are not yet supported
+
+### Fixed Issues
+
+✅ Work request posting limit (increased from 10 to configurable value)  
+✅ Error handling and messaging between communication partners  
+✅ Multiple output memory region handling  
+✅ Receive queue overflow with many output regions  
+
+
+## Authors
+
+- Florian Mikolajczak (florian.mikolajczak@uni-potsdam.de)
+- Dylan Everingham (everingham@zib.de)
+- Niklas Schelten (niklas.schelten@hhi.fraunhofer.de)
+- Steffen Christgau (christgau@zib.de)
+- Hannes Signer (signer@uni-potsdam.de)
+
+## References
+
+- NAAICE Project Website: https://www.greenhpc.eu
+
+## License
+
+BSD-3-Clause
+
+---
+
+**Last Updated**: January 2026

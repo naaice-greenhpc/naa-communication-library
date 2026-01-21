@@ -112,23 +112,23 @@
 #define ntohll be64toh
 #define htonll htobe64
 
-/** @defgroup defines Default defines */
-/** @defgroup StructsEnums Structs & Enums */
+/** @defgroup DefinesLowLevel Default defines */
+/** @defgroup StructsEnumsLowLevel Structs & Enums */
 
-/** @ingroup defines
+/** @ingroup DefinesLowLevel
  * @brief Timeout for resolving RDMA routes, in milliseconds. */
 #define TIMEOUT_RESOLVE_ROUTE 500
 
-/** @ingroup defines
+/** @ingroup DefinesLowLevel
  * @brief Timeout for poll functions, in milliseconds. */
 #define POLLING_TIMEOUT 500
 
-/** @ingroup defines
+/** @ingroup DefinesLowLevel
  * @brief Default timeout for blocking calls to the NAA, in seconds.
  */
 #define DEFAULT_TIMEOUT 3600
 
-/** @ingroup defines Default number of retries for the RDMA connection. */
+/** @ingroup DefinesLowLevel Default number of retries for the RDMA connection. */
 #define DEFAULT_RETRY_COUNT 7
 
 #ifdef __cplusplus
@@ -371,7 +371,7 @@ struct naaice_rpc_metadata {
 };
 
 /**
- * @ingroup StructsEnums
+ * @ingroup StructsEnumsLowLevel
  * @brief Connection state machine for NAA communication.
  *
  * Defines the possible states of a communication session between the
@@ -419,6 +419,7 @@ enum naaice_communication_state {
 };
 
 /**
+ * @ingroup StructsEnumsLowLevel
  * @brief Communication context for NAA connections.
  *
  * Holds all information about a connection, including RDMA resources,
@@ -535,10 +536,10 @@ struct naaice_communication_context {
 /* Public Functions **********************************************************/
 
 /**
- * @defgroup PublicFunctions Functions
+ * @defgroup PublicFunctionsLowLevel Functions
  */
 
-/** @addtogroup PublicFunctions
+/** @addtogroup PublicFunctionsLowLevel
  *  @{
  */
 
@@ -1146,7 +1147,7 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx);
 int naaice_set_bytes_to_send(struct naaice_communication_context *comm_ctx,
                              int mr_idx, int number_bytes);
 
-/** @} */ // end of doxygen group PublicFunctions
+/** @} */ // end of doxygen group PublicFunctionsLowLevel
 
 #ifdef __cplusplus
 }

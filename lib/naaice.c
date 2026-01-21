@@ -1190,7 +1190,7 @@ int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
     time(&end);
     if (naaice_poll_cq_nonblocking(comm_ctx)) { return -1; }
     if (comm_ctx->timeout > 0 && difftime(end, start) > comm_ctx->timeout) {
-      log_error( "naaice_do_mrsp :: Timeout while waiting for a response from the NAA (max timeout %fs)\n", comm_ctx->timeout);
+      log_error( "naaice_do_mrsp: Timeout while waiting for a response from the NAA (max timeout %fs)\n", comm_ctx->timeout);
       return -1;
     }
   }
@@ -1215,7 +1215,7 @@ int naaice_do_data_transfer(struct naaice_communication_context *comm_ctx) {
       return -1;
     }
     if (comm_ctx->timeout > 0 && difftime(end, start) > comm_ctx->timeout) {
-      log_error( "naaice_do_data_transfer :: Timeout while waiting for a response from the NAA (max timeout %fs) current state: %s \n", comm_ctx->timeout, get_state_str(comm_ctx->state));
+      log_error( "naaice_do_data_transfer: Timeout while waiting for a response from the NAA (max timeout %fs) current state: %s \n", comm_ctx->timeout, get_state_str(comm_ctx->state));
       return -1;
     }
   }
