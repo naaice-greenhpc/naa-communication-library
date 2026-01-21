@@ -6,7 +6,7 @@ mkdir build
 cmake -S . -B build
 cmake --build build
 
-cd "$ROOT_DIR/build/src/"
+cd "$ROOT_DIR/build/examples/"
 if [ ! -e naaice_client ]; then
     echo "Error: naaice_client is missing"
     exit 1  # Exit with a non-zero status to indicate failure
