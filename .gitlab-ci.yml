@@ -14,8 +14,8 @@ variables:
   GIT_SUBMODULE_FORCE_HTTPS: "true"
   GIT_SUBMODULE_STRATEGY: recursive
   GIT_SUBMODULE_UPDATE_FLAGS: --jobs 8
-  CC:gcc-13
-  CXX:g++-13
+  CC: gcc-13
+  CXX: g++-13
 
 build:
   stage: build
