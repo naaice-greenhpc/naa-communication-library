@@ -1,6 +1,6 @@
 before_script:
     - echo "Starting CI/CD pipeline for NAA communication prototype"
-    - apt-get update && apt-get -y install git cmake librdmacm-dev libibverbs1 ibverbs-utils
+    - apt-get update && apt-get -y install git cmake librdmacm-dev libibverbs1 ibverbs-utils gcc-13 g++-13
 
 stages:
     - build
