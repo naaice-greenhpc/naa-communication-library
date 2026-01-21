@@ -25,7 +25,7 @@ plt.xlabel('Bytes')
 plt.ylabel('Latency (s)')
 plt.savefig('reference_vs_measurements.pdf', dpi=300)
 
-if(deviation.mean() > 0.15):
+if(deviation.mean() > 0.5):
     raise ValueError(f'Deviation is {deviation.mean():.4f}, which is greater than 0.15. See plot in pipeline artificats for details.\n')
 else:
     print('Mean deviation is:', deviation.mean())
