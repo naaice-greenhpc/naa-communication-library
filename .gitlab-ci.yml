@@ -69,7 +69,13 @@ pages:
       - public
 
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
+        - if: |
+            ($CI_PIPELINE_SOURCE == "push" &&
+            $CI_COMMIT_BRANCH == "main") ||
+            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
+            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
+            when: on_success
+        - when: never
 
 measurement_server:
     stage: measurement
@@ -88,7 +94,13 @@ measurement_server:
         - naaice2-runner
 
     rules:
-        - if: '$CI_COMMIT_BRANCH == "main"'
+        - if: |
+            ($CI_PIPELINE_SOURCE == "push" &&
+            $CI_COMMIT_BRANCH == "main") ||
+            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
+            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
+            when: on_success
+        - when: never
 
 measurement_client:
     stage: measurement
@@ -113,7 +125,13 @@ measurement_client:
         - naaice1-runner
 
     rules:
-        - if: '$CI_COMMIT_BRANCH == "main"'
+        - if: |
+            ($CI_PIPELINE_SOURCE == "push" &&
+            $CI_COMMIT_BRANCH == "main") ||
+            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
+            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
+            when: on_success
+        - when: never
 
 evaluation:
     stage: evaluation
@@ -136,7 +154,13 @@ evaluation:
         - naaice1-runner
 
     rules:
-        - if: '$CI_COMMIT_BRANCH == "main"'
+        - if: |
+            ($CI_PIPELINE_SOURCE == "push" &&
+            $CI_COMMIT_BRANCH == "main") ||
+            ($CI_PIPELINE_SOURCE == "merge_request_event" &&
+            $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main")
+            when: on_success
+        - when: never
 
   # rules:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
