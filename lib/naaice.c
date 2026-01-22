@@ -1675,7 +1675,7 @@ int naaice_post_recv_data(
   struct naaice_communication_context *comm_ctx) {
 
   /**
-  * Hint: We only have to post one receive request for the data transfer, since
+  * \note We only have to post one receive request for the data transfer, since
   * we only get one completion queue element for an immediate write of the
   * server application. Posting multiple receive requests will lead to errors
   * when using more than one output memory region with a large amount of RPC
@@ -1683,10 +1683,6 @@ int naaice_post_recv_data(
   */
 
   log_info("In naaice_post_recv_data\n");
-
-  // DYL: Changed this back to constructing only a single, empty recv request.
-  // Information about input and output regions is recieved from the host
-  // during MRSP in the announcement packet MR flags.
 
   // Construct a single, simple recv request.
   struct ibv_recv_wr wr;

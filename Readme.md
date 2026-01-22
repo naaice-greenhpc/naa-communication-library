@@ -1,6 +1,20 @@
+<table>
+<tr>
+<td width="50%">
+  
 # NAAICE Communication Libraries
 
+</td>
+<td width="20%" align="right">
+  <a href="https://greenhpc.eu">
+    <img src="docs/source/_static/naaice.png" alt="NAAICE Logo" width="100"/>
+  </a>
+</td>
+</tr>
+</table>
+
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-02B36C)](LICENSE)
+
 
 ## Overview
 
