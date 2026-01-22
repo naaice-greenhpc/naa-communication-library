@@ -17,20 +17,17 @@ double get_timestamp() {
 }
 
 int main(int argc, char *argv[]) {
-  ulog_set_level(LOG_ERROR);
-  if (argc != 5) {
-    fprintf(stderr,
-            "Wrong number of arguments. use: "
-            "./naaice_client local-ip remote-ip region-sizes\n"
-            "Example: ./naaice_client 10.3.10.134 10.3.10.135 1024 logfile\n");
+  ulog_set_level(LOG_LEVEL);
+
+  if (argc != 3) {
+    fprintf(stderr, "Wrong number of arguments. use: "
+                    "./naaice_client region-sizes logfile\n"
+                    "Example: ./naaice_client 1024 logfile\n");
     return -1;
   };
 
-  char *local_ip = argv[1];
-  char *remote_ip = argv[2];
-
   size_t param_sizes[1];
-  param_sizes[0] = atoi(argv[3]);
+  param_sizes[0] = atoi(argv[1]);
 
   char *params[1];
   params[0] = (char *)malloc(param_sizes[0] * sizeof(char));
@@ -54,16 +51,21 @@ int main(int argc, char *argv[]) {
   struct naa_param_t output_params[] = {
       {(void *)params[0], param_sizes[0], false}};
 
-  naa_create(FNCODE, input_params, 1, output_params, 1, handle);
+  if (naa_create(FNCODE, input_params, 1, output_params, 1, handle)) {
+    return -1;
+  };
 
   double start = get_timestamp();
-  naa_invoke(handle);
+  if (naa_invoke(handle)) {
+    return -1;
+  };
   naa_wait(handle, &status);
   double end = get_timestamp();
 
   naa_finalize(handle);
+  free(params[0]);
 
-  FILE *logfile = fopen(argv[4], "a");
+  FILE *logfile = fopen(argv[2], "a");
   if (logfile == NULL) {
     fprintf(stderr, "Failed to open logfile.\n");
     return -1;
