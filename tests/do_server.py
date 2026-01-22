@@ -26,7 +26,7 @@ from tenacity import retry, wait_fixed
 # )
 
 count_runs = 0
-while count_runs < 520:
+while count_runs < 1040:
     
     @retry(wait=wait_fixed(4))
     def run():
