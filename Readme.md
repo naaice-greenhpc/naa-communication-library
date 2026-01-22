@@ -1,11 +1,11 @@
 <table>
 <tr>
-<td width="50%">
+<td width="75%">
   
 # NAAICE Communication Libraries
 
 </td>
-<td width="20%" align="right">
+<td width="25%" align="right">
   <a href="https://greenhpc.eu">
     <img src="docs/source/_static/naaice.png" alt="NAAICE Logo" width="100"/>
   </a>
