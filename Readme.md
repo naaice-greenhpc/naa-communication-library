@@ -1,17 +1,9 @@
-<table width="100%">
-<tr>
-<td width="75%">
-  
-# NAAICE Communication Libraries
+<div align="center">
 
-</td>
-<td width="25%" align="right">
-  <a href="https://greenhpc.eu">
-    <img src="docs/source/_static/naaice.png" alt="NAAICE Logo" width="100"/>
-  </a>
-</td>
-</tr>
-</table>
+| <h1>NAAICE Communication Libraries</h1> | <a href="https://greenhpc.eu"><img src="docs/source/_static/naaice.png" alt="NAAICE Logo" width="100"/></a> |
+|:---|---:|
+
+</div>
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-02B36C)](LICENSE)
 
