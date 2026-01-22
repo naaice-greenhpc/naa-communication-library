@@ -99,7 +99,8 @@ measurement_client:
 
     artifacts:
         paths:
-            - output.csv
+            - output_low_level.csv
+            - output_middleware.csv
         expire_in: 1 hour
         when: always
 
