@@ -1,11 +1,7 @@
-<div align="center">
-
-| <h1>NAAICE Communication Libraries</h1> | <a href="https://greenhpc.eu"><img src="docs/source/_static/naaice.png" alt="NAAICE Logo" width="100"/></a> |
-|:---|---:|
-
-</div>
+# NAAICE Communication Libraries
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-02B36C)](LICENSE)
+[![Project](https://img.shields.io/badge/Project-greenhpc.eu-02B36C)](https://greenhpc.eu)
 
 
 ## Overview
