@@ -66,14 +66,10 @@ cmake -S . -B build [OPTIONS]
 
 ### Compilation
 
+To build the examples, run the following command: 
+
 ```bash
 cmake --build build
-```
-
-### Installation/Usage
-
-```bash
-cmake --install build --prefix /path/to/install
 ```
 
 For your own projects, the APIs can be integrated via CMake using the FetchContent mechanism. A dedicated CMake target is provided for each of the three components:
