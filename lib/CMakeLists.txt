@@ -5,6 +5,7 @@ find_library(RDMACM_LIB rdmacm REQUIRED)
 
 add_library(naaice_low_level STATIC naaice.c)
 add_library(naaice::low_level ALIAS naaice_low_level)
+set_target_properties(naaice_low_level PROPERTIES EXPORT_NAME low_level)
 target_include_directories(naaice_low_level 
                             PUBLIC 
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -19,6 +20,7 @@ target_link_libraries(naaice_low_level
 
 add_library(naaice_middleware STATIC naaice_ap2.c)
 add_library(naaice::middleware ALIAS naaice_middleware)
+set_target_properties(naaice_middleware PROPERTIES EXPORT_NAME middleware)
 target_include_directories(naaice_middleware 
                             PUBLIC 
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -30,6 +32,7 @@ target_link_libraries(naaice_middleware
 
 add_library(naaice_swnaa STATIC naaice_swnaa.c)
 add_library(naaice::swnaa ALIAS naaice_swnaa)
+set_target_properties(naaice_swnaa PROPERTIES EXPORT_NAME swnaa)
 target_include_directories(naaice_swnaa 
                             PUBLIC 
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
