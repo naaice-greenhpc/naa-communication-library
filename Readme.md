@@ -133,7 +133,7 @@ Simplified interface using environment variables for NAA discovery.
 
 **Example:**
 ```bash
-NAA_SPEC=10.3.10.42:12345:1:3 ./build/src/naaice_client_ap2 4 "1024 1024 1024 1024"
+NAA_SPEC=10.3.10.42:12345:1:4 ./build/examples/naaice_client_ap2 4 "1024 1024 1024 1024"
 ```
 
 
@@ -192,12 +192,6 @@ The development of the NAAICE Communication Libraries is funded by the BMFTR Ger
 
 
 <img src="docs/source/_static/BMFTR-sponsored.jpg" alt="BMFTR" title="BMFTR" width="50%">
-
-
----
-
-**Last Updated**: January 2026
-
 
 
 ---
