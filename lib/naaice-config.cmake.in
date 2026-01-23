@@ -1,0 +1,13 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Find required dependencies
+find_dependency(Threads REQUIRED)
+find_library(IBVERBS_LIB ibverbs REQUIRED)
+find_library(RDMACM_LIB rdmacm REQUIRED)
+
+# Include the exported targets
+include("${CMAKE_CURRENT_LIST_DIR}/naaice-targets.cmake")
+
+check_required_components(naaice)

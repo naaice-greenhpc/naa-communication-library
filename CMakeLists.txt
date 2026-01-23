@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15...3.31)
 
 project(
   naa-communication-prototype
-  VERSION 1.0
+    VERSION 0.1
   LANGUAGES C)
 
 option(USE_EMA "Use EMA" OFF)
@@ -15,7 +15,10 @@ add_compile_options(-MMD -MP -Wall -pedantic -Wextra -gdwarf-2 $<$<CONFIG:DEBUG>
 include(FetchContent)
 include(ExternalProject)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+# Set default install prefix to build/install only if not specified by user
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Installation directory" FORCE)
+endif()
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 if(USE_EMA)
@@ -43,3 +46,19 @@ add_compile_definitions(LOG_LEVEL=${LOG_LEVEL})
 add_subdirectory(lib)
 add_subdirectory(examples)
 add_subdirectory(tests)
+
+# install licences in different locations
+install(FILES 
+        ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        ${CMAKE_CURRENT_SOURCE_DIR}/Readme.md
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+install(FILES 
+        ${CMAKE_BINARY_DIR}/_deps/ulog-src/LICENSE
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/microlog)
+
+install(FILES 
+        ${CMAKE_BINARY_DIR}/_deps/ulog-build/micrologConfig.cmake
+        ${CMAKE_BINARY_DIR}/_deps/ulog-build/micrologConfigVersion.cmake
+        ${CMAKE_BINARY_DIR}/_deps/ulog-src/cmake/micrologTargets.cmake
+        DESTINATION lib/cmake/microlog)

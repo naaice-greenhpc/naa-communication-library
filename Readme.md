@@ -45,12 +45,14 @@ This library provides a low-level and middleware implementation for RDMA-based c
 
 ### Prerequisites
 
-- CMake >= 3.10
-- C compiler with C11 support
+- CMake >= 3.15
+- C compiler with C17 support
 - RDMA libraries: `libibverbs`, `librdmacm`
 - (Optional) Doxygen and Sphinx for documentation
 
 ### Configuration
+
+To build the examples run the following commands:
 
 ```bash
 cmake -S . -B build [OPTIONS]
@@ -77,6 +79,8 @@ For your own projects, the APIs can be integrated via CMake using the FetchConte
 - NAAICE Low-Level API (naaice::low_level)
 - NAAICE Middleware API (naaice::middleware)
 - Software-NAA (naaice::swnaa).
+
+
 
 ## Examples
 
