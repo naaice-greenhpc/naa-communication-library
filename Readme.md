@@ -197,9 +197,3 @@ The development of the NAAICE Communication Libraries is funded by the BMFTR Ger
 ---
 
 **Last Updated**: January 2026
-
-
-
----
-
-**Last Updated**: January 2026
