@@ -133,7 +133,7 @@ Simplified interface using environment variables for NAA discovery.
 
 **Example:**
 ```bash
-NAA_SPEC=10.3.10.42:12345:1:3 ./build/src/naaice_client_ap2 4 "1024 1024 1024 1024"
+NAA_SPEC=10.3.10.42:12345:1:4 ./build/examples/naaice_client_ap2 4 "1024 1024 1024 1024"
 ```
 
 
