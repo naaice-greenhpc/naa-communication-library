@@ -52,6 +52,8 @@ This library provides a low-level and middleware implementation for RDMA-based c
 
 ### Configuration
 
+To build the examples run the following commands:
+
 ```bash
 cmake -S . -B build [OPTIONS]
 ```
@@ -72,15 +74,13 @@ cmake --build build
 
 ### Installation/Usage
 
-```bash
-cmake --install build --prefix /path/to/install
-```
-
 For your own projects, the APIs can be integrated via CMake using the FetchContent mechanism. A dedicated CMake target is provided for each of the three components:
 
 - NAAICE Low-Level API (naaice::low_level)
 - NAAICE Middleware API (naaice::middleware)
 - Software-NAA (naaice::swnaa).
+
+
 
 ## Examples
 
