@@ -45,8 +45,8 @@ This library provides a low-level and middleware implementation for RDMA-based c
 
 ### Prerequisites
 
-- CMake >= 3.10
-- C compiler with C11 support
+- CMake >= 3.15
+- C compiler with C17 support
 - RDMA libraries: `libibverbs`, `librdmacm`
 - (Optional) Doxygen and Sphinx for documentation
 
