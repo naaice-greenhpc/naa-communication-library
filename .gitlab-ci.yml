@@ -96,7 +96,6 @@ push:
     # Therefore, the ssh key is stored as a base64 encoded string
     - apt-get update && apt-get -y install git openssh-client
     - mkdir -p ~/.ssh && echo "$GITHUB_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_ed25519 && chmod 0600 ~/.ssh/id_ed25519
-    - cat ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - ssh-keyscan git.gfz-potsdam.de >> ~/.ssh/known_hosts
   script:
