@@ -5,13 +5,14 @@ workflow:
 
 before_script:
   - echo "Starting CI/CD pipeline for NAA communication prototype"
-  - apt-get update && apt-get -y install git cmake librdmacm-dev libibverbs1 ibverbs-utils gcc-13 g++-13
+  - apt-get update && apt-get -y install git cmake librdmacm-dev libibverbs1 ibverbs-utils gcc-13 g++-13 openssh-client git
 
 
 stages:
   - build
   - run
   - deploy
+  - release
   - measurement
   - evaluation
 
@@ -86,6 +87,22 @@ pages:
     paths:
       - public
 
+push:
+  stage: release
+  variables:
+    GITHUB_REPOSITORY: 'git@github.com:naaice-greenhpc/naa-communication-library.git'
+  before_script:
+    # I know that there is this file env variable in gitlab, but somehow it does not work for me (still complaining about white spaces ...)
+    # Therefore, the ssh key is stored as a base64 encoded string
+    - apt-get update && apt-get -y install git openssh-client
+    - mkdir -p ~/.ssh && echo "$GITHUB_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_ed25519 && chmod 0600 ~/.ssh/id_ed25519
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - ssh-keyscan git.gfz-potsdam.de >> ~/.ssh/known_hosts
+  script:
+    - if [[ -d naa-communication-library.git ]]; then rm -rf naa-communication-library.git; fi
+    - git clone --mirror "git@git.gfz-potsdam.de:naaice/naa-communication-prototype.git" "naa-communication-library.git" && cd naa-communication-library.git
+    - git push --mirror $GITHUB_REPOSITORY
+  allow_failure: true
 
 measurement_server:
   stage: measurement

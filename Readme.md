@@ -27,7 +27,6 @@ This library provides a low-level and middleware implementation for RDMA-based c
     - [Prerequisites](#prerequisites)
     - [Configuration](#configuration)
     - [Compilation](#compilation)
-    - [Installation/Usage](#installationusage)
   - [Examples](#examples)
     - [Low-Level API (AP1)](#low-level-api-ap1)
     - [Application-Level API (Middleware)](#application-level-api-middleware)
@@ -66,7 +65,7 @@ cmake -S . -B build [OPTIONS]
 | `LOG_LEVEL` | `LOG_INFO`, `LOG_DEBUG`, `LOG_WARN`, `LOG_ERROR` | `LOG_INFO` | Logging verbosity |
 | `USE_EMA` | `ON`, `OFF` | `OFF` | Enable EMA measurements |
 
-### Compilation
+### Compilation/Installation
 
 To build the examples, run the following command: 
 
@@ -79,8 +78,6 @@ For your own projects, the APIs can be integrated via CMake using the FetchConte
 - NAAICE Low-Level API (naaice::low_level)
 - NAAICE Middleware API (naaice::middleware)
 - Software-NAA (naaice::swnaa).
-
-
 
 ## Examples
 
