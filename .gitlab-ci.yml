@@ -96,9 +96,11 @@ push:
     # Therefore, the ssh key is stored as a base64 encoded string
     - apt-get update && apt-get -y install git openssh-client
     - mkdir -p ~/.ssh && echo "$GITHUB_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_ed25519 && chmod 0600 ~/.ssh/id_ed25519
+    - cat ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - ssh-keyscan git.gfz-potsdam.de >> ~/.ssh/known_hosts
   script:
-    - if [[-d naa-communication-library.git ]]; then rm -rf naa-communication-library.git; fi
+    - if [[ -d naa-communication-library.git ]]; then rm -rf naa-communication-library.git; fi
     - git clone --mirror "git@git.gfz-potsdam.de:naaice/naa-communication-prototype.git" "naa-communication-library.git" && cd naa-communication-library.git
     - git push --mirror $GITHUB_REPOSITORY
   allow_failure: true
