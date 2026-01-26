@@ -99,7 +99,7 @@ push:
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
   script:
     - if [[-d naa-communication-library.git ]]; then rm -rf naa-communication-library.git; fi
-    - git clone --mirror "https://git.gfz-potsdam.de/naaice/naa-communication-prototype" "naa-communication-library.git" && cd naa-communication-library.git
+    - git clone --mirror "git@git.gfz-potsdam.de:naaice/naa-communication-prototype.git" "naa-communication-library.git" && cd naa-communication-library.git
     - git push --mirror $GITHUB_REPOSITORY
   allow_failure: true
 
