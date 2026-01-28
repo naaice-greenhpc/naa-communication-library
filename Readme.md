@@ -2,6 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-02B36C)](LICENSE)
 [![Project](https://img.shields.io/badge/Project-greenhpc.eu-02B36C)](https://greenhpc.eu)
+[![DOI](https://zenodo.org/badge/1142599439.svg)](https://doi.org/10.5281/zenodo.18403259)
 
 
 ## Overview
