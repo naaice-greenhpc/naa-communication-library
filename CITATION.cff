@@ -24,8 +24,13 @@ authors:
     family-names: Christgau
     email: christgau@zib.de
     orcid: 'https://orcid.org/0000-0002-8702-8422'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.18403260
 repository-code: >-
   https://git.gfz-potsdam.de/naaice/naa-communication-prototype
+repository: >-
+  https://github.com/naaice-greenhpc/naa-communication-library
 keywords:
   - RDMA
   - RoCEv2
@@ -34,4 +39,4 @@ keywords:
   - ibverbs
 license: BSD-3-Clause
 version: '0.10'
-date-released: '2026-01-23'
+date-released: '2026-01-28'
