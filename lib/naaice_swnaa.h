@@ -1,28 +1,28 @@
 /**************************************************************************
  *
- *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM  
- *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7  
- *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d    
- *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM    
- *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  , 
- *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M 
- *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM 
- * 
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
  *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
- * 
+ *
  * naaice_swnaa.h
  *
  * Interface for NAAICE AP1 software dummy NAA (SWNAA).
- * 
+ *
  * These functions are used to set up a software mockup of an NAA, which
  * behaves like a FPGA-based NAA should. Such an SWNAA can be used for testing
  * the NAAICE middleware layers in the absence of an FPGA.
- * 
+ *
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
- * 
+ *
  * 26-01-2024
- * 
+ *
  *****************************************************************************/
 
 #ifndef NAAICE_SWNAA_H
@@ -33,17 +33,14 @@
 #include "naaice.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /**
  * @defgroup PublicFunctionsSWNAA Functions
  */
 
-
 /* Public Functions **********************************************************/
-
 
 /** @addtogroup PublicFunctionsSWNAA
  *  @{
@@ -69,7 +66,7 @@ extern "C"
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_init_communication_context(
-  struct naaice_communication_context **comm_ctx, uint16_t port);
+    struct naaice_communication_context **comm_ctx, uint16_t port);
 
 /**
  * @brief Set up the software NAA connection.
@@ -87,7 +84,7 @@ int naaice_swnaa_init_communication_context(
  *   0 on success, -1 on failure (e.g. due to timeout).
  */
 int naaice_swnaa_setup_connection(
-  struct naaice_communication_context *comm_ctx);
+    struct naaice_communication_context *comm_ctx);
 
 /**
  * @defgroup SWNAAEventHandlers Software NAA connection event handlers
@@ -126,13 +123,14 @@ int naaice_swnaa_setup_connection(
  */
 
 /** @brief Handle RDMA_CM_EVENT_CONNECTION_REQUEST events. */
-int naaice_swnaa_handle_connection_requests(struct naaice_communication_context *comm_ctx,
-                                struct rdma_cm_event *ev);
+int naaice_swnaa_handle_connection_requests(
+    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
 /** @brief Handle RDMA_CM_EVENT_CONNECT_ESTABLISHED events. */
 int naaice_swnaa_handle_connection_established(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
 /** @brief Handle connection error events. */
-int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
+int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
+                              struct rdma_cm_event *ev);
 
 /** @} */
 /**
@@ -150,7 +148,8 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx, str
  *   -1 on failure.
  */
 
-int naaice_swnaa_poll_and_handle_connection_event(struct naaice_communication_context *comm_ctx);
+int naaice_swnaa_poll_and_handle_connection_event(
+    struct naaice_communication_context *comm_ctx);
 
 /**
  * @brief Initialize MRSP on the software NAA side.
@@ -197,8 +196,8 @@ int naaice_swnaa_post_recv_mrsp(struct naaice_communication_context *comm_ctx);
  * @return
  *   0 on success, -1 on failure.
  */
-int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
-  struct naaice_communication_context *comm_ctx);
+int naaice_swnaa_handle_work_completion(
+    struct ibv_wc *wc, struct naaice_communication_context *comm_ctx);
 
 /**
  * @defgroup SWNAAMRSPHandlers MRSP packet handlers
@@ -219,10 +218,10 @@ int naaice_swnaa_handle_work_completion(struct ibv_wc *wc,
 
 /** @brief Handle MRSP announce packets. */
 int naaice_swnaa_handle_mr_announce(
-  struct naaice_communication_context *comm_ctx);
+    struct naaice_communication_context *comm_ctx);
 /** @brief Handle MRSP announce-and-request packets. */
 int naaice_swnaa_handle_mr_announce_and_request(
-  struct naaice_communication_context *comm_ctx);
+    struct naaice_communication_context *comm_ctx);
 
 /** @} */
 
@@ -245,7 +244,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
-  enum message_id message_type, uint8_t errorcode);
+                              enum message_id message_type, uint8_t errorcode);
 
 /**
  * @brief Post a receive for a memory region write.
@@ -284,8 +283,8 @@ int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx);
  * @return
  *   0 on success, -1 on failure.
  */
-int naaice_swnaa_write_data(
-  struct naaice_communication_context *comm_ctx, uint8_t errorcode);
+int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
+                            uint8_t errorcode);
 
 /**
  * @brief Disconnect and clean up the software NAA connection.
@@ -300,7 +299,7 @@ int naaice_swnaa_write_data(
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_disconnect_and_cleanup(
-  struct naaice_communication_context *comm_ctx);
+    struct naaice_communication_context *comm_ctx);
 
 /**
  * @brief Execute MRSP logic in a blocking manner.
@@ -329,7 +328,7 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_receive_data_transfer(
-  struct naaice_communication_context *comm_ctx);
+    struct naaice_communication_context *comm_ctx);
 
 /**
  * @brief Perform the complete data transfer procedure.
@@ -345,8 +344,8 @@ int naaice_swnaa_receive_data_transfer(
  * @return
  *   0 on success, -1 on failure.
  */
-int naaice_swnaa_do_data_transfer(
-    struct naaice_communication_context *comm_ctx, uint8_t errorcode);
+int naaice_swnaa_do_data_transfer(struct naaice_communication_context *comm_ctx,
+                                  uint8_t errorcode);
 
 /**
  * @brief Poll the completion queue in a non-blocking manner.
@@ -364,7 +363,7 @@ int naaice_swnaa_do_data_transfer(
  *  -1 on failure.
  */
 int naaice_swnaa_poll_cq_nonblocking(
-  struct naaice_communication_context *comm_ctx);
+    struct naaice_communication_context *comm_ctx);
 
 /** @} */ // end of doxygen group PublicFunctionsSWNAA
 
