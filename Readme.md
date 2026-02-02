@@ -169,11 +169,12 @@ Documentation will be generated in `docs/build/`.
 
 ## Authors
 
-- Florian Mikolajczak (florian.mikolajczak@uni-potsdam.de)
-- Dylan Everingham (everingham@zib.de)
-- Niklas Schelten (niklas.schelten@hhi.fraunhofer.de)
 - Steffen Christgau (christgau@zib.de)
+- Dylan Everingham (everingham@zib.de)
+- Florian Mikolajczak (florian.mikolajczak@uni-potsdam.de)
+- Niklas Schelten (niklas.schelten@hhi.fraunhofer.de)
 - Hannes Signer (signer@uni-potsdam.de)
+- Fritjof Steinert (fritjof.steinert@hhi.fraunhofer.de)
 
 ## References
 
