@@ -8,22 +8,35 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - given-names: Florian
-    family-names: Mikolajczak
-  - given-names: Everingham
-    family-names: Dylan
-  - given-names: Niklas
-    family-names: Schelten
-    email: niklas.schelten@hhi.fraunhofer.de
-    orcid: 'https://orcid.org/0000-0002-6597-4928'
-  - given-names: Hannes
-    family-names: Signer
-    email: signer@uni-potsdam.de
-    orcid: 'https://orcid.org/0009-0000-3058-8472'
   - given-names: Steffen
     family-names: Christgau
     email: christgau@zib.de
     orcid: 'https://orcid.org/0000-0002-8702-8422'
+    affiliation: Zuse Institute Berlin
+  - given-names: Everingham
+    family-names: Dylan
+    orcid: 'https://orcid.org/0009-0003-8847-6221'
+  - given-names: Florian
+    family-names: Mikolajczak
+  - given-names: Niklas
+    family-names: Schelten
+    email: niklas.schelten@hhi.fraunhofer.de
+    orcid: 'https://orcid.org/0000-0002-6597-4928'
+    affiliation: >-
+      Fraunhofer Institute for Telecommunications — Heinrich
+      Hertz Institute
+  - given-names: Hannes
+    family-names: Signer
+    email: signer@uni-potsdam.de
+    orcid: 'https://orcid.org/0009-0000-3058-8472'
+    affiliation: University of Potsdam
+  - given-names: Fritjof
+    family-names: Steinert
+    email: fritjof.steinert@hhi.fraunhofer.de
+    orcid: 'https://orcid.org/0000-0002-8733-3064'
+    affiliation: >-
+      Fraunhofer Institute for Telecommunications — Heinrich
+      Hertz Institute
 identifiers:
   - type: doi
     value: 10.5281/zenodo.18403260
