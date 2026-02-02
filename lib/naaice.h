@@ -128,12 +128,9 @@
  */
 #define DEFAULT_TIMEOUT 3600
 
-/** @ingroup DefinesLowLevel Default number of retries for the RDMA connection. */
+/** @ingroup DefinesLowLevel Default number of retries for the RDMA connection.
+ */
 #define DEFAULT_RETRY_COUNT 7
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 // Maximum allowed number of memory regions.
 // Total of parameters and internal NAA memory regions.
@@ -532,6 +529,10 @@ struct naaice_communication_context {
     uint8_t immediate_bytearr[4];
   };
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Public Functions **********************************************************/
 
