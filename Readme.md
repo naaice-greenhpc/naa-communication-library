@@ -137,7 +137,7 @@ NAA_SPEC=10.3.10.42:12345:1:4 ./build/examples/naaice_client_ap2 4 "1024 1024 10
 
 ## Documentation
 
-Full API documentation is available at: https://naaice.git-pages.gfz-potsdam.de/naa-communication-prototype/
+Full API documentation is available at: https://naaice-greenhpc.github.io/naa-communication-library/
 
 ### Building Documentation
 
