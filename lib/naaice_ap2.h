@@ -31,10 +31,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /** @defgroup StructsEnumsMiddleware Structs & Enums */
 /** @defgroup PublicFunctionsMiddleware Functions */
 
@@ -80,14 +76,13 @@ typedef uint32_t naa_function_code_t;
  *
  */
 typedef struct naa_param_t {
-    void *addr; ///< Pointer to the data region
-    size_t size; ///< Size of the data region, in bytes
-    bool single_send; ///< Indicates that the parameter should be sent only once. If true, the parameter is sent only during the first communication with the NAA routine (typically for configuration data)
+  void *addr;       ///< Pointer to the data region
+  size_t size;      ///< Size of the data region, in bytes
+  bool single_send; ///< Indicates that the parameter should be sent only once.
+                    ///< If true, the parameter is sent only during the first
+                    ///< communication with the NAA routine (typically for
+                    ///< configuration data)
 } naa_param_t;
-
-
-
-
 
 /**
  * @ingroup StructsEnumsMiddleware
@@ -123,14 +118,18 @@ typedef struct naa_status {
   uint64_t bytes_received;
 } naa_status;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Public Functions **********************************************************/
 
 /**
  * @ingroup PublicFunctionsMiddleware
- * @brief Finding IP address and socket ID for an NAA matching required function code.
-  Prepare connection, register and exchange memory region information between
-  HPC node and NAA.
- 
+ * @brief Finding IP address and socket ID for an NAA matching required function
+ code. Prepare connection, register and exchange memory region information
+ between HPC node and NAA.
+
  IP address and socket ID are already known to HPC node. Info is retrieved from
  resource management system (Slurm) at creation/deployment of slurm job. User
  knows function code for method/calculation to outsource to NAA. Connection to
@@ -175,13 +174,13 @@ int naa_create(const naa_function_code_t function_code,
  * Initiates the data transfer for the current session using the provided
  * communication handle. Handles posting RDMA writes and waiting for the
  * remote computation to complete.
- * 
- * 
- * \note Data transfer is done with RDMA_WITH_IMM. If the transfer requires n > 1
- * operations, n − 1 RDMA_WRITE operations are done. The last writing operation is
- * RDMA_WITH_IMM, where the immediate data value is the function code.
- * RDMA_WITH_IMM signals the end of the data transfer to the NAA and initiates 
- * calculations on the NAA (RPC start)
+ *
+ *
+ * \note Data transfer is done with RDMA_WITH_IMM. If the transfer requires n >
+ * 1 operations, n − 1 RDMA_WRITE operations are done. The last writing
+ * operation is RDMA_WITH_IMM, where the immediate data value is the function
+ * code. RDMA_WITH_IMM signals the end of the data transfer to the NAA and
+ * initiates calculations on the NAA (RPC start)
  *
  * @param handle Pointer to a ::naa_handle created by ::naa_create.
  * @return int 0 if successful, -1 if an error occurred.
@@ -192,12 +191,13 @@ int naa_invoke(naa_handle *handle);
  * @ingroup PublicFunctionsMiddleware
  * @brief Waits in non-blocking mode for a receive.
  *
- * Much like MPI_TEST, the naa_test call is non-blocking and polls the completion
- * queue of the queue pair associated with the data transfer.
+ * Much like MPI_TEST, the naa_test call is non-blocking and polls the
+ * completion queue of the queue pair associated with the data transfer.
  *
- * A call to naa_test returns flag=true if the operation identified by handle is complete. * In such a case, the status object is set to contain information on the completed
- * operation. The call returns flag = false if the operation is not complete. In this case,
- * the value of the status object is undefined.
+ * A call to naa_test returns flag=true if the operation identified by handle is
+ * complete. * In such a case, the status object is set to contain information
+ * on the completed operation. The call returns flag = false if the operation is
+ * not complete. In this case, the value of the status object is undefined.
  *
  *
  *
@@ -212,10 +212,13 @@ int naa_test(naa_handle *handle, bool *flag, naa_status *status);
  * @ingroup PublicFunctionsMiddleware
  * @brief Waits in blocking mode for a receive.
  *
- * Much like MPI_WAIT, the naa_wait call is blocking and polls the completion queue
- * of the queue pair associated with the data transfer. naa_wait returns, when data
+ * Much like MPI_WAIT, the naa_wait call is blocking and polls the completion
+ queue
+ * of the queue pair associated with the data transfer. naa_wait returns, when
+ data
  * has been written back to the HPC node.
- * The call returns with the information on the completed operation stored in the
+ * The call returns with the information on the completed operation stored in
+ the
  * status variable.
 
  * @param handle communication handle created by naa_create
