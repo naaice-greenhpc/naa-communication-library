@@ -136,7 +136,7 @@ int naaice_init_communication_context(
   // Allocate memory for the communication context.
   *comm_ctx = (struct naaice_communication_context *)malloc(
       sizeof(struct naaice_communication_context));
-  if (comm_ctx == NULL) {
+  if (*comm_ctx == NULL) {
     log_error("Failed to allocate memory for communication context.\n");
     return -1;
   }
