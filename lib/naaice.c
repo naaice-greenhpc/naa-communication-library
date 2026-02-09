@@ -269,7 +269,7 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
                                  struct rdma_cm_event *ev,
                                  struct rdma_cm_event *ev_cp) {
 
-  log_trace("In naaice_poll_connection_event\n");
+  // log_trace("In naaice_poll_connection_event\n");
 
   if (!rdma_get_cm_event(comm_ctx->ev_channel, &ev)) {
 
@@ -1666,7 +1666,7 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
 
 int naaice_post_recv_mrsp(struct naaice_communication_context *comm_ctx) {
 
-  log_trace("In naaice_post_recv_mrsp\n");
+  log_debug("In naaice_post_recv_mrsp\n");
 
   // Construct the receive request and scatter/gather elements.
   struct ibv_recv_wr wr, *bad_wr = NULL;
