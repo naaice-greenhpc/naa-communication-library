@@ -21,21 +21,16 @@
  *
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
- * Hannes Signer, signer@uni-potsdam.de
- * 04.02.2026
+ *
+ * 26-01-2024
  *
  *****************************************************************************/
 
 /* Dependencies **************************************************************/
 
-#include "naaice.h"
 #include <naaice_swnaa.h>
-#include <pthread.h>
-#include <signal.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/sysinfo.h>
 #include <ulog.h>
 #include <unistd.h>
 
@@ -43,24 +38,17 @@
 
 #define CONNECTION_PORT 12345
 
-/** Idea: Master-Worker logic
- * master handles connection establishment for multiple connections
- * worker holds one connection per thread
- *
- * User-specified logic has to be implemented in the kernels/swnaa_kernel file
- * and are encoded with the function code.
- */
-
-static volatile sig_atomic_t g_stop_requested = 0;
+/* Implementation of NAA Procedure *******************************************/
 
 static void handle_shutdown_signal(__attribute__((unused)) int signo) {
   g_stop_requested = 1;
 }
 
-static int install_signal_handlers(void) {
-  struct sigaction sa;
-  memset(&sa, 0, sizeof(sa));
-  sa.sa_handler = handle_shutdown_signal;
+  log_debug("in do_procedure\n");
+
+  // Can switch on function code.
+  // Here, do nothing if code is 0. Otherwise do something.
+  if (comm_ctx->fncode) {
 
   if (sigaction(SIGINT, &sa, NULL) != 0) {
     return -1;
@@ -72,16 +60,10 @@ static int install_signal_handlers(void) {
   return 0;
 }
 
-static void cleanup_master_context(struct context *ctx) {
-  if (ctx == NULL) {
-    return;
-  }
+      // Get pointer to data.
+      unsigned char *data = (unsigned char *)comm_ctx->mr_local_data[i].addr;
 
-  if (ctx->master != NULL) {
-    if (ctx->master->id != NULL) {
-      rdma_destroy_id(ctx->master->id);
-      ctx->master->id = NULL;
-    }
+      for (unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
 
     if (ctx->master->ev_channel != NULL) {
       rdma_destroy_event_channel(ctx->master->ev_channel);
@@ -95,8 +77,14 @@ static void cleanup_master_context(struct context *ctx) {
   free(ctx);
 }
 
+/* Main **********************************************************************/
+
+/**
+ * Command line arguments:
+ *  None. Port is hardcoded.
+ */
 int main(int argc, __attribute__((unused)) char *argv[]) {
-  ulog_output_level_set_all(LOG_LEVEL);
+  ulog_set_level(LOG_LEVEL);
 
   // Handle command line arguments.
   ulog_info("-- Handling Command Line Arguments --\n");
@@ -105,27 +93,60 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1;
   }
 
-  if (install_signal_handlers()) {
-    ulog_error("Failed to install signal handlers.\n");
+  // Communication context struct.
+  // This will hold all information necessary for the connection.
+  log_info("-- Initializing Communication Context --\n");
+  struct naaice_communication_context *comm_ctx = NULL;
+
+  // Initialize the communication context struct.
+  if (naaice_swnaa_init_communication_context(&comm_ctx, CONNECTION_PORT)) {
     return -1;
   }
+
+  // Now, handle connection setup.
+  log_info("-- Setting Up Connection --\n");
+  if (naaice_swnaa_setup_connection(comm_ctx)) {
+    return -1;
+  }
+
+  // Receive MRSP message from the host.
+  log_info("-- Doing MRSP --\n");
+  if (naaice_swnaa_do_mrsp(comm_ctx)) {
+    return -1;
+  }
+
+  while (comm_ctx->state >= NAAICE_MRSP_DONE) {
+
+    // Receive data transfer from host.
+    log_info("-- Receiving Data Transfer --\n");
+    if (naaice_swnaa_receive_data_transfer(comm_ctx)) {
+      return -1;
+    }
+    if (comm_ctx->state < NAAICE_MRSP_DONE ||
+        comm_ctx->state == NAAICE_FINISHED) {
+      break;
+    }
 
   struct context *ctx;
 
-  if (naaice_swnaa_init_master(&ctx, CONNECTION_PORT)) {
-    ulog_error("Failed to initialize SWNAA master context.\n");
-    return -1;
-  }
+    // Finally, write back the results to the host.
+    log_info("-- Writing Back Data --\n");
+    if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) {
+      return -1;
+    }
 
-  while (!g_stop_requested) {
-    if (naaice_swnaa_poll_and_handle_connection_event(ctx)) {
-      if (!g_stop_requested) {
-        ulog_error("Failed to handle connection event.\n");
-      }
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx) < 0) {
+      return -1;
+    } else if (comm_ctx->state == NAAICE_FINISHED) {
+      break;
     }
   }
 
-  cleanup_master_context(ctx);
+  // Disconnect and clean up.
+  log_info("-- Cleaning Up --\n");
+  if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) {
+    return -1;
+  }
 
   return 0;
 }

@@ -25,10 +25,6 @@ void custom_kernel_2(struct naaice_communication_context *comm_ctx) {
   }
 }
 
-// do nothing, used for measuring overhead of the communication without actual
-// computation
-void empty_kernel(struct naaice_communication_context *comm_ctx) {}
-
 // match function codes to functions
 int match_function_code(
     uint8_t fncode,
@@ -41,11 +37,8 @@ int match_function_code(
   case 2:
     *worker_func = &custom_kernel_2;
     return 0;
-  case 3:
-    *worker_func = &empty_kernel;
-    return 0;
   default:
-    ulog_error("Received invalid function code %d.\n", fncode);
+    log_error("Received invalid function code %d.\n", fncode);
     return -1;
   }
 }

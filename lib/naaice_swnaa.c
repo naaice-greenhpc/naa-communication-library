@@ -23,9 +23,7 @@
 
 // Enable debug messages.
 #include "naaice_swnaa.h"
-#include "config.h"
 #include "naaice.h"
-#include <bits/pthreadtypes.h>
 #include <errno.h>
 #include <infiniband/verbs.h>
 #include <pthread.h>
@@ -39,50 +37,28 @@
 
 // Implemented in naaice.c.
 const char *get_ibv_wc_opcode_str(enum ibv_wc_opcode opcode);
-const char *get_state_str(naaice_communication_state state);
+const char *get_state_str(enum naaice_communication_state state);
 
-// Global lock for ulog, since the SWNAA is multi-threaded and ulog isn't thread
-// safe by default.
-static pthread_mutex_t g_ulog_lock = PTHREAD_MUTEX_INITIALIZER;
-
-// Lock/unlock function for ulog, which uses the global lock defined above.
-static ulog_status naaice_swnaa_ulog_lock_fn(bool lock, void *lock_arg) {
-  if (lock_arg == NULL) {
-    return ULOG_STATUS_INVALID_ARGUMENT;
-  }
-
-  pthread_mutex_t *mtx = (pthread_mutex_t *)lock_arg;
-  int rc = lock ? pthread_mutex_lock(mtx) : pthread_mutex_unlock(mtx);
-  return (rc == 0) ? ULOG_STATUS_OK : ULOG_STATUS_ERROR;
-}
+int naaice_swnaa_consume_connection(struct connection_management *con_mng,
+                                    uint8_t *worker_id);
 
 /* Function Implementations **************************************************/
 
 int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
 
-  ulog_trace("In naaice_swnaa_init_master\n");
-  if (ulog_lock_set_fn(naaice_swnaa_ulog_lock_fn, &g_ulog_lock) !=
-      ULOG_STATUS_OK) {
-    ulog_error("Failed to configure ulog thread lock.\n");
-    return -1;
-  }
+  log_trace("In naaice_swnaa_init_master\n");
 
   // initialize master context
-  *ctx = (struct context *)calloc(1, sizeof(struct context));
+  *ctx = (struct context *)malloc(sizeof(struct context));
   if (*ctx == NULL) {
-    ulog_error("Memory allocation for the server_context failed");
+    log_error("Malloc of server_context failed");
     return -1;
   }
 
   pthread_mutex_init(&(*ctx)->lock, NULL);
 
-  (*ctx)->con_mng = (struct connection_management *)calloc(
-      1, sizeof(struct connection_management));
-  if ((*ctx)->con_mng == NULL) {
-    ulog_error("Memory allocation for the connection management failed");
-    return -1;
-  }
-
+  (*ctx)->con_mng = (struct connection_management *)malloc(
+      sizeof(struct connection_management));
   // initalize array and position of free connections
   (*ctx)->con_mng->top = MAX_CONNECTIONS;
   for (int i = 0; i < MAX_CONNECTIONS; i++) {
@@ -90,57 +66,52 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
     (*ctx)->worker[i] = NULL;
   }
 
-  (*ctx)->master = (struct naaice_communication_context *)calloc(
-      1, sizeof(struct naaice_communication_context));
-  if ((*ctx)->master == NULL) {
-    ulog_error("Memory allocation for the master communication context failed");
-    return -1;
-  }
+  (*ctx)->master = (struct naaice_communication_context *)malloc(
+      sizeof(struct naaice_communication_context));
 
   (*ctx)->master->state = NAAICE_INIT;
-  (*ctx)->total_connections_lifetime = 0;
 
   // Make an event channel, checking for allocation success.
-  ulog_debug("Making event channel.\n");
+  log_debug("Making event channel.\n");
   (*ctx)->master->ev_channel = rdma_create_event_channel();
   if (!(*ctx)->master->ev_channel) {
-    ulog_error("Failed to create the master RDMA event channel.\n");
+    log_error("Failed to create the master RDMA event channel.\n");
     return -1;
   }
 
   // Make a communication ID, checking for allocation success.
-  ulog_debug("Making communication ID.\n");
+  log_debug("Making communication ID.\n");
   struct rdma_cm_id *rdma_comm_id;
   if (rdma_create_id((*ctx)->master->ev_channel, &rdma_comm_id, NULL,
                      RDMA_PS_TCP) == -1) {
-    ulog_error("Failed to create master RDMA communication id.\n");
+    log_error("Failed to create master RDMA communication id.\n");
     return -1;
   }
   (*ctx)->master->id = rdma_comm_id;
 
-  ulog_debug("Configuring connection.\n");
+  log_debug("Configuring connection.\n");
   struct sockaddr loc_addr;
   memset(&loc_addr, 0, sizeof(loc_addr));
   loc_addr.sa_family = AF_INET;
   ((struct sockaddr_in *)&loc_addr)->sin_port = htons(port);
 
   // Bind communication ID to local address.
-  ulog_debug("Bind address.\n");
+  log_debug("Bind address.\n");
   if (rdma_bind_addr((*ctx)->master->id, &loc_addr)) {
-    ulog_error("Binding communication ID to local address failed.\n");
-    ulog_error("errno: %d\n", errno);
+    log_error("Binding communication ID to local address failed.\n");
+    log_error("errno: %d\n", errno);
     return -1;
   }
 
   // Listen on the port.
   if (rdma_listen((*ctx)->master->id,
                   10)) { // Backlog queue length 10.
-    ulog_error("Listening on specified port failed.\n");
+    log_error("Listening on specified port failed.\n");
     return -1;
   }
 
   int port_num = ntohs(rdma_get_src_port((*ctx)->master->id));
-  ulog_debug("Listening on port %d.\n", port_num);
+  log_debug("Listening on port %d.\n", port_num);
 
   return 0;
 }
@@ -148,7 +119,7 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
 int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id) {
 
   (*ctx)->worker[worker_id] =
-      calloc(1, sizeof(struct naaice_communication_context));
+      malloc(sizeof(struct naaice_communication_context));
 
   (*ctx)->worker[worker_id]->connection_id = worker_id;
   (*ctx)->worker[worker_id]->state = NAAICE_INIT;
@@ -170,17 +141,17 @@ int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id) {
   // computation are not until after MRSP is complete.
   (*ctx)->worker[worker_id]->mr_local_data = NULL;
 
-  ulog_debug("Allocating memory region for MRSP.\n");
+  log_debug("Allocating memory region for MRSP.\n");
   (*ctx)->worker[worker_id]->mr_local_message =
       (struct naaice_mr_local *)calloc(1, sizeof(struct naaice_mr_local));
   if ((*ctx)->worker[worker_id]->mr_local_message == NULL) {
-    ulog_error("Failed to allocate local memory for MRSP messages.\n");
+    log_error("Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
   (*ctx)->worker[worker_id]->mr_local_message->addr =
       (char *)calloc(1, MR_SIZE_MRSP);
   if ((*ctx)->worker[worker_id]->mr_local_message->addr == NULL) {
-    ulog_error("Failed to allocate local memory for MRSP messages.\n");
+    log_error("Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
 
@@ -188,16 +159,16 @@ int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id) {
 }
 
 int naaice_swnaa_init_communication_context(
-    struct naaice_communication_context **comm_ctx) {
+    struct naaice_communication_context **comm_ctx, uint16_t port) {
 
   ulog_trace("In naaice_swnaa_init_communication_context\n");
 
   // Allocate memory for the communication context.
-  ulog_debug("Allocating communication context.\n");
-  *comm_ctx = (struct naaice_communication_context *)calloc(
-      1, sizeof(struct naaice_communication_context));
+  log_debug("Allocating communication context.\n");
+  *comm_ctx = (struct naaice_communication_context *)malloc(
+      sizeof(struct naaice_communication_context));
   if (comm_ctx == NULL) {
-    ulog_error("Failed to allocate memory for communication context. Exiting.");
+    log_error("Failed to allocate memory for communication context. Exiting.");
     return -1;
   }
 
@@ -205,7 +176,7 @@ int naaice_swnaa_init_communication_context(
   ulog_debug("Making event channel.\n");
   (*comm_ctx)->ev_channel = rdma_create_event_channel();
   if (!(*comm_ctx)->ev_channel) {
-    ulog_error("Failed to create an RDMA event channel.\n");
+    log_error("Failed to create an RDMA event channel.\n");
     return -1;
   }
 
@@ -214,7 +185,7 @@ int naaice_swnaa_init_communication_context(
   struct rdma_cm_id *rdma_comm_id;
   if (rdma_create_id((*comm_ctx)->ev_channel, &rdma_comm_id, NULL,
                      RDMA_PS_TCP) == -1) {
-    ulog_error("Failed to create an RDMA communication id.\n");
+    log_error("Failed to create an RDMA communication id.\n");
     return -1;
   }
   (*comm_ctx)->ibv_ctx = rdma_comm_id->verbs;
@@ -240,23 +211,50 @@ int naaice_swnaa_init_communication_context(
   // computation are not until after MRSP is complete.
   (*comm_ctx)->mr_local_data = NULL;
 
-  ulog_debug("Allocating memory region for MRSP.\n");
+  log_debug("Allocating memory region for MRSP.\n");
   (*comm_ctx)->mr_local_message =
       (struct naaice_mr_local *)calloc(1, sizeof(struct naaice_mr_local));
   if ((*comm_ctx)->mr_local_message == NULL) {
-    ulog_error("Failed to allocate local memory for MRSP messages.\n");
+    log_error("Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
   (*comm_ctx)->mr_local_message->addr = (char *)calloc(1, MR_SIZE_MRSP);
   if ((*comm_ctx)->mr_local_message->addr == NULL) {
-    ulog_error("Failed to allocate local memory for MRSP messages.\n");
+    log_error("Failed to allocate local memory for MRSP messages.\n");
     return -1;
   }
+
+  // Configure connection.
+  // TODO: make port flexible?
+  // Probably with RMS support, when we ask for the NAA ip, we will also get
+  // port num.
+  log_debug("Configuring connection.\n");
+  struct sockaddr loc_addr;
+  memset(&loc_addr, 0, sizeof(loc_addr));
+  loc_addr.sa_family = AF_INET;
+  ((struct sockaddr_in *)&loc_addr)->sin_port = htons(port);
+
+  // Bind communication ID to local address.
+  if (rdma_bind_addr(rdma_comm_id, &loc_addr)) {
+    log_error("Binding communication ID to local address failed.\n");
+    log_error("errno: %d\n", errno);
+    return -1;
+  }
+
+  // Listen on the port.
+  if (rdma_listen(rdma_comm_id, 10)) { // Backlog queue length 10.
+    log_error("Listening on specified port failed.\n");
+    return -1;
+  }
+
+  int port_num = ntohs(rdma_get_src_port(rdma_comm_id));
+  log_debug("Listening on port %d.\n", port_num);
 
   return 0;
 }
 
-int naaice_swnaa_setup_connection(struct context *ctx) {
+int naaice_swnaa_setup_connection(
+    struct naaice_communication_context *comm_ctx) {
 
   ulog_debug("In naaice_swnaa_setup_connection\n");
 
@@ -269,14 +267,74 @@ int naaice_swnaa_setup_connection(struct context *ctx) {
   return 0;
 }
 
-int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
+int naaice_swnaa_setup_connection_multi(struct context *ctx) {
 
-  ulog_debug("In naaice_poll_and_handle_connection_event\n");
+  log_debug("In naaice_swnaa_setup_connection\n");
+
+  // Loop handling events and updating the completion flag until finished.
+  while (ctx->master->state < NAAICE_CONNECTED) {
+
+    naaice_swnaa_poll_and_handle_connection_event_multi(ctx);
+  }
+
+  return 0;
+}
+
+int naaice_swnaa_poll_and_handle_connection_event(
+    struct naaice_communication_context *comm_ctx) {
+
+  // log_trace("In naaice_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
   struct rdma_cm_event ev_cp;
   uintptr_t worker_id;
+  struct naaice_communication_context *comm_ctx;
+
+  if (!naaice_poll_connection_event(comm_ctx, &ev, &ev_cp)) {
+    comm_ctx->id = ev_cp.id;
+    log_warn("connection event id: %d", ev_cp.id);
+    switch (ev_cp.event) {
+    case RDMA_CM_EVENT_CONNECT_REQUEST:
+      if (naaice_swnaa_handle_connection_requests(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+    case RDMA_CM_EVENT_ESTABLISHED:
+      if (naaice_swnaa_handle_connection_established(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+    case RDMA_CM_EVENT_CONNECT_ERROR:
+    case RDMA_CM_EVENT_DISCONNECTED:
+    case RDMA_CM_EVENT_DEVICE_REMOVAL:
+      if (naaice_swnaa_handle_error(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+      // Since we're the server we don't handle addr resolution etc (we never
+      // make calls that would create such an event)
+
+    default:
+      if (naaice_handle_other(comm_ctx, &ev_cp)) {
+        return -1;
+      }
+      break;
+    }
+  }
+
+  // If we sucessfully handled an event (or haven't received one), success.
+  return 0;
+}
+
+int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
+
+  log_debug("In naaice_poll_and_handle_connection_event\n");
+
+  // If we've received an event...
+  struct rdma_cm_event ev;
+  struct rdma_cm_event ev_cp;
+  uint8_t worker_id = '\0';
   struct naaice_communication_context *comm_ctx;
 
   if (!naaice_poll_connection_event(ctx->master, &ev, &ev_cp)) {
@@ -285,85 +343,70 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
     case RDMA_CM_EVENT_CONNECT_REQUEST:
       // check if there is the capacity for a new connection
       if (ctx->con_mng->top <= 0) {
-        ulog_error("No capacity for a new connection");
+        log_error("No capacity for a new connection");
         return -1;
       }
-      // in the case of a connection request get an index of a free connection
-      // context and assign the new rdma_id to this worker
+      // in the case of a connection request assign the new rdma_id to the
+      // worker
       pthread_mutex_lock(&ctx->lock);
-      worker_id = ctx->con_mng->connections[--ctx->con_mng->top];
-      pthread_mutex_unlock(&ctx->lock);
-      if (naaice_swnaa_init_worker(&ctx, worker_id)) {
-        ulog_error("Failed to initialize worker for new connection");
-        pthread_mutex_lock(&ctx->lock);
-        ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
+      int worker_idx = ctx->con_mng->connections[--ctx->con_mng->top];
+      if (naaice_swnaa_init_worker(&ctx, worker_idx)) {
+        log_error("Failed to initialize worker for new connection");
         pthread_mutex_unlock(&ctx->lock);
         return -1;
       }
-      ctx->worker[worker_id]->id = ev_cp.id;
-      ev_cp.id->context = (void *)(uintptr_t)worker_id;
+      ctx->worker[worker_idx]->id = ev_cp.id;
+      ev_cp.id->context = ctx->worker[worker_idx];
+      pthread_mutex_unlock(&ctx->lock);
 
-      if (naaice_swnaa_handle_connection_requests(ctx, &ev_cp)) {
-        ulog_error("Failed to handle connection request");
-        naaice_swnaa_disconnect_and_cleanup(ctx->worker[worker_id]);
-        pthread_mutex_lock(&ctx->lock);
-        ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
-        ctx->worker[worker_id] = NULL;
-        pthread_mutex_unlock(&ctx->lock);
+      if (naaice_swnaa_handle_connection_requests_multi(ctx, &ev_cp)) {
         return -1;
       }
       break;
     case RDMA_CM_EVENT_ESTABLISHED:
-      worker_id = (uintptr_t)ev_cp.id->context;
-      ctx->total_connections_lifetime++;
-      comm_ctx = ctx->worker[worker_id];
-      // ulog_debug("Connection established event for worker %hhu\n",
-      //  comm_ctx->connection_id);
+      comm_ctx = ev_cp.id->context;
+      log_debug("Connection established event for worker %hhu\n",
+                comm_ctx->connection_id);
       if (naaice_swnaa_handle_connection_established(comm_ctx, &ev_cp)) {
-        ulog_error("Failed to handle connection establishment");
-        pthread_mutex_lock(&ctx->lock);
-        ctx->con_mng->connections[ctx->con_mng->top++] =
-            comm_ctx->connection_id;
-        ctx->worker[comm_ctx->connection_id] = NULL;
-        pthread_mutex_unlock(&ctx->lock);
-        naaice_swnaa_disconnect_and_cleanup(comm_ctx);
         return -1;
       }
 
-      // if the event is established, start the worker thread for this
-      // connection
-      struct worker_args *wargs = calloc(1, sizeof(struct worker_args));
-      if (wargs == NULL) {
-        ulog_error("Failed to allocate memory for worker args");
-        return -1;
-      }
+      struct worker_args *wargs = malloc(sizeof(struct worker_args));
       wargs->ctx = ctx;
       wargs->worker_id = comm_ctx->connection_id;
-      pthread_create(&ctx->worker_threads[comm_ctx->connection_id], NULL,
-                     worker_procedure, wargs);
+      pthread_create(&ctx->worker_threads[worker_id], NULL, worker_procedure,
+                     wargs);
+
+      log_debug("before break");
       break;
     case RDMA_CM_EVENT_CONNECT_ERROR:
-      ulog_debug("Error: RDMA_CM_EVENT_CONNECT_ERROR");
+      log_debug("Error: RDMA_CM_EVENT_CONNECT_ERROR");
     case RDMA_CM_EVENT_DISCONNECTED:
-      ulog_debug("Error: RDMA_CM_EVENT_DISCONNECTED");
+      log_debug("Error: RDMA_CM_EVENT_DISCONNECTED");
     case RDMA_CM_EVENT_DEVICE_REMOVAL:
-      worker_id = (uintptr_t)ev_cp.id->context;
-      struct naaice_communication_context *check_ctx = NULL;
-
-      pthread_mutex_lock(&ctx->lock);
-      if (worker_id < MAX_CONNECTIONS && ctx->worker[worker_id] != NULL &&
-          ctx->worker[worker_id]->id == ev_cp.id) {
-        check_ctx = ctx->worker[worker_id];
-      }
-      pthread_mutex_unlock(&ctx->lock);
-      if (check_ctx == NULL) {
-        ulog_error("Received error event for unknown connection. Ignoring.\n");
-        return 0;
-      }
-
+      comm_ctx = ev_cp.id->context;
+      uint8_t worker_id = comm_ctx->connection_id;
+      printf("worker_id (event error): %d\n", worker_id);
       if (naaice_swnaa_handle_error(ctx->worker[worker_id], &ev_cp)) {
         return -1;
       }
+
+      //       comm_ctx = ev_cp.id->context;
+      // int worker_id = comm_ctx->connection_id;
+      // printf("worker_id (event error): %d\n", worker_id);
+      // if (pthread_cancel(ctx->worker_threads[worker_id])) {
+      //   log_error("Error on canceling worker tread");
+      // } else {
+      //   log_debug("Worker thread canceled successfully");
+      //   pthread_mutex_lock(&ctx->lock);
+      //   naaice_swnaa_disconnect_and_cleanup_multi(ctx->worker[worker_id]);
+      //   ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
+      //   pthread_mutex_unlock(&ctx->lock);
+      // }
+      // if (naaice_swnaa_handle_error(ctx->worker[worker_id], &ev_cp)) {
+      //   return -1;
+      // }
+
       break;
       // Since we're the server we don't handle addr resolution etc (we never
       // make calls that would create such an event)
@@ -382,10 +425,7 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
 
 void *worker_procedure(void *arg) {
 
-  // detach thread so that it can clean up after itself when finished
-  pthread_detach(pthread_self());
-
-  ulog_debug("in worker_procedure\n");
+  log_debug("in worker_procedure\n");
   struct worker_args *wargs = (struct worker_args *)arg;
   struct context *ctx = wargs->ctx;
   uint8_t worker_id = wargs->worker_id;
@@ -393,16 +433,16 @@ void *worker_procedure(void *arg) {
 
   free(wargs);
 
-  ulog_info("Worker %hhu started\n", worker_id);
+  log_info("Worker %hhu started\n", worker_id);
 
   naaice_swnaa_do_mrsp(comm_ctx);
 
   while (comm_ctx->state >= NAAICE_MRSP_DONE) {
 
     // Receive data transfer from host.
-    ulog_info("-- Receiving Data Transfer --\n");
-    if (naaice_swnaa_receive_data_transfer(comm_ctx)) {
-      ulog_error("Failed in receiving data transfer");
+    log_info("-- Receiving Data Transfer --\n");
+    if (naaice_swnaa_receive_data_transfer_multi(comm_ctx)) {
+      log_error("Failed in receiving data transfer");
     }
     if (comm_ctx->state < NAAICE_MRSP_DONE ||
         comm_ctx->state == NAAICE_FINISHED) {
@@ -410,40 +450,51 @@ void *worker_procedure(void *arg) {
     }
 
     // Now that all data has arrived, perform the RPC.
-    ulog_info("-- Doing RPC --\n");
-    ulog_debug("Function Code: %d\n", comm_ctx->fncode);
+    log_info("-- Doing RPC --\n");
+    log_debug("Function Code: %d\n", comm_ctx->fncode);
 
     if (comm_ctx->fncode) {
       void (*worker_func)(struct naaice_communication_context *) = NULL;
 
       match_function_code(comm_ctx->fncode, &worker_func);
       if (worker_func == NULL) {
-        ulog_error(
+        log_error(
             "Invalid function code received, no matching worker function.\n");
         break;
       } else {
-        ulog_debug("Run function with function code: %d", comm_ctx->fncode);
+        log_debug("Run function with function code: %d", comm_ctx->fncode);
         worker_func(comm_ctx);
       }
+
+      // for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
+
+      //   unsigned char *data = (unsigned char
+      //   *)comm_ctx->mr_local_data[i].addr;
+
+      //   for (unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
+      //     data[j]++;
+      //   }
+      // }
     }
+
+    sleep(3);
 
     uint8_t errorcode = 0;
 
     // Finally, write back the results to the host.
-    // ulog_info("-- Writing Back Data --\n");
+    log_info("-- Writing Back Data --\n");
     if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) {
-      ulog_error("Failed to do data transfer\n");
+      log_error("Failed to do data transfer\n");
       break;
     }
   }
 
-  naaice_swnaa_disconnect_and_cleanup(comm_ctx);
   pthread_mutex_lock(&ctx->lock);
-  ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
-  ctx->worker[worker_id] = NULL;
+  naaice_swnaa_disconnect_and_cleanup_multi(comm_ctx);
+  ctx->con_mng->top++;
   pthread_mutex_unlock(&ctx->lock);
 
-  ulog_info("Worker %hhu finished, freed connection slot\n", worker_id);
+  log_info("Worker %hhu finished, freed connection slot\n", worker_id);
 
   return 0;
 }
@@ -459,6 +510,13 @@ int naaice_swnaa_match_event_worker(struct context *ctx,
       return 0;
     }
   }
+
+  log_error("Could not match event to any worker\n");
+  return -1;
+}
+
+int naaice_swnaa_handle_connection_requests(
+    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
 
   ulog_error("Could not match event to any worker\n");
   return -1;
@@ -481,7 +539,7 @@ int naaice_swnaa_handle_connection_requests(struct context *ctx,
     struct naaice_communication_context *comm_ctx = ctx->worker[worker_id];
     ulog_debug("connection id %d", comm_ctx->connection_id);
     if (naaice_init_rdma_resources(comm_ctx)) {
-      ulog_error("Failed in allocating RDMA resources\n");
+      log_error("Failed in allocating RDMA resources\n");
     }
 
     // Register the memory region used for MRSP on the server side.
@@ -489,7 +547,51 @@ int naaice_swnaa_handle_connection_requests(struct context *ctx,
         ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MRSP,
                    (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
     if (comm_ctx->mr_local_message->ibv == NULL) {
-      ulog_error(
+      log_error(
+          "Failed to register memory for memory region setup protocol.\n");
+      return -1;
+    }
+
+    if (naaice_swnaa_post_recv_mrsp(comm_ctx)) {
+      long privdata = 0;
+      if (rdma_reject(comm_ctx->id, (void *)privdata, sizeof(privdata))) {
+        log_error("Rejecting RDMA connection due to error failed. Exiting\n");
+      }
+    }
+    if (rdma_accept(comm_ctx->id, &cm_params)) {
+      log_error("RDMA connection failed, in rdma_accept.\n");
+      return -1;
+    }
+  }
+
+  return 0;
+}
+
+int naaice_swnaa_handle_connection_requests_multi(struct context *ctx,
+                                                  struct rdma_cm_event *ev) {
+
+  log_trace("In naaice_handle_connection_requests multi\n");
+
+  if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
+    struct rdma_conn_param cm_params;
+    memset(&cm_params, 0, sizeof(cm_params));
+    cm_params.retry_count = 7;
+    cm_params.initiator_depth = 1;
+    cm_params.responder_resources = 1;
+    cm_params.rnr_retry_count = 6; // 7 would be indefinite
+
+    struct naaice_communication_context *comm_ctx = ev->id->context;
+    log_debug("connection id %d", comm_ctx->connection_id);
+    if (naaice_init_rdma_resources(comm_ctx)) {
+      log_error("Failed in allocating RDMA resources\n");
+    }
+
+    // Register the memory region used for MRSP on the server side.
+    comm_ctx->mr_local_message->ibv =
+        ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MRSP,
+                   (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
+    if (comm_ctx->mr_local_message->ibv == NULL) {
+      log_error(
           "Failed to register memory for memory region setup protocol.\n");
       return -1;
     }
@@ -497,7 +599,7 @@ int naaice_swnaa_handle_connection_requests(struct context *ctx,
     if (naaice_swnaa_post_recv_mrsp(comm_ctx)) {
       long privdata = 0;
       if (rdma_reject(ctx->master->id, (void *)privdata, sizeof(privdata))) {
-        ulog_error("Rejecting RDMA connection due to error failed. Exiting\n");
+        log_error("Rejecting RDMA connection due to error failed. Exiting\n");
       }
     }
     if (rdma_accept(comm_ctx->id, &cm_params)) {
@@ -528,7 +630,7 @@ int naaice_swnaa_init_mrsp(struct naaice_communication_context *comm_ctx) {
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
                               struct rdma_cm_event *ev) {
 
-  ulog_debug("In naaice_handle_error\n");
+  log_debug("In naaice_handle_error\n");
 
   // Returns -1 and prints an error message if the event is one of
   // the following identified error types.
@@ -548,11 +650,50 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
     comm_ctx->state = NAAICE_FINISHED;
-    // ulog_debug("event id: %d", ev->id);
-    // FM What to do here? is this an error state in this case? Check what
-    // needs to be cleaned up in which state...
+    log_warn("event id: %d", ev->id);
+    // FM What to do here? is this an error state in this case? Check what needs
+    //  to be cleaned up in which state...
     //  We're not expecting disconnect at this point, so we should exit.
-    // ulog_warn("RDMA disconnected by client request.\n");
+    log_warn("RDMA disconnected by client request.\n");
+    // Keep current state for error free cleanup (depending on the state, we
+    // allocated different structures)
+    // comm_ctx->state = DISCONNECTED;
+    // Handle disconnect.
+    // naaice_swnaa_disconnect_and_cleanup(comm_ctx);
+    return 0;
+  }
+
+  return 0;
+}
+
+int naaice_swnaa_handle_error_multi(
+    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
+
+  log_debug("In naaice_handle_error\n");
+
+  // Returns -1 and prints an error message if the event is one of
+  // the following identified error types.
+  // Otherwise returns 0.
+
+  // set error state to be able to exit upstream loop in
+  // naaice_setup_connection
+  // comm_ctx->state = ERROR;
+
+  if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
+    comm_ctx->state = NAAICE_ERROR;
+    log_error("Error during connection establishment.\n");
+    return -1;
+  } else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
+    comm_ctx->state = NAAICE_ERROR;
+    log_error("RDMA device was removed.\n");
+    return -1;
+  } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
+    comm_ctx->state = NAAICE_FINISHED;
+    log_warn("event id: %d", ev->id);
+    // FM What to do here? is this an error state in this case? Check what needs
+    //  to be cleaned up in which state...
+    //  We're not expecting disconnect at this point, so we should exit.
+    log_warn("RDMA disconnected by client request.\n");
     // Keep current state for error free cleanup (depending on the state, we
     // allocated different structures)
     // comm_ctx->state = DISCONNECTED;
@@ -596,8 +737,8 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx) {
       return -1;
     }
     if (difftime(end, start) > comm_ctx->timeout) {
-      ulog_warn("Timeout while receiving MRSP from client (timeout %f).\n",
-                comm_ctx->timeout);
+      log_warn("Timeout while receiving MRSP from client (timeout %f).\n",
+               comm_ctx->timeout);
       return -1;
     }
   }
@@ -636,6 +777,48 @@ int naaice_swnaa_receive_data_transfer(
 
   // Increment number of RPC calls.
   comm_ctx->no_rpc_calls++;
+  // Check if connection event is available
+  int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
+  if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
+    log_error("Failed to change file descriptor of rdma event "
+              "channel.\n");
+    return -1;
+  }
+
+  comm_ctx->state = NAAICE_DATA_RECEIVING;
+
+  // Post a receive for the data.
+  naaice_swnaa_post_recv_data(comm_ctx);
+
+  // Poll the completion queue and handle work completions until the data
+  // transfer to the NAA is complete.
+  time_t start, end;
+  time(&start);
+
+  while (comm_ctx->state == NAAICE_DATA_RECEIVING) {
+    time(&end);
+    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) {
+      return -1;
+    }
+    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)) {
+      return -1;
+    };
+    if (difftime(end, start) > comm_ctx->timeout) {
+      ulog_warn("Timeout while receiving data from client.\n");
+      return -1;
+    }
+  }
+
+  return 0;
+}
+
+int naaice_swnaa_receive_data_transfer_multi(
+    struct naaice_communication_context *comm_ctx) {
+
+  log_trace("In naaice_swnaa_receive_data_transfer multi\n");
+
+  // Increment number of RPC calls.
+  comm_ctx->no_rpc_calls++;
 
   comm_ctx->state = NAAICE_DATA_RECEIVING;
 
@@ -653,7 +836,7 @@ int naaice_swnaa_receive_data_transfer(
       return -1;
     }
     if (difftime(end, start) > comm_ctx->timeout) {
-      ulog_warn("Timeout while receiving data from client.\n");
+      log_warn("Timeout while receiving data from client.\n");
       return -1;
     }
   }
@@ -677,10 +860,13 @@ int naaice_swnaa_handle_work_completion(
   ulog_debug("state: %s, opcode: %s\n", get_state_str(comm_ctx->state),
              get_ibv_wc_opcode_str(wc->opcode));
 
+  log_debug("state: %s, opcode: %s\n", get_state_str(comm_ctx->state),
+            get_ibv_wc_opcode_str(wc->opcode));
+
   // If the work completion status is not success, return with error.
   if (wc->status != IBV_WC_SUCCESS) {
-    ulog_error("Status is not IBV_WC_SUCCESS. Status %d for operation %d.\n",
-               wc->status, wc->opcode);
+    log_error("Status is not IBV_WC_SUCCESS. Status %d for operation %d.\n",
+              wc->status, wc->opcode);
     return -1;
   }
 
@@ -718,12 +904,12 @@ int naaice_swnaa_handle_work_completion(
         if (naaice_swnaa_handle_mr_announce_and_request(comm_ctx)) {
 
           // If an error occurs, send an error message to the host.
-          ulog_debug("Error while handling MR announce and request.\n");
+          log_debug("Error while handling MR announce and request.\n");
           naaice_swnaa_send_message(comm_ctx, MSG_MR_ERR, 1);
           return -1;
         }
 
-        ulog_debug("Send message backt to client: MRSP succesul");
+        log_debug("Send message backt to client: MRSP succesul");
         // Otherwise send an announcement back.
         naaice_swnaa_send_message(comm_ctx, MSG_MR_A, 0);
 
@@ -735,14 +921,14 @@ int naaice_swnaa_handle_work_completion(
         struct naaice_mr_error *err =
             (struct naaice_mr_error *)(comm_ctx->mr_local_message->addr +
                                        sizeof(struct naaice_mr_error));
-        ulog_error("Remote node encountered error in message exchange: %d\n",
-                   err->code);
+        log_error("Remote node encountered error in message exchange: %d\n",
+                  err->code);
         return -1;
       }
 
       // Otherwise, some weird message type. Return with error.
       else {
-        ulog_error("Unhandled MRSP packet type received: %d\n", msg->type);
+        log_error("Unhandled MRSP packet type received: %d\n", msg->type);
         return -1;
       }
     }
@@ -775,7 +961,7 @@ int naaice_swnaa_handle_work_completion(
 
       // Check if the immediate value is zero, indicating an error.
       if (!ntohl(wc->imm_data)) {
-        ulog_error("Received write with immediate value zero.\n");
+        log_error("Received write with immediate value zero.\n");
         return -1;
       }
 
@@ -801,7 +987,7 @@ int naaice_swnaa_handle_work_completion(
       ulog_debug("dlid_path_bits: %d\n", wc->dlid_path_bits);
       */
 
-      // ulog_debug("transfer size: %d\n", wc->byte_len);
+      // log_debug("transfer size: %d\n", wc->byte_len);
 
       // Update state.
       comm_ctx->state = NAAICE_CALCULATING;
@@ -852,8 +1038,8 @@ int naaice_swnaa_poll_cq_nonblocking(
   // Ensure completion channel is in non-blocking mode.
   int fd_flags = fcntl(comm_ctx->comp_channel->fd, F_GETFL);
   if (fcntl(comm_ctx->comp_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
-    ulog_error("Failed to change file descriptor of completion event "
-               "channel.\n");
+    log_error("Failed to change file descriptor of completion event "
+              "channel.\n");
     return -1;
   }
 
@@ -869,7 +1055,7 @@ int naaice_swnaa_poll_cq_nonblocking(
   int poll_result = poll(&my_pollfd, 1, ms_timeout);
   if (poll_result < 0) {
     // FM: This is probably an error. If none is received, we get back 0.
-    ulog_error("Error occured when polling completion channel.\n");
+    log_error("Error occured when polling completion channel.\n");
     return -1;
   } else if (poll_result == 0) {
 
@@ -879,7 +1065,7 @@ int naaice_swnaa_poll_cq_nonblocking(
 
   // If something is received, get the completion event.
   if (ibv_get_cq_event(comm_ctx->comp_channel, &ev_cq, &ev_ctx)) {
-    ulog_error("Failed to get completion queue event.\n");
+    log_error("Failed to get completion queue event.\n");
     return -1;
   }
 
@@ -894,14 +1080,14 @@ int naaice_swnaa_poll_cq_nonblocking(
 
   // If ibv_poll_cq returns an error, return.
   if (n_wcs < 0) {
-    ulog_error("ibv_poll_cq() failed.\n");
+    log_error("ibv_poll_cq() failed.\n");
     return -1;
   }
 
   while (n_wcs) {
     // Handle the work completion.
     if (naaice_swnaa_handle_work_completion(&wc, comm_ctx)) {
-      ulog_error("Error while handling work completion.\n");
+      log_error("Error while handling work completion.\n");
       return -1;
     }
 
@@ -918,14 +1104,14 @@ int naaice_swnaa_poll_cq_nonblocking(
     // Find any remaining work completions in the queue.
     n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
     if (n_wcs < 0) {
-      ulog_error("ibv_poll_cq() failed.\n");
+      log_error("ibv_poll_cq() failed.\n");
       return -1;
     }
   }
 
   // Request completion channel notifications for the next event.
   if (ibv_req_notify_cq(comm_ctx->cq, 0)) {
-    ulog_error(
+    log_error(
 
         "Failed to request completion channel notifications on completion "
         "queue.\n");
@@ -973,7 +1159,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
                     (i) * sizeof(struct naaice_mr_advertisement_request)));
 
     // Get memory region info. Includes MR flags and requested address.
-    // ulog_debug("naa: mr_info: %lX\n", curr->mr_info);
+    // log_debug("naa: mr_info: %lX\n", curr->mr_info);
     uint64_t mr_info = ntohll(curr->mr_info);
     uint8_t *mr_info_bytearray = (uint8_t *)&mr_info;
     uint8_t mr_flags = mr_info_bytearray[7];
@@ -993,7 +1179,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
   comm_ctx->mr_local_data = (struct naaice_mr_local *)calloc(
       comm_ctx->no_local_mrs, sizeof(struct naaice_mr_local));
   if (comm_ctx->mr_local_data == NULL) {
-    ulog_error(
+    log_error(
         "Failed to allocate memory for local memory region structures.\n");
     return -1;
   }
@@ -1006,8 +1192,8 @@ int naaice_swnaa_handle_mr_announce_and_request(
   comm_ctx->mr_peer_data = (struct naaice_mr_peer *)calloc(
       comm_ctx->no_peer_mrs, sizeof(struct naaice_mr_peer));
   if (comm_ctx->mr_peer_data == NULL) {
-    ulog_error("Failed to allocate memory for remote memory region "
-               "structures.\n");
+    log_error("Failed to allocate memory for remote memory region "
+              "structures.\n");
     return -1;
   }
 
@@ -1055,7 +1241,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_internal[internal_count].addr =
           (uint64_t)calloc(1, ntohl(curr->size));
       if (comm_ctx->mr_internal[internal_count].addr == 0 /* NULL */) {
-        ulog_error(
+        log_error(
             "Failed to allocate memory for internal memory region buffer.\n");
         return -1;
       }
@@ -1063,11 +1249,11 @@ int naaice_swnaa_handle_mr_announce_and_request(
       // Set the size of the memory region.
       comm_ctx->mr_internal[internal_count].size = ntohl(curr->size);
 
-      ulog_debug("Internal MR %d: Addr: %lX, Size: %d, Requested Addr: %lX\n",
-                 internal_count + 1,
-                 (uintptr_t)comm_ctx->mr_internal[internal_count].addr,
-                 (int)comm_ctx->mr_internal[internal_count].size,
-                 (uint64_t)*fpgaaddress);
+      log_debug("Internal MR %d: Addr: %lX, Size: %d, Requested Addr: %lX\n",
+                internal_count + 1,
+                (uintptr_t)comm_ctx->mr_internal[internal_count].addr,
+                (int)comm_ctx->mr_internal[internal_count].size,
+                (uint64_t)*fpgaaddress);
 
       // Increment count.
       internal_count++;
@@ -1094,7 +1280,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_local_data[local_count].addr =
           (char *)calloc(1, comm_ctx->mr_peer_data[local_count].size);
       if (comm_ctx->mr_local_data[local_count].addr == NULL) {
-        ulog_error(
+        log_error(
             "Failed to allocate memory for local memory region buffer.\n");
         return -1;
       }
@@ -1105,7 +1291,7 @@ int naaice_swnaa_handle_mr_announce_and_request(
                      comm_ctx->mr_peer_data[local_count].size,
                      (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
       if (comm_ctx->mr_local_data[local_count].ibv == NULL) {
-        ulog_error("Failed to register memory for local memory region.\n");
+        log_error("Failed to register memory for local memory region.\n");
         return -1;
       }
 
@@ -1129,20 +1315,20 @@ int naaice_swnaa_handle_mr_announce_and_request(
       comm_ctx->mr_local_data[local_count].single_send =
           (bool)(mr_flags & MRFLAG_SINGLESEND);
 
-      ulog_debug("Local MR %d: Addr: %lX, Size: %lu, Requested Addr: %lX, is "
-                 "output: %d\n",
-                 local_count + 1,
-                 (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
-                 comm_ctx->mr_local_data[local_count].ibv->length,
-                 (uint64_t)*fpgaaddress,
-                 comm_ctx->mr_local_data[local_count].to_write);
+      log_debug("Local MR %d: Addr: %lX, Size: %lu, Requested Addr: %lX, is "
+                "output: %d\n",
+                local_count + 1,
+                (uintptr_t)comm_ctx->mr_local_data[local_count].addr,
+                comm_ctx->mr_local_data[local_count].ibv->length,
+                (uint64_t)*fpgaaddress,
+                comm_ctx->mr_local_data[local_count].to_write);
 
-      ulog_debug("Peer MR %d: Addr: %lX, Size: %lu, rkey: %u, is input: %d\n",
-                 local_count + 1,
-                 (uintptr_t)comm_ctx->mr_peer_data[local_count].addr,
-                 comm_ctx->mr_peer_data[local_count].size,
-                 comm_ctx->mr_peer_data[local_count].rkey,
-                 comm_ctx->mr_peer_data[local_count].to_write);
+      log_debug("Peer MR %d: Addr: %lX, Size: %lu, rkey: %u, is input: %d\n",
+                local_count + 1,
+                (uintptr_t)comm_ctx->mr_peer_data[local_count].addr,
+                comm_ctx->mr_peer_data[local_count].size,
+                comm_ctx->mr_peer_data[local_count].rkey,
+                comm_ctx->mr_peer_data[local_count].to_write);
 
       // Increment count.
       local_count++;
@@ -1244,7 +1430,7 @@ int naaice_swnaa_send_message(struct naaice_communication_context *comm_ctx,
   // Send the packet.
   int post_result = ibv_post_send(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
-    ulog_error("Posting send for MRSP failed with error %d.\n", post_result);
+    log_error("Posting send for MRSP failed with error %d.\n", post_result);
     return -1;
   }
 
@@ -1274,13 +1460,13 @@ int naaice_swnaa_post_recv_data(struct naaice_communication_context *comm_ctx) {
   sge.length = 0;
   sge.lkey = comm_ctx->mr_local_data[0].ibv->lkey;
 
-  ulog_debug("recv addr: %p, length: %d, lkey %d\n", (void *)sge.addr,
-             sge.length, sge.lkey);
+  log_debug("recv addr: %p, length: %d, lkey %d\n", (void *)sge.addr,
+            sge.length, sge.lkey);
 
   // Post the recieve.
   int post_result = ibv_post_recv(comm_ctx->qp, &wr, &bad_wr);
   if (post_result) {
-    ulog_error("Posting recieve for data failed with error %d.\n", post_result);
+    log_error("Posting recieve for data failed with error %d.\n", post_result);
     return post_result;
   }
 
@@ -1293,14 +1479,14 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   // FM TODO: What if we have more than one region to return? For example
   // ping_pong example Just a reminder: POET is actual use case where we might
   // write back multiple MRs Allow multiple wrs? multiple return addresses?
-  ulog_trace("In naaice_swnaa_write_data\n");
+  log_trace("In naaice_swnaa_write_data\n");
 
   // Update state.
   comm_ctx->state = NAAICE_DATA_SENDING;
 
   // If there are no memory regions to write back, return an error.
   if (comm_ctx->no_local_mrs < 1) {
-    ulog_error("No local memory regions to write back.\n");
+    log_error("No local memory regions to write back.\n");
     return -1;
   }
 
@@ -1311,8 +1497,7 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
   // The immediate value signifies an error by being nonzero.
   if (errorcode) {
 
-    ulog_error("Error occured during NAA routine computation: %d.\n",
-               errorcode);
+    log_error("Error occured during NAA routine computation: %d.\n", errorcode);
 
     // Construct the write request and scatter/gather elements.
     struct ibv_send_wr wr, *bad_wr = NULL;
@@ -1337,9 +1522,9 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
     // Post the send.
     int post_result = ibv_post_send(comm_ctx->qp, &wr, &bad_wr);
     if (post_result) {
-      ulog_error("Posting send for data write "
-                 "(while sending error message) failed with error %d.\n",
-                 post_result);
+      log_error("Posting send for data write "
+                "(while sending error message) failed with error %d.\n",
+                post_result);
       return post_result;
     }
   }
@@ -1404,9 +1589,9 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
     // Post the send.
     int post_result = ibv_post_send(comm_ctx->qp, &wr[0], &bad_wr);
     if (post_result) {
-      ulog_error("Posting send for data write "
-                 "failed with error %d.\n",
-                 post_result);
+      log_error("Posting send for data write "
+                "failed with error %d.\n",
+                post_result);
       return post_result;
     }
   }
@@ -1420,6 +1605,8 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 
 int naaice_swnaa_disconnect_and_cleanup(
     struct naaice_communication_context *comm_ctx) {
+  // FM TODO: Fix clean up: look if stuff to clean up can be derived by
+  // communication state
 
   ulog_trace("In naaice_swnaa_disconnect_and_cleanup\n");
 
@@ -1434,17 +1621,17 @@ int naaice_swnaa_disconnect_and_cleanup(
   int err = 0;
   err = ibv_dereg_mr(comm_ctx->mr_local_message->ibv);
   if (err) {
-    ulog_error("Deregestering local message memory region failed with "
-               "error %d.\n",
-               err);
+    log_error("Deregestering local message memory region failed with "
+              "error %d.\n",
+              err);
     return -1;
   }
   for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
     err = ibv_dereg_mr(comm_ctx->mr_local_data[i].ibv);
     if (err) {
-      ulog_error("Deregestering local data memory region failed with "
-                 "error %d.\n",
-                 err);
+      log_error("Deregestering local data memory region failed with "
+                "error %d.\n",
+                err);
       return -1;
     }
     free((void *)(comm_ctx->mr_local_data[i].addr));
@@ -1469,34 +1656,122 @@ int naaice_swnaa_disconnect_and_cleanup(
   // Destroy queue pair.
   err = ibv_destroy_qp(comm_ctx->qp);
   if (err) {
-    ulog_error("Destroying queue pair failed with error %d.\n", err);
+    log_error("Destroying queue pair failed with error %d.\n", err);
     return -1;
   }
 
   // Destroy completion queue.
   err = ibv_destroy_cq(comm_ctx->cq);
   if (err) {
-    ulog_error("Destroying completion queue failed with "
-               "error %d.\n",
-               err);
+    log_error("Destroying completion queue failed with "
+              "error %d.\n",
+              err);
     return -1;
   }
 
   // Destroy completion channel.
   err = ibv_destroy_comp_channel(comm_ctx->comp_channel);
   if (err) {
-    ulog_error("Destroying completion channel failed with "
-               "error %d.\n",
-               err);
+    log_error("Destroying completion channel failed with "
+              "error %d.\n",
+              err);
     return -1;
   }
 
   // Destroy protection domain.
   err = ibv_dealloc_pd(comm_ctx->pd);
   if (err) {
-    ulog_error("Destroying protection domain failed with "
-               "error %d.\n",
-               err);
+    log_error("Destroying protection domain failed with "
+              "error %d.\n",
+              err);
+    return -1;
+  }
+
+  // Destroy rdma communication id.
+  if (rdma_destroy_id(comm_ctx->id)) {
+    perror("Failed to destroy RDMA communication id.\n");
+    return -1;
+  }
+
+  free(comm_ctx);
+
+  return 0;
+}
+
+int naaice_swnaa_disconnect_and_cleanup_multi(
+    struct naaice_communication_context *comm_ctx) {
+  // FM TODO: Fix clean up: look if stuff to clean up can be derived by
+  // communication state
+
+  log_trace("In naaice_swnaa_disconnect_and_cleanup\n");
+
+  // Logic slightly different than on the host side:
+  // All local memory regions can be freed because they do not exist in user
+  // memory space.
+
+  // Disconnect: Done by client exclusively
+  // rdma_disconnect(comm_ctx->id);
+
+  // Deregister memory regions.
+  int err = 0;
+  err = ibv_dereg_mr(comm_ctx->mr_local_message->ibv);
+  if (err) {
+    log_error("Deregestering local message memory region failed with "
+              "error %d.\n",
+              err);
+    return -1;
+  }
+  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
+    err = ibv_dereg_mr(comm_ctx->mr_local_data[i].ibv);
+    if (err) {
+      log_error("Deregestering local data memory region failed with "
+                "error %d.\n",
+                err);
+      return -1;
+    }
+    free((void *)(comm_ctx->mr_local_data[i].addr));
+  }
+
+  if (comm_ctx->state >= NAAICE_MRSP_DONE) {
+    free(comm_ctx->mr_peer_data);
+    comm_ctx->mr_peer_data = NULL;
+  }
+
+  free((void *)(comm_ctx->mr_local_message->addr));
+  free(comm_ctx->mr_local_message);
+  free(comm_ctx->mr_local_data);
+
+  // Destroy queue pair.
+  err = ibv_destroy_qp(comm_ctx->qp);
+  if (err) {
+    log_error("Destroying queue pair failed with error %d.\n", err);
+    return -1;
+  }
+
+  // Destroy completion queue.
+  err = ibv_destroy_cq(comm_ctx->cq);
+  if (err) {
+    log_error("Destroying completion queue failed with "
+              "error %d.\n",
+              err);
+    return -1;
+  }
+
+  // Destroy completion channel.
+  err = ibv_destroy_comp_channel(comm_ctx->comp_channel);
+  if (err) {
+    log_error("Destroying completion channel failed with "
+              "error %d.\n",
+              err);
+    return -1;
+  }
+
+  // Destroy protection domain.
+  err = ibv_dealloc_pd(comm_ctx->pd);
+  if (err) {
+    log_error("Destroying protection domain failed with "
+              "error %d.\n",
+              err);
     return -1;
   }
 
