@@ -31,6 +31,33 @@
 /* Dependencies **************************************************************/
 
 #include "naaice.h"
+#include <pthread.h>
+#include <rdma/rdma_cma.h>
+#include <stdint.h>
+
+#define MAX_CONNECTIONS 3
+
+/**
+ * Array of indices of free positions in the worker array.
+ * All positions after the position variable are available.
+ */
+struct connection_management {
+  uint8_t connections[MAX_CONNECTIONS];
+  int top;
+};
+
+struct context {
+  pthread_mutex_t lock;
+  struct naaice_communication_context *master;
+  struct connection_management *con_mng;
+  struct naaice_communication_context *worker[MAX_CONNECTIONS];
+  pthread_t worker_threads[MAX_CONNECTIONS];
+};
+
+struct worker_args {
+  struct context *ctx;
+  uint8_t worker_id;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,20 +67,27 @@ extern "C" {
  * @defgroup PublicFunctionsSWNAA Functions
  */
 
-/* Public Functions **********************************************************/
+/* Public Functions
+ * **********************************************************/
 
 /** @addtogroup PublicFunctionsSWNAA
  *  @{
  */
 
+void *worker_procedure(void *args);
+
+int naaice_swnaa_init_master(struct context **ctx, uint16_t port);
+
+int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id);
+
 /**
  * @brief Initialize a communication context structure.
  *
  * This function initializes a communication context structure.
- * The dummy software NAA reuses the communication context structure from the
- * host-side AP1 implementation, but does not use all fields in the same way.
- * In particular, the size and number of parameters are not known (and related
- * fields are not populated) until the MRSP has completed.
+ * The dummy software NAA reuses the communication context structure from
+ * the host-side AP1 implementation, but does not use all fields in the same
+ * way. In particular, the size and number of parameters are not known (and
+ * related fields are not populated) until the MRSP has completed.
  *
  * @param comm_ctx
  *   Pointer to a communication context structure to be initialized.
@@ -85,6 +119,8 @@ int naaice_swnaa_init_communication_context(
  */
 int naaice_swnaa_setup_connection(
     struct naaice_communication_context *comm_ctx);
+
+int naaice_swnaa_setup_connection_multi(struct context *ctx);
 
 /**
  * @defgroup SWNAAEventHandlers Software NAA connection event handlers
@@ -131,17 +167,25 @@ int naaice_swnaa_handle_connection_established(
 /** @brief Handle connection error events. */
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
                               struct rdma_cm_event *ev);
+int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx);
+int naaice_swnaa_handle_connection_requests_multi(struct context *ctx,
+                                                  struct rdma_cm_event *ev);
+int naaice_swnaa_match_event_worker(struct context *ctx,
+                                    struct rdma_cm_event *ev,
+                                    uint8_t *worker_id);
 
 /** @} */
 /**
  * @brief Poll for and handle a software NAA connection event.
  *
  * Polls the RDMA event channel stored in the communication context for a
- * connection event and handles it if one is received. This function delegates
- * the actual work to the corresponding poll and handler functions.
+ * connection event and handles it if one is received. This function
+ * delegates the actual work to the corresponding poll and handler
+ * functions.
  *
  * @param comm_ctx
- *   Pointer to the communication context structure describing the connection.
+ *   Pointer to the communication context structure describing the
+ * connection.
  *
  * @return
  *   0 on success (regardless of whether an event was received),
@@ -301,6 +345,9 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 int naaice_swnaa_disconnect_and_cleanup(
     struct naaice_communication_context *comm_ctx);
 
+int naaice_swnaa_disconnect_and_cleanup_multi(
+    struct naaice_communication_context *comm_ctx);
+
 /**
  * @brief Execute MRSP logic in a blocking manner.
  *
@@ -328,6 +375,9 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_receive_data_transfer(
+    struct naaice_communication_context *comm_ctx);
+
+int naaice_swnaa_receive_data_transfer_multi(
     struct naaice_communication_context *comm_ctx);
 
 /**
