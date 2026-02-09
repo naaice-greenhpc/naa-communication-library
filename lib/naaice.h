@@ -98,6 +98,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/poll.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include <limits.h>
@@ -528,6 +529,9 @@ struct naaice_communication_context {
     uint32_t immediate;
     uint8_t immediate_bytearr[4];
   };
+
+  /* --- Connection tracking for the server --- */
+  uint8_t connection_id;
 };
 
 #ifdef __cplusplus
