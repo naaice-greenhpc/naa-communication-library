@@ -1,7 +1,19 @@
+include(ProcessorCount)
+ProcessorCount(NAAICE_PROCESSOR_COUNT)
+if(NAAICE_PROCESSOR_COUNT EQUAL 0)
+  set(NUMBER_CONNECTIONS 1)
+else()
+  set(NUMBER_CONNECTIONS ${NAAICE_PROCESSOR_COUNT})
+endif()
+message(STATUS "Detected ${NAAICE_PROCESSOR_COUNT} CPU cores for multiple server connections.")
+
+configure_file(config.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/config.h
+               @ONLY)
+
 find_package(Threads REQUIRED)
 find_library(IBVERBS_LIB ibverbs REQUIRED)
 find_library(RDMACM_LIB rdmacm REQUIRED)
-
 
 add_library(naaice_low_level STATIC naaice.c)
 add_library(naaice::low_level ALIAS naaice_low_level)
