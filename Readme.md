@@ -65,6 +65,7 @@ cmake -S . -B build [OPTIONS]
 | `CMAKE_BUILD_TYPE` | `Debug`, `Release` | `Release` | Build configuration |
 | `LOG_LEVEL` | `LOG_INFO`, `LOG_DEBUG`, `LOG_WARN`, `LOG_ERROR` | `LOG_INFO` | Logging verbosity |
 | `USE_EMA` | `ON`, `OFF` | `OFF` | Enable EMA measurements |
+| `NUMBER_CONNECTIONS` | 1...n | Core number | Maximal allowed number of parallel server connections 
 
 ### Compilation/Installation
 
@@ -92,6 +93,7 @@ Direct control over RDMA connections and memory regions.
    - Processes data (increments by 1)
    - Sends results back
 
+**Update**: The server now also supports multiple connections. User-specific worker logic must be implemented in the `kernels/swnaa_kernels.c` file, and encoding is performed using the function code. 
 
 ```bash
 ./build/examples/naaice_server
@@ -157,7 +159,6 @@ Documentation will be generated in `docs/build/`.
 
 ## Known Limitations
 
-- Multiple concurrent connections from different clients to the same `naaice_swnaa` instance are not yet supported
 
 ### Fixed Issues
 
