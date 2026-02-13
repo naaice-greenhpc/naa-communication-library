@@ -1,16 +1,11 @@
 include(ProcessorCount)
 ProcessorCount(NAAICE_PROCESSOR_COUNT)
-
 if(NAAICE_PROCESSOR_COUNT EQUAL 0)
-  set(_DEFAULT_CONNECTIONS 1)
+  set(NUMBER_CONNECTIONS 1)
 else()
-  set(_DEFAULT_CONNECTIONS ${NAAICE_PROCESSOR_COUNT})
+  set(NUMBER_CONNECTIONS ${NAAICE_PROCESSOR_COUNT})
 endif()
-
-set(NUMBER_CONNECTIONS "${_DEFAULT_CONNECTIONS}" CACHE STRING "Number of parallel server connections")
-
-message(STATUS "Detected ${NAAICE_PROCESSOR_COUNT} CPU cores.")
-message(STATUS "Configured number of connections: ${NUMBER_CONNECTIONS}")
+message(STATUS "Detected ${NAAICE_PROCESSOR_COUNT} CPU cores for multiple server connections.")
 
 configure_file(config.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/config.h
