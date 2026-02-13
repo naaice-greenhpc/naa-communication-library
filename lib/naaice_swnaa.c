@@ -24,6 +24,7 @@
 // Enable debug messages.
 #include "naaice_swnaa.h"
 #include "naaice.h"
+#include <bits/pthreadtypes.h>
 #include <errno.h>
 #include <infiniband/verbs.h>
 #include <pthread.h>
@@ -49,16 +50,21 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
   log_trace("In naaice_swnaa_init_master\n");
 
   // initialize master context
-  *ctx = (struct context *)malloc(sizeof(struct context));
+  *ctx = (struct context *)calloc(1, sizeof(struct context));
   if (*ctx == NULL) {
-    log_error("Malloc of server_context failed");
+    log_error("Memory allocation for the server_context failed");
     return -1;
   }
 
   pthread_mutex_init(&(*ctx)->lock, NULL);
 
-  (*ctx)->con_mng = (struct connection_management *)malloc(
-      sizeof(struct connection_management));
+  (*ctx)->con_mng = (struct connection_management *)calloc(
+      1, sizeof(struct connection_management));
+  if ((*ctx)->con_mng == NULL) {
+    log_error("Memory allocation for the connection management failed");
+    return -1;
+  }
+
   // initalize array and position of free connections
   (*ctx)->con_mng->top = MAX_CONNECTIONS;
   for (int i = 0; i < MAX_CONNECTIONS; i++) {
@@ -66,8 +72,12 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
     (*ctx)->worker[i] = NULL;
   }
 
-  (*ctx)->master = (struct naaice_communication_context *)malloc(
-      sizeof(struct naaice_communication_context));
+  (*ctx)->master = (struct naaice_communication_context *)calloc(
+      1, sizeof(struct naaice_communication_context));
+  if ((*ctx)->master == NULL) {
+    log_error("Memory allocation for the master communication context failed");
+    return -1;
+  }
 
   (*ctx)->master->state = NAAICE_INIT;
 
@@ -119,7 +129,7 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
 int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id) {
 
   (*ctx)->worker[worker_id] =
-      malloc(sizeof(struct naaice_communication_context));
+      calloc(1, sizeof(struct naaice_communication_context));
 
   (*ctx)->worker[worker_id]->connection_id = worker_id;
   (*ctx)->worker[worker_id]->state = NAAICE_INIT;
@@ -165,8 +175,8 @@ int naaice_swnaa_init_communication_context(
 
   // Allocate memory for the communication context.
   log_debug("Allocating communication context.\n");
-  *comm_ctx = (struct naaice_communication_context *)malloc(
-      sizeof(struct naaice_communication_context));
+  *comm_ctx = (struct naaice_communication_context *)calloc(
+      1, sizeof(struct naaice_communication_context));
   if (comm_ctx == NULL) {
     log_error("Failed to allocate memory for communication context. Exiting.");
     return -1;
@@ -225,31 +235,6 @@ int naaice_swnaa_init_communication_context(
   }
 
   // Configure connection.
-  // TODO: make port flexible?
-  // Probably with RMS support, when we ask for the NAA ip, we will also get
-  // port num.
-  log_debug("Configuring connection.\n");
-  struct sockaddr loc_addr;
-  memset(&loc_addr, 0, sizeof(loc_addr));
-  loc_addr.sa_family = AF_INET;
-  ((struct sockaddr_in *)&loc_addr)->sin_port = htons(port);
-
-  // Bind communication ID to local address.
-  if (rdma_bind_addr(rdma_comm_id, &loc_addr)) {
-    log_error("Binding communication ID to local address failed.\n");
-    log_error("errno: %d\n", errno);
-    return -1;
-  }
-
-  // Listen on the port.
-  if (rdma_listen(rdma_comm_id, 10)) { // Backlog queue length 10.
-    log_error("Listening on specified port failed.\n");
-    return -1;
-  }
-
-  int port_num = ntohs(rdma_get_src_port(rdma_comm_id));
-  log_debug("Listening on port %d.\n", port_num);
-
   return 0;
 }
 
@@ -334,7 +319,7 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
   // If we've received an event...
   struct rdma_cm_event ev;
   struct rdma_cm_event ev_cp;
-  uint8_t worker_id = '\0';
+  uint8_t worker_id;
   struct naaice_communication_context *comm_ctx;
 
   if (!naaice_poll_connection_event(ctx->master, &ev, &ev_cp)) {
@@ -346,20 +331,28 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
         log_error("No capacity for a new connection");
         return -1;
       }
-      // in the case of a connection request assign the new rdma_id to the
-      // worker
+      // in the case of a connection request get an index of a free connection
+      // context and assign the new rdma_id to this worker
       pthread_mutex_lock(&ctx->lock);
-      int worker_idx = ctx->con_mng->connections[--ctx->con_mng->top];
-      if (naaice_swnaa_init_worker(&ctx, worker_idx)) {
+      worker_id = ctx->con_mng->connections[--ctx->con_mng->top];
+      pthread_mutex_unlock(&ctx->lock);
+      if (naaice_swnaa_init_worker(&ctx, worker_id)) {
         log_error("Failed to initialize worker for new connection");
+        pthread_mutex_lock(&ctx->lock);
+        ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
         pthread_mutex_unlock(&ctx->lock);
         return -1;
       }
-      ctx->worker[worker_idx]->id = ev_cp.id;
-      ev_cp.id->context = ctx->worker[worker_idx];
-      pthread_mutex_unlock(&ctx->lock);
+      ctx->worker[worker_id]->id = ev_cp.id;
+      ev_cp.id->context = ctx->worker[worker_id];
 
       if (naaice_swnaa_handle_connection_requests_multi(ctx, &ev_cp)) {
+        log_error("Failed to handle connection request");
+        naaice_swnaa_disconnect_and_cleanup_multi(ctx->worker[worker_id]);
+        pthread_mutex_lock(&ctx->lock);
+        ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
+        ctx->worker[worker_id] = NULL;
+        pthread_mutex_unlock(&ctx->lock);
         return -1;
       }
       break;
@@ -368,16 +361,27 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
       log_debug("Connection established event for worker %hhu\n",
                 comm_ctx->connection_id);
       if (naaice_swnaa_handle_connection_established(comm_ctx, &ev_cp)) {
+        log_error("Failed to handle connection establishment");
+        pthread_mutex_lock(&ctx->lock);
+        ctx->con_mng->connections[ctx->con_mng->top++] =
+            comm_ctx->connection_id;
+        ctx->worker[comm_ctx->connection_id] = NULL;
+        pthread_mutex_unlock(&ctx->lock);
+        naaice_swnaa_disconnect_and_cleanup_multi(comm_ctx);
         return -1;
       }
 
-      struct worker_args *wargs = malloc(sizeof(struct worker_args));
+      // if the event is established, start the worker thread for this
+      // connection
+      struct worker_args *wargs = calloc(1, sizeof(struct worker_args));
+      if (wargs == NULL) {
+        log_error("Failed to allocate memory for worker args");
+        return -1;
+      }
       wargs->ctx = ctx;
       wargs->worker_id = comm_ctx->connection_id;
-      pthread_create(&ctx->worker_threads[worker_id], NULL, worker_procedure,
-                     wargs);
-
-      log_debug("before break");
+      pthread_create(&ctx->worker_threads[comm_ctx->connection_id], NULL,
+                     worker_procedure, wargs);
       break;
     case RDMA_CM_EVENT_CONNECT_ERROR:
       log_debug("Error: RDMA_CM_EVENT_CONNECT_ERROR");
@@ -385,28 +389,11 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
       log_debug("Error: RDMA_CM_EVENT_DISCONNECTED");
     case RDMA_CM_EVENT_DEVICE_REMOVAL:
       comm_ctx = ev_cp.id->context;
-      uint8_t worker_id = comm_ctx->connection_id;
+      worker_id = comm_ctx->connection_id;
       printf("worker_id (event error): %d\n", worker_id);
       if (naaice_swnaa_handle_error(ctx->worker[worker_id], &ev_cp)) {
         return -1;
       }
-
-      //       comm_ctx = ev_cp.id->context;
-      // int worker_id = comm_ctx->connection_id;
-      // printf("worker_id (event error): %d\n", worker_id);
-      // if (pthread_cancel(ctx->worker_threads[worker_id])) {
-      //   log_error("Error on canceling worker tread");
-      // } else {
-      //   log_debug("Worker thread canceled successfully");
-      //   pthread_mutex_lock(&ctx->lock);
-      //   naaice_swnaa_disconnect_and_cleanup_multi(ctx->worker[worker_id]);
-      //   ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
-      //   pthread_mutex_unlock(&ctx->lock);
-      // }
-      // if (naaice_swnaa_handle_error(ctx->worker[worker_id], &ev_cp)) {
-      //   return -1;
-      // }
-
       break;
       // Since we're the server we don't handle addr resolution etc (we never
       // make calls that would create such an event)
@@ -424,6 +411,9 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
 }
 
 void *worker_procedure(void *arg) {
+
+  // detach thread so that it can clean up after itself when finished
+  pthread_detach(pthread_self());
 
   log_debug("in worker_procedure\n");
   struct worker_args *wargs = (struct worker_args *)arg;
@@ -465,16 +455,6 @@ void *worker_procedure(void *arg) {
         log_debug("Run function with function code: %d", comm_ctx->fncode);
         worker_func(comm_ctx);
       }
-
-      // for (unsigned int i = 0; i < comm_ctx->no_local_mrs; i++) {
-
-      //   unsigned char *data = (unsigned char
-      //   *)comm_ctx->mr_local_data[i].addr;
-
-      //   for (unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
-      //     data[j]++;
-      //   }
-      // }
     }
 
     sleep(3);
@@ -489,9 +469,10 @@ void *worker_procedure(void *arg) {
     }
   }
 
-  pthread_mutex_lock(&ctx->lock);
   naaice_swnaa_disconnect_and_cleanup_multi(comm_ctx);
-  ctx->con_mng->top++;
+  pthread_mutex_lock(&ctx->lock);
+  ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
+  ctx->worker[worker_id] = NULL;
   pthread_mutex_unlock(&ctx->lock);
 
   log_info("Worker %hhu finished, freed connection slot\n", worker_id);
@@ -1700,8 +1681,6 @@ int naaice_swnaa_disconnect_and_cleanup(
 
 int naaice_swnaa_disconnect_and_cleanup_multi(
     struct naaice_communication_context *comm_ctx) {
-  // FM TODO: Fix clean up: look if stuff to clean up can be derived by
-  // communication state
 
   log_trace("In naaice_swnaa_disconnect_and_cleanup\n");
 
@@ -1732,9 +1711,14 @@ int naaice_swnaa_disconnect_and_cleanup_multi(
     free((void *)(comm_ctx->mr_local_data[i].addr));
   }
 
-  if (comm_ctx->state >= NAAICE_MRSP_DONE) {
+  if (comm_ctx->mr_peer_data != NULL) {
     free(comm_ctx->mr_peer_data);
     comm_ctx->mr_peer_data = NULL;
+  }
+
+  if (comm_ctx->mr_internal != NULL) {
+    free(comm_ctx->mr_internal);
+    comm_ctx->mr_internal = NULL;
   }
 
   free((void *)(comm_ctx->mr_local_message->addr));

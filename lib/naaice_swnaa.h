@@ -31,11 +31,10 @@
 /* Dependencies **************************************************************/
 
 #include "naaice.h"
+#include <config.h>
 #include <pthread.h>
 #include <rdma/rdma_cma.h>
 #include <stdint.h>
-
-#define MAX_CONNECTIONS 3
 
 /**
  * Array of indices of free positions in the worker array.

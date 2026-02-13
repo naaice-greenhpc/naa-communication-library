@@ -39,7 +39,6 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
-#define MAX_CONNECTIONS 16
 
 /** Idea: Master-Worker logic
 master handles connection establishment for multiple connections
