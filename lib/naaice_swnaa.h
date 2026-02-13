@@ -118,8 +118,6 @@ int naaice_swnaa_init_communication_context(
  */
 int naaice_swnaa_setup_connection(struct context *ctx);
 
-int naaice_swnaa_setup_connection_multi(struct context *ctx);
-
 /**
  * @defgroup SWNAAEventHandlers Software NAA connection event handlers
  * @ingroup PublicFunctionsSWNAA
@@ -165,12 +163,6 @@ int naaice_swnaa_handle_connection_established(
 /** @brief Handle connection error events. */
 int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
                               struct rdma_cm_event *ev);
-int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx);
-int naaice_swnaa_handle_connection_requests_multi(struct context *ctx,
-                                                  struct rdma_cm_event *ev);
-int naaice_swnaa_match_event_worker(struct context *ctx,
-                                    struct rdma_cm_event *ev,
-                                    uint8_t *worker_id);
 
 /** @} */
 /**
@@ -341,9 +333,6 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 int naaice_swnaa_disconnect_and_cleanup(
     struct naaice_communication_context *comm_ctx);
 
-int naaice_swnaa_disconnect_and_cleanup_multi(
-    struct naaice_communication_context *comm_ctx);
-
 /**
  * @brief Execute MRSP logic in a blocking manner.
  *
@@ -371,9 +360,6 @@ int naaice_swnaa_do_mrsp(struct naaice_communication_context *comm_ctx);
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_receive_data_transfer(
-    struct naaice_communication_context *comm_ctx);
-
-int naaice_swnaa_receive_data_transfer_multi(
     struct naaice_communication_context *comm_ctx);
 
 /**

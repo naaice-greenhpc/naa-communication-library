@@ -23,6 +23,7 @@
 
 // Enable debug messages.
 #include "naaice_swnaa.h"
+#include "config.h"
 #include "naaice.h"
 #include <bits/pthreadtypes.h>
 #include <errno.h>
@@ -169,7 +170,7 @@ int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id) {
 }
 
 int naaice_swnaa_init_communication_context(
-    struct naaice_communication_context **comm_ctx, uint16_t port) {
+    struct naaice_communication_context **comm_ctx) {
 
   ulog_trace("In naaice_swnaa_init_communication_context\n");
 
@@ -234,14 +235,12 @@ int naaice_swnaa_init_communication_context(
     return -1;
   }
 
-  // Configure connection.
   return 0;
 }
 
-int naaice_swnaa_setup_connection(
-    struct naaice_communication_context *comm_ctx) {
+int naaice_swnaa_setup_connection(struct context *ctx) {
 
-  ulog_debug("In naaice_swnaa_setup_connection\n");
+  log_debug("In naaice_swnaa_setup_connection\n");
 
   // Loop handling events and updating the completion flag until finished.
   while (ctx->master->state < NAAICE_CONNECTED) {
@@ -252,74 +251,14 @@ int naaice_swnaa_setup_connection(
   return 0;
 }
 
-int naaice_swnaa_setup_connection_multi(struct context *ctx) {
-
-  log_debug("In naaice_swnaa_setup_connection\n");
-
-  // Loop handling events and updating the completion flag until finished.
-  while (ctx->master->state < NAAICE_CONNECTED) {
-
-    naaice_swnaa_poll_and_handle_connection_event_multi(ctx);
-  }
-
-  return 0;
-}
-
-int naaice_swnaa_poll_and_handle_connection_event(
-    struct naaice_communication_context *comm_ctx) {
-
-  // log_trace("In naaice_poll_and_handle_connection_event\n");
-
-  // If we've received an event...
-  struct rdma_cm_event ev;
-  struct rdma_cm_event ev_cp;
-  uintptr_t worker_id;
-  struct naaice_communication_context *comm_ctx;
-
-  if (!naaice_poll_connection_event(comm_ctx, &ev, &ev_cp)) {
-    comm_ctx->id = ev_cp.id;
-    log_warn("connection event id: %d", ev_cp.id);
-    switch (ev_cp.event) {
-    case RDMA_CM_EVENT_CONNECT_REQUEST:
-      if (naaice_swnaa_handle_connection_requests(comm_ctx, &ev_cp)) {
-        return -1;
-      }
-      break;
-    case RDMA_CM_EVENT_ESTABLISHED:
-      if (naaice_swnaa_handle_connection_established(comm_ctx, &ev_cp)) {
-        return -1;
-      }
-      break;
-    case RDMA_CM_EVENT_CONNECT_ERROR:
-    case RDMA_CM_EVENT_DISCONNECTED:
-    case RDMA_CM_EVENT_DEVICE_REMOVAL:
-      if (naaice_swnaa_handle_error(comm_ctx, &ev_cp)) {
-        return -1;
-      }
-      break;
-      // Since we're the server we don't handle addr resolution etc (we never
-      // make calls that would create such an event)
-
-    default:
-      if (naaice_handle_other(comm_ctx, &ev_cp)) {
-        return -1;
-      }
-      break;
-    }
-  }
-
-  // If we sucessfully handled an event (or haven't received one), success.
-  return 0;
-}
-
-int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
+int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
 
   log_debug("In naaice_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
   struct rdma_cm_event ev_cp;
-  uint8_t worker_id;
+  uintptr_t worker_id;
   struct naaice_communication_context *comm_ctx;
 
   if (!naaice_poll_connection_event(ctx->master, &ev, &ev_cp)) {
@@ -344,11 +283,11 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
         return -1;
       }
       ctx->worker[worker_id]->id = ev_cp.id;
-      ev_cp.id->context = ctx->worker[worker_id];
+      ev_cp.id->context = (void *)(uintptr_t)worker_id;
 
-      if (naaice_swnaa_handle_connection_requests_multi(ctx, &ev_cp)) {
+      if (naaice_swnaa_handle_connection_requests(ctx, &ev_cp)) {
         log_error("Failed to handle connection request");
-        naaice_swnaa_disconnect_and_cleanup_multi(ctx->worker[worker_id]);
+        naaice_swnaa_disconnect_and_cleanup(ctx->worker[worker_id]);
         pthread_mutex_lock(&ctx->lock);
         ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
         ctx->worker[worker_id] = NULL;
@@ -357,7 +296,8 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
       }
       break;
     case RDMA_CM_EVENT_ESTABLISHED:
-      comm_ctx = ev_cp.id->context;
+      worker_id = (uintptr_t)ev_cp.id->context;
+      comm_ctx = ctx->worker[worker_id];
       log_debug("Connection established event for worker %hhu\n",
                 comm_ctx->connection_id);
       if (naaice_swnaa_handle_connection_established(comm_ctx, &ev_cp)) {
@@ -367,7 +307,7 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
             comm_ctx->connection_id;
         ctx->worker[comm_ctx->connection_id] = NULL;
         pthread_mutex_unlock(&ctx->lock);
-        naaice_swnaa_disconnect_and_cleanup_multi(comm_ctx);
+        naaice_swnaa_disconnect_and_cleanup(comm_ctx);
         return -1;
       }
 
@@ -388,9 +328,21 @@ int naaice_swnaa_poll_and_handle_connection_event_multi(struct context *ctx) {
     case RDMA_CM_EVENT_DISCONNECTED:
       log_debug("Error: RDMA_CM_EVENT_DISCONNECTED");
     case RDMA_CM_EVENT_DEVICE_REMOVAL:
-      comm_ctx = ev_cp.id->context;
-      worker_id = comm_ctx->connection_id;
-      printf("worker_id (event error): %d\n", worker_id);
+      worker_id = (uintptr_t)ev_cp.id->context;
+      struct naaice_communication_context *check_ctx = NULL;
+
+      pthread_mutex_lock(&ctx->lock);
+      if (worker_id < MAX_CONNECTIONS && ctx->worker[worker_id] != NULL &&
+          ctx->worker[worker_id]->id == ev_cp.id) {
+        check_ctx = ctx->worker[worker_id];
+      }
+      pthread_mutex_unlock(&ctx->lock);
+      if (check_ctx == NULL) {
+        log_error("Received error event for unknown connection. Ignoring.\n");
+        return 0;
+      }
+
+      printf("worker_id (event error): %lu\n", worker_id);
       if (naaice_swnaa_handle_error(ctx->worker[worker_id], &ev_cp)) {
         return -1;
       }
@@ -431,7 +383,7 @@ void *worker_procedure(void *arg) {
 
     // Receive data transfer from host.
     log_info("-- Receiving Data Transfer --\n");
-    if (naaice_swnaa_receive_data_transfer_multi(comm_ctx)) {
+    if (naaice_swnaa_receive_data_transfer(comm_ctx)) {
       log_error("Failed in receiving data transfer");
     }
     if (comm_ctx->state < NAAICE_MRSP_DONE ||
@@ -457,8 +409,6 @@ void *worker_procedure(void *arg) {
       }
     }
 
-    sleep(3);
-
     uint8_t errorcode = 0;
 
     // Finally, write back the results to the host.
@@ -469,7 +419,7 @@ void *worker_procedure(void *arg) {
     }
   }
 
-  naaice_swnaa_disconnect_and_cleanup_multi(comm_ctx);
+  naaice_swnaa_disconnect_and_cleanup(comm_ctx);
   pthread_mutex_lock(&ctx->lock);
   ctx->con_mng->connections[ctx->con_mng->top++] = worker_id;
   ctx->worker[worker_id] = NULL;
@@ -496,8 +446,8 @@ int naaice_swnaa_match_event_worker(struct context *ctx,
   return -1;
 }
 
-int naaice_swnaa_handle_connection_requests(
-    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
+int naaice_swnaa_handle_connection_requests(struct context *ctx,
+                                            struct rdma_cm_event *ev) {
 
   ulog_error("Could not match event to any worker\n");
   return -1;
@@ -518,50 +468,6 @@ int naaice_swnaa_handle_connection_requests(struct context *ctx,
 
     uintptr_t worker_id = (uintptr_t)ev->id->context;
     struct naaice_communication_context *comm_ctx = ctx->worker[worker_id];
-    ulog_debug("connection id %d", comm_ctx->connection_id);
-    if (naaice_init_rdma_resources(comm_ctx)) {
-      log_error("Failed in allocating RDMA resources\n");
-    }
-
-    // Register the memory region used for MRSP on the server side.
-    comm_ctx->mr_local_message->ibv =
-        ibv_reg_mr(comm_ctx->pd, comm_ctx->mr_local_message->addr, MR_SIZE_MRSP,
-                   (IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE));
-    if (comm_ctx->mr_local_message->ibv == NULL) {
-      log_error(
-          "Failed to register memory for memory region setup protocol.\n");
-      return -1;
-    }
-
-    if (naaice_swnaa_post_recv_mrsp(comm_ctx)) {
-      long privdata = 0;
-      if (rdma_reject(comm_ctx->id, (void *)privdata, sizeof(privdata))) {
-        log_error("Rejecting RDMA connection due to error failed. Exiting\n");
-      }
-    }
-    if (rdma_accept(comm_ctx->id, &cm_params)) {
-      log_error("RDMA connection failed, in rdma_accept.\n");
-      return -1;
-    }
-  }
-
-  return 0;
-}
-
-int naaice_swnaa_handle_connection_requests_multi(struct context *ctx,
-                                                  struct rdma_cm_event *ev) {
-
-  log_trace("In naaice_handle_connection_requests multi\n");
-
-  if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
-    struct rdma_conn_param cm_params;
-    memset(&cm_params, 0, sizeof(cm_params));
-    cm_params.retry_count = 7;
-    cm_params.initiator_depth = 1;
-    cm_params.responder_resources = 1;
-    cm_params.rnr_retry_count = 6; // 7 would be indefinite
-
-    struct naaice_communication_context *comm_ctx = ev->id->context;
     log_debug("connection id %d", comm_ctx->connection_id);
     if (naaice_init_rdma_resources(comm_ctx)) {
       log_error("Failed in allocating RDMA resources\n");
@@ -631,48 +537,9 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
     comm_ctx->state = NAAICE_FINISHED;
-    log_warn("event id: %d", ev->id);
-    // FM What to do here? is this an error state in this case? Check what needs
-    //  to be cleaned up in which state...
-    //  We're not expecting disconnect at this point, so we should exit.
-    log_warn("RDMA disconnected by client request.\n");
-    // Keep current state for error free cleanup (depending on the state, we
-    // allocated different structures)
-    // comm_ctx->state = DISCONNECTED;
-    // Handle disconnect.
-    // naaice_swnaa_disconnect_and_cleanup(comm_ctx);
-    return 0;
-  }
-
-  return 0;
-}
-
-int naaice_swnaa_handle_error_multi(
-    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev) {
-
-  log_debug("In naaice_handle_error\n");
-
-  // Returns -1 and prints an error message if the event is one of
-  // the following identified error types.
-  // Otherwise returns 0.
-
-  // set error state to be able to exit upstream loop in
-  // naaice_setup_connection
-  // comm_ctx->state = ERROR;
-
-  if (ev->event == RDMA_CM_EVENT_CONNECT_ERROR) {
-    comm_ctx->state = NAAICE_ERROR;
-    log_error("Error during connection establishment.\n");
-    return -1;
-  } else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
-    comm_ctx->state = NAAICE_ERROR;
-    log_error("RDMA device was removed.\n");
-    return -1;
-  } else if (ev->event == RDMA_CM_EVENT_DISCONNECTED) {
-    comm_ctx->state = NAAICE_FINISHED;
-    log_warn("event id: %d", ev->id);
-    // FM What to do here? is this an error state in this case? Check what needs
-    //  to be cleaned up in which state...
+    log_debug("event id: %d", ev->id);
+    // FM What to do here? is this an error state in this case? Check what
+    // needs to be cleaned up in which state...
     //  We're not expecting disconnect at this point, so we should exit.
     log_warn("RDMA disconnected by client request.\n");
     // Keep current state for error free cleanup (depending on the state, we
@@ -755,48 +622,6 @@ int naaice_swnaa_receive_data_transfer(
     struct naaice_communication_context *comm_ctx) {
 
   ulog_trace("In naaice_swnaa_receive_data_transfer\n");
-
-  // Increment number of RPC calls.
-  comm_ctx->no_rpc_calls++;
-  // Check if connection event is available
-  int fd_flags = fcntl(comm_ctx->ev_channel->fd, F_GETFL);
-  if (fcntl(comm_ctx->ev_channel->fd, F_SETFL, fd_flags | O_NONBLOCK) < 0) {
-    log_error("Failed to change file descriptor of rdma event "
-              "channel.\n");
-    return -1;
-  }
-
-  comm_ctx->state = NAAICE_DATA_RECEIVING;
-
-  // Post a receive for the data.
-  naaice_swnaa_post_recv_data(comm_ctx);
-
-  // Poll the completion queue and handle work completions until the data
-  // transfer to the NAA is complete.
-  time_t start, end;
-  time(&start);
-
-  while (comm_ctx->state == NAAICE_DATA_RECEIVING) {
-    time(&end);
-    if (naaice_swnaa_poll_cq_nonblocking(comm_ctx)) {
-      return -1;
-    }
-    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)) {
-      return -1;
-    };
-    if (difftime(end, start) > comm_ctx->timeout) {
-      ulog_warn("Timeout while receiving data from client.\n");
-      return -1;
-    }
-  }
-
-  return 0;
-}
-
-int naaice_swnaa_receive_data_transfer_multi(
-    struct naaice_communication_context *comm_ctx) {
-
-  log_trace("In naaice_swnaa_receive_data_transfer multi\n");
 
   // Increment number of RPC calls.
   comm_ctx->no_rpc_calls++;
@@ -1585,101 +1410,6 @@ int naaice_swnaa_write_data(struct naaice_communication_context *comm_ctx,
 }
 
 int naaice_swnaa_disconnect_and_cleanup(
-    struct naaice_communication_context *comm_ctx) {
-  // FM TODO: Fix clean up: look if stuff to clean up can be derived by
-  // communication state
-
-  ulog_trace("In naaice_swnaa_disconnect_and_cleanup\n");
-
-  // Logic slightly different than on the host side:
-  // All local memory regions can be freed because they do not exist in user
-  // memory space.
-
-  // Disconnect: Done by client exclusively
-  // rdma_disconnect(comm_ctx->id);
-
-  // Deregister memory regions.
-  int err = 0;
-  err = ibv_dereg_mr(comm_ctx->mr_local_message->ibv);
-  if (err) {
-    log_error("Deregestering local message memory region failed with "
-              "error %d.\n",
-              err);
-    return -1;
-  }
-  for (int i = 0; i < comm_ctx->no_local_mrs; i++) {
-    err = ibv_dereg_mr(comm_ctx->mr_local_data[i].ibv);
-    if (err) {
-      log_error("Deregestering local data memory region failed with "
-                "error %d.\n",
-                err);
-      return -1;
-    }
-    free((void *)(comm_ctx->mr_local_data[i].addr));
-  }
-
-  if (comm_ctx->mr_peer_data != NULL) {
-    free(comm_ctx->mr_peer_data);
-    comm_ctx->mr_peer_data = NULL;
-  }
-
-  if (comm_ctx->mr_internal != NULL) {
-    free(comm_ctx->mr_internal);
-    comm_ctx->mr_internal = NULL;
-  }
-
-  free((void *)(comm_ctx->mr_local_message->addr));
-  free(comm_ctx->mr_local_message);
-  free(comm_ctx->mr_local_data);
-  free(comm_ctx->id);
-  free(comm_ctx->ev_channel);
-
-  // Destroy queue pair.
-  err = ibv_destroy_qp(comm_ctx->qp);
-  if (err) {
-    log_error("Destroying queue pair failed with error %d.\n", err);
-    return -1;
-  }
-
-  // Destroy completion queue.
-  err = ibv_destroy_cq(comm_ctx->cq);
-  if (err) {
-    log_error("Destroying completion queue failed with "
-              "error %d.\n",
-              err);
-    return -1;
-  }
-
-  // Destroy completion channel.
-  err = ibv_destroy_comp_channel(comm_ctx->comp_channel);
-  if (err) {
-    log_error("Destroying completion channel failed with "
-              "error %d.\n",
-              err);
-    return -1;
-  }
-
-  // Destroy protection domain.
-  err = ibv_dealloc_pd(comm_ctx->pd);
-  if (err) {
-    log_error("Destroying protection domain failed with "
-              "error %d.\n",
-              err);
-    return -1;
-  }
-
-  // Destroy rdma communication id.
-  if (rdma_destroy_id(comm_ctx->id)) {
-    perror("Failed to destroy RDMA communication id.\n");
-    return -1;
-  }
-
-  free(comm_ctx);
-
-  return 0;
-}
-
-int naaice_swnaa_disconnect_and_cleanup_multi(
     struct naaice_communication_context *comm_ctx) {
 
   log_trace("In naaice_swnaa_disconnect_and_cleanup\n");

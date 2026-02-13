@@ -21,16 +21,20 @@
  *
  * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
  * Dylan Everingham, everingham@zib.de
- *
- * 26-01-2024
+ * Hannes Signer, signer@uni-potsdam.de
+ * 04.02.2026
  *
  *****************************************************************************/
 
 /* Dependencies **************************************************************/
 
+#include "naaice.h"
 #include <naaice_swnaa.h>
+#include <pthread.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <sys/sysinfo.h>
 #include <ulog.h>
 #include <unistd.h>
 
@@ -38,51 +42,14 @@
 
 #define CONNECTION_PORT 12345
 
-/* Implementation of NAA Procedure *******************************************/
-
-static void handle_shutdown_signal(__attribute__((unused)) int signo) {
-  g_stop_requested = 1;
-}
-
-  log_debug("in do_procedure\n");
-
-  // Can switch on function code.
-  // Here, do nothing if code is 0. Otherwise do something.
-  if (comm_ctx->fncode) {
-
-  if (sigaction(SIGINT, &sa, NULL) != 0) {
-    return -1;
-  }
-  if (sigaction(SIGTERM, &sa, NULL) != 0) {
-    return -1;
-  }
-
-  return 0;
-}
-
-      // Get pointer to data.
-      unsigned char *data = (unsigned char *)comm_ctx->mr_local_data[i].addr;
-
-      for (unsigned int j = 0; j < comm_ctx->mr_local_data[i].size; j++) {
-
-    if (ctx->master->ev_channel != NULL) {
-      rdma_destroy_event_channel(ctx->master->ev_channel);
-      ctx->master->ev_channel = NULL;
-    }
-  }
-
-  pthread_mutex_destroy(&ctx->lock);
-  free(ctx->master);
-  free(ctx->con_mng);
-  free(ctx);
-}
-
-/* Main **********************************************************************/
-
-/**
- * Command line arguments:
- *  None. Port is hardcoded.
+/** Idea: Master-Worker logic
+ * master handles connection establishment for multiple connections
+ * worker holds one connection per thread
+ *
+ * User-specified logic has to be implemented in the kernels/swnaa_kernel file
+ * and are encoded with the function code.
  */
+
 int main(int argc, __attribute__((unused)) char *argv[]) {
   ulog_set_level(LOG_LEVEL);
 
@@ -93,59 +60,16 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1;
   }
 
-  // Communication context struct.
-  // This will hold all information necessary for the connection.
-  log_info("-- Initializing Communication Context --\n");
-  struct naaice_communication_context *comm_ctx = NULL;
-
-  // Initialize the communication context struct.
-  if (naaice_swnaa_init_communication_context(&comm_ctx, CONNECTION_PORT)) {
-    return -1;
-  }
-
-  // Now, handle connection setup.
-  log_info("-- Setting Up Connection --\n");
-  if (naaice_swnaa_setup_connection(comm_ctx)) {
-    return -1;
-  }
-
-  // Receive MRSP message from the host.
-  log_info("-- Doing MRSP --\n");
-  if (naaice_swnaa_do_mrsp(comm_ctx)) {
-    return -1;
-  }
-
-  while (comm_ctx->state >= NAAICE_MRSP_DONE) {
-
-    // Receive data transfer from host.
-    log_info("-- Receiving Data Transfer --\n");
-    if (naaice_swnaa_receive_data_transfer(comm_ctx)) {
-      return -1;
-    }
-    if (comm_ctx->state < NAAICE_MRSP_DONE ||
-        comm_ctx->state == NAAICE_FINISHED) {
-      break;
-    }
-
   struct context *ctx;
 
-    // Finally, write back the results to the host.
-    log_info("-- Writing Back Data --\n");
-    if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) {
-      return -1;
-    }
+  naaice_swnaa_init_master(&ctx, CONNECTION_PORT);
+  while (1) {
 
-    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx) < 0) {
-      return -1;
-    } else if (comm_ctx->state == NAAICE_FINISHED) {
-      break;
+    ctx->master->state = NAAICE_INIT;
+    if (naaice_swnaa_setup_connection(ctx)) {
+      log_error("Failed to setup connection.\n");
+      continue; // don't exit, but listen for new connections
     }
-  }
-
-  // Disconnect and clean up.
-  log_info("-- Cleaning Up --\n");
-  if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) {
-    return -1;
   }
 
   return 0;
