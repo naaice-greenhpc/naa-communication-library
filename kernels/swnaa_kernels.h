@@ -26,3 +26,5 @@ int match_function_code(
 void custom_kernel_1(struct naaice_communication_context *comm_ctx);
 
 void custom_kernel_2(struct naaice_communication_context *comm_ctx);
+
+void empty_kernel(struct naaice_communication_context *comm_ctx);
