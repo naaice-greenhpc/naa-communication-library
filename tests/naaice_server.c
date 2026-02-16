@@ -29,6 +29,7 @@
 #include "naaice.h"
 #include <naaice_swnaa.h>
 #include <pthread.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
-#define MAX_CONNECTIONS 1
+// #define MAX_CONNECTIONS 1
 
 /** Idea: Master-Worker logic
 master handles connection establishment for multiple connections
@@ -57,16 +58,28 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   }
 
   struct context *ctx;
-
   naaice_swnaa_init_master(&ctx, CONNECTION_PORT);
-  while (1) {
 
-    ctx->master->state = NAAICE_INIT;
-    if (naaice_swnaa_setup_connection(ctx)) {
-      log_error("Failed to setup connection.\n");
-      continue; // don't exit, but listen for new connections
+  // printf("%d\n", ctx->con_mng->top);
+  // printf("%d\n", ctx->total_connections_lifetime);
+  while (true) {
+    naaice_swnaa_poll_and_handle_connection_event(ctx);
+
+    // Prüfe ob alle Worker fertig sind (alle Slots wieder frei)
+    if (ctx->total_connections_lifetime > 0) {
+      naaice_swnaa_poll_and_handle_connection_event(ctx);
+      log_info("All workers finished, shutting down.\n");
+      break;
     }
   }
+
+  while (ctx->con_mng->top < MAX_CONNECTIONS) {
+    sleep(1);
+  }
+
+  free(ctx->master);
+  free(ctx->con_mng);
+  free(ctx);
 
   return 0;
 }
