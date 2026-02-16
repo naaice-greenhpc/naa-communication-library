@@ -1,3 +1,29 @@
+/**************************************************************************
+ *
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
+ *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
+ *
+ * naaice_client.c
+ *
+ * Application implementing a basic use case of the AP1 NAAICE communication
+ * layer.
+ *
+ * For use in conjunction with naaice_server.c.
+ *
+ * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
+ * Dylan Everingham, everingham@zib.de
+ *
+ * 26-01-2024
+ *
+ *****************************************************************************/
+
 #include "ulog.h"
 #include <naaice_ap2.h>
 #include <stdlib.h>
@@ -6,7 +32,7 @@
 #include <unistd.h>
 
 #define CONNECTION_PORT 12345
-#define FNCODE 1
+#define FNCODE 3
 
 #define N_INVOKES 1
 

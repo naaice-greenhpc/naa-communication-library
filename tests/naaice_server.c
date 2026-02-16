@@ -1,4 +1,4 @@
-/**************************************************************************//**
+/**************************************************************************
  *
  *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
  *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
@@ -19,97 +19,66 @@
  * The actual logic of the NAA procedure can be changed by putting whatever
  * you like in the implementation of do_procedure().
  *
- * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
- * Dylan Everingham, everingham@zib.de
- *
- * 26-01-2024
+ * Hannes Signer, signer@uni-potsdam.de
+ * 04.02.2026
  *
  *****************************************************************************/
 
 /* Dependencies **************************************************************/
 
-#include "ulog.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdint.h>
-#include <naaice.h>
+#include "naaice.h"
 #include <naaice_swnaa.h>
-
+#include <pthread.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/sysinfo.h>
+#include <ulog.h>
+#include <unistd.h>
 
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
+// #define MAX_CONNECTIONS 1
 
+/** Idea: Master-Worker logic
+master handles connection establishment for multiple connections
+worker holds one connection per thread
+*/
 
-/* Implementation of NAA Procedure *******************************************/
-
-// The routine should return 0 if successful, or some nonzero number if not.
-// This nonzero error code is sent to the host in the case of an error.
-uint8_t do_procedure(struct naaice_communication_context *comm_ctx) {
-  // printf("in do_procedure\n");
-  return 0;
-}
-
-
-/* Main **********************************************************************/
-
-/**
- * Command line arguments:
- *  None. Port is hardcoded.
- */
 int main(int argc, __attribute__((unused)) char *argv[]) {
-  ulog_set_level(LOG_ERROR);
+  ulog_set_level(LOG_LEVEL);
+
   // Handle command line arguments.
   log_info("-- Handling Command Line Arguments --\n");
   if (argc != 1) {
-    fprintf(stderr,
-            "Server should be called without arguments.\n");
+    log_error("Server should be called without arguments.\n");
     return -1;
   }
 
-  // Communication context struct.
-  // This will hold all information necessary for the connection.
-  log_info("-- Initializing Communication Context --\n");
-  struct naaice_communication_context *comm_ctx = NULL;
+  struct context *ctx;
+  naaice_swnaa_init_master(&ctx, CONNECTION_PORT);
 
-  // Initialize the communication context struct.
-  if(naaice_swnaa_init_communication_context(&comm_ctx, CONNECTION_PORT)) {
-    return -1; }
+  // printf("%d\n", ctx->con_mng->top);
+  // printf("%d\n", ctx->total_connections_lifetime);
+  while (true) {
+    naaice_swnaa_poll_and_handle_connection_event(ctx);
 
-  // Now, handle connection setup.
-  log_info("-- Setting Up Connection --\n");
-  if (naaice_swnaa_setup_connection(comm_ctx)) { return -1; }
-
-  // Receive MRSP message from the host.
-  log_info("-- Doing MRSP --\n");
-  if (naaice_swnaa_do_mrsp(comm_ctx)) { return -1; }
-
-  while (comm_ctx->state >= NAAICE_MRSP_DONE) {
-
-    // Receive data transfer from host.
-    log_info("-- Receiving Data Transfer --\n");
-    if (naaice_swnaa_receive_data_transfer(comm_ctx)) { return -1; }
-    if (comm_ctx->state < NAAICE_MRSP_DONE || comm_ctx->state == NAAICE_FINISHED){
-      break;
-    }
-
-    // Now that all data has arrived, perform the RPC.
-    log_info("-- Doing RPC --\n");
-    log_info("Function Code: %d\n", comm_ctx->fncode);
-    uint8_t errorcode = do_procedure(comm_ctx);
-
-    // Finally, write back the results to the host.
-    log_info("-- Writing Back Data --\n");
-    if (naaice_swnaa_do_data_transfer(comm_ctx, errorcode)) { return -1; }
-
-    if (naaice_swnaa_poll_and_handle_connection_event(comm_ctx)<0) { return -1; }
-    else if(comm_ctx->state==NAAICE_FINISHED){
+    // Prüfe ob alle Worker fertig sind (alle Slots wieder frei)
+    if (ctx->total_connections_lifetime > 0) {
+      naaice_swnaa_poll_and_handle_connection_event(ctx);
+      log_info("All workers finished, shutting down.\n");
       break;
     }
   }
-  // Disconnect and clean up.
-  log_info("-- Cleaning Up --\n");
-  if (naaice_swnaa_disconnect_and_cleanup(comm_ctx)) { return -1; }
+
+  while (ctx->con_mng->top < MAX_CONNECTIONS) {
+  }
+
+  free(ctx->master);
+  free(ctx->con_mng);
+  free(ctx);
 
   return 0;
 }

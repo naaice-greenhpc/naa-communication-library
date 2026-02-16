@@ -31,6 +31,34 @@
 /* Dependencies **************************************************************/
 
 #include "naaice.h"
+#include <config.h>
+#include <pthread.h>
+#include <rdma/rdma_cma.h>
+#include <stdint.h>
+#include <sys/types.h>
+
+/**
+ * Array of indices of free positions in the worker array.
+ * All positions after the position variable are available.
+ */
+struct connection_management {
+  uint8_t connections[MAX_CONNECTIONS];
+  int top;
+};
+
+struct context {
+  pthread_mutex_t lock;
+  uint8_t total_connections_lifetime;
+  struct naaice_communication_context *master;
+  struct connection_management *con_mng;
+  struct naaice_communication_context *worker[MAX_CONNECTIONS];
+  pthread_t worker_threads[MAX_CONNECTIONS];
+};
+
+struct worker_args {
+  struct context *ctx;
+  uint8_t worker_id;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,20 +68,27 @@ extern "C" {
  * @defgroup PublicFunctionsSWNAA Functions
  */
 
-/* Public Functions **********************************************************/
+/* Public Functions
+ * **********************************************************/
 
 /** @addtogroup PublicFunctionsSWNAA
  *  @{
  */
 
+void *worker_procedure(void *args);
+
+int naaice_swnaa_init_master(struct context **ctx, uint16_t port);
+
+int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id);
+
 /**
  * @brief Initialize a communication context structure.
  *
  * This function initializes a communication context structure.
- * The dummy software NAA reuses the communication context structure from the
- * host-side AP1 implementation, but does not use all fields in the same way.
- * In particular, the size and number of parameters are not known (and related
- * fields are not populated) until the MRSP has completed.
+ * The dummy software NAA reuses the communication context structure from
+ * the host-side AP1 implementation, but does not use all fields in the same
+ * way. In particular, the size and number of parameters are not known (and
+ * related fields are not populated) until the MRSP has completed.
  *
  * @param comm_ctx
  *   Pointer to a communication context structure to be initialized.
@@ -66,7 +101,7 @@ extern "C" {
  *   0 on success, -1 on failure.
  */
 int naaice_swnaa_init_communication_context(
-    struct naaice_communication_context **comm_ctx, uint16_t port);
+    struct naaice_communication_context **comm_ctx);
 
 /**
  * @brief Set up the software NAA connection.
@@ -83,8 +118,7 @@ int naaice_swnaa_init_communication_context(
  * @return
  *   0 on success, -1 on failure (e.g. due to timeout).
  */
-int naaice_swnaa_setup_connection(
-    struct naaice_communication_context *comm_ctx);
+int naaice_swnaa_setup_connection(struct context *ctx);
 
 /**
  * @defgroup SWNAAEventHandlers Software NAA connection event handlers
@@ -123,8 +157,8 @@ int naaice_swnaa_setup_connection(
  */
 
 /** @brief Handle RDMA_CM_EVENT_CONNECTION_REQUEST events. */
-int naaice_swnaa_handle_connection_requests(
-    struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
+int naaice_swnaa_handle_connection_requests(struct context *ctx,
+                                            struct rdma_cm_event *ev);
 /** @brief Handle RDMA_CM_EVENT_CONNECT_ESTABLISHED events. */
 int naaice_swnaa_handle_connection_established(
     struct naaice_communication_context *comm_ctx, struct rdma_cm_event *ev);
@@ -137,19 +171,19 @@ int naaice_swnaa_handle_error(struct naaice_communication_context *comm_ctx,
  * @brief Poll for and handle a software NAA connection event.
  *
  * Polls the RDMA event channel stored in the communication context for a
- * connection event and handles it if one is received. This function delegates
- * the actual work to the corresponding poll and handler functions.
+ * connection event and handles it if one is received. This function
+ * delegates the actual work to the corresponding poll and handler
+ * functions.
  *
  * @param comm_ctx
- *   Pointer to the communication context structure describing the connection.
+ *   Pointer to the communication context structure describing the
+ * connection.
  *
  * @return
  *   0 on success (regardless of whether an event was received),
  *   -1 on failure.
  */
-
-int naaice_swnaa_poll_and_handle_connection_event(
-    struct naaice_communication_context *comm_ctx);
+int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx);
 
 /**
  * @brief Initialize MRSP on the software NAA side.
