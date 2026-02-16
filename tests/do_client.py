@@ -64,7 +64,7 @@ def run_low_level(dma_length):
 @retry(wait=wait_fixed(0.5))
 def run_middleware(dma_length):
     env = os.environ.copy()
-    env["NAA_SPEC"] = "10.3.10.42:12345:1:1"
+    env["NAA_SPEC"] = "10.3.10.42:12345:3:1"
     sp.check_call(
         ["build/tests/naaice_client_middleware_measurement", str(dma_length), str(file_middleware)],
         env=env
