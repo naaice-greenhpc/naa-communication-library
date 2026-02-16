@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
   log_info("-- Print Results --\n");
 
   unsigned char *data = (unsigned char *)(params[params_amount - 1]);
-  printf("Output of the last MR:");
+  printf("Output of the last MR: ");
   for (unsigned int j = 0; j < param_sizes[params_amount - 1]; j++) {
     printf("%d ", data[j]);
     if (j >= 10) {
