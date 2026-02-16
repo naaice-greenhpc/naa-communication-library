@@ -109,12 +109,9 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   struct context *ctx;
   naaice_swnaa_init_master(&ctx, CONNECTION_PORT);
 
-  // printf("%d\n", ctx->con_mng->top);
-  // printf("%d\n", ctx->total_connections_lifetime);
   while (true) {
     naaice_swnaa_poll_and_handle_connection_event(ctx);
 
-    // Prüfe ob alle Worker fertig sind (alle Slots wieder frei)
     if (ctx->total_connections_lifetime > 0) {
       naaice_swnaa_poll_and_handle_connection_event(ctx);
       log_info("All workers finished, shutting down.\n");
