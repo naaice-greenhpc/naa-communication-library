@@ -81,6 +81,7 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
   }
 
   (*ctx)->master->state = NAAICE_INIT;
+  (*ctx)->total_connections_lifetime = 0;
 
   // Make an event channel, checking for allocation success.
   log_debug("Making event channel.\n");
@@ -297,6 +298,7 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
       break;
     case RDMA_CM_EVENT_ESTABLISHED:
       worker_id = (uintptr_t)ev_cp.id->context;
+      ctx->total_connections_lifetime++;
       comm_ctx = ctx->worker[worker_id];
       log_debug("Connection established event for worker %hhu\n",
                 comm_ctx->connection_id);
