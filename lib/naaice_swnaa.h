@@ -35,6 +35,7 @@
 #include <pthread.h>
 #include <rdma/rdma_cma.h>
 #include <stdint.h>
+#include <sys/types.h>
 
 /**
  * Array of indices of free positions in the worker array.
@@ -47,6 +48,7 @@ struct connection_management {
 
 struct context {
   pthread_mutex_t lock;
+  uint8_t total_connections_lifetime;
   struct naaice_communication_context *master;
   struct connection_management *con_mng;
   struct naaice_communication_context *worker[MAX_CONNECTIONS];

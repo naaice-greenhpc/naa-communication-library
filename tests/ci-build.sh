@@ -3,7 +3,7 @@ ROOT_DIR=$(pwd)
 
 [ -e build ] && rm -r build
 mkdir build
-cmake -S . -B build -D CMAKE_BUILD_TYPE=Release
+cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -DCMAKE_NUMBER_CONNECTIONS=1
 cmake --build build
 
 cd "$ROOT_DIR/build/examples/"
