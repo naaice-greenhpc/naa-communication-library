@@ -55,7 +55,8 @@ run_server:
     - build
   timeout: 10 minutes
   script:
-    - bash -c "./build/tests/naaice_server_measurement"
+    - echo "Start SWNAA"
+    - ./build/tests/naaice_server_measurement
   tags:
     - naaice2-runner
 
