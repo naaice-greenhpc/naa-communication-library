@@ -12,7 +12,7 @@ ATTEMPT=1
 while [ $ATTEMPT -le $MAX_RETRIES ]; do
     echo "Attempt $ATTEMPT of $MAX_RETRIES"
     
-    ./build/examples/naaice_client 10.3.10.42 3 "10 10 10"
+    ./build/examples/naaice_client 10.3.10.41 10.3.10.42 3 "10 10 10"
     EXIT_CODE=$?
 
     if [ $EXIT_CODE -ne 0 ]; then
