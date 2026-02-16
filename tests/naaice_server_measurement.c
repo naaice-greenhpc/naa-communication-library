@@ -123,7 +123,6 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   }
 
   while (ctx->con_mng->top < MAX_CONNECTIONS) {
-    sleep(1);
   }
 
   free(ctx->master);

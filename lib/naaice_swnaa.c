@@ -344,7 +344,6 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
         return 0;
       }
 
-      printf("worker_id (event error): %lu\n", worker_id);
       if (naaice_swnaa_handle_error(ctx->worker[worker_id], &ev_cp)) {
         return -1;
       }
