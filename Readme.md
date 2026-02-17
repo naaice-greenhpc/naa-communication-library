@@ -63,7 +63,7 @@ cmake -S . -B build [OPTIONS]
 | Option | Values | Default | Description |
 |--------|--------|---------|-------------|
 | `CMAKE_BUILD_TYPE` | `Debug`, `Release` | `Release` | Build configuration |
-| `LOG_LEVEL` | `LOG_INFO`, `LOG_DEBUG`, `LOG_WARN`, `LOG_ERROR` | `LOG_INFO` | Logging verbosity |
+| `LOG_LEVEL` | `ULOG_LEVEL_INFO`, `ULOG_LEVEL_DEBUG`, `ULOG_LEVEL_WARN`, `ULOG_LEVEL_ERROR` | `ULOG_LEVEL_INFO` | Logging verbosity |
 | `USE_EMA` | `ON`, `OFF` | `OFF` | Enable EMA measurements |
 | `NUMBER_CONNECTIONS` | 1...n | Core number | Maximal allowed number of parallel server connections 
 
