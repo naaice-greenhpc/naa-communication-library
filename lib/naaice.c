@@ -263,6 +263,18 @@ int naaice_poll_connection_event(struct naaice_communication_context *comm_ctx,
 
   ulog_trace("In naaice_poll_connection_event\n");
 
+  // HINT: changed to use poll on the event channel file descriptor, to avoid
+  // blocking indefinitely
+  struct pollfd poll_fd;
+  poll_fd.fd = comm_ctx->ev_channel->fd;
+  poll_fd.events = POLLIN;
+  poll_fd.revents = 0;
+
+  int poll_result = poll(&poll_fd, 1, POLLING_TIMEOUT);
+  if (poll_result <= 0) {
+    return -1;
+  }
+
   if (!rdma_get_cm_event(comm_ctx->ev_channel, &ev)) {
 
     // Acking Event frees memory, therefore copy event before and use it
