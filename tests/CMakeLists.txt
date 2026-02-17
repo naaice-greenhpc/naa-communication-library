@@ -1,6 +1,6 @@
 add_executable(naaice_client_low_level_measurement naaice_client_low_level_measurement.c)
 add_executable(naaice_client_middleware_measurement naaice_client_middleware_measurement.c )
-add_executable(naaice_server_measurement naaice_server.c ${CMAKE_SOURCE_DIR}/kernels/swnaa_kernels.c)
+add_executable(naaice_server_measurement naaice_server_measurement.c ${CMAKE_SOURCE_DIR}/kernels/swnaa_kernels.c)
 
 target_link_libraries(naaice_client_low_level_measurement PRIVATE naaice::low_level)
 target_link_libraries(naaice_server_measurement PRIVATE naaice::swnaa)
