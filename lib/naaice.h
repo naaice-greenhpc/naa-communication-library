@@ -31,6 +31,14 @@
 #ifndef NAAICE_H
 #define NAAICE_H
 
+#ifdef __cplusplus
+#include <atomic>
+#define ATOMIC_TYPE(T) std::atomic<T>
+#else
+#include <stdatomic.h>
+#define ATOMIC_TYPE(T) _Atomic(T)
+#endif
+
 /**
  * TODO:
  *
@@ -101,11 +109,19 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <infiniband/verbs.h>
 #include <limits.h>
 #include <netdb.h>
 #include <rdma/rdma_cma.h>
 #include <rdma/rdma_verbs.h>
+#include <signal.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #include <sys/socket.h>
+#include <ulog.h>
+
+#include <stdatomic.h>
 
 /* Constants *****************************************************************/
 
@@ -401,7 +417,7 @@ struct naaice_rpc_metadata {
  * - NAAICE_DATA_SENDING: Posting write for data transfer back to host.
  * - NAAICE_FINISHED: Done!
  */
-enum naaice_communication_state {
+typedef enum {
   NAAICE_INIT = 0,            ///< Starting state
   NAAICE_READY = 1,           ///< Address resolved (host only)
   NAAICE_CONNECTED = 2,       ///< Connection established
@@ -414,7 +430,7 @@ enum naaice_communication_state {
   NAAICE_DATA_RECEIVING = 22, ///< Waiting for / processing data transfer
   NAAICE_FINISHED = 30,       ///< Completed all communication
   NAAICE_ERROR = 40,          ///< Error state
-};
+} naaice_communication_state;
 
 /**
  * @ingroup StructsEnumsLowLevel
@@ -457,7 +473,7 @@ struct naaice_communication_context {
   /* --- Current connection state --- */
 
   /// Current communication state.
-  enum naaice_communication_state state;
+  ATOMIC_TYPE(naaice_communication_state) state;
 
   /* --- Local memory regions --- */
 

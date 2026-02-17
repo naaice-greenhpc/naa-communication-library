@@ -39,7 +39,7 @@
 
 // Implemented in naaice.c.
 const char *get_ibv_wc_opcode_str(enum ibv_wc_opcode opcode);
-const char *get_state_str(enum naaice_communication_state state);
+const char *get_state_str(naaice_communication_state state);
 
 int naaice_swnaa_consume_connection(struct connection_management *con_mng,
                                     uint8_t *worker_id);
@@ -871,7 +871,7 @@ int naaice_swnaa_poll_cq_nonblocking(
 
   // While there are work completions in the completion queue, handle them.
   struct ibv_wc wc;
-  enum naaice_communication_state state = comm_ctx->state;
+  naaice_communication_state state = comm_ctx->state;
   int n_wcs = ibv_poll_cq(comm_ctx->cq, 1, &wc);
   log_debug("number of polled elements: %d\n", n_wcs);
 
