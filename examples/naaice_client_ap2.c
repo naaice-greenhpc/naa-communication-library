@@ -38,7 +38,6 @@
 #define N_INVOKES 100
 
 /* Main **********************************************************************/
-
 /**
  * Command line arguments:
  *  number-of-regions, ex. 1
