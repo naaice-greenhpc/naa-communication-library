@@ -54,7 +54,8 @@ run_server:
   dependencies:
     - build
   timeout: 10 minutes
-  # script:
+  script:
+    - bash -c "echo Hallo"
     #  - bash -c "./build/tests/naaice_server_measurement"
   tags:
     - naaice2-runner
