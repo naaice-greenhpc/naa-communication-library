@@ -45,7 +45,7 @@ double get_timestamp() {
 }
 
 int main(int argc, char *argv[]) {
-  ulog_set_level(LOG_ERROR);
+  ulog_output_level_set_all(LOG_LEVEL);
   if (argc != 5) {
     fprintf(stderr,
             "Wrong number of arguments. use: "

@@ -51,12 +51,12 @@
  */
 
 int main(int argc, __attribute__((unused)) char *argv[]) {
-  ulog_set_level(LOG_LEVEL);
+  // ulog_set_level(ulog_LEVEL);
 
   // Handle command line arguments.
-  log_info("-- Handling Command Line Arguments --\n");
+  ulog_info("-- Handling Command Line Arguments --\n");
   if (argc != 1) {
-    log_error("Server should be called without arguments.\n");
+    ulog_error("Server should be called without arguments.\n");
     return -1;
   }
 
@@ -67,7 +67,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
 
     ctx->master->state = NAAICE_INIT;
     if (naaice_swnaa_setup_connection(ctx)) {
-      log_error("Failed to setup connection.\n");
+      ulog_error("Failed to setup connection.\n");
       continue; // don't exit, but listen for new connections
     }
   }
