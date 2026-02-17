@@ -91,7 +91,7 @@ static void cleanup_master_context(struct context *ctx) {
 }
 
 int main(int argc, __attribute__((unused)) char *argv[]) {
-  ulog_output_level_set_all(LOG_LEVEL);
+  // ulog_set_level(LOG_LEVEL);
 
   // Handle command line arguments.
   ulog_info("-- Handling Command Line Arguments --\n");
@@ -100,13 +100,11 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
     return -1;
   }
 
-  if (install_signal_handlers()) {
-    ulog_error("Failed to install signal handlers.\n");
+  struct context *ctx;
+  if (naaice_swnaa_init_master(&ctx, CONNECTION_PORT)) {
+    ulog_error("Failed to initialize SWNAA master context.\n");
     return -1;
   }
-
-  struct context *ctx;
-  naaice_swnaa_init_master(&ctx, CONNECTION_PORT);
 
   while (true) {
     naaice_swnaa_poll_and_handle_connection_event(ctx);
@@ -118,12 +116,26 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   }
 
   while (ctx->con_mng->top < MAX_CONNECTIONS) {
+    usleep(10);
   }
 
-  log_info("All workers finished, shutting down.\n");
+  ulog_info("All workers finished, shutting down.\n");
+
+  if (ctx->master != NULL) {
+    if (ctx->master->id != NULL) {
+      rdma_destroy_id(ctx->master->id);
+      ctx->master->id = NULL;
+    }
+
+    if (ctx->master->ev_channel != NULL) {
+      rdma_destroy_event_channel(ctx->master->ev_channel);
+      ctx->master->ev_channel = NULL;
+    }
+  }
 
   pthread_mutex_destroy(&ctx->lock);
   free(ctx->master);
+
   free(ctx->con_mng);
   free(ctx);
 
