@@ -40,7 +40,7 @@
 #define FNCODE 1
 
 // Number of times to repeat the RPC.
-#define N_INVOKES 2
+#define N_INVOKES 1
 
 /* Main **********************************************************************/
 
