@@ -29,6 +29,7 @@
 #include "naaice.h"
 #include <naaice_swnaa.h>
 #include <pthread.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -46,36 +47,31 @@ master handles connection establishment for multiple connections
 worker holds one connection per thread
 */
 
-int main(int argc, __attribute__((unused)) char *argv[]) {
-  // ulog_set_level(LOG_LEVEL);
+static volatile sig_atomic_t g_stop_requested = 0;
 
-  // Handle command line arguments.
-  ulog_info("-- Handling Command Line Arguments --\n");
-  if (argc != 1) {
-    ulog_error("Server should be called without arguments.\n");
+static void handle_shutdown_signal(__attribute__((unused)) int signo) {
+  g_stop_requested = 1;
+}
+
+static int install_signal_handlers(void) {
+  struct sigaction sa;
+  memset(&sa, 0, sizeof(sa));
+  sa.sa_handler = handle_shutdown_signal;
+
+  if (sigaction(SIGINT, &sa, NULL) != 0) {
+    return -1;
+  }
+  if (sigaction(SIGTERM, &sa, NULL) != 0) {
     return -1;
   }
 
-  struct context *ctx;
-  if (naaice_swnaa_init_master(&ctx, CONNECTION_PORT)) {
-    ulog_error("Failed to initialize SWNAA master context.\n");
-    return -1;
+  return 0;
+}
+
+static void cleanup_master_context(struct context *ctx) {
+  if (ctx == NULL) {
+    return;
   }
-
-  while (true) {
-    naaice_swnaa_poll_and_handle_connection_event(ctx);
-
-    if (ctx->total_connections_lifetime > 0) {
-      naaice_swnaa_poll_and_handle_connection_event(ctx);
-      break;
-    }
-  }
-
-  while (ctx->con_mng->top < MAX_CONNECTIONS) {
-    usleep(10);
-  }
-
-  ulog_info("All workers finished, shutting down.\n");
 
   if (ctx->master != NULL) {
     if (ctx->master->id != NULL) {
@@ -91,9 +87,47 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
 
   pthread_mutex_destroy(&ctx->lock);
   free(ctx->master);
-
   free(ctx->con_mng);
   free(ctx);
+}
+
+int main(int argc, __attribute__((unused)) char *argv[]) {
+  ulog_output_level_set_all(LOG_LEVEL);
+
+  // Handle command line arguments.
+  ulog_info("-- Handling Command Line Arguments --\n");
+  if (argc != 1) {
+    ulog_error("Server should be called without arguments.\n");
+    return -1;
+  }
+
+  if (install_signal_handlers()) {
+    ulog_error("Failed to install signal handlers.\n");
+    return -1;
+  }
+
+  struct context *ctx;
+  if (naaice_swnaa_init_master(&ctx, CONNECTION_PORT)) {
+    ulog_error("Failed to initialize SWNAA master context.\n");
+    return -1;
+  }
+
+  while (!g_stop_requested) {
+    naaice_swnaa_poll_and_handle_connection_event(ctx);
+
+    if (ctx->total_connections_lifetime > 0) {
+      naaice_swnaa_poll_and_handle_connection_event(ctx);
+      break;
+    }
+  }
+
+  while (!g_stop_requested && ctx->con_mng->top < MAX_CONNECTIONS) {
+    usleep(10);
+  }
+
+  ulog_info("All workers finished, shutting down.\n");
+
+  cleanup_master_context(ctx);
 
   return 0;
 }
