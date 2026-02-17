@@ -133,7 +133,7 @@ All messages share a similar structure as shown below
   +-+-+-+-+-+-+-+-+- - - - - - - - - - - - - - - - - - - - - - - -
 
 where type denotes the message types defined in the list above.
-An Advertisement and Request message can include up to 256 memory regions, limited only be the ``count`` variable, which indicates the number of announced memory regions. This variable has 8 bits but can be expanded to use up to 24 bits (including 16 bits now used for padding). However, the current limit of 256 memory regions to be exchanged vastly outnumbers the amount of memory regions the FPGA can handle. In the current implementation, the FPGA is only able to handle up to 32 memory regions. Note: For regular compute nodes using ``ibverbs``, the amount of memory available for registration is hardware-specific as well.
+An Advertisement and Request message can include up to 256 memory regions, limited only be the ``count`` variable, which indicates the number of announced memory regions. This variable has 8 bits but can be expanded to use up to 24 bits (including 16 bits now used for padding). However, the current limit of 256 memory regions to be exchanged vastly outnumbers the amount of memory regions the FPGA can handle. In the current implementation, the FPGA is only able to handle up to 32 memory regions. Note: For regular compute nodes using ``ibverbs``, the amount of memory available for registration is hardware-specific as well. In practice, the size of a single memory region is effectively limited by the maximum message transfer size defined by the InfiniBand standard to 2 GB (see [#infiniband_standard]_, Chapter 9.3.3.3, C9-9).
 
 .. code-block:: text
    :caption: Advertisement and Request Message
@@ -242,7 +242,7 @@ Connection termination is again done through methods provided by ``librdmacm``. 
 
 The main goal of the API is to allow the offloading of tasks on to an NAA in an RPC-like fashion. For this, the data transfer should be as performant as possible. Taking message overhead into account it can be safely assumed that the performance of fewer and larger messages is the best. The actual style of the data transfer, i.e. the number and size of messages sent is dependent on many factors however:
 
-- A single message can only hold 1 GB, which is also the maximum size for a memory region right now
+- A single message can only hold 2 GB, which is also the maximum size for a memory region right now
 - There is an overhead for multiple memory regions on the FPGA
 
     - The management on the FPGA (e.g. mapping of virtual to physical addresses and the verification of the ``rkeys``) is easier with a smaller number of memory regions
