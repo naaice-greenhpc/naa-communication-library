@@ -40,7 +40,6 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
-// #define MAX_CONNECTIONS 1
 
 /** Idea: Master-Worker logic
 master handles connection establishment for multiple connections
@@ -114,7 +113,6 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
 
     if (ctx->total_connections_lifetime > 0) {
       naaice_swnaa_poll_and_handle_connection_event(ctx);
-      log_info("All workers finished, shutting down.\n");
       break;
     }
   }
@@ -122,6 +120,9 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   while (ctx->con_mng->top < MAX_CONNECTIONS) {
   }
 
+  log_info("All workers finished, shutting down.\n");
+
+  pthread_mutex_destroy(&ctx->lock);
   free(ctx->master);
   free(ctx->con_mng);
   free(ctx);
