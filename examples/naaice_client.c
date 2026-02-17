@@ -37,7 +37,7 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
-#define FNCODE 1
+#define FNCODE 3
 
 // Number of times to repeat the RPC.
 #define N_INVOKES 1
