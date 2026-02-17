@@ -271,7 +271,7 @@ int naaice_swnaa_setup_connection(struct context *ctx) {
 
 int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
 
-  // ulog_debug("In naaice_poll_and_handle_connection_event\n");
+  ulog_debug("In naaice_poll_and_handle_connection_event\n");
 
   // If we've received an event...
   struct rdma_cm_event ev;
