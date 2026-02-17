@@ -43,7 +43,7 @@ double get_timestamp() {
 }
 
 int main(int argc, char *argv[]) {
-  ulog_set_level(LOG_LEVEL);
+  // ulog_set_level(LOG_LEVEL);
 
   if (argc != 3) {
     fprintf(stderr, "Wrong number of arguments. use: "
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   struct naa_handle *handle =
       (naa_handle *)calloc(1, sizeof(struct naa_handle));
   if (!handle) {
-    log_error("Failed to create naa handle. Exiting.\n");
+    ulog_error("Failed to create naa handle. Exiting.\n");
     return -1;
   }
 

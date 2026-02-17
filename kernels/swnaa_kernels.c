@@ -45,7 +45,7 @@ int match_function_code(
     *worker_func = &empty_kernel;
     return 0;
   default:
-    log_error("Received invalid function code %d.\n", fncode);
+    ulog_error("Received invalid function code %d.\n", fncode);
     return -1;
   }
 }
