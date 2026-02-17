@@ -43,7 +43,7 @@
  */
 struct connection_management {
   uint8_t connections[MAX_CONNECTIONS];
-  int top;
+  volatile int top;
 };
 
 struct context {
