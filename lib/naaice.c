@@ -1,37 +1,29 @@
-/**************************************************************************/ /**
-                                                                              *
-                                                                              *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
-                                                                              *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
-                                                                              *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
-                                                                              *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
-                                                                              *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
-                                                                              *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
-                                                                              *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
-                                                                              *
-                                                                              *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
-                                                                              *
-                                                                              * naaice.c
-                                                                              *
-                                                                              * Implementations for functions in naaice.h.
-                                                                              *
-                                                                              * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
-                                                                              * Dylan Everingham, everingham@zib.de
-                                                                              * Hannes Signer, signer@uni-potsdam.de
-                                                                              *
-                                                                              * 26-01-2024
-                                                                              *
-                                                                              *****************************************************************************/
+/**************************************************************************
+ *
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
+ *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
+ *
+ * naaice.c
+ *
+ * Implementations for functions in naaice.h.
+ *
+ * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
+ * Dylan Everingham, everingham@zib.de
+ * Hannes Signer, signer@uni-potsdam.de
+ *
+ * 26-01-2024
+ *
+ *****************************************************************************/
 
 /* Dependencies **************************************************************/
 #include "naaice.h"
-#include <errno.h>
-#include <infiniband/verbs.h>
-#include <rdma/rdma_cma.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <ulog.h>
 
 /* Constants *****************************************************************/
 #define TIMEOUT_RESOLVE_ADDR 100
@@ -68,7 +60,7 @@ const char *get_ibv_wc_opcode_str(enum ibv_wc_opcode opcode) {
 
 // Returns a string representing a naaice connection state.
 // Used in debugging.
-const char *get_state_str(enum naaice_communication_state state) {
+const char *get_state_str(naaice_communication_state state) {
   switch (state) {
   case NAAICE_INIT:
     return "NAAICE_INIT";
