@@ -393,6 +393,9 @@ int naaice_handle_error(struct naaice_communication_context *comm_ctx,
   } else if (ev->event == RDMA_CM_EVENT_REJECTED) {
     comm_ctx->state = NAAICE_ERROR;
     ulog_error("Connection request rejected by peer.\n");
+    if (ev->param.conn.private_data_len > 0) {
+      ulog_error(((char *)ev->param.conn.private_data));
+    }
     return -1;
   } else if (ev->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
     comm_ctx->state = NAAICE_ERROR;
