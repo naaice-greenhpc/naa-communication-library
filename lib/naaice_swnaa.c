@@ -278,6 +278,7 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
   struct rdma_cm_event ev_cp;
   uintptr_t worker_id;
   struct naaice_communication_context *comm_ctx;
+  static char *reject_reason = "Server overlad";
 
   if (!naaice_poll_connection_event(ctx->master, &ev, &ev_cp)) {
 
@@ -286,6 +287,13 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
       // check if there is the capacity for a new connection
       if (ctx->con_mng->top <= 0) {
         ulog_error("No capacity for a new connection");
+        if (rdma_reject(ev_cp.id, reject_reason, strlen(reject_reason) + 1) ==
+            0) {
+          ulog_error("Rejected connection due to server overload");
+        } else {
+          ulog_error("Error on connection rejection");
+        }
+
         return -1;
       }
       // in the case of a connection request get an index of a free connection
