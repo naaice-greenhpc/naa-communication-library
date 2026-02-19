@@ -370,18 +370,10 @@ int naa_test(naa_handle *handle, bool *flag, naa_status *status) {
   return 0;
 }
 
-// TODO: When blocking method is implemented, change this to do blocking
 int naa_wait(naa_handle *handle, naa_status *status) {
   if (naaice_poll_cq_blocking(handle->comm_ctx)) {
     return -1;
   }
-  /*	bool flag = false
-            while (!flag) {
-      if (naa_test(handle, &flag, status)) {
-        fprintf(stderr, "Error occurred during naa_test. Exiting.\n");
-        return -1;
-      }
-    }*/
 
   status->state = handle->comm_ctx->state;
   status->naa_error = (enum naa_error)handle->comm_ctx->naa_returncode;
