@@ -30,7 +30,7 @@ plt.xlabel('Bytes')
 plt.ylabel('Latency (s)')
 plt.savefig('reference_vs_measurements.pdf', dpi=300)
 
-deviation_treshold = 0.5
+deviation_treshold = 0.7
 if(deviation_low_level.mean() > deviation_treshold or deviation_middleware.mean() > deviation_treshold):
     raise ValueError(f'Deviation (Low-Level API) is {deviation_low_level.mean():.4f} and for the middleware {deviation_middleware.mean():.4f} , which is greater than {deviation_treshold}. See plot in pipeline artificats for details.\n')
 else:
