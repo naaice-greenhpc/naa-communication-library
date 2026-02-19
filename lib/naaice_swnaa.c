@@ -364,8 +364,13 @@ int naaice_swnaa_poll_and_handle_connection_event(struct context *ctx) {
         check_ctx = ctx->worker[worker_id];
       }
       pthread_mutex_unlock(&ctx->lock);
+
+      // Check the unlikely case that multiple error events are received for
+      // the same connection, but the connection has already been destroyed
+      // after the first error.
       if (check_ctx == NULL) {
-        ulog_error("Received error event for unknown connection. Ignoring.\n");
+        ulog_error("Received an error event for a connection that was already "
+                   "destroyed.\n");
         return 0;
       }
 
