@@ -1023,7 +1023,7 @@ int naaice_handle_work_completion(
       // If no error, go to finished state.
       comm_ctx->state = NAAICE_FINISHED;
       comm_ctx->naa_returncode = wc->imm_data;
-      comm_ctx->bytes_received += wc->byte_len;
+      comm_ctx->bytes_received = wc->byte_len;
       return 0;
     }
   }
