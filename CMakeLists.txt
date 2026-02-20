@@ -34,13 +34,17 @@ endif()
 
 FetchContent_Declare(ulog
     GIT_REPOSITORY https://github.com/an-dr/microlog.git
-    GIT_TAG v6.2.1)
+    GIT_TAG v7.0.0)
 
-add_definitions(-DULOG_HIDE_FILE_STRING)
+add_definitions(-DULOG_BUILD_SOURCE_LOCATION=0) # disable source path location in log messages
+add_definitions(-DULOG_BUILD_COLOR=1) # enable color output in log messages
+
+set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
+set(CMAKE_POLICY_DEFAULT_CMP0177 OLD)
 
 FetchContent_MakeAvailable(ulog)
 
-set(LOG_LEVEL "LOG_INFO" CACHE STRING "Set log level (e.g. LOG_INFO, LOG_DEBUG, LOG_WARN, LOG_ERROR)")
+set(LOG_LEVEL "ULOG_LEVEL_INFO" CACHE STRING "Set log level (e.g. ULOG_LEVEL_TRACE, ULOG_LEVEL_INFO, ULOG_LEVEL_DEBUG, ULOG_LEVEL_WARN, ULOG_LEVEL_ERROR)")
 add_compile_definitions(LOG_LEVEL=${LOG_LEVEL})
 
 add_subdirectory(lib)

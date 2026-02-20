@@ -109,7 +109,7 @@ typedef struct naa_handle {
  */
 typedef struct naa_status {
   /// Current state of the communication session.
-  enum naaice_communication_state state;
+  naaice_communication_state state;
 
   /// Last error code returned by the NAA.
   enum naa_error naa_error;

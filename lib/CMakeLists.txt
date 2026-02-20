@@ -1,7 +1,24 @@
+include(ProcessorCount)
+ProcessorCount(NAAICE_PROCESSOR_COUNT)
+
+if(NAAICE_PROCESSOR_COUNT EQUAL 0)
+  set(_DEFAULT_CONNECTIONS 1)
+else()
+  set(_DEFAULT_CONNECTIONS ${NAAICE_PROCESSOR_COUNT})
+endif()
+
+set(NUMBER_CONNECTIONS "${_DEFAULT_CONNECTIONS}" CACHE STRING "Number of parallel server connections")
+
+message(STATUS "Detected ${NAAICE_PROCESSOR_COUNT} CPU cores.")
+message(STATUS "Configured number of connections: ${NUMBER_CONNECTIONS}")
+
+configure_file(config.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/config.h
+               @ONLY)
+
 find_package(Threads REQUIRED)
 find_library(IBVERBS_LIB ibverbs REQUIRED)
 find_library(RDMACM_LIB rdmacm REQUIRED)
-
 
 add_library(naaice_low_level STATIC naaice.c)
 add_library(naaice::low_level ALIAS naaice_low_level)
@@ -36,6 +53,7 @@ set_target_properties(naaice_swnaa PROPERTIES EXPORT_NAME swnaa)
 target_include_directories(naaice_swnaa 
                             PUBLIC 
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/kernels>
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
                                 $<INSTALL_INTERFACE:include/naaice>)
 target_link_libraries(naaice_swnaa 
