@@ -791,13 +791,6 @@ int naaice_set_internal_mrs(struct naaice_communication_context *comm_ctx,
 int naaice_set_immediate(struct naaice_communication_context *comm_ctx,
                          uint8_t *imm_bytes) {
 
-  // if user wants to use first byte for encoding information print a warning
-  // since it is overwritten with the function code
-  if (imm_bytes[0] != 0) {
-    ulog_warn(
-        "First byte of immediate value is overwritten with function code\n");
-  }
-
   // Immediate byte array should hold no more than 3 bytes.
   // These are placed in the 3 higher bytes of the immediate value.
   for (unsigned int i = 1; i < 4; i++) {
