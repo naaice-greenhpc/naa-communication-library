@@ -1,33 +1,33 @@
-/*************************************************************************/ /**
-*
-*    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
-*      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
-*      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
-*      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
-*      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
-*      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
-*    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
-*
-*  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
-*
-* naaice_client_ap2.c
-*
-* Application implementing a basic use case of the AP2 NAAICE interface.
-*
-* For use in conjunction with naaice_server.c.
-*
-* Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
-* Dylan Everingham, everingham@zib.de
-*
-* 07-02-2024
-*
-******************************************************************************/
+/**************************************************************************
+ *
+ *    `7MN.   `7MF'     db            db      `7MMF'  .g8"""bgd `7MM"""YMM
+ *      MMN.    M      ;MM:          ;MM:       MM  .dP'     `M   MM    `7
+ *      M YMb   M     ,V^MM.        ,V^MM.      MM  dM'       `   MM   d
+ *      M  `MN. M    ,M  `MM       ,M  `MM      MM  MM            MMmmMM
+ *      M   `MM.M    AbmmmqMA      AbmmmqMA     MM  MM.           MM   Y  ,
+ *      M     YMM   A'     VML    A'     VML    MM  `Mb.     ,'   MM     ,M
+ *    .JML.    YM .AMA.   .AMMA..AMA.   .AMMA..JMML.  `"bmmmd'  .JMMmmmmMMM
+ *
+ *  Network-Attached Accelerators for Energy-Efficient Heterogeneous Computing
+ *
+ * naaice_client.c
+ *
+ * Application implementing a basic use case of the AP1 NAAICE communication
+ * layer.
+ *
+ * For use in conjunction with naaice_server.c.
+ *
+ * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
+ * Dylan Everingham, everingham@zib.de
+ *
+ * 26-01-2024
+ *
+ *****************************************************************************/
 
 /* Dependencies **************************************************************/
 
 #include "naaice_ap2.h"
 #include <ulog.h>
-
 
 /* Constants *****************************************************************/
 
@@ -37,9 +37,7 @@
 // Number of times to repeat the RPC.
 #define N_INVOKES 100
 
-
 /* Main **********************************************************************/
-
 /**
  * Command line arguments:
  *  number-of-regions, ex. 1
@@ -51,18 +49,18 @@ int main(int argc, char *argv[]) {
 
   // Check number of arguments.
   if (argc != 3) {
-    log_error("Wrong number of arguments. use: "
-      "./naaice_client_ap2 number-of-regions 'region-sizes'\n"
-      "Example: ./naaice_client_ap2 2 '64, 128'\n");
+    ulog_error("Wrong number of arguments. use: "
+               "./naaice_client_ap2 number-of-regions 'region-sizes'\n"
+               "Example: ./naaice_client_ap2 2 '64, 128'\n");
     return -1;
   };
 
   // Check against maximum number of memory regions.
   char *ptr;
   long int params_amount = strtol(argv[1], &ptr, 10);
-  if(params_amount < 1 || params_amount > MAX_MRS) {
-    log_error("Chosen number of arguments %ld is not supported.\n",
-      params_amount);
+  if (params_amount < 1 || params_amount > MAX_MRS) {
+    ulog_error("Chosen number of arguments %ld is not supported.\n",
+               params_amount);
     return -1;
   }
 
@@ -78,13 +76,13 @@ int main(int argc, char *argv[]) {
   while (i <= params_amount) {
     i++;
     token = strtok(NULL, " ");
-    if(token == NULL) {
-      if(i < params_amount) {
-        log_error("Higher number of memory regions requested "
-          "than size information given.\n");
+    if (token == NULL) {
+      if (i < params_amount) {
+        ulog_error("Higher number of memory regions requested "
+                   "than size information given.\n");
         return -1;
       }
-    break;
+      break;
     }
     param_sizes[i] = atoi(token);
   }
@@ -97,27 +95,28 @@ int main(int argc, char *argv[]) {
   char *params[params_amount];
   for (unsigned char i = 0; i < params_amount; i++) {
 
-    params[i] = (char*) malloc(param_sizes[i] * sizeof(char));
+    params[i] = (char *)malloc(param_sizes[i] * sizeof(char));
     if (params[i] == NULL) {
-      log_error("Failed to allocate memory for parameters.\n");
+      ulog_error("Failed to allocate memory for parameters.\n");
       return -1;
     }
 
-    params[i] = (char*) memset(params[i], i, param_sizes[i]);
+    params[i] = (char *)memset(params[i], i, param_sizes[i]);
   }
 
   // Handle struct holds all information about a NAA session.
-  struct naa_handle *handle = (naa_handle*) calloc(1,sizeof(struct naa_handle));
+  struct naa_handle *handle =
+      (naa_handle *)calloc(1, sizeof(struct naa_handle));
   if (!handle) {
-    log_error("Failed to create naa handle. Exiting.\n");
+    ulog_error("Failed to create naa handle. Exiting.\n");
     return -1;
   }
 
   // Param structs encapsulate parameters and their sizes.
-  struct naa_param_t *all_params = (naa_param_t*) calloc(
-    params_amount, sizeof(struct naa_param_t));
+  struct naa_param_t *all_params =
+      (naa_param_t *)calloc(params_amount, sizeof(struct naa_param_t));
   for (int i = 0; i < params_amount; i++) {
-    all_params[i].addr = (void*) params[i];
+    all_params[i].addr = (void *)params[i];
     all_params[i].size = param_sizes[i];
   }
 
@@ -129,64 +128,59 @@ int main(int argc, char *argv[]) {
   // simulations, for example.
   int input_amount = 4;
   struct naa_param_t input_params[] = {
-    {(void *) params[0], param_sizes[0], false}, // single send option enabled
-    {(void *) params[1], param_sizes[1], false},
-    {(void *) params[2], param_sizes[2], false},
-    {(void *) params[3], param_sizes[3], false}
-  };
-
+      {(void *)params[0], param_sizes[0], false}, // single send option enabled
+      {(void *)params[1], param_sizes[1], false},
+      {(void *)params[2], param_sizes[2], false},
+      {(void *)params[3], param_sizes[3], false}};
 
   int output_amount = 3;
   struct naa_param_t output_params[] = {
-    {(void *) params[0], param_sizes[0], false},
-    {(void *) params[1], param_sizes[1], false},
-    {(void *) params[3], param_sizes[3], false}
-  };
+      {(void *)params[0], param_sizes[0], false},
+      {(void *)params[1], param_sizes[1], false},
+      {(void *)params[3], param_sizes[3], false}};
 
   // naa_create: establishes connection with NAA.
   printf("-- Setting Up Connection --\n");
-  if (naa_create(FNCODE, input_params, input_amount,
-      output_params, output_amount, handle)) {
-    log_error("Error during naa_create. Exiting.\n");
+  if (naa_create(FNCODE, input_params, input_amount, output_params,
+                 output_amount, handle)) {
+    ulog_error("Error during naa_create. Exiting.\n");
     return -1;
   };
-
-
 
   // Repeat RPC N_INVOKES times.
   for (int i = 0; i < N_INVOKES; i++) {
 
     // naa_invoke: call RPC on NAA.
-    printf("-- RPC Invocation #%d --\n", i+1);
+    printf("-- RPC Invocation #%d --\n", i + 1);
     if (naa_invoke(handle)) {
-      log_error("Error durning naa_invoke. Exiting.\n");
+      ulog_error("Error durning naa_invoke. Exiting.\n");
       return -1;
     }
 
     struct naa_status status;
     if (naa_wait(handle, &status)) {
-        log_error("Error occurred during naa_wait. Exiting.\n");
-        return -1;
-      }
+      ulog_error("Error occurred during naa_wait. Exiting.\n");
+      return -1;
+    }
     // Do blocking and non-blocking wait/test for alternatingly
     // if(i % 2 == 0){
     //   // naa_test: keep tabs on the status of the RPC.
     //   bool flag = false;
     //   while (!flag) {
     //     if (naa_test(handle, &flag, &status)) {
-    //       log_error("Error occurred during naa_test. Exiting.\n");
+    //       ulog_error("Error occurred during naa_test. Exiting.\n");
     //       return -1;
     //     }
     //   }
     // }
     // else{
     //   if (naa_wait(handle, &status)) {
-    //     log_error("Error occurred during naa_wait. Exiting.\n");
+    //     ulog_error("Error occurred during naa_wait. Exiting.\n");
     //     return -1;
     //   }
     // }
-    printf("Bytes received: %zu, RPC Return code: %d\n",
-           status.bytes_received, status.naa_error);
+    printf("Bytes received: %zu, RPC Return code: %d\n", status.bytes_received,
+           status.naa_error);
   }
   // naa_finalize: clean up connection.
   printf("-- Cleaning Up --\n");
@@ -200,7 +194,7 @@ int main(int argc, char *argv[]) {
 
     bool success = true;
     unsigned char *data = (unsigned char *)(params[i]);
-    for(unsigned int j = 0; j < param_sizes[i]; j++) {
+    for (unsigned int j = 0; j < param_sizes[i]; j++) {
 
       unsigned char el = data[j];
 
@@ -208,16 +202,16 @@ int main(int argc, char *argv[]) {
         if (el != (i + N_INVOKES)) {
           success = false;
         }
-      }
-      else {
-        if (el != i) { success = false; }
+      } else {
+        if (el != i) {
+          success = false;
+        }
       }
     }
 
-    printf("Parameter %u: first element: %u. Success? %s\n",
-          i, data[0], success ? "yes" : "no");
+    printf("Parameter %u: first element: %u. Success? %s\n", i, data[0],
+           success ? "yes" : "no");
   }
-
 
   return 0;
 }

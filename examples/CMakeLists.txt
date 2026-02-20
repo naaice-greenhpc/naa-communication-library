@@ -1,6 +1,6 @@
 add_executable(naaice_client naaice_client.c)
 add_executable(naaice_client_ap2 naaice_client_ap2.c)
-add_executable(naaice_server naaice_server.c)
+add_executable(naaice_server naaice_server.c ${CMAKE_SOURCE_DIR}/kernels/swnaa_kernels.c)
 
 if(USE_EMA)
     include_directories(${CMAKE_INSTALL_PREFIX}/include)

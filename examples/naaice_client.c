@@ -37,10 +37,10 @@
 /* Constants *****************************************************************/
 
 #define CONNECTION_PORT 12345
-#define FNCODE 1
+#define FNCODE 3
 
 // Number of times to repeat the RPC.
-#define N_INVOKES 2
+#define N_INVOKES 1
 
 /* Main **********************************************************************/
 
@@ -52,17 +52,18 @@
  *  'region-sizes', ex '1024'
  */
 int main(int argc, char *argv[]) {
-  ulog_set_level(LOG_LEVEL);
 
-  log_info("-- Handling Command Line Arguments --\n");
+  ulog_output_level_set_all(LOG_LEVEL);
+
+  ulog_info("-- Handling Command Line Arguments --\n");
 
   // Check number of arguments.
   // TODO add command line parser getopt
   if ((argc != 4) && (argc != 5)) {
-    log_error("Wrong number of arguments. use: "
-              "./naaice_client [local-ip] remote-ip number-of-regions "
-              "'region-sizes'\n"
-              "Example: ./naaice_client 10.3.10.134 10.3.10.135 1 '1024'\n");
+    ulog_error("Wrong number of arguments. use: "
+               "./naaice_client [local-ip] remote-ip number-of-regions "
+               "'region-sizes'\n"
+               "Example: ./naaice_client 10.3.10.134 10.3.10.135 1 '1024'\n");
     return -1;
   };
 
@@ -75,13 +76,13 @@ int main(int argc, char *argv[]) {
   char *ptr;
   long int params_amount = strtol(argv[2 + arg_offset], &ptr, 10);
   if (params_amount < 1 || params_amount > MAX_MRS) {
-    log_error("Chosen number of arguments %ld is not supported.\n",
-              params_amount);
+    ulog_error("Chosen number of arguments %ld is not supported.\n",
+               params_amount);
     return -1;
   }
 
-  log_debug("Connecting to %s from %s, using %d memory regions", remote_ip,
-            local_ip, params_amount);
+  ulog_debug("Connecting to %s from %s, using %d memory regions", remote_ip,
+             local_ip, params_amount);
 
   // Get sizes of memory regions from command line.
   size_t param_sizes[params_amount];
@@ -97,8 +98,8 @@ int main(int argc, char *argv[]) {
     token = strtok(NULL, " ");
     if (token == NULL) {
       if (i < params_amount) {
-        log_error("Higher number of memory regions requested "
-                  "than size information given.\n");
+        ulog_error("Higher number of memory regions requested "
+                   "than size information given.\n");
         return -1;
       }
       break;
@@ -116,7 +117,7 @@ int main(int argc, char *argv[]) {
 
     params[i] = (char *)malloc(param_sizes[i] * sizeof(char));
     if (params[i] == NULL) {
-      log_error("Failed to allocate memory for parameters.\n");
+      ulog_error("Failed to allocate memory for parameters.\n");
       return -1;
     }
 
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
 
   // Communication context struct.
   // This will hold all information necessary for the connection.
-  log_info("-- Initializing Communication Context --\n");
+  ulog_info("-- Initializing Communication Context --\n");
   struct naaice_communication_context *comm_ctx = NULL;
 
   // Initialize the communication context struct.
@@ -136,7 +137,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Now, handle connection setup.
-  log_info("-- Setting Up Connection --\n");
+  ulog_info("-- Setting Up Connection --\n");
   if (naaice_setup_connection(comm_ctx)) {
     return -1;
   }
@@ -145,7 +146,7 @@ int main(int argc, char *argv[]) {
   // As an example, specify the first n-1 regions as input and the last one as
   // output
 
-  log_info("-- Specifying Input and Output Memory Regions --\n");
+  ulog_info("-- Specifying Input and Output Memory Regions --\n");
   uint8_t no_input_mrs = 0;
   if (params_amount == 1) {
     no_input_mrs = 1;
@@ -153,7 +154,7 @@ int main(int argc, char *argv[]) {
     no_input_mrs = params_amount;
   }
   if (params_amount <= 0) {
-    log_error("Please specify at least one parameter!\n");
+    ulog_error("Please specify at least one parameter!\n");
     return -1;
   }
 
@@ -183,7 +184,7 @@ int main(int argc, char *argv[]) {
   uint8_t imm_bytes[4] = {0, 0, 0, 0};
 
   // Then, register the memory regions with IBV.
-  log_info("-- Registering Memory Regions with IBV --\n");
+  ulog_info("-- Registering Memory Regions with IBV --\n");
 
   if (naaice_register_mrs(comm_ctx)) {
     return -1;
@@ -200,7 +201,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Do the memory region setup protocol.
-  log_info("-- Doing MRSP --\n");
+  ulog_info("-- Doing MRSP --\n");
   if (naaice_do_mrsp(comm_ctx)) {
     return -1;
   }
@@ -209,10 +210,10 @@ int main(int argc, char *argv[]) {
   // waiting for calculation to complete, and receiving return parameter
   // back from NAA.
   // Repeat RPC N_INVOKES times.
-  log_info("-- Doing Data Transfer --\n");
+  ulog_info("-- Doing Data Transfer --\n");
   for (int i = 0; i < N_INVOKES; i++) {
 
-    log_info("-- RPC Invocation #%d --\n", i + 1);
+    ulog_info("-- RPC Invocation #%d --\n", i + 1);
     if (naaice_do_data_transfer(comm_ctx)) {
       return -1;
     }
@@ -224,7 +225,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Disconnect and cleanup.
-  log_info("-- Cleaning Up --\n");
+  ulog_info("-- Cleaning Up --\n");
   if (naaice_disconnect_and_cleanup(comm_ctx)) {
     return -1;
   }
@@ -232,10 +233,10 @@ int main(int argc, char *argv[]) {
   // At this point, we can check the data for correctness.
   // For the simple SWNAA example, we expect all values in the last parameter
   // to have been incremented, and the other parameters to be unchanged.
-  log_info("-- Print Results --\n");
+  ulog_info("-- Print Results --\n");
 
   unsigned char *data = (unsigned char *)(params[params_amount - 1]);
-  printf("Output of the last MR:");
+  printf("Output of the last MR: ");
   for (unsigned int j = 0; j < param_sizes[params_amount - 1]; j++) {
     printf("%d ", data[j]);
     if (j >= 10) {

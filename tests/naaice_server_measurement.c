@@ -19,8 +19,6 @@
  * The actual logic of the NAA procedure can be changed by putting whatever
  * you like in the implementation of do_procedure().
  *
- * Florian Mikolajczak, florian.mikolajczak@uni-potsdam.de
- * Dylan Everingham, everingham@zib.de
  * Hannes Signer, signer@uni-potsdam.de
  * 04.02.2026
  *
@@ -32,6 +30,7 @@
 #include <naaice_swnaa.h>
 #include <pthread.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,12 +43,9 @@
 #define CONNECTION_PORT 12345
 
 /** Idea: Master-Worker logic
- * master handles connection establishment for multiple connections
- * worker holds one connection per thread
- *
- * User-specified logic has to be implemented in the kernels/swnaa_kernel file
- * and are encoded with the function code.
- */
+master handles connection establishment for multiple connections
+worker holds one connection per thread
+*/
 
 static volatile sig_atomic_t g_stop_requested = 0;
 
@@ -111,19 +107,25 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   }
 
   struct context *ctx;
-
   if (naaice_swnaa_init_master(&ctx, CONNECTION_PORT)) {
     ulog_error("Failed to initialize SWNAA master context.\n");
     return -1;
   }
 
   while (!g_stop_requested) {
-    if (naaice_swnaa_poll_and_handle_connection_event(ctx)) {
-      if (!g_stop_requested) {
-        ulog_error("Failed to handle connection event.\n");
-      }
+    naaice_swnaa_poll_and_handle_connection_event(ctx);
+
+    if (ctx->total_connections_lifetime > 0) {
+      naaice_swnaa_poll_and_handle_connection_event(ctx);
+      break;
     }
   }
+
+  while (!g_stop_requested && ctx->con_mng->top < MAX_CONNECTIONS) {
+    usleep(10);
+  }
+
+  ulog_info("All workers finished, shutting down.\n");
 
   cleanup_master_context(ctx);
 
