@@ -7,6 +7,7 @@ project(
 
 option(USE_EMA "Use EMA" OFF)
 option(NAAICE_DISABLE_LOGGING "Disable microlog completely" OFF)
+option(LOG_VERBOSE "Enable verbose log output" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 17)
@@ -35,28 +36,26 @@ endif()
 
 FetchContent_Declare(ulog
     GIT_REPOSITORY https://github.com/an-dr/microlog.git
-    GIT_TAG v7.0.0)
+    GIT_TAG v7.0.0
+    EXCLUDE_FROM_ALL)
 
 set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
 set(CMAKE_POLICY_DEFAULT_CMP0177 OLD)
 
 if(NAAICE_DISABLE_LOGGING)
-     FetchContent_GetProperties(ulog)
-    if(NOT ulog_POPULATED)
-        FetchContent_Populate(ulog)
-    endif()
-    
-    add_library(microlog INTERFACE)
-    target_include_directories(microlog INTERFACE 
-        $<BUILD_INTERFACE:${ulog_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/naaice>
-    )
+    FetchContent_MakeAvailable(ulog)
+       
     target_compile_definitions(microlog INTERFACE ULOG_BUILD_DISABLED=1)
+    add_link_options(-Wl,--allow-multiple-definition)
 else()
-    add_definitions(-DULOG_BUILD_SOURCE_LOCATION=0) # disable source path location in log messages
+    if(LOG_VERBOSE)
+        add_definitions(-DULOG_BUILD_SOURCE_LOCATION=1)
+    else()
+        add_definitions(-DULOG_BUILD_SOURCE_LOCATION=0)
+    endif()
     add_definitions(-DULOG_BUILD_COLOR=1) # enable color output in log messages
     
-    FetchContent_MakeAvailable(ulog)
+    FetchContent_MakeAvailable(ulog)  
     
     set(LOG_LEVEL "ULOG_LEVEL_INFO" CACHE STRING "Set log level (e.g. ULOG_LEVEL_TRACE, ULOG_LEVEL_INFO, ULOG_LEVEL_DEBUG, ULOG_LEVEL_WARN, ULOG_LEVEL_ERROR)")
     add_compile_definitions(LOG_LEVEL=${LOG_LEVEL})
@@ -83,3 +82,4 @@ if(NOT NAAICE_DISABLE_LOGGING)
             ${ulog_SOURCE_DIR}/cmake/micrologTargets.cmake
             DESTINATION lib/cmake/microlog)
 endif()
+
