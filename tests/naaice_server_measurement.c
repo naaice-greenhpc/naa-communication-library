@@ -92,8 +92,9 @@ static void cleanup_master_context(struct context *ctx) {
 }
 
 int main(int argc, __attribute__((unused)) char *argv[]) {
+#ifndef ULOG_BUILD_DISABLED
   ulog_output_level_set_all(LOG_LEVEL);
-
+#endif
   // Handle command line arguments.
   ulog_info("-- Handling Command Line Arguments --\n");
   if (argc != 1) {
