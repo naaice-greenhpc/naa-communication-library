@@ -537,6 +537,9 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx) {
     return -1;
   }
 
+  uint32_t inline_sizes[] = {512, 256, 128, 64, 0};
+  int num_sizes = sizeof(inline_sizes) / sizeof(inline_sizes[0]);
+  bool qp_created = false;
   // Set queue pair attributes.
   struct ibv_qp_init_attr init_attr = {
       .send_cq = comm_ctx->cq,
@@ -548,26 +551,45 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx) {
       .cap = {.max_send_wr = RX_DEPTH,
               .max_recv_wr = RX_DEPTH,
               .max_send_sge = 32,
-              .max_recv_sge = 32},
+              .max_recv_sge = 32,
+              .max_inline_data = inline_sizes[0]},
       // DEFINE COMMUNICATION TYPE!
       .qp_type = IBV_QPT_RC,
       .sq_sig_all = 1};
 
-  int ret;
-  struct ibv_device_attr device_attr;
-  ret = ibv_query_device(comm_ctx->ibv_ctx, &device_attr);
-  if (ret) {
-    ulog_error("Failed to query device\n");
+  // try different inline size until a valid is found
+  for (int i = 0; i < num_sizes && !qp_created; i++)
+  {
+    init_attr.cap.max_inline_data = inline_sizes[i];
+    int ret;
+    struct ibv_device_attr device_attr;
+    ret = ibv_query_device(comm_ctx->ibv_ctx, &device_attr);
+    if (ret)
+    {
+      ulog_error("Failed to query device\n");
+    }
+
+    // Make a queue pair, checking for allocation success.
+    ulog_debug("Making queue pair.\n");
+    if (!rdma_create_qp(comm_ctx->id, comm_ctx->pd, &init_attr))
+    {
+      qp_created = true;
+      ulog_info("QP created with max_inline_data=%u (actual=%u)\n",
+                inline_sizes[i], init_attr.cap.max_inline_data);
+    } else
+    {
+      ulog_debug("QP creation failed with max_inline_data=%u, trying smaller...\n",
+                 inline_sizes[i]);
+    }
   }
 
-  // Make a queue pair, checking for allocation success.
-  ulog_debug("Making queue pair.\n");
-  if (rdma_create_qp(comm_ctx->id, comm_ctx->pd, &init_attr)) {
-    perror("Failed to create an RDMA queue pair.\n");
+  if (!qp_created)
+  {
+    perror("Failed to create an RDMA queue pair with any inline data size (even 0)\n");
     return -1;
   }
   comm_ctx->qp = comm_ctx->id->qp;
-
+  comm_ctx->max_inline_data = init_attr.cap.max_inline_data;
   return 0;
 }
 
@@ -1183,6 +1205,45 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx) {
   return 0;
 }
 
+int naaice_poll_cq_busy(struct naaice_communication_context *comm_ctx)
+{
+  struct timespec start, now;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+  while (comm_ctx->state < NAAICE_FINISHED)
+  {
+    struct ibv_wc wc;
+    int n = ibv_poll_cq(comm_ctx->cq, 1, &wc);
+
+    if (n > 0)
+    {
+      if (naaice_handle_work_completion(&wc, comm_ctx))
+      {
+        return -1;
+      }
+    }
+    else if (n < 0)
+    {
+      ulog_error("ibv_poll_cq failed\n");
+      return -1;
+    }
+
+    // check timeout (POLLING_TIMEOUT in ms)
+    if (POLLING_TIMEOUT > 0)
+    {
+      clock_gettime(CLOCK_MONOTONIC, &now);
+      long elapsed_ms = (now.tv_sec - start.tv_sec) * 1000 +
+                        (now.tv_nsec - start.tv_nsec) / 1000000;
+
+      if (elapsed_ms > POLLING_TIMEOUT)
+      {
+        ulog_error("Timeout after %ld ms\n", elapsed_ms);
+        return -1;
+      }
+    }
+  }
+  return 0;
+}
+
 int naaice_do_mrsp(struct naaice_communication_context *comm_ctx) {
 
   ulog_trace("In naaice_do_mrsp\n");
@@ -1650,6 +1711,10 @@ int naaice_write_data(struct naaice_communication_context *comm_ctx,
 
         sge[mr_idx].addr = (uintptr_t)comm_ctx->mr_local_data[i].addr;
         sge[mr_idx].length = comm_ctx->mr_local_data[i].size;
+        if (sge[mr_idx].length <= comm_ctx->max_inline_data)
+        {
+          wr[mr_idx].send_flags |= IBV_SEND_INLINE;
+        }
         sge[mr_idx].lkey = comm_ctx->mr_local_data[i].ibv->lkey;
 
         mr_idx++;
