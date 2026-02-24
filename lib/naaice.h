@@ -119,6 +119,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <time.h>
 #include <ulog.h>
 
 #include <stdatomic.h>
@@ -469,6 +470,11 @@ struct naaice_communication_context {
 
   /// Retry count for RDMA connection.
   uint8_t retry_count;
+
+  /// Max byte number for data send inline
+  /// ([User Buffer] ──CPU Copy──> [WQE] ──Network──> [Remote])
+  /// Inline copy is faster for small messages
+  uint16_t max_inline_data;
 
   /* --- Current connection state --- */
 
@@ -1008,6 +1014,25 @@ int naaice_poll_cq_nonblocking(struct naaice_communication_context *comm_ctx);
  */
 
 int naaice_poll_cq_blocking(struct naaice_communication_context *comm_ctx);
+
+/**
+ * @brief Polls the completion queue blocking using busy waiting.
+ *
+ * Polls the completion queue using busy waiting for a work completion
+ * and blocks until at least one completion is available. Once a completion
+ * is received, it is processed using ::naaice_handle_work_completion.
+ * After handling, ::comm_ctx->state is updated to reflect the current
+ * state of the NAA connection and routine.
+ *
+ * @param comm_ctx
+ *   Pointer to the communication context describing the connection.
+ *
+ * @return
+ *   0 on success (regardless of whether any work completions were received),
+ *  -1 on failure.
+ */
+
+int naaice_poll_cq_busy(struct naaice_communication_context *comm_ctx);
 
 /**
  * @brief Disconnect and clean up the communication context.
