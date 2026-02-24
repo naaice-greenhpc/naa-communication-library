@@ -561,10 +561,8 @@ int naaice_init_rdma_resources(struct naaice_communication_context *comm_ctx) {
   for (int i = 0; i < num_sizes && !qp_created; i++)
   {
     init_attr.cap.max_inline_data = inline_sizes[i];
-    int ret;
     struct ibv_device_attr device_attr;
-    ret = ibv_query_device(comm_ctx->ibv_ctx, &device_attr);
-    if (ret)
+    if (ibv_query_device(comm_ctx->ibv_ctx, &device_attr))
     {
       ulog_error("Failed to query device\n");
     }
