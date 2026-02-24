@@ -53,7 +53,9 @@
  */
 int main(int argc, char *argv[]) {
 
+#ifndef ULOG_BUILD_DISABLED
   ulog_output_level_set_all(LOG_LEVEL);
+#endif
 
   ulog_info("-- Handling Command Line Arguments --\n");
 

@@ -61,8 +61,9 @@ static ulog_status naaice_swnaa_ulog_lock_fn(bool lock, void *lock_arg) {
 int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
 
   ulog_trace("In naaice_swnaa_init_master\n");
-  if (ulog_lock_set_fn(naaice_swnaa_ulog_lock_fn, &g_ulog_lock) !=
-      ULOG_STATUS_OK) {
+  int log_status = ulog_lock_set_fn(naaice_swnaa_ulog_lock_fn, &g_ulog_lock);
+  // check if setting the lock function was successful or if logging is disabled
+  if ((log_status != ULOG_STATUS_OK) && (log_status != ULOG_STATUS_DISABLED)) {
     ulog_error("Failed to configure ulog thread lock.\n");
     return -1;
   }
