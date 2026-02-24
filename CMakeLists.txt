@@ -46,7 +46,6 @@ if(NAAICE_DISABLE_LOGGING)
     FetchContent_MakeAvailable(ulog)
        
     target_compile_definitions(microlog INTERFACE ULOG_BUILD_DISABLED=1)
-    add_link_options(-Wl,--allow-multiple-definition)
 else()
     if(LOG_VERBOSE)
         add_definitions(-DULOG_BUILD_SOURCE_LOCATION=1)
