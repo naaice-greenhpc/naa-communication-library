@@ -35,8 +35,8 @@ ExternalProject_Add(
 endif()
 
 FetchContent_Declare(ulog
-    GIT_REPOSITORY https://github.com/an-dr/microlog.git
-    GIT_TAG v7.0.0
+    GIT_REPOSITORY git@github.com:sobc/microlog.git
+    GIT_TAG main
     EXCLUDE_FROM_ALL)
 
 set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
