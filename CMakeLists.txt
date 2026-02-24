@@ -35,7 +35,7 @@ ExternalProject_Add(
 endif()
 
 FetchContent_Declare(ulog
-    GIT_REPOSITORY git@github.com:sobc/microlog.git
+    GIT_REPOSITORY https://github.com/sobc/microlog.git
     GIT_TAG main
     EXCLUDE_FROM_ALL)
 
