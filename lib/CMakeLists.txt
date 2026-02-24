@@ -53,7 +53,7 @@ set_target_properties(naaice_swnaa PROPERTIES EXPORT_NAME swnaa)
 target_include_directories(naaice_swnaa 
                             PUBLIC 
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                                $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/kernels>
+                                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/kernels>
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
                                 $<INSTALL_INTERFACE:include/naaice>)
 target_link_libraries(naaice_swnaa 
