@@ -1009,11 +1009,10 @@ int naaice_handle_work_completion(
     // If we have received data with an immediate...
     if (wc->opcode == IBV_WC_RECV_RDMA_WITH_IMM) {
 
-      uint32_t return_code = ntohl(wc->imm_data) >> IMMEDIATE_OFFSET;
+      uint32_t naa_return_code = ntohl(wc->imm_data) >> IMMEDIATE_OFFSET;
       // Check whether an error occured.
-      if (return_code) {
-        ulog_error("Immediate return code non-zero: %d.\n", return_code);
-        return return_code;
+      if (naa_return_code) {
+        ulog_error("Immediate return code non-zero: %d.\n", naa_return_code);
       }
 
       // Print all information about the work completion.
@@ -1035,7 +1034,7 @@ int naaice_handle_work_completion(
 
       // If no error, go to finished state.
       comm_ctx->state = NAAICE_FINISHED;
-      comm_ctx->naa_returncode = wc->imm_data;
+      comm_ctx->naa_returncode = naa_return_code;
       comm_ctx->bytes_received = wc->byte_len;
       return 0;
     }
