@@ -231,7 +231,7 @@ int naaice_init_communication_context(
   // Get local address from getaddrinfo, if provided.
   if (local_ip != NULL && strlen(local_ip) > 0) {
     struct addrinfo *loc_addr = NULL;
-    if (getaddrinfo(local_ip, port_str, NULL, &loc_addr)) {
+    if (getaddrinfo(local_ip, NULL, NULL, &loc_addr)) {
       ulog_error("Failed to get address info for local address.\n");
       return -1;
     }
