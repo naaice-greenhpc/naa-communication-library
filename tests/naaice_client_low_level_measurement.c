@@ -33,10 +33,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define CONNECTION_PORT 12345
 #define FNCODE 3
-
-#define N_INVOKES 1
 
 double get_timestamp() {
   struct timeval tv;
@@ -74,7 +71,7 @@ int main(int argc, char *argv[]) {
 
   if (naaice_init_communication_context(&comm_ctx, 0, param_sizes, params, 1, 0,
                                         0, FNCODE, local_ip, remote_ip,
-                                        CONNECTION_PORT)) {
+                                        SERVER_CONNECTION_PORT)) {
     return -1;
   }
   if (naaice_setup_connection(comm_ctx)) {

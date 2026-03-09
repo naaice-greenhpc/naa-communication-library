@@ -77,7 +77,7 @@ extern "C" {
 
 void *worker_procedure(void *args);
 
-int naaice_swnaa_init_master(struct context **ctx, uint16_t port);
+int naaice_swnaa_init_master(struct context **ctx, uint16_t local_cm_port);
 
 int naaice_swnaa_init_worker(struct context **ctx, uint8_t worker_id);
 

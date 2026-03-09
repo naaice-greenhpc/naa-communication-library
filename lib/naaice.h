@@ -125,6 +125,7 @@
 #include <stdatomic.h>
 
 /* Constants *****************************************************************/
+#define SERVER_CONNECTION_PORT 12345
 
 #define RX_DEPTH 1025
 #define ntohll be64toh
@@ -609,8 +610,9 @@ extern "C" {
  * @param remote_address
  *   Remote address string (e.g. "10.3.10.135").
  *
- * @param port
- *   Connection port. A value of 0 enables dynamic port allocation.
+ * @param remote_cm_port
+ *   Connection remote port. Must match with the local port of the
+ *   server, either NAA or SW NAA.
  *
  * @return
  *   0 on success, -1 on failure.
@@ -619,7 +621,7 @@ int naaice_init_communication_context(
     struct naaice_communication_context **comm_ctx, uint64_t addr_offset,
     size_t *param_sizes, char **params, unsigned int params_amount,
     unsigned int internal_mr_amount, size_t *internal_mr_sizes, uint8_t fncode,
-    const char *local_address, const char *remote_address, uint16_t port);
+    const char *local_address, const char *remote_address, uint16_t remote_cm_port);
 
 /**
  * @brief Polls for a connection event on the RDMA event channel.

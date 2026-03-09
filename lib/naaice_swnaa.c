@@ -58,7 +58,8 @@ static ulog_status naaice_swnaa_ulog_lock_fn(bool lock, void *lock_arg) {
 
 /* Function Implementations **************************************************/
 
-int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
+int naaice_swnaa_init_master(struct context **ctx, uint16_t local_cm_port)
+{
 
   ulog_trace("In naaice_swnaa_init_master\n");
   int log_status = ulog_lock_set_fn(naaice_swnaa_ulog_lock_fn, &g_ulog_lock);
@@ -123,7 +124,7 @@ int naaice_swnaa_init_master(struct context **ctx, uint16_t port) {
   struct sockaddr loc_addr;
   memset(&loc_addr, 0, sizeof(loc_addr));
   loc_addr.sa_family = AF_INET;
-  ((struct sockaddr_in *)&loc_addr)->sin_port = htons(port);
+  ((struct sockaddr_in *)&loc_addr)->sin_port = htons(local_cm_port);
 
   // Bind communication ID to local address.
   ulog_debug("Bind address.\n");

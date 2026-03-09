@@ -31,10 +31,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define CONNECTION_PORT 12345
 #define FNCODE 3
-
-#define N_INVOKES 1
 
 double get_timestamp() {
   struct timeval tv;
