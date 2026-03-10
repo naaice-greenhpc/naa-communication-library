@@ -27,7 +27,6 @@
 
 /* Constants *****************************************************************/
 #define TIMEOUT_RESOLVE_ADDR 100
-#define CONNECTION_PORT 12345
 #define NAA_PAGE_WIDTH 4096
 #define START_RPC_MASK 0x80
 
@@ -115,7 +114,8 @@ int naaice_init_communication_context(
     struct naaice_communication_context **comm_ctx, uint64_t addr_offset,
     size_t *param_sizes, char **params, unsigned int params_amount,
     unsigned int internal_mr_amount, size_t *internal_mr_sizes, uint8_t fncode,
-    const char *local_ip, const char *remote_ip, uint16_t port) {
+    const char *local_ip, const char *remote_ip, uint16_t remote_cm_port)
+{
 
   ulog_trace("In naaice_init_communication_context\n");
 
@@ -217,7 +217,7 @@ int naaice_init_communication_context(
 
   // port can't be larger than 65535, so 5+1 chars are sufficient here
   char port_str[6];
-  snprintf(port_str, sizeof(port_str) / sizeof(port_str[0]), "%u", port);
+  snprintf(port_str, sizeof(port_str) / sizeof(port_str[0]), "%u", remote_cm_port);
 
   // Get remote address from getaddrinfo.
   struct addrinfo *rem_addr = NULL;
@@ -231,7 +231,7 @@ int naaice_init_communication_context(
   // Get local address from getaddrinfo, if provided.
   if (local_ip != NULL && strlen(local_ip) > 0) {
     struct addrinfo *loc_addr = NULL;
-    if (getaddrinfo(local_ip, port_str, NULL, &loc_addr)) {
+    if (getaddrinfo(local_ip, NULL, NULL, &loc_addr)) {
       ulog_error("Failed to get address info for local address.\n");
       return -1;
     }

@@ -35,8 +35,6 @@
 #include <unistd.h>
 
 /* Constants *****************************************************************/
-
-#define CONNECTION_PORT 12345
 #define FNCODE 3
 
 // Number of times to repeat the RPC.
@@ -134,7 +132,8 @@ int main(int argc, char *argv[]) {
   // Initialize the communication context struct.
   if (naaice_init_communication_context(&comm_ctx, 0, param_sizes, params,
                                         params_amount, 0, 0, FNCODE, local_ip,
-                                        remote_ip, CONNECTION_PORT)) {
+                                        remote_ip, SERVER_CONNECTION_PORT))
+  {
     return -1;
   }
 

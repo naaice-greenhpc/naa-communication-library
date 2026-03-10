@@ -53,8 +53,6 @@ typedef struct {
 #define TIMEOUT_TEST 100
 #define TIMEOUT_WAIT 100
 
-#define NAA_DEFAULT_PORT 12345
-
 // Environment variable names
 
 // Specification of the NAA Functions to be used (see parse_naa_job_sec for
@@ -88,7 +86,7 @@ static bool parse_naa_job_spec_chunk(char *chunk) {
       if (strlen(token) > 0) {
         spec->port = (uint16_t)strtol(token, NULL, 10);
       } else {
-        spec->port = NAA_DEFAULT_PORT;
+        spec->port = SERVER_CONNECTION_PORT;
       }
       break;
     case 2:

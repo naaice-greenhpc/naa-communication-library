@@ -38,10 +38,6 @@
 #include <ulog.h>
 #include <unistd.h>
 
-/* Constants *****************************************************************/
-
-#define CONNECTION_PORT 12345
-
 /** Idea: Master-Worker logic
 master handles connection establishment for multiple connections
 worker holds one connection per thread
@@ -108,7 +104,7 @@ int main(int argc, __attribute__((unused)) char *argv[]) {
   }
 
   struct context *ctx;
-  if (naaice_swnaa_init_master(&ctx, CONNECTION_PORT)) {
+  if (naaice_swnaa_init_master(&ctx, SERVER_CONNECTION_PORT)) {
     ulog_error("Failed to initialize SWNAA master context.\n");
     return -1;
   }
