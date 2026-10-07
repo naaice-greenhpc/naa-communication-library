@@ -1,0 +1,3 @@
+[submodule "ext/microlog"]
+	path = ext/microlog
+	url = https://github.com/an-dr/microlog.git

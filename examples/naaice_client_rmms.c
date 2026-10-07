@@ -1,6 +1,6 @@
 /*
- * Basic example client for the NAAICE AP1 communication layer.
- * Use together with naaice_server.c.
+ * Example client for the NAAICE AP1 communication layer with the remote memory
+ * management service. Use with naaice_server.c and remote_malloc_server.py.
  */
 
 /* Dependencies **************************************************************/
@@ -13,25 +13,26 @@
 #include <ulog.h>
 #include <unistd.h>
 
+#include "malloc_client.h"
+
 /* Constants *****************************************************************/
 #define FNCODE 3
 
 // Number of times to repeat the RPC.
 #define N_INVOKES 10
+
 // Number of args with local IP
-#define NUM_ARG_LOCAL_IP 5
+#define NUM_ARG_LOCAL_IP 8
 // Number of args without local IP
-#define NUM_ARG_NO_LOCAL_IP 4
+#define NUM_ARG_NO_LOCAL_IP 7
 
 /* Main **********************************************************************/
-
 int main(int argc, char *argv[]) {
 #ifndef ULOG_BUILD_DISABLED
   ulog_output_level_set_all(LOG_LEVEL);
 #endif
 
   ulog_info("-- Handling Command Line Arguments --\n");
-
   // Check number of arguments.
   if ((argc != NUM_ARG_LOCAL_IP) && (argc != NUM_ARG_NO_LOCAL_IP)) {
     ulog_error(
@@ -41,7 +42,13 @@ int main(int argc, char *argv[]) {
         "\tremote-ip\n"
         "\tnumber-of-regions\n"
         "\t'region-sizes'\n"
-        "Example: ./naaice_client 10.3.10.134 10.3.10.135 1 '1024'\n");
+        "\tremote_malloc_address\n"
+        "\tremote_malloc_port\n"
+        "\tFPGA mnemonic\n\n"
+
+        "Example: ./naaice_client_rmms 10.3.10.134 10.3.10.135 1 '1024' 10.3.10.135 54321 "
+        "EL_ZERO\n"
+        "");
     return -1;
   };
 
@@ -85,6 +92,11 @@ int main(int argc, char *argv[]) {
     param_sizes[i] = atoi(token);
   }
 
+  // Extra values needed to talk to the rmms server.
+  char *rmms_address = argv[4 + arg_offset];
+  int rmms_port = atoi(argv[5 + arg_offset]);
+  char *fpga_mnemomic = argv[6 + arg_offset];
+
   // Fill each parameter with a char array whose value equals its index:
   // first parameter all 0s, second all 1s, and so on.
   char *params[params_amount];
@@ -100,12 +112,28 @@ int main(int argc, char *argv[]) {
 
   // Communication context, holding all state for the connection.
   ulog_info("-- Initializing Communication Context --\n");
+
   struct naaice_communication_context *comm_ctx = NULL;
+  struct naaice_rmms_data *rmms_data = NULL;
+
+  ulog_info(
+      "local ip: %s\n"
+      "remote ip: %s\n"
+      "rmms ip: %s\n"
+      "rmms port: %d\n"
+      "fpga mnenomic: %s\n"
+      "param size 0: %d\n",
+      local_address, remote_address, rmms_address, rmms_port, fpga_mnemomic, param_sizes[0]);
+
+  // Initialize rmms communication data.
+  if (naaice_init_rmms_data(&rmms_data, rmms_address, rmms_port, fpga_mnemomic, NULL)) {
+    return -1;
+  }
 
   // Initialize the communication context.
-  if (naaice_init_communication_context(&comm_ctx, 0, param_sizes, params, params_amount, 0, 0,
-                                        FNCODE, local_address, remote_address,
-                                        SERVER_CONNECTION_PORT)) {
+  if (naaice_init_communication_context_with_rmms(&comm_ctx, param_sizes, params, params_amount, 0,
+                                                  0, FNCODE, local_address, remote_address,
+                                                  SERVER_CONNECTION_PORT, rmms_data)) {
     return -1;
   }
 
@@ -169,16 +197,11 @@ int main(int argc, char *argv[]) {
   // Send parameters to the NAA, wait for the computation, and receive the
   // return parameter back. Repeated N_INVOKES times.
   ulog_info("-- Doing Data Transfer --\n");
-  struct timespec start, end;
   for (int i = 0; i < N_INVOKES; i++) {
     ulog_info("-- RPC Invocation #%d --\n", i + 1);
-    clock_gettime(CLOCK_MONOTONIC, &start);
     if (naaice_do_data_transfer(comm_ctx)) {
       return -1;
     }
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    double ms = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_nsec - start.tv_nsec) / 1000000.0;
-    ulog_info("RPC took %.3f ms\n", ms);
     // Reset region 0 to send its full size again.
     if (naaice_set_bytes_to_send(comm_ctx, 0, -1)) {
       return -1;

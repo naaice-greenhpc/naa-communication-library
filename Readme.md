@@ -108,7 +108,7 @@ Direct control over RDMA connections and memory regions.
   - Validates results
 
 ```bash
-./build/examples/naaice_client <local_ip> <server_ip> <num_regions> "<region_sizes>"
+./build/examples/naaice_client <local_address> <server_address> <num_regions> "<region_sizes>"
 ```
 
 Example:
@@ -130,7 +130,7 @@ Simplified interface using environment variables for NAA discovery.
   - Format: `<address>:<port>:<fn_code>:<fn_num_args>[,...]`
   - Example: `10.3.10.42:12345:1:3`
   
-- `NAA_LOCAL_IP` (optional): Local interface IP/hostname
+- `NAA_LOCAL_ADDRESS` (optional): Local interface IP/hostname
 
 **Example:**
 ```bash

@@ -1,6 +1,6 @@
 add_executable(naaice_client naaice_client.c)
 add_executable(naaice_client_ap2 naaice_client_ap2.c)
-add_executable(naaice_server naaice_server.c ${PROJECT_SOURCE_DIR}/kernels/swnaa_kernels.c)
+add_executable(naaice_server naaice_server.c kernels/swnaa_kernels.c)
 
 if(USE_EMA)
     include_directories(${CMAKE_INSTALL_PREFIX}/include)
@@ -10,6 +10,11 @@ if(USE_EMA)
                             PRIVATE ${CMAKE_INSTALL_PREFIX}/lib/libEMA.so
                             PRIVATE naaice::low_level)
 endif(USE_EMA)
+
+if(USE_RMMS)
+    add_executable(naaice_client_rmms naaice_client_rmms.c)
+    target_link_libraries(naaice_client_rmms PRIVATE naaice::low_level)
+endif()
 
 target_link_libraries(naaice_client PRIVATE naaice::low_level)
 target_link_libraries(naaice_client_ap2 PRIVATE naaice::middleware)

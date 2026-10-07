@@ -56,3 +56,4 @@ build/*
 src/*.o
 
 .cache
+__pycache__
